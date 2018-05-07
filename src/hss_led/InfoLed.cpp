@@ -16,6 +16,7 @@ InfoLed::InfoLed():
   redLed("rpi_rf_mod:red"),
   greenLed("rpi_rf_mod:green"),
   blueLed("rpi_rf_mod:blue"),
+  rpiRfModFound(false),
   #else
   infoLed("info"),
   #endif
@@ -34,6 +35,7 @@ InfoLed::InfoLed():
     redLed.LedOn();
     greenLed.LedOn();
     blueLed.LedOff();
+    rpiRfModFound = true;
   }
   #else
 	infoLed.LedOff();
@@ -141,7 +143,7 @@ void InfoLed::updateLedState() {
      (this->nextInfoUpdate > time_millis()))
   {
     // identify if we have a RPI-RF-MOD
-    if(system("lsmod | grep -q rx8130") == 0)
+    if(rpiRfModFound == true)
     {
       this->redLed.LedOff();
       this->greenLed.LedOff();

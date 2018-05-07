@@ -31,6 +31,7 @@ private:
 	led greenLed;
 	led blueLed;
 	Network net;
+	bool rpiRfModFound;
   #else
 	led infoLed;
   #endif
