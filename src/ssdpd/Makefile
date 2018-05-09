@@ -7,11 +7,12 @@ TARGET = ssdpd
 
 TARGETOBJS = $(TARGET.o)
 
-LIBELVUTILSPATH = ../base/libs/elvutils
+LIBELVUTILSPATH = ../elvutils
 LIBELVUTILS = elvutils
 
-CC = arm-linux-g++
-CXX = arm-linux-g++
+CC = $(CROSS)g++
+CXX = $(CROSS)g++
+STRIP = $(CROSS)strip
 CXXFLAGS +=  -O2 -I$(LIBELVUTILSPATH) -Wall -Wstrict-prototypes
 LDFLAGS += -L$(LIBELVUTILSPATH) -l$(LIBELVUTILS) -lpthread
 
