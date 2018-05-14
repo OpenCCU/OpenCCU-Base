@@ -31,7 +31,7 @@ endif
 
 TARGET = ssdpd
 
-TARGETOBJS = $(TARGET.o)
+OBJS = $(TARGET).o
 
 LIBELVUTILSPATH = ../elvutils
 LIBELVUTILS = elvutils
@@ -39,16 +39,27 @@ LIBELVUTILS = elvutils
 CC = $(CROSS)g++
 CXX = $(CROSS)g++
 STRIP = $(CROSS)strip
-CXXFLAGS +=  -O2 -I$(LIBELVUTILSPATH) -Wall -Wstrict-prototypes
+CXXFLAGS +=  -O2 -I$(LIBELVUTILSPATH) -Wall
 LDFLAGS += -L$(LIBELVUTILSPATH) -l$(LIBELVUTILS) -lpthread
 
-all: $(TARGET)
+all: configure info $(TARGET)
 
-$(TARGET): $(TARGETOBJS)
+$(TARGET): $(OBJS)
+	$(CXX) $(LDFLAGS) -o $(TARGET) $(OBJS)
+	cp -f $(TARGET) $(TARGET).debug || true
+	$(STRIP) $(TARGET)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 install: $(TARGET)
-	$(STRIP) $(TARGET)
 	$(ROMFSINST) /bin/$(TARGET)
+
+configure:
+	rm -f $(LOCAL_CONFIG_FILE)
+	touch $(LOCAL_CONFIG_FILE)
+	echo "PROJECT_DIR=$(PROJECT_DIR)" >> $(LOCAL_CONFIG_FILE)
+	echo "PLATFORM=$(PLATFORM)" >> $(LOCAL_CONFIG_FILE)
 	
 info:
 	@echo ""
