@@ -79,7 +79,7 @@ void InfoLed::updateLedState() {
           newStateRed = led::LED_OFF;
           newStateGreen = led::LED_OFF;
           newStateBlue = led::LED_ON;
-          newStateLGW = led::LED_ON;
+          newStateLGW = led::LED_OFF;
           //printf("STANDARD\n");
         }
         else
