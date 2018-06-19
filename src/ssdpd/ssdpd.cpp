@@ -15,6 +15,7 @@
 #include <fstream>
 #include <net/if.h>
 #include <fcntl.h>
+#include <ifaddrs.h>
 
 //static const char* RESPONSE_URL =
 //		"http://127.0.0.1/upnp/basic_dev.cgi?ssdp=response";
@@ -26,7 +27,6 @@ static const int REPEAT_AFTER = 1800;
 
 static std::string serial;
 static std::string uuid;
-struct in_addr getOwnIP(std::string interface);
 
 #if 0
 static bool InterfaceByTargetAddress(unsigned long address, std::string* interface)
@@ -192,7 +192,7 @@ static void fetch_uuid(const std::string& msg) {
 		uuid = msg.substr(left, right - left);
 }
 
-void send_udp(int s, struct sockaddr_in* sa, std::string response, int mx) {
+static void send_udp(int s, struct sockaddr_in* sa, std::string response, int mx) {
 	int nb_packets = 0;
 	std::string::size_type start = 0;
 	while (std::string::npos
@@ -234,8 +234,37 @@ void send_udp(int s, struct sockaddr_in* sa, std::string response, int mx) {
 		it++;
 	}
 }
-void sendRespose(int socke, struct sockaddr_in* sa, int mx) {
-	std::string ip = inet_ntoa(getOwnIP("eth0"));
+
+static std::string getIPAddress() {
+  std::string ipAddress="0.0.0.0";
+  struct ifaddrs *interfaces = NULL;
+  struct ifaddrs *temp_addr = NULL;
+  int success = 0;
+  // retrieve the current interfaces - returns 0 on success
+  success = getifaddrs(&interfaces);
+  if (success == 0) {
+    // Loop through linked list of interfaces
+    temp_addr = interfaces;
+    while(temp_addr != NULL) {
+      // ignore non ipv4, if not up or if a loopback or not running interface
+      if(temp_addr->ifa_addr->sa_family == AF_INET &&
+         (temp_addr->ifa_flags & IFF_UP) == IFF_UP &&
+         (temp_addr->ifa_flags & IFF_LOOPBACK) != IFF_LOOPBACK &&
+         (temp_addr->ifa_flags & IFF_RUNNING) == IFF_RUNNING) {
+        ipAddress=inet_ntoa(((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr);
+        break;
+      }
+      temp_addr = temp_addr->ifa_next;
+    }
+  }
+
+  // Free memory
+  freeifaddrs(interfaces);
+  return ipAddress;
+}
+
+static void sendRespose(int socke, struct sockaddr_in* sa, int mx) {
+	std::string ip = getIPAddress();
 	std::string resposeMsg = "HTTP/1.1 200 OK\r\n";
 	resposeMsg += "CACHE-CONTROL:max-age=5000\r\n";
 	resposeMsg += "EXT:\r\n";
@@ -247,8 +276,8 @@ void sendRespose(int socke, struct sockaddr_in* sa, int mx) {
 			+ "::upnp:rootdevice\r\n\r\n";
 	send_udp(socke, sa, resposeMsg, mx);
 }
-void sendAlive(int sock, struct sockaddr_in* sa, int mx) {
-	std::string ip = inet_ntoa(getOwnIP("eth0"));
+static void sendAlive(int sock, struct sockaddr_in* sa, int mx) {
+	std::string ip = getIPAddress();
 	std::string aliveMsg = "NOTIFY * HTTP/1.1\r\n";
 	aliveMsg += "HOST:239.255.255.250:1900\r\n";
 	aliveMsg += "CACHE-CONTROL:max-age=5000\r\n";
@@ -260,26 +289,8 @@ void sendAlive(int sock, struct sockaddr_in* sa, int mx) {
 			+ "::upnp:rootdevice\r\n\r\n";
 	send_udp(sock,sa,aliveMsg,mx);
 }
-struct in_addr getOwnIP(std::string interface) {
-	struct ifreq ifa;
-	struct sockaddr_in *i;
-	i = (struct sockaddr_in*) &ifa.ifr_addr;
-	int fd;
-	if (interface.size() >= sizeof(ifa.ifr_name)) {
-		i->sin_addr.s_addr = inet_addr("0.0.0.0");
-		return i->sin_addr;
-	}
-	strcpy(ifa.ifr_name, interface.c_str());
-	fd = socket(AF_INET, SOCK_DGRAM, 0);
-	if (fd == -1) {
-		i->sin_addr.s_addr = inet_addr("0.0.0.0");
-		return i->sin_addr;
-	}
-	ioctl(fd, SIOCGIFADDR, &ifa);
-	i = (struct sockaddr_in*) &ifa.ifr_addr;
-	return i->sin_addr;
-}
-std::string getSerialNum() {
+
+static std::string getSerialNum() {
 	char data[1024];
 	std::string serialContetn;
 	int serialFile;
