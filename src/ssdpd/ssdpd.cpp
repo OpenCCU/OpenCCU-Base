@@ -16,8 +16,8 @@
 #include <net/if.h>
 #include <fcntl.h>
 
-static const char* RESPONSE_URL =
-		"http://127.0.0.1/upnp/basic_dev.cgi?ssdp=response";
+//static const char* RESPONSE_URL =
+//		"http://127.0.0.1/upnp/basic_dev.cgi?ssdp=response";
 
 static const int REPEAT_AFTER = 1800;
 
@@ -52,6 +52,7 @@ static bool InterfaceByTargetAddress(unsigned long address, std::string* interfa
 }
 #endif
 
+#if 0
 static int ParseURL(const std::string& url, struct sockaddr_in* sa,
 		std::string* uri) {
 	std::string::size_type left, right;
@@ -87,7 +88,9 @@ static int ParseURL(const std::string& url, struct sockaddr_in* sa,
 	memset(&(sa->sin_zero), 0, 8);
 	return 0;
 }
+#endif
 
+#if 0
 static int GetHTTP(const std::string& url, std::string* response) {
 	std::string uri;
 	struct sockaddr_in dest_addr;
@@ -156,6 +159,7 @@ static int GetHTTP(const std::string& url, std::string* response) {
 	}
 	return 0;
 }
+#endif
 
 static std::string get_header_field(const std::string& s, std::string f) {
 	f += ":";
@@ -278,13 +282,12 @@ struct in_addr getOwnIP(std::string interface) {
 std::string getSerialNum() {
 	char data[1024];
 	std::string serialContetn;
-  #if defined(PLATFORM_CCU3)
-	int serialFile = open("/var/board_serial",
-			O_RDONLY);
-  #else
-	int serialFile = open("/sys/module/plat_eq3ccu2/parameters/board_serial",
-			O_RDONLY);
-  #endif
+	int serialFile;
+	serialFile = open("/var/board_sgtin", O_RDONLY);
+	if(serialFile == -1)
+		serialFile = open("/var/board_serial", O_RDONLY);
+	if(serialFile == -1)
+		serialFile = open("/sys/module/plat_eq3ccu2/parameters/board_serial", O_RDONLY);
 	if (serialFile > 0) {
 		size_t readDataSize = read(serialFile, data, 1024);
 		if(readDataSize >0)
