@@ -16,14 +16,15 @@
 #include <net/if.h>
 #include <fcntl.h>
 #include <ifaddrs.h>
+#include <sstream>
 
 //static const char* RESPONSE_URL =
 //		"http://127.0.0.1/upnp/basic_dev.cgi?ssdp=response";
 
 static const int REPEAT_AFTER = 1800;
 
-#define PORT (1900)
-#define UPNP_MCAST_ADDR ("239.255.255.250")
+#define SSDP_PORT 1900
+#define SSDP_IP   "239.255.255.250"
 
 static std::string serial;
 static std::string uuid;
@@ -162,30 +163,34 @@ static int GetHTTP(const std::string& url, std::string* response) {
 #endif
 
 static std::string get_header_field(const std::string& s, std::string f) {
-	f += ":";
-	std::string::size_type left = 0;
-	std::string::size_type right = 0;
-	while (right != std::string::npos) {
-		std::string::size_type right = s.find("\x0d\x0a", left);
-		if (right == left)
-			return "";
-		std::string line = s.substr(left, right - left);
+	std::istringstream split(s);
+	std::vector<std::string> tokens;
+	for (std::string each; std::getline(split, each, '\n'); ) {
+		std::string::size_type right = each.find('\r');
+		if (right != std::string::npos)
+			tokens.push_back(each.substr(0, right));
+		else
+			tokens.push_back(each);
+	}
+
+	// now use `tokens`
+	for (std::vector <std::string>::iterator iter = tokens.begin(); iter != tokens.end(); iter++) {
+		std::string line = *iter;
 		if (strcasecmp(line.substr(0, f.size()).c_str(), f.c_str()) == 0) {
-			left = line.find_first_not_of(" \"", f.size());
+			std::string::size_type left = line.find_first_not_of(" \"", f.size());
 			if (left == std::string::npos)
 				return "";
-			right = line.find_last_not_of(" \"");
+			std::string::size_type right = line.find_last_not_of(" \"");
 			if (right != std::string::npos)
 				right++;
 			return line.substr(left, right - left);
 		}
-		left = right + 2;
 	}
 	return "";
 }
 
 static void fetch_uuid(const std::string& msg) {
-	std::string usn = get_header_field(msg, "USN");
+	std::string usn = get_header_field(msg, "USN:");
 	std::string::size_type left = msg.find("uuid:");
 	std::string::size_type right = msg.find("::");
 	if (left != std::string::npos)
@@ -271,7 +276,7 @@ static void sendRespose(int socke, struct sockaddr_in* sa, int mx) {
 	resposeMsg += "LOCATION:http://" + ip
 			+ "/upnp/basic_dev.cgi\r\n";
 	resposeMsg += "SERVER:HomeMatic\r\n";
-	resposeMsg += "ST:upnp:rootdevice";
+	resposeMsg += "ST:upnp:rootdevice\r\n";
 	resposeMsg += "USN:uuid:upnp-BasicDevice-1_0-" + serial
 			+ "::upnp:rootdevice\r\n\r\n";
 	send_udp(socke, sa, resposeMsg, mx);
@@ -316,47 +321,93 @@ static std::string getSerialNum() {
 int main(int argc, char ** argv) {
 	char buffer[2048];
 
-	int mcast_server_socket;
 	int cnt;
-	struct sockaddr_in sa_mcast_server;
 	struct sockaddr_in sa_mcast_client;
 	struct sockaddr_in sa_peer;
-	struct ip_mreq imr;
+
+	int onOff;
+	u_char ttl = (u_char)4;
+	int ssdpSock = -1;
+	struct ip_mreq ssdpMcastAddr;
+	struct sockaddr_storage __ss;
+	struct sockaddr_in *ssdpAddr4 = (struct sockaddr_in *)&__ss;
+	struct in_addr addr;
+
 	serial = getSerialNum();
 	srand(time(NULL));
-	mcast_server_socket = socket(PF_INET, SOCK_DGRAM, 0);
 
-	memset(&sa_mcast_server, 0, sizeof(struct sockaddr_in));
+	ssdpSock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (ssdpSock < 0) {
+		perror("socket() failed");
+		exit(1);
+	}
+
+	// set SO_REUSEPORT and SO_REUSEADDR to allow multiple apps to
+	// use the same udp port (1900)
+	onOff = 1;
+	if (setsockopt(ssdpSock, SOL_SOCKET, SO_REUSEADDR, (const char*)&onOff, sizeof(onOff)) < 0) {
+		perror("setsockopt(SO_REUSEADDR) failed");
+		exit(1);
+	}
+
+	// SO_REUSEPORT is only supported since kernel 3.9+, so depending
+	// on the toolchain we check for an error or not.
+	onOff = 1;
+	#ifndef SO_REUSEPORT
+	#define SO_REUSEPORT	15
+	setsockopt(ssdpSock, SOL_SOCKET, SO_REUSEPORT, (const char*)&onOff, sizeof(onOff));
+	#else
+	if (setsockopt(ssdpSock, SOL_SOCKET, SO_REUSEPORT, (const char*)&onOff, sizeof(onOff)) < 0) {
+		perror("setsockopt(SO_REUSEPORT) failed");
+		exit(1);
+	}
+	#endif
+
+	memset(&__ss, 0, sizeof(__ss));
+	ssdpAddr4->sin_family = AF_INET;
+	ssdpAddr4->sin_addr.s_addr = htonl(INADDR_ANY);
+	ssdpAddr4->sin_port = htons(SSDP_PORT);
+
+	if (bind(ssdpSock, (struct sockaddr *)ssdpAddr4, sizeof(*ssdpAddr4)) == -1) {
+		perror("bind failed");
+		exit(1);
+	}
+
+	memset((void *)&ssdpMcastAddr, 0, sizeof(struct ip_mreq));
+	ssdpMcastAddr.imr_interface.s_addr = inet_addr(getIPAddress().c_str());
+	ssdpMcastAddr.imr_multiaddr.s_addr = inet_addr(SSDP_IP);
+	if (setsockopt(ssdpSock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ssdpMcastAddr, sizeof(struct ip_mreq)) == -1) {
+		perror("setsockopt(IP_ADD_MEMBERSHIP) failed");
+		exit(1);
+	}
+
+	/* Set multicast interface. */
+	memset((void *)&addr, 0, sizeof(struct in_addr));
+	addr.s_addr = inet_addr(getIPAddress().c_str());
+	if (setsockopt(ssdpSock, IPPROTO_IP, IP_MULTICAST_IF, (char *)&addr, sizeof addr) == -1) {
+		perror("setsockopt(IP_MULTICAST_IF) failed");
+		/* This is probably not a critical error, so let's continue. */
+	}
+
+	/* result is not checked becuase it will fail in WinMe and Win9x. */
+	setsockopt(ssdpSock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
+	onOff = 1;
+	if (setsockopt(ssdpSock, SOL_SOCKET, SO_BROADCAST, (char *)&onOff, sizeof(onOff)) == -1) {
+		perror("setsockopt(SO_BROADCAST) failed");
+		exit(1);
+	}
+
 	memset(&sa_peer, 0, sizeof(struct sockaddr_in));
-	memset(&sa_mcast_client, 0, sizeof(struct sockaddr_in));
-
-	sa_mcast_server.sin_family = AF_INET;
-	sa_mcast_server.sin_port = htons(PORT);
-	sa_mcast_server.sin_addr.s_addr = htonl(INADDR_ANY );
-
 	sa_peer.sin_family = AF_INET;
-	sa_peer.sin_port = htons(PORT);
-	sa_peer.sin_addr.s_addr = inet_addr(UPNP_MCAST_ADDR);
+	sa_peer.sin_port = htons(SSDP_PORT);
+	sa_peer.sin_addr.s_addr = inet_addr(SSDP_IP);
 
+	memset(&sa_mcast_client, 0, sizeof(struct sockaddr_in));
 	sa_mcast_client.sin_family = AF_INET;
-	sa_mcast_client.sin_port = htons(PORT);
-	sa_mcast_client.sin_addr.s_addr = inet_addr(UPNP_MCAST_ADDR);
+	sa_mcast_client.sin_port = htons(SSDP_PORT);
+	sa_mcast_client.sin_addr.s_addr = inet_addr(SSDP_IP);
 
-	if (bind(mcast_server_socket, (struct sockaddr *) &sa_mcast_server,
-			sizeof(struct sockaddr_in)) < 0) {
-		perror("bind");
-		exit(1);
-	}
-
-	imr.imr_multiaddr.s_addr = inet_addr(UPNP_MCAST_ADDR);
-	imr.imr_interface.s_addr = htonl(INADDR_ANY );
-
-	if (setsockopt(mcast_server_socket, IPPROTO_IP, IP_ADD_MEMBERSHIP,
-			(void *) &imr, sizeof(struct ip_mreq)) < 0) {
-		perror("setsockopt - IP_ADD_MEMBERSHIP");
-		exit(1);
-	}
-	sendAlive(mcast_server_socket,&sa_mcast_client,5);
+	sendAlive(ssdpSock, &sa_mcast_client, 5);
 	time_t t = time(NULL);
 
 	while (1) {
@@ -366,38 +417,38 @@ int main(int argc, char ** argv) {
 		FD_ZERO(&outFd);
 		FD_ZERO(&excFd);
 
-		int maxFd = mcast_server_socket;
-		FD_SET(mcast_server_socket, &inFd);
+		FD_SET(ssdpSock, &inFd);
 
 		struct timeval tv;
 		tv.tv_sec = REPEAT_AFTER - (time(NULL) - t);
 		tv.tv_usec = 0;
 		if (tv.tv_sec > REPEAT_AFTER)
 			tv.tv_sec = 0;
-		if (select(maxFd + 1, &inFd, &outFd, &excFd, &tv) > 0) {
+		if (select(ssdpSock + 1, &inFd, &outFd, &excFd, &tv) > 0) {
 			socklen_t len_r;
 			len_r = sizeof(struct sockaddr_in);
-			cnt = recvfrom(mcast_server_socket, buffer, sizeof(buffer), 0,
+			memset(buffer, 0, sizeof(buffer));
+			cnt = recvfrom(ssdpSock, buffer, sizeof(buffer) - 1, 0,
 					(struct sockaddr *) &sa_peer, &len_r);
 			if (cnt < 0) {
-				perror("recvfrom");
+				perror("recvfrom failed");
 				exit(1);
 			} else if (cnt == 0) { /* end of transmission */
 				break;
 			}
+			buffer[cnt] = '\0';
 			if (strncmp(buffer, "M-SEARCH", 8) == 0) {
-				buffer[cnt] = 0;
 				std::string request = buffer;
-				std::string st_header = get_header_field(request, "ST");
-				std::string man_header = get_header_field(request, "MAN");
+				std::string st_header = get_header_field(request, "ST:");
+				std::string man_header = get_header_field(request, "MAN:");
 				if (man_header == "ssdp:discover"
-						&& (st_header == "upnp:rootdevice" || st_header == uuid)) {
-					int mx = atoi(get_header_field(request, "MX").c_str());
-					sendRespose(mcast_server_socket, &sa_peer, mx);
+						&& (st_header == "upnp:rootdevice" || st_header == uuid || st_header == "ssdp:all")) {
+					int mx = atoi(get_header_field(request, "MX:").c_str());
+					sendRespose(ssdpSock, &sa_peer, mx);
 				}
 			}
 		} else {
-			sendAlive(mcast_server_socket,&sa_mcast_client,5);
+			sendAlive(ssdpSock, &sa_mcast_client, 5);
 			t = time(NULL);
 		}
 	}
