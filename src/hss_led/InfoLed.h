@@ -24,6 +24,7 @@ public:
 	virtual ~InfoLed();
 	void updateLedState();
 	bool checkMessage(std::string &msg);
+	bool isProcessRunning(const char *pidFileName, const char *procName);
 
 private:
   #if defined(PLATFORM_CCU3)

@@ -9,7 +9,11 @@
 #include <utils.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <strings.h>
+#include <sys/stat.h>
 #include <cstdlib>
+#include <iostream>
+#include <fstream>
 
 InfoLed::InfoLed():
   #if defined(PLATFORM_CCU3)
@@ -44,6 +48,48 @@ InfoLed::InfoLed():
 
 InfoLed::~InfoLed() {
 	// TODO !CodeTemplates.destructorstub.tododesc!
+}
+
+bool InfoLed::isProcessRunning(const char *filename, const char *pname) {
+
+  bool res = false;
+  std::string pidFileName = std::string(filename);
+  std::string procName = std::string(pname);
+
+  std::ifstream pidFile(pidFileName.c_str());
+  if(pidFile.is_open()) {
+    std::string pidNumStr;
+
+    std::getline(pidFile, pidNumStr);
+
+    int pid = atoi(pidNumStr.c_str());
+    if(pid > 0 && pidNumStr.empty() == false)
+    {
+      // Read contents of virtual /proc/{pid}/cmdline file
+      std::string cmdPath = std::string("/proc/") + pidNumStr + "/cmdline";
+      std::ifstream cmdFile(cmdPath.c_str());
+      if(cmdFile.is_open()) {
+        std::string cmdLine;
+        getline(cmdFile, cmdLine);
+        if(!cmdLine.empty())
+        {
+          // Keep first cmdline item which contains the program path
+          size_t pos = cmdLine.find('\0');
+          if(pos != std::string::npos)
+            cmdLine = cmdLine.substr(0, pos);
+          // Keep program name only, removing the path
+          pos = cmdLine.rfind('/');
+          if(pos != std::string::npos)
+            cmdLine = cmdLine.substr(pos + 1);
+          // Compare against requested process name
+          if(strcasecmp(procName.c_str(), cmdLine.c_str()) == 0)
+            res = true;
+        }
+      }
+    }
+  }
+
+  return res;
 }
 
 void InfoLed::updateLedState() {
@@ -106,10 +152,10 @@ void InfoLed::updateLedState() {
 
     case Network::IP:
     {
-      // No-Internet, but IP available: blink blue
+      // No-Internet, but IP available: blink blue fast
       newStateRed = led::LED_OFF;
       newStateGreen = led::LED_OFF;
-      newStateBlue = led::LED_SLOW;
+      newStateBlue = led::LED_FAST;
       newStateLGW = led::LED_ON;
       //printf("NO INTERNET+IP\n");
     }
@@ -128,14 +174,27 @@ void InfoLed::updateLedState() {
 
     case Network::LinkUp:
     {
-      // Link-Up, but no IP (yet): blink blue fast
+      // Link-Up, but no IP (yet): blink blue slowly
       newStateRed = led::LED_OFF;
       newStateGreen = led::LED_OFF;
-      newStateBlue = led::LED_FAST;
+      newStateBlue = led::LED_SLOW;
       newStateLGW = led::LED_ON;
       //printf("LINK\n");
     }
     break;
+  }
+
+  // check if all essential homematic services are running or not
+  if(isProcessRunning("/var/run/HMIPServer.pid", "java") == false ||
+     isProcessRunning("/var/run/eq3configd.pid", "eq3configd") == false ||
+     isProcessRunning("/var/run/multimacd.pid", "multimacd") == false ||
+     isProcessRunning("/var/run/rfd.pid", "rfd") == false ||
+     isProcessRunning("/var/run/ReGaHss.pid", "ReGaHss") == false ||
+     isProcessRunning("/var/run/ssdpd.pid", "ssdpd") == false)
+  {
+    newStateRed = led::LED_ON;
+    newStateGreen = led::LED_OFF;
+    newStateBlue = led::LED_OFF;
   }
 
   if(((newStateRed != oldStateRed || newStateGreen != oldStateGreen || newStateBlue != oldStateBlue) &&
@@ -145,13 +204,20 @@ void InfoLed::updateLedState() {
     // identify if we have a RPI-RF-MOD
     if(rpiRfModFound == true)
     {
-      this->redLed.LedOff();
-      this->greenLed.LedOff();
-      this->blueLed.LedOff();
+      // check that a file /var/status/startupFinished exists and if not
+      // we skip setting the RPI-RF-MOD led on our own
+      struct stat buffer;
+      if((stat("/var/status/startupFinished", &buffer) == 0) ||
+         (oldStateRed == led::LED_OFF && oldStateGreen == led::LED_OFF && oldStateBlue == led::LED_ON)) {
 
-      this->redLed.switchLed(newStateRed);
-      this->greenLed.switchLed(newStateGreen);
-      this->blueLed.switchLed(newStateBlue);
+        this->redLed.LedOff();
+        this->greenLed.LedOff();
+        this->blueLed.LedOff();
+
+        this->redLed.switchLed(newStateRed);
+        this->greenLed.switchLed(newStateGreen);
+        this->blueLed.switchLed(newStateBlue);
+      }
     }
 
     if(newStateLGW != oldStateLGW && newStateLGW != led::UNKNOWN)

@@ -23,6 +23,7 @@
 #include "UdpCannel.h"
 #include "defines.h"
 
+#define VERSION "2.0 (11.07.2018)"
 
 //sigterm_handler / Aufruf von Systemfunktion signal(...)
 
@@ -123,7 +124,7 @@ int main(int argc, char **argv)
 //----------------------------------------------------------------------
 void PrintUsage()
 {
-	std::cout << "hss_led [-c] [-l 0..6]"  << std::endl;
+	std::cout << "hss_led " VERSION << std::endl;
 	std::cout << "-c: Log-Meldungen auf Konsole ausgeben."   << std::endl;
 	std::cout << "-l: Setze Log-Level: 0..6\n" <<
 						"    (0=Alles,\n" <<
