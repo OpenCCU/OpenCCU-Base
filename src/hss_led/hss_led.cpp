@@ -23,7 +23,7 @@
 #include "UdpCannel.h"
 #include "defines.h"
 
-#define VERSION "2.0 (11.07.2018)"
+#define VERSION "2.0 (12.07.2018)"
 
 //sigterm_handler / Aufruf von Systemfunktion signal(...)
 
