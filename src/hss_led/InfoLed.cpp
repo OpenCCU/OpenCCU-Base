@@ -21,6 +21,7 @@ InfoLed::InfoLed():
   greenLed("rpi_rf_mod:green"),
   blueLed("rpi_rf_mod:blue"),
   rpiRfModFound(false),
+  fullCCUFound(false),
   #else
   infoLed("info"),
   #endif
@@ -41,6 +42,12 @@ InfoLed::InfoLed():
     blueLed.LedOff();
     rpiRfModFound = true;
   }
+
+  // identify if we running on a production image or on
+  // a full CCU
+  struct stat buffer;
+  if(stat("/bin/rfd", &buffer) == 0)
+    fullCCUFound = true;
   #else
 	infoLed.LedOff();
   #endif
@@ -50,48 +57,42 @@ InfoLed::~InfoLed() {
 	// TODO !CodeTemplates.destructorstub.tododesc!
 }
 
-bool InfoLed::isProcessRunning(const char *filename, const char *pname, const char *prgfile) {
+bool InfoLed::isProcessRunning(const char *filename, const char *pname) {
 
   bool res = false;
 
-  // only perform check if prgfile exists
-  struct stat buffer;
-  if(stat(prgfile, &buffer) == 0) {
-    std::ifstream pidFile(filename);
-    if(pidFile.is_open()) {
-      std::string pidNumStr;
+  std::ifstream pidFile(filename);
+  if(pidFile.is_open()) {
+    std::string pidNumStr;
 
-      std::getline(pidFile, pidNumStr);
+    std::getline(pidFile, pidNumStr);
 
-      int pid = atoi(pidNumStr.c_str());
-      if(pid > 0 && pidNumStr.empty() == false)
-      {
-        // Read contents of virtual /proc/{pid}/cmdline file
-        std::string cmdPath = std::string("/proc/") + pidNumStr + "/cmdline";
-        std::ifstream cmdFile(cmdPath.c_str());
-        if(cmdFile.is_open()) {
-          std::string cmdLine;
-          getline(cmdFile, cmdLine);
-          if(!cmdLine.empty())
-          {
-            // Keep first cmdline item which contains the program path
-            size_t pos = cmdLine.find('\0');
-            if(pos != std::string::npos)
-              cmdLine = cmdLine.substr(0, pos);
-            // Keep program name only, removing the path
-            pos = cmdLine.rfind('/');
-            if(pos != std::string::npos)
-              cmdLine = cmdLine.substr(pos + 1);
-            // Compare against requested process name
-            if(strcasecmp(pname, cmdLine.c_str()) == 0)
-              res = true;
-          }
+    int pid = atoi(pidNumStr.c_str());
+    if(pid > 0 && pidNumStr.empty() == false)
+    {
+      // Read contents of virtual /proc/{pid}/cmdline file
+      std::string cmdPath = std::string("/proc/") + pidNumStr + "/cmdline";
+      std::ifstream cmdFile(cmdPath.c_str());
+      if(cmdFile.is_open()) {
+        std::string cmdLine;
+        getline(cmdFile, cmdLine);
+        if(!cmdLine.empty())
+        {
+          // Keep first cmdline item which contains the program path
+          size_t pos = cmdLine.find('\0');
+          if(pos != std::string::npos)
+            cmdLine = cmdLine.substr(0, pos);
+          // Keep program name only, removing the path
+          pos = cmdLine.rfind('/');
+          if(pos != std::string::npos)
+            cmdLine = cmdLine.substr(pos + 1);
+          // Compare against requested process name
+          if(strcasecmp(pname, cmdLine.c_str()) == 0)
+            res = true;
         }
       }
     }
   }
-  else
-    res = true;
 
   return res;
 }
@@ -189,16 +190,29 @@ void InfoLed::updateLedState() {
   }
 
   // check if all essential homematic services are running or not
-  if(isProcessRunning("/var/run/HMIPServer.pid", "java", "/opt/HMServer/HMIPServer.jar") == false ||
-     isProcessRunning("/var/run/multimacd.pid", "multimacd", "/bin/multimacd") == false ||
-     isProcessRunning("/var/run/rfd.pid", "rfd", "/bin/rfd") == false ||
-     isProcessRunning("/var/run/eq3configd.pid", "eq3configd", "/bin/eq3configd") == false ||
-     isProcessRunning("/var/run/ReGaHss.pid", "ReGaHss", "/bin/ReGaHss") == false ||
-     isProcessRunning("/var/run/ssdpd.pid", "ssdpd", "/bin/ssdpd") == false)
+  // depending on which system we are running on (prodimage vs. full CCU)
+
+  // on all systems (prodimage+CCU)
+  bool allProcessesRunning = false;
+  if(isProcessRunning("/var/run/eq3configd.pid", "eq3configd") == true &&
+     isProcessRunning("/var/run/ReGaHss.pid", "ReGaHss") == true &&
+     isProcessRunning("/var/run/ssdpd.pid", "ssdpd") == true)
   {
-      newStateRed = led::LED_ON;
-      newStateGreen = led::LED_OFF;
-      newStateBlue = led::LED_OFF;
+    // on full CCU we test for more
+    if(fullCCUFound == false ||
+       (isProcessRunning("/var/run/HMIPServer.pid", "java") == true &&
+        isProcessRunning("/var/run/multimacd.pid", "multimacd") == true &&
+        isProcessRunning("/var/run/rfd.pid", "rfd") == true))
+    {
+      allProcessesRunning = true;
+    }
+  }
+
+  if(allProcessesRunning == false)
+  {
+    newStateRed = led::LED_ON;
+    newStateGreen = led::LED_OFF;
+    newStateBlue = led::LED_OFF;
   }
 
   if(((newStateRed != oldStateRed || newStateGreen != oldStateGreen || newStateBlue != oldStateBlue) &&

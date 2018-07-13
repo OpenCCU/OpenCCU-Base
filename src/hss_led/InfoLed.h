@@ -24,7 +24,7 @@ public:
 	virtual ~InfoLed();
 	void updateLedState();
 	bool checkMessage(std::string &msg);
-	bool isProcessRunning(const char *pidFileName, const char *procName, const char *prgfile);
+	bool isProcessRunning(const char *pidFileName, const char *procName);
 
 private:
   #if defined(PLATFORM_CCU3)
@@ -33,6 +33,7 @@ private:
 	led blueLed;
 	Network net;
 	bool rpiRfModFound;
+	bool fullCCUFound;
   #else
 	led infoLed;
   #endif
