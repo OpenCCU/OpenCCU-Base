@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <ifaddrs.h>
 #include <sstream>
+#include <errno.h>
 
 //static const char* RESPONSE_URL =
 //		"http://127.0.0.1/upnp/basic_dev.cgi?ssdp=response";
@@ -422,13 +423,16 @@ int main(int argc, char ** argv) {
 		struct timeval tv;
 		tv.tv_sec = REPEAT_AFTER - (time(NULL) - t);
 		tv.tv_usec = 0;
-		if (tv.tv_sec > REPEAT_AFTER)
+		if (tv.tv_sec > REPEAT_AFTER || tv.tv_sec < 0)
 			tv.tv_sec = 0;
 
 		int ret = select(ssdpSock + 1, &inFd, NULL, NULL, &tv);
 		if (ret < 0) {
 			perror("select failed");
-			break;
+
+			// only exit if not EINVAL (invalid argument)
+			if(errno != EINVAL)
+				break;
 		}
 
 		if (ret > 0) {
@@ -443,7 +447,6 @@ int main(int argc, char ** argv) {
 			} else if (cnt == 0) { /* end of transmission */
 				break;
 			}
-
 			if(cnt < (ssize_t)sizeof(buffer))
 				buffer[cnt] = '\0';
 
@@ -462,6 +465,6 @@ int main(int argc, char ** argv) {
 			t = time(NULL);
 		}
 	}
+
 	return 0;
 }
-
