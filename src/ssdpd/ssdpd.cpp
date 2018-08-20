@@ -382,7 +382,7 @@ int main(int argc, char ** argv) {
 	ssdpMcastAddr.imr_multiaddr.s_addr = inet_addr(SSDP_IP);
 	if (setsockopt(ssdpSock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ssdpMcastAddr, sizeof(struct ip_mreq)) == -1) {
 		perror("setsockopt(IP_ADD_MEMBERSHIP) failed");
-		exit(1);
+		/* This is probably not a critical error, so let's continue. */
 	}
 
 	/* Set multicast interface. */
