@@ -6,6 +6,7 @@
  */
 
 #include "AlarmMessage.h"
+#include "hss_led_util.h"
 
 AlarmMessage::AlarmMessage() {
 	// TODO Automatisch generierter Konstruktorstub
@@ -27,6 +28,10 @@ bool AlarmMessage::isInfoPending() {
 	}
 
 	return false;
+}
+
+bool AlarmMessage::isInfoEnabled(const std::map<std::string, std::string>& configData) {
+	return !(HSSLedUtil::stringToBool( getConfigValue(configData, ConfigValue::IGNORE_ALARM_MESSAGES) ));
 }
 
 void AlarmMessage::setMessage(std::string source, bool value) {

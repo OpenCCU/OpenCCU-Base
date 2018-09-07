@@ -55,7 +55,8 @@ OBJS = $(TARGET).o\
 	Network.o \
 	ServiceMessage.o \
 	UpdateAvailable.o \
-	RFLGWInfoLED.o
+	RFLGWInfoLED.o \
+	hss_led_util.o
 	
 				
 #all: $(TARGET)

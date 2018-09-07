@@ -103,13 +103,17 @@ bool InfoLed::isProcessRunning(const char *filename, const char *pname, const bo
   return res;
 }
 
+#include <stdio.h>
+
 void InfoLed::updateLedState() {
   #if defined(PLATFORM_CCU3)
 
 	this->net.isInfoPending();
   int netState = this->net.getNetState();
-  bool serviceState = this->service.isInfoPending();
-  bool alarmState = this->alarm.isInfoPending();
+
+  const std::map<std::string, std::string> infoConfigData = Info::readConfig();//calls Info::updateInfoConfig, which reads all cfg data.
+  bool serviceState =  (this->service.isInfoEnabled(infoConfigData) && this->service.isInfoPending());
+  bool alarmState = (this->alarm.isInfoEnabled(infoConfigData) && this->alarm.isInfoPending());
   //bool updateState = this->update.isInfoPending();
 
   // get old LED states

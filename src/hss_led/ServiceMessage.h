@@ -16,9 +16,11 @@ public:
 	ServiceMessage();
 	virtual ~ServiceMessage();
 	virtual bool isInfoPending();
+	virtual bool isInfoEnabled(const std::map<std::string, std::string>& configData);
 	void setMessage(std::string souce, int value);
 private:
 	std::map<std::string,int> messages;
+
 };
 
 #endif /* SERVICEMESSAGE_H_ */

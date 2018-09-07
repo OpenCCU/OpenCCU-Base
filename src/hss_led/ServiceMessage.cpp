@@ -6,14 +6,18 @@
  */
 
 #include "ServiceMessage.h"
+#include "hss_led_util.h"
 
-ServiceMessage::ServiceMessage() {
-	// TODO Automatisch generierter Konstruktorstub
-
+ServiceMessage::ServiceMessage() 
+{
 }
 
 ServiceMessage::~ServiceMessage() {
 	// TODO !CodeTemplates.destructorstub.tododesc!
+}
+
+bool ServiceMessage::isInfoEnabled(const std::map<std::string, std::string>& configData) {
+	return !(HSSLedUtil::stringToBool(getConfigValue(configData, ConfigValue::IGNORE_SERVICE_MESSAGES) ));
 }
 
 bool ServiceMessage::isInfoPending() {

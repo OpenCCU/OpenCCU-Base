@@ -15,6 +15,7 @@ public:
 	AlarmMessage();
 	virtual ~AlarmMessage();
 	virtual bool isInfoPending();
+	virtual bool isInfoEnabled(const std::map<std::string, std::string>& configData);
 	void setMessage(std::string source, bool value);
 private:
 	std::map<std::string,bool> messages;
