@@ -229,22 +229,31 @@ void InfoLed::updateLedState() {
       (newStateRed != led::UNKNOWN && newStateGreen != led::UNKNOWN && newStateBlue != led::UNKNOWN)) ||
      (this->nextInfoUpdate > time_millis()))
   {
-    // identify if we have a RPI-RF-MOD
-    if(rpiRfModFound == true)
-    {
-      // check that a file /var/status/startupFinished exists and if not
-      // we skip setting the RPI-RF-MOD led on our own
-      struct stat buffer;
-      if((stat("/var/status/startupFinished", &buffer) == 0) ||
-         (oldStateRed == led::LED_OFF && oldStateGreen == led::LED_OFF && oldStateBlue == led::LED_ON)) {
+    // check that a file /var/status/startupFinished exists and if not
+    // we skip setting the leds
+    struct stat buffer;
+    if((stat("/var/status/startupFinished", &buffer) == 0) ||
+       (oldStateRed == led::LED_OFF && oldStateGreen == led::LED_OFF && oldStateBlue == led::LED_ON)) {
 
-        this->redLed.LedOff();
-        this->greenLed.LedOff();
-        this->blueLed.LedOff();
+      // if /etc/config/DisableLED exists we disable all leds completly.
+      if(stat("/etc/config/disableLED", &buffer) == 0)
+      {
+        newStateRed = led::LED_OFF;
+        newStateGreen = led::LED_OFF;
+        newStateBlue = led::LED_OFF;
+        newStateLGW = led::LED_OFF;
+      }
 
-        this->redLed.switchLed(newStateRed);
-        this->greenLed.switchLed(newStateGreen);
-        this->blueLed.switchLed(newStateBlue);
+      // set LEDs of a RPI-RF-MOD
+      if(rpiRfModFound == true)
+      {
+         this->redLed.LedOff();
+         this->greenLed.LedOff();
+         this->blueLed.LedOff();
+
+         this->redLed.switchLed(newStateRed);
+         this->greenLed.switchLed(newStateGreen);
+         this->blueLed.switchLed(newStateBlue);
       }
     }
 
