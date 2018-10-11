@@ -9,10 +9,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <Logger.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
 Network::Network() :
 		netState(Disconnected), linkFileErrorOutput(false), ipFileErrorOutput(
-				false), internetFileErrorOutput(false) {
+				false), internetFileErrorOutput(false), checkInternetInterval(50) {
 	// TODO Automatisch generierter Konstruktorstub
 
 }
@@ -22,13 +24,12 @@ Network::~Network() {
 }
 
 bool Network::isInfoPending() {
-	int hasLinkFile, hasIPFile, hasInternetFile;
+	struct stat buffer;
 	this->netState = Disconnected;
-	hasLinkFile = open("/var/status/hasLink", O_RDONLY);
-	if (hasLinkFile > 0) {
+
+	if (stat("/var/status/hasLink", &buffer) == 0) {
 		this->netState = Network::LinkUp;
 		linkFileErrorOutput = false;
-		close(hasLinkFile);
 	} else {
 		if (!linkFileErrorOutput) {
 			LOG(Logger::LOG_DEBUG,
@@ -37,11 +38,10 @@ bool Network::isInfoPending() {
 		}
 		return true;
 	}
-	hasIPFile = open("/var/status/hasIP", O_RDONLY);
-	if (hasIPFile > 0) {
+
+	if (stat("/var/status/hasIP", &buffer) == 0) {
 		this->netState = Network::IP;
 		ipFileErrorOutput = false;
-		close(hasIPFile);
 	} else {
 		if (!ipFileErrorOutput) {
 			LOG(Logger::LOG_DEBUG,
@@ -50,11 +50,18 @@ bool Network::isInfoPending() {
 		}
 		return true;
 	}
-	hasInternetFile = open("/var/status/hasInternet", O_RDONLY);
-	if (hasInternetFile > 0) {
+
+	// run the /bin/checkInternet script every X'th interval
+	if (--checkInternetInterval <= 0) {
+		if (stat("/bin/checkInternet", &buffer) == 0)
+			system("/bin/checkInternet");
+
+		checkInternetInterval = 50;
+	}
+
+	if (stat("/var/status/hasInternet", &buffer) == 0) {
 		this->netState = Network::InternetAvailable;
 		internetFileErrorOutput = false;
-		close(hasInternetFile);
 	} else {
 		if (!internetFileErrorOutput) {
 			LOG(Logger::LOG_DEBUG,

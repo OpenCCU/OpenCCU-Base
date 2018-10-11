@@ -27,6 +27,7 @@ private:
 	bool linkFileErrorOutput;
 	bool ipFileErrorOutput;
 	bool internetFileErrorOutput;
+	int checkInternetInterval;
 };
 
 #endif /* NETWORK_H_ */
