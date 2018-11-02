@@ -287,26 +287,26 @@ static std::string getIPAddress() {
 static void sendRespose(int socke, struct sockaddr_in* sa, int mx) {
 	std::string ip = getIPAddress();
 	std::string resposeMsg = "HTTP/1.1 200 OK\r\n";
-	resposeMsg += "CACHE-CONTROL:max-age=5000\r\n";
-	resposeMsg += "EXT:\r\n";
-	resposeMsg += "LOCATION:http://" + ip
+	resposeMsg += "CACHE-CONTROL: max-age=5000\r\n";
+	resposeMsg += "EXT: \r\n";
+	resposeMsg += "LOCATION: http://" + ip
 			+ "/upnp/basic_dev.cgi\r\n";
-	resposeMsg += "SERVER:HomeMatic\r\n";
-	resposeMsg += "ST:upnp:rootdevice\r\n";
-	resposeMsg += "USN:uuid:upnp-BasicDevice-1_0-" + serial
+	resposeMsg += "SERVER: HomeMatic\r\n";
+	resposeMsg += "ST: upnp:rootdevice\r\n";
+	resposeMsg += "USN: uuid:upnp-BasicDevice-1_0-" + serial
 			+ "::upnp:rootdevice\r\n\r\n";
 	send_udp(socke, sa, resposeMsg, mx);
 }
 static void sendAlive(int sock, struct sockaddr_in* sa, int mx) {
 	std::string ip = getIPAddress();
 	std::string aliveMsg = "NOTIFY * HTTP/1.1\r\n";
-	aliveMsg += "HOST:239.255.255.250:1900\r\n";
-	aliveMsg += "CACHE-CONTROL:max-age=5000\r\n";
-	aliveMsg += "LOCATION:http://" + ip	+ "/upnp/basic_dev.cgi\r\n";
-	aliveMsg += "NTS:ssdp:alive\r\n";
-	aliveMsg += "SERVER:HomeMatic\r\n";
-	aliveMsg += "NT:upnp:rootdevice\r\n";
-	aliveMsg += "USN:uuid:upnp-BasicDevice-1_0-" + serial
+	aliveMsg += "HOST: 239.255.255.250:1900\r\n";
+	aliveMsg += "CACHE-CONTROL: max-age=5000\r\n";
+	aliveMsg += "LOCATION: http://" + ip	+ "/upnp/basic_dev.cgi\r\n";
+	aliveMsg += "NTS: ssdp:alive\r\n";
+	aliveMsg += "SERVER: HomeMatic\r\n";
+	aliveMsg += "NT: upnp:rootdevice\r\n";
+	aliveMsg += "USN: uuid:upnp-BasicDevice-1_0-" + serial
 			+ "::upnp:rootdevice\r\n\r\n";
 	send_udp(sock,sa,aliveMsg,mx);
 }
