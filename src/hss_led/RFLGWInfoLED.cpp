@@ -4,12 +4,15 @@
 #include <string>
 #include <PropertyMap.h>
 #include "led.h"
+#include <fstream>
 
 RFLGWInfoLED::RFLGWInfoLED() 
-  : rfLgwExists(false),
-    lastState(led::UNKNOWN)
+: rfLgwExists(false)
+,	lastState(led::UNKNOWN)
+,	rfdPort("2001")
 {
 	rfLgwExists = isRfLgwPresent();
+	initRFDPort();
 }
 
 RFLGWInfoLED::~RFLGWInfoLED() {
@@ -38,7 +41,7 @@ void RFLGWInfoLED::ledFlashFast()
 void RFLGWInfoLED::setLED(led::LedState ledState)
 {
 	if(rfLgwExists) {
-		std::string url("http://127.0.0.1:2001");
+		std::string url("http://127.0.0.1:"+rfdPort);
 		XmlRpc::XmlRpcClient client(url);	
 		XmlRpc::XmlRpcValue params;
 		XmlRpc::XmlRpcValue result;
@@ -102,6 +105,34 @@ bool RFLGWInfoLED::isRfLgwPresent()
     return false;
 }
 
+std::string RFLGWInfoLED::trim(const std::string& str) {
+    unsigned int first = str.find_first_not_of(' ');
+    if (std::string::npos == first)
+    {
+        return str;
+    }
+    unsigned int last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}
+
+std::string RFLGWInfoLED::readPortFromFile(const char* filename) {
+    std::ifstream ifs;
+    ifs.open(filename, std::ifstream::in);
+    char* buffer = new char[256];
+    std::string base("01234567890");
+    while(ifs.good()) {
+        ifs.getline(buffer, 256);
+        std::string port(buffer);
+        port = trim(port);
+        if(!port.empty() && (port.find_first_not_of(base) == std::string::npos)) {
+            delete[] buffer;
+            return port;
+        }
+    }
+    delete[] buffer;
+    return std::string("");
+}
+
 led::LedState RFLGWInfoLED::getLedState() {
   return lastState;
 }
@@ -124,4 +155,11 @@ void RFLGWInfoLED::switchLed(enum led::LedState state) {
       // nothing
     break;
   }
+}
+
+void RFLGWInfoLED::initRFDPort() {
+	std::string port(readPortFromFile("/etc/rfd.port"));
+	if(!port.empty()) {
+		rfdPort = port;
+	}
 }

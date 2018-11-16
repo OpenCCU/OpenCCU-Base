@@ -2,6 +2,7 @@
 #define _RFLGWINFOLED_H_
 
 #include "led.h"
+#include <string>
 
 class RFLGWInfoLED
 {
@@ -18,10 +19,17 @@ public:
 protected:
 	virtual void setLED(led::LedState ledState);
 	virtual bool isRfLgwPresent();
+
+private:
+	std::string trim(const std::string& str);
+	std::string readPortFromFile(const char* filename);
+	void initRFDPort();
 	
 private:
 	bool rfLgwExists;
   led::LedState lastState;
+	std::string rfdPort;
+
 };
 
 #endif
