@@ -3637,6 +3637,12 @@ DEV_getImagePath = function(type, size)
 {
 
   var product = WEBUI_VERSION.split(".")[0];
+
+  if (product < 3 && (type == "HmIP-RCV-50")) {
+    DEV_PATHS[type][50] = "/config/img/devices/50/CCU2_thumb.png";
+    DEV_PATHS[type][250] = "/config/img/devices/250/CCU2.png";
+  }
+
   if (product >= 3 && (type == "HM-RCV-50" || type == "HMW-RCV-50")) {
     DEV_PATHS[type][50] = "/config/img/devices/50/CCU3_thumb.png";
     DEV_PATHS[type][250] = "/config/img/devices/250/CCU3.png";
@@ -14629,11 +14635,13 @@ StatusDisplayDialogAcousticEPaper = Class.create({
   },
 
   _createConfigString: function() {
+    var textConfigString = "", acousticConfigString = "";
     if (! resetEPaperDisplay) {
-      var textConfigString = this._getTextConfigString(),
-        acousticConfigString = this._getAcousticConfigString();
+       textConfigString = this._getTextConfigString();
+       acousticConfigString = this._getAcousticConfigString();
       this.configString = (acousticConfigString == "") ? textConfigString.slice(0, textConfigString.length - 1) : textConfigString + acousticConfigString;
     } else {
+      acousticConfigString = this._getAcousticConfigString();
       this.configString = (acousticConfigString == "") ? "{DDS=XXX,DDID=1,DDC=true}" : "{DDS=XXX,DDID=1,DDC=true}," + this._getAcousticConfigString() ;
     }
   },

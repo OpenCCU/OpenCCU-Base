@@ -987,6 +987,11 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
           # TEXT
           append html "<td>"
             append html "<input id='separate_$special_input_id\_$prn' name='TEXT' type='text' value='$valText' maxlength='15' size='15'>"
+            append html "<script type=\"text/javascript\">"
+              append html "var elm = document.getElementById('separate_$special_input_id\_$prn');"
+              append html "elm.defaultValue = elm.value;"
+            append html "</script>"
+
           append html "</td>"
           incr prn
 
@@ -1005,6 +1010,8 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
             append html "</select>"
           append html "</td>"
           append html "<script type=\"text/javascript\">"
+            append html "var elm = document.getElementById('separate_$special_input_id\_$prn');"
+            append html "elm.defaultSelected = elm.value;"
 
             append html "setTextAlignment = function(alignment, chn, prevElmPrn) \{"
               append html "var align = \['left', 'center', 'right'\];"
@@ -1031,6 +1038,10 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
               append html "<option value='2' $colorRed>\${colorRED}</option>"
             append html "</select>"
           append html "</td>"
+          append html "<script type=\"text/javascript\">"
+            append html "var elm = document.getElementById('separate_$special_input_id\_$prn');"
+            append html "elm.defaultSelected = elm.value;"
+           append html "</script>"
           incr prn
 
           # TextColor
@@ -1047,6 +1058,10 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
               append html "<option value='2' $colorRed>\${colorRED}</option>"
             append html "</select>"
           append html "</td>"
+          append html "<script type=\"text/javascript\">"
+            append html "var elm = document.getElementById('separate_$special_input_id\_$prn');"
+            append html "elm.defaultSelected = elm.value;"
+           append html "</script>"
           incr prn
 
           # Icon
@@ -1064,7 +1079,6 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
           append html "<td id=\"iconPreview_$chn\"></td>"
 
           append html "<script type=\"text/javascript\">"
-
             append html "setIconPreview = function(picNr, chn) \{"
               append html "var picPath = \"/ise/img/icons_hmip_wrcd/24/\","
               append html "previewElm = jQuery(\"\#iconPreview_\"+chn);"
@@ -1080,6 +1094,8 @@ proc getAcousticdDisplayReceiverConfig {special_input_id chn valText valAlignmen
             append html "window.setTimeout(function() \{"
               append html "jQuery(\"\#separate\_$special_input_id\_$prn option\[value='$valIcon'\]\").prop(\"selected\",true).change();"
 
+              append html "var elm = document.getElementById('separate_$special_input_id\_$prn');"
+              append html "elm.options\[elm.selectedIndex\].defaultSelected = elm.value;"
             append html "\},100);"
           append html "</script>"
           incr prn
