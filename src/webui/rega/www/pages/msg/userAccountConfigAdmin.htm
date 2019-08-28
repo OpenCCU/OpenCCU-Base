@@ -76,7 +76,6 @@
                                <option value="0">${selectLangAuto}</option>
                                <option value="1">${selectLangDE}</option>
                                <option value="2">${selectLangUK}</option>
-                               <option value="3">${selectLangTR}</option>
                            </select>
                        </td>
                    </tr>
@@ -209,11 +208,13 @@
   var iUserId = <% Write(system.GetVar("userid")); %>;
   var arUserNames = new Array();
 
+
+
   // Deactivate this when the user language is not in use
   <%
     object user = dom.GetObject(uid);
-    Write("var lang = homematic('User.getLanguage', {'userName': '"#user#"'});");
-    Write("lang = (lang == null) ? 0 : lang;");
+    Write("var lang = homematic('User.getLanguage', {'userID' : userId});");
+    Write("lang = ((lang == null) || (lang > 2)) ? 0 : lang;");
     Write("$('userLanguage').value = lang;");
   %>
 
