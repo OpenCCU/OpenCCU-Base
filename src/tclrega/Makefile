@@ -6,6 +6,7 @@ STRIP = $(CROSS)strip
 TARGET = tclrega.so
 
 TCLPATH = ../tcl
+#TCLPATH = ../tcl-8.6.9
 TCLVERSION = $(shell awk -F "[ \t]*=[ \t]*" 'NF==2 && $$1 == "VERSION" {print $$2}' $(TCLPATH)/unix/Makefile)
 TCLINCLUDEPATH = $(TCLPATH)/generic
 TCLLIBPATH = $(TCLPATH)/unix
@@ -19,7 +20,7 @@ TARGETOBJS = tclrega.o
 CC = $(CROSS)g++
 CXX = $(CROSS)g++
 LD = $(CROSS)g++
-CXXFLAGS +=  -fPIC -O2 -I$(TCLINCLUDEPATH) -I$(LIBXMLPARSERPATH) -Wall -Wstrict-prototypes
+CXXFLAGS +=  -fPIC -O2 -I$(TCLINCLUDEPATH) -I$(LIBXMLPARSERPATH) -Wall
 LDFLAGS += -shared -fPIC $(TCLLIB) -L$(LIBXMLPARSERPATH) -l$(LIBXMLPARSER) -lstdc++
 
 all: $(TARGET)
