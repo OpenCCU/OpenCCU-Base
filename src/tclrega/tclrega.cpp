@@ -68,12 +68,12 @@ static volatile bool portRegaRead;
 
 std::string trim(const std::string& str)
 {
-    unsigned int first = str.find_first_not_of(' ');
+    size_t first = str.find_first_not_of(' ');
     if (std::string::npos == first)
     {
         return str;
     }
-    unsigned int last = str.find_last_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
     return str.substr(first, (last - first + 1));
 }
 
@@ -175,7 +175,7 @@ static int ParseURL(const std::string& url)
 {
 	std::string::size_type left, right;
     std::string host;
-    unsigned long port=80;
+    unsigned int port=80;
 	left=0;
 	right=url.find("://", left);
 	if(right != std::string::npos){
@@ -208,7 +208,7 @@ static int ParseURL(const std::string& url)
 static int SendRequest(Tcl_Interp * interp, const std::string& request, std::string* response)
 {
     static char buffer[1024];
-    sprintf(buffer, "%u", request.size());
+    sprintf(buffer, "%u", static_cast<uint32_t>(request.size()));
     std::string http_request="POST "+uri+sid+" HTTP/1.0\x0d\x0a""Content-Length: "+buffer+"\x0d\x0a\x0d\x0a"+request;//+"\x0d\x0a";
     int fd=socket(PF_INET, SOCK_STREAM, 0);
     if(fd<0){
