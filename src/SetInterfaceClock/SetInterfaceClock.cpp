@@ -6,6 +6,7 @@
 #include <TimeZoneInfo.h>
 #include <SyslogLogger.h>
 #include <fstream>
+#include <iostream>
 
 
 void printUsage();
@@ -99,5 +100,5 @@ void printUsage() {
 	msg.append("IP:		IP address (optional)\n");
 	msg.append("Port:	Port number (optional)\n");
 	msg.append("If called without paremeters, the IP address defaults to 127.0.0.1.\nThe port is read from /etc/rfd.port, fallback value is still 2001.\n");
-	printf(msg.c_str());
+	std::cout << msg;
 }
