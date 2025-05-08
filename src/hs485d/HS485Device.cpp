@@ -698,7 +698,7 @@ HS485Channel* HS485Device::GetChannelByPhysicalIndex(int index, int direction)
 	return NULL;
 }
 
-void HS485Device::OnTimer(unsigned long cookie)
+void HS485Device::OnTimer(uint32_t cookie)
 {
 	switch(cookie){
 		case TIMER_RESET_FAIL_COUNTER:

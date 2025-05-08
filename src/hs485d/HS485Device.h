@@ -111,7 +111,7 @@ protected:
 
 	bool WriteFlash(const std::vector<unsigned char> &buffer, unsigned int start);
 	bool VerifyFlash(const std::vector<unsigned char> &buffer, unsigned int start);
-	void OnTimer(unsigned long cookie);
+	void OnTimer(uint32_t cookie);
 	void CheckConfigPendingEvent();
 	void ClearChannels();
     bool ReadEEProm(unsigned int address, unsigned int count, data_t* data);
