@@ -70,5 +70,6 @@ info:
 	@echo ""
 
 clean:
+	rm -f config.mk
 	rm -rf *.o
 	rm -rf $(TARGET)
