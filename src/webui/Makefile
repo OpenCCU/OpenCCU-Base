@@ -30,10 +30,10 @@ install: preinstall subdirs_install
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3_old/once.tcl      /www/config/display/once.tcl
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3_old/common.tcl    /www/config/display/common.tcl  
 
-	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/extern/cgi.tcl            /www/pda/extern/cgi.tcl
-	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/extern/tmpl_parser.tcl    /www/pda/extern/tmpl_parser.tcl
-	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/rega.tcl              /www/pda/eq3/rega.tcl
-	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/session.tcl           /www/pda/eq3/session.tcl
+#	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/extern/cgi.tcl            /www/pda/extern/cgi.tcl
+#	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/extern/tmpl_parser.tcl    /www/pda/extern/tmpl_parser.tcl
+#	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/rega.tcl              /www/pda/eq3/rega.tcl
+#	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/session.tcl           /www/pda/eq3/session.tcl
 
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/rega.tcl              /www/api/eq3/rega.tcl
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3/session.tcl           /www/api/eq3/session.tcl
