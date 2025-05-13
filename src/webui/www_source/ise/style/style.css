@@ -1,0 +1,1516 @@
+:root {
+  --btnGradient: linear-gradient(to bottom, #ffffff, #a1a1a1);
+}
+
+* {
+	font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif ! important;
+	font-size: 12px ! important;
+}
+
+.j_translate, .j_startPage
+{
+    display: none;
+}
+
+.btnActive {
+  background-color: $_(active) !important;
+}
+
+.attention {
+    color: $_(attention);
+    font-weight: bold;
+}
+
+.height20px {
+    height:20px;
+}
+
+.border1px {
+    border: 1px solid black;
+}
+
+.border2px {
+    border: 2px solid black !important;
+}
+
+.borderRadius2px {
+    border-radius: 2px !important;
+}
+
+.borderRadius5px {
+    border-radius: 5px !important;
+}
+
+.width160px {
+	width:160px;
+}
+
+.minWidth210px {
+  min-width: 210px;
+}
+
+.minWidth230px {
+  min-width: 230px;
+}
+
+.conditionEven
+{
+  /*Wenn die Farbe nicht nur als Rahmen, sondern für die ganze Bedingung gelten soll,
+    muss background-color in der Klasse .Rule deaktiviert werden */
+  background-color: $_(programEven);
+  /* border: solid 1px $_(black); *//* black */
+ /* padding: 4px; */
+}
+
+.conditionOdd
+{
+  background-color: $_(programOdd);
+  /* border: solid 1px $_(black); */ /* black */
+  /* padding: 4px; */
+}
+
+.colorGradient {
+  /*background-image:url(/ise/img/gradientButton25px.png) !important;*/
+  /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
+}
+
+.colorGradient50px {
+  /*background-image:url(/ise/img/gradientButton50px.png) !important;*/
+  /*(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
+}
+
+.startPageInfo {
+  /*border: solid 1px $_(darkgray);
+  padding: 4px;*/
+}
+
+html,body
+{
+  margin:0;
+  padding:0;
+  color: $_(textColorB); /* black */
+  background-color: $_(background); /* #183473 */
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+ol {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+ul {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+ul ul {
+  margin-top: 0px;
+  margin-bottom: 0px;  
+}
+
+a img {
+  border: 0 none;
+}
+
+ /* * * * * * * * * * * * * * * * * * * * * * *
+ * * *   Element IDs                     * * *
+ * * * * * * * * * * * * * * * * * * * * * * */
+
+/* Navigation-Leiste */
+#navbar 
+{
+  margin: 0px;
+  background-color: $_(background); /* #183473 */
+  width:100%;
+  border-bottom: solid 5px $_(white); /* #ffffff */ /* Trennlinie zwischen Navigation und Hauptbereich */
+}
+ 
+/* Haupt-Fenster */
+#_content
+{
+  height: 70%;
+  /* background-color: $_(background);  */ /* #183473 */
+
+  /* fallback */
+  background-color: $_(backgroundEnd);
+
+ /* Safari 4-5, Chrome 1-9 */
+ background: -webkit-gradient(linear, 0% 0%, 0% 100%, from($_(backgroundEnd)), to($_(backgroundStart)));
+
+  /* Safari 5.1, Chrome 10+ */
+  background: -webkit-linear-gradient(top, $_(backgroundEnd), $_(backgroundStart));
+
+  /* Firefox 3.6+ */
+  background: -moz-linear-gradient(bottom, $_(backgroundStart), $_(backgroundEnd));
+
+  /* IE 10 */ background: -ms-linear-gradient(top,$_(backgroundStart), $_(backgroundEnd));
+
+  /* For Internet Explorer 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr= #d0d0d0, endColorstr=#ffffff)";
+
+  overflow: auto;
+}
+
+#content
+{
+    background-color: $_(contentBackground);
+    overflow: auto;
+}
+
+/* Kopfzeile */
+#header {
+  height: 15%;
+  background-color: $_(background);  /* #183473 */
+  /* background-color: #dcdcdc; */
+  color: $_(textColorB); /* black */
+  /*border: solid 1px $_(inactiveBackground);*/
+  /*margin-top:-8px;*/
+}
+
+/* Fusszeile */
+#footer {
+  height:15%;
+  background-color: $_(background); /* #183473 */
+  /* background-color: #dcdcdc; */
+  color: $_(textColorB); /* black */
+  border-top: solid 5px $_(navBarSeparator);
+}
+
+/* Tabelle zur Gestaltung der Login-Seite */
+#login_content {
+  padding-top: 20px;
+}
+
+/* Feld zur Benutzernamen-/Passwort-Eingabe */
+#LoginMask {
+  font-weight: bold;
+  text-align: center;
+  width: 200px;
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  border: 1px solid;
+}
+
+#LoginMask input
+{
+  margin: 0;
+  padding: 0;
+  width: 200px;
+}
+
+/* Benutzername im Seiten-Header */
+#UserName {
+  color: $_(textColorA); /* #ffffff */
+  vertical-align: top;
+}
+
+/* Pfadangabe im Seiten-Header */
+#PagePath {
+  /*color: $_(textColorA);  #ffffff */
+  color: #afafaf; /* #ffffff */
+  vertical-align: bottom;
+}
+#PagePath span {
+  cursor:pointer;
+}
+
+/* Linker Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
+#contentLeft 
+{
+  vertical-align: top;
+}
+
+/* Rechter Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
+#contentRight 
+{ 
+  border-left: solid 5px $_(navBarSeparator); /* #ffffff */ /* Trennlinie zwischen Navigation und Hauptbereich */
+  /* padding-top: 10px; */
+  vertical-align: top;
+}
+
+#separator {
+  color: $_(textColorA); /* #ffffff */
+  height: 5px;
+  width: 100%;
+  background-color: $_(white); /* #ffffff */
+}
+
+/* Buttons im linken Bereich der Startseite */
+#ButtonTable td{
+  text-align: center;
+  background-color: $_(clickable);
+  height: 40px;
+  cursor:pointer;
+}
+
+/* Grundlegende Tabelle auf der Statusanzeige-Seite */
+#tblStatus {
+  width:1200px; 
+  height:100%;
+  table-layout: fixed;
+}
+
+#tblStatus td {
+  vertical-align: top;
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+}
+
+#chkCell {
+  background-color: $_(white); /* white */
+}
+
+#tblListFold {
+  background-color: $_(background); /* #183473 */
+}
+
+#chnListBody td {
+  /*border: solid 1px $_(black); /* black */
+  text-align: center;  
+}
+#chnListBody th {
+  /*border: solid 1px $_(black); /* black */
+  text-align: center;  
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * *
+ * * *   Classes                         * * *
+ * * * * * * * * * * * * * * * * * * * * * * */
+
+.clickable {
+  cursor:pointer;
+}
+
+/* Desktop Label */
+.DesktopLabel
+{
+  background-color:#C0C0C0; 
+  width:auto; 
+  border: solid 1px $_(black); /* black */ 
+  font-weight:bold;  
+  text-align: center; 
+  margin-top:3px; 
+  margin-left:3px; 
+  margin-right:3px;
+}
+
+/* Small Logo Position */
+.SmallLogo
+{
+  /*position: absolute;*/
+  margin-left: 0px;
+  margin-top: 6px;
+  padding-left: 10px;
+}
+
+/* Small Logo Position für An- und Abmeldung */
+.SmallLogoLog
+{
+  position: absolute;
+  left: 18px;
+  top: 12px;
+}
+
+/* Big Logo Position */
+.LargeLogo
+{
+  position: absolute;
+  left: 480px;
+  top: 180px;
+}
+
+/* Standard-Button (z.B. Benutzernamen bei Login) */
+.Button {
+  background-color: $_(clickable);
+  /*background-image:url(/ise/img/gradientButton50px.png) !important;*/
+  /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
+  background-image: var(--btnGradient) !important;
+  color: $_(textColorB); /* black */
+  font-weight: bold;
+  width: 200px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  margin-left: 1px;
+  border-radius: 10px;
+}
+
+/* Statusanzeige-Rooms */
+.ButtonStatusRooms
+{ 
+  background-color:$_(activeBackground); /* #f0f0f0 */
+  border:solid 1px $_(black); /* black */
+  color: $_(textColorB); /* black */
+  width:100px;
+  height:100px;
+}
+
+.ButtonStatusRoomsSelected
+{ 
+  background-color:$_(active); /* #565657 */
+  border:solid 1px $_(black); /* black */
+  color: $_(textColorA); /* white */
+  width:100px;
+  height:100px;
+}
+
+.ButtonStatusRoomsPic
+{
+  text-align:center;
+  background-color: $_(activeBackground); /* #f0f0f0 */
+  border: solid 1px $_(black); /* black */
+  width:100px;
+  height:100px;
+}
+
+.ButtonStatusRoomsPicSelected
+{
+  text-align:center;
+  border: solid 1px $_(black); /* black */
+  color: $_(textColorA); /* white */
+  background-color:$_(active); /* #565657 */
+  height: 100px;
+  width: 100px;
+}
+
+.filterTable 
+{
+  empty-cells:show;
+}
+
+.filterTable th
+{
+  text-align:center;
+  border:solid 1px $_(black); /* black */
+  background-color:$_(clickable);
+  height: 20px;
+}
+
+.filterTable td
+{
+  text-align:center;
+  border:solid 1px $_(black); /* black */
+  color: $_(textColorB); /* black */
+  height: 40px;
+}
+
+.filterTable .leftAlign {
+  text-align: left;
+}
+
+/* Grosse Beschriftung eines Buttons (z.B. "Posteingang" auf Startseite) */
+.ButtonLargeFont {
+  line-height:40px;
+  height: 80px;
+}
+
+/* Überschrift im Header-Feld */
+.HeaderTitle {
+  font-weight: bold;
+  color: $_(textColorA); /* #ffffff */
+}
+
+/* Buttons innerhalb der Navigations-Leiste */
+.NavButton 
+{
+  background-color: $_(logoutButton);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+  color: $_(textColorB); /* black */
+  font-weight: bold;
+  width: 165px;
+  /* height: 52px; */
+  /* line-height: 52px; */
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* Buttons innerhalb der Navigations-Leiste */
+.NavButton2
+{
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+  width: 130px;
+  height: 42px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  line-height: 21px;
+}
+
+
+/* Aktuell selektierter Button innerhalb der Navigations-Leiste */
+.NavButtonSelected {
+  background-color: $_(active); /* #5655657 */
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+  width: 130px;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Aktuell selektierter Button innerhalb der Navigations-Leiste */
+.NavButtonSelected2 {
+  background-color: $_(active); /* #5655657 */
+  color: $_(textColorA); /* white */
+  width: 140px;
+  font-weight: bold;
+  height: 42px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  vertical-align: middle;
+  line-height: 21px;
+}
+
+/* Alarm-/Servicemeldungen im Header */
+.Messages {
+  background-color: $_(messagesBackground);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+  overflow: auto;
+
+  text-align: center;
+  color: $_(textColorB); /* black */
+  font-weight: bold;
+  width: 250px;
+  border: solid 1px $_(black); /* black */
+}
+
+.Messages_Selected {
+  background-color: $_(active); /* #565657 */
+}
+
+/* Kopfzeile der Alarm-/Servicemeldungen */
+.MsgTblHeader {
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  height: 30px;
+}
+
+.StdTable {
+  height:100%;
+  width:100%
+}
+
+.StdTable td {
+  background-color: $_(inactiveBackground);
+  text-align:left;
+  vertical-align: top;
+  color: $_(textColorB); /* black */
+}
+
+._StdTableBtn{
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  height: 70px;
+  line-height: 70px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  margin: 5px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.StdTableBtn{
+  background-color: $_(clickable);
+  color: $_(textColorB); /* black */
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  margin: 5px;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-left: 10px;
+  /*background-image:url(/ise/img/gradientButton50px.png);*/
+  background-image: linear-gradient(to bottom, white 40%, gray);
+  background-image: var(--btnGradient);
+}
+
+.StdTableBtnHelp {
+    /* padding-right: 50px; */
+}
+
+.StdTableBtn2{
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  height: 70px;
+  line-height: 35px;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  margin: 5px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* "Kopfzeile" einiger Tabellenzellen (wie z.B. in der Statusanzeige) */
+.HeaderBg {
+  background-color: $_(inactiveBackground);
+  width: 100%;
+  height: 30px;
+  color: $_(textColorB); /* black */
+  white-space: nowrap;
+}
+
+/* Trennlinie Statusanzeige Systemhistorie*/
+
+.borderBottomHist 
+{
+  border-bottom:solid 1px $_(black); /* black */
+}
+
+/* Logging von Ereignissen (z.B. Seite zur Statusnazeige) */
+.divLog 
+{
+  color: $_(textColorB); /* black */
+  overflow: auto;
+  width:100%;
+  height:75%; /* sorgt für korrekte Darstellung der Scrollbalken im IE */
+}
+
+/* Tabelle zur Listendarstellung von Elementen (z.B. Raumübersicht) */
+.tblList {
+  margin-top: 20px;
+  width: 100%;
+  empty-cells: show;
+}
+
+.tblList th {
+  color: $_(textColorA); /* white */
+  font-weight: normal;
+  background-color: $_(clickable);
+}
+
+.Sort
+{
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.SortSelected
+{
+  cursor: pointer;
+  background-color: $_(active); /* #565657 */
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.pt11
+{
+  padding-top: 11px;
+}
+
+.tblList td {
+  color: $_(textColorB); /* black */
+  height: 25px;
+  text-align:center;
+  vertical-align:middle;
+}
+
+/* Kopfzeile eines Popup-Fenster */
+.popupTitle {
+  color: $_(textColorB); /* black */
+  width: 99.4%;
+  background-color: $_(white); /* white */
+  border: solid 1px $_(black); /* black */
+  padding-left: 4px;
+}
+/* Dirty IE-Hack only works, if IE7 is running in quirks mode.*/
+* html .popupTitle {
+  color: $_(textColorB); /* black */
+  width: 100%;
+  background-color: $_(white); /* white */
+  border: solid 1px $_(black); /* black */
+  padding-left: 4px;
+}
+
+/* Tabelle zum Bearbeiten von Eigenschaften (z.B. "Raum bearbeiten") */
+.popupTable {
+  width: 100%;
+  border: solid 1px $_(black); /* black */
+  empty-cells: show;
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  text-align: center;
+  vertical-align: middle;
+  font-weight: normal;
+}
+
+.popupTableScript
+{
+  width: 100%;
+  border: solid 1px $_(black); /* black */
+  empty-cells: show;
+  color: $_(textColorA); /* white */
+  text-align: center;
+  vertical-align: middle;
+  font-weight: normal;
+}
+
+.popupTableRow
+{ 
+  border-bottom: solid 1px $_(clickable);
+  border-top: solid 1px $_(clickable);
+}
+
+.scriptButton
+{ 
+  text-align:center;
+  width:10%;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:1px solid $_(black); /* black */
+}
+
+.popupWhiteCells {
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  font-weight: normal;
+}
+
+.popupWhiteCells {
+  cursor: pointer;
+}
+.popupGrayCells {
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  font-weight: normal;
+}
+
+.popupControls {
+  background-color: $_(white); /* white */
+  width: 100%;
+  border: solid 1px $_(black); /* black */
+}
+
+.popupControls div {
+  background-color: $_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+  color: $_(textColorB); /* black */
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+  border: solid 1px $_(black); /* black */
+  border-radius: 5px;
+}
+
+/* Rechter Teil der Hilfe-Seite */
+.helpViewer {
+  width: 100%;
+  height: 100%;
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+}
+
+/* KanalListe */
+.ChnListTbl {
+  width: 100%;
+  background-color: $_(black); /* black */
+}
+
+.ChnListTbl td {
+  background-color: $_(activeBackground); /* #f0f0f0 */
+  color: $_(textColorB); /* black */
+  height: 50px;
+}
+
+.ChnListNav {
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  font-weight: normal;
+  height: 30px;
+}
+
+.ChnListNavSelected {
+  background-color: $_(active); /* #565657 */
+  color: $_(textColorA); /* white */
+  font-weight: normal;
+  height: 30px;
+}
+
+.FilterBtn {
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+  color: $_(textColorB); /* black */
+
+  cursor: pointer;
+  width: 100%;
+  /* height: 100%; */
+  height: 20px;
+  line-height: 20px;
+}
+
+.FilterBtnActive {
+  background-color: $_(active); /* #565657 */
+}
+
+/* Filter Untermenüs */
+.FilterSubMenu 
+{
+  overflow:auto;
+  background-color: $_(inactiveBackground);
+  position: absolute;
+  border: solid 1px $_(black); /* black */
+  color: $_(textColorA); /* white */
+  z-index:500;
+}
+
+.FilterSubMenu td {
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  height: 15px;
+  border:none;
+}
+
+.FilterSetButton {
+  background-color: $_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+  color: $_(textColorB); /* black */
+  border: solid 1px $_(black); /* black */
+  border-radius: 2px;
+  margin-bottom:6px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 90%;
+  cursor:pointer;
+  z-index:501;
+}
+
+.ControlBtnOff {
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  /* border-top: inset 4px $_(clickable);*/
+  border-right: inset 4px $_(clickable);
+  cursor: pointer;
+}
+
+.ControlBtnOn {
+  background-color: $_(active); /* #565657 */
+  color: $_(textColorA); /* white */
+  font-weight: bold;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  border-top: inset 4px $_(active);
+  border-right: inset 4px $_(active);
+  cursor: pointer;
+}
+
+.PercBtn {
+  background-color: $_(clickable); 
+  color: $_(textColorA); 
+  font-weight: bold;
+  text-align: center;
+  border: solid 1px $_(black); 
+  border-top: inset 4px $_(clickable);
+  border-right: inset 4px $_(clickable);
+	height:96px;
+	width:96px;
+}
+
+.ControlBtnInfo {
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoActive {
+  background-color: $_(active);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnInfoNotActive {
+  background-color: #89989b;
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  padding: 5px;
+  font-weight: bold;
+  min-height: 30px;
+}
+
+.ControlBtnPushed {
+  background-color: $_(clickable);
+  color: $_(textColorB); /* black */
+  font-weight: bold;
+  text-align: center;
+  border: solid 1px $_(black); /* black */
+  border-top: inset 4px $_(warnSignal); /* #fdf304 */
+  border-right: inset 4px $_(warnSignal); /* #fdf304 */
+}
+  
+#id_progressbar_wrapper
+{
+ 	background-color: $_(activeBackground); /* rgb(220, 220, 220) */
+  color: $_(textColorB); /* black */
+}
+.popupTableRowGray
+{
+  border-bottom: solid 1px $_(clickable);
+  border-top: solid 1px $_(clickable);
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  margin: 0;
+}
+.popupTableRowWhite
+{
+  border-bottom: solid 1px $_(clickable);
+  border-top: solid 1px $_(clickable);
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  margin: 0;
+}
+.popupTableHeaderRow
+{
+ 	background-color: $_(gray); /* rgb(153, 153, 153) */
+ 	border: 1px black solid;
+  color: $_(textColorA); /* white */
+ 	margin: 0;
+}
+.popupTableHeaderRow th
+{
+ 	background-color: $_(gray); /* rgb(153, 153, 153) */
+  color: $_(textColorA); /* white */
+ 	margin: 0;
+}
+.popupTableHeaderRow td
+{
+ 	background-color: $_(gray); /* rgb(153, 153, 153) */
+ color: $_(textColorA); /* white */
+	margin: 0;
+}
+
+/* Buttons (Löschen, Einstellen, Geräte...) auf Geräte/Raum/Gewerk-Übersicht */
+._StdButton
+{
+  background-color: $_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+  color: $_(textColorB); /* white */
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.StdButton {
+    background-color: $_(clickable);
+    background-image:url(/ise/img/gradientButton25px.png);
+    /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+    background-image: var(--btnGradient);
+    margin:2%;
+    border:1px solid $_(black); /* black */
+    /* width:95%; */
+    text-align:center;
+    height:20px;
+    line-height:20px;
+    vertical-align:middle;
+    color: $_(textColorB); /* black */
+    font-weight:bold;
+    cursor:pointer;
+    border-radius: 5px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.StdButtonBig {
+    background-color: $_(clickable);
+    /*background-image:url(/ise/img/gradientButton50px.png);*/
+    background-image: linear-gradient(to bottom, white 40%, gray);
+    background-image: var(--btnGradient);
+    margin:2%;
+    border:1px solid $_(black); /* black */
+    /* width:95%; */
+    text-align:center;
+    height:20px;
+    line-height:20px;
+    vertical-align:middle;
+    color: $_(textColorB); /* black */
+    font-weight:bold;
+    cursor:pointer;
+    border-radius: 5px;
+}
+
+.heightAuto {
+    height: auto;
+}
+
+.StdButtonInactive
+{
+  background-color: $_(activeBackground); /* #dddddd */
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+  color: $_(textColorA); /* #ffffff */
+  border: solid 1px $_(gray); /* silver */
+  border-radius: 5px;
+  margin:2%;
+  text-align:center;
+  height:20px;
+  line-height:20px;
+  vertical-align:middle;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.TestButton {
+  border: 1px solid $_(black); /* black */
+  margin: 5px;
+  text-align: center;
+  background-color: $_(clickable);
+  color: $_(textColorB); /* black */
+  cursor: pointer;
+}
+
+.TestButtonDisabled {
+  border: 1px solid $_(gray); /* silver */
+  margin: 5px;
+  text-align: center;
+  background-color: $_(activeBackground); /* rgb(221, 221, 221) */
+  color: $_(textColorA); /* white */
+  cursor: default;
+}
+
+.OkButton {
+  text-align: center;
+  font-weight: bold;
+  background-color: $_(okSignal); /* rgb(0, 255, 0) */
+  color: $_(textColorB); /* black */
+  border: solid 1px $_(black); /* black */
+  width: 100%;
+}
+
+.OkButtonRunning {
+  text-align: center;
+  font-weight: bold;
+  background-color: $_(warnSignal); /* rgb(255, 255, 0) */
+  color: $_(textColorB); /* black */
+  border: solid 1px $_(black); /* black */
+  width: 100%;
+}
+
+.TestDate {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border-top: solid 1px $_(black); /* black */
+  border-bottom: solid 1px $_(black); /* black */
+}
+
+.FooterButton {
+
+  background-color: $_(clickable);
+  /*background-image:url(/ise/img/gradientButton50px.png);*/
+  background-image: linear-gradient(to bottom, white 40%, gray);
+  background-image: var(--btnGradient);
+
+  overflow: auto;
+
+
+  border: solid 1px $_(black);
+  border-radius: 5px;
+  color: $_(textColorB); /* black */
+  width: 120px;
+  height: 30px;
+  cursor: pointer;
+  line-height: 30px;
+  font-weight: bold;
+}
+
+.FooterButtonLarge {
+  border: solid 1px $_(black); /* black */
+  color: $_(textColorB); /* black */
+  background-color: $_(clickable);
+  width: 150px;
+  height: 30px;
+  cursor: pointer;
+  line-height: 30px;
+  font-weight: bold;
+}
+
+/* Tabellen Benutzerkonto-Konfiguration */
+
+.TblHeaderUserConfig {
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */  
+  text-align:center;
+  height: 50px;
+}
+
+.TblFilterUserConfig {
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  height:20px;
+  border:solid 1px $_(black); /* black */
+  text-align:center;
+}
+
+.TblUserConfig {
+  color: $_(textColorB); /* black */
+  border:solid 1px $_(black); /* black */
+  background-color:$_(inactiveBackground);
+  text-align:center;
+}
+
+.tblUserData td{
+  color: $_(textColorB); /* black */
+}
+
+.TblUserAdministration {
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  text-align:center;
+  border:solid 1px $_(black); /* black */
+}  
+
+.StatViewTbl {
+  empty-cells: show;
+}
+
+.StatViewTbl td{
+  border: solid 1px $_(black); /* black */
+}
+
+
+.ChannelStatusTbl{
+  border:solid 1px $_(black); /* black */
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  height:100px;
+  text-align:center;
+  empty-cells:show;
+}
+
+.picDiv {
+  margin:0; 
+  padding:0; 
+  position:relative; 
+  width:50px; 
+  height:50px;
+}
+
+.ChannelTblPopup{
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  border:solid 1px $_(black); /* #000000 */
+  height:60px;
+  text-align:center;
+}
+.SysVarsTblPopup{
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  height:60px;
+  text-align:center;
+}
+.WhiteBkgChannelPopup {
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  border:solid 1px $_(black); /* black */
+  height:60px;
+  text-align:center;
+  empty-cells:show;
+}
+
+.RoomFuncChooser {
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+}
+
+.RoomFuncChooser td{
+  color: $_(textColorB); /* black */
+}
+
+.SelectBox
+{
+  border: solid 1px $_(black); /* black */
+  background-color: $_(clickable);
+  color: $_(textColorA); /* #ffffff */
+}
+
+.BigFont
+{
+  font-weight: bold;
+}
+
+.Rule
+{
+  /* background-color: $_(inactiveBackground);*/
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  text-align: left;
+}
+
+.Condition
+{
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  text-align: left;
+  margin-left: 15px;
+}
+
+.tHeaderCell
+{
+  color: $_(textColorA); /* white */
+  background-color: $_(clickable);
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  text-align : left;
+  vertical-align: middle;
+} 
+
+.tSubHeaderCell
+{
+  color: $_(textColorA); /* #ffffff */
+  background-color: $_(clickable);
+  height: 20px;
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  text-align : center;
+  vertical-align: middle;
+}
+
+.tHeaderCellSort
+{
+  color: $_(textColorA); /* white */
+  background-color: $_(active); /* #565657 */
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  text-align : center;
+  vertical-align: middle;
+  cursor: pointer;
+  height: 100%;
+}
+
+.tHeaderCellSortSelected
+{
+  color: $_(textColorA); /* white */
+  background-color: $_(active); /* #565657 */
+  height: 100%;
+  border: solid 1px $_(black); /* black */
+  padding: 4px;
+  cursor: pointer;
+  background-color: $_(active); /* #565657 */
+  text-align: center;
+  vertical-align: middle;
+}
+
+.tBodyCell
+{
+  background-color: $_(activeBackground); /* #f0f0f0 */
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  color: $_(textColorB); /* black */
+  padding: 4px;
+  text-align: left;
+}
+
+.tBodyCellCenter
+{
+  background-color: $_(activeBackground); /* #f0f0f0 */
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  color: $_(textColorB); /* black */
+  padding: 4px;
+  text-align: center;
+}
+
+.tTable
+{
+  text-align:center;
+  margin-left:10px;
+  margin-top:10px;
+  margin-right:10px;
+  empty-cells: show;
+  width:97%;
+  /*width:1200px;*/
+  border:solid 1px $_(black); /* black */
+}
+/*
+.tTable th
+{
+  padding: 2px;
+}
+
+.tTable td
+{
+  color: $_(textColorB);
+}
+*/
+
+.bgWhite
+{
+  background-color: $_(white); /* white */
+}
+
+.taCenter
+{
+  text-align: center;
+}
+
+.viewTbl {
+  border: none;
+  background-color: $_(activeBackground); /* #dcdcdc */
+}
+
+.ctrlTbl {
+  border: none;
+  background-color: $_(white); /* white */
+}
+
+.ctrlTbl td {
+  border: none;
+  height: auto;
+  background-color: $_(inherit);/* inherit */
+  color: $_(textColorA); /* white */
+}
+
+/*  TABLE DIVS */
+
+div.table    { display: table; border-collapse:collapse; }
+div.tr       { display: table-row; }
+div.td       { display: table-cell; }
+div.thead    { display: table-header-group; }
+div.tbody    { display: table-row-group; }
+div.tfoot    { display: table-footer-group; }
+div.col      { display: table-column; }
+div.colgroup { display: table-column-group; }
+div.th       { display: table-cell; }
+div.caption  { display: table-caption; }
+
+.tMain
+{
+  border:solid 1px $_(black); /* black */
+  margin-left:20px;
+  margin-top:20px;
+}
+
+.tHeader
+{
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */
+  height:40px;
+  empty-cells: show;
+}
+
+.tFilter
+{
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */
+  height:auto;
+  text-align:center;
+  empty-cells: show;
+}
+
+.tClick
+{
+  cursor:pointer;
+}
+
+.tCell
+{
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  border:solid 1px $_(black); /* black */
+  text-align:center;
+  empty-cells: show;
+}
+
+.bcWhitePic
+{
+  background-color: $_(white); /* #ffffff */
+}
+
+.bcWhite
+{
+  background-color: $_(activeBackground); /* #f0f0f0 */
+}
+
+.loginErrorBox
+{
+  border: solid 4px $_(red);
+  background-color: $_(inactiveBackground);
+  margin: 10px;
+  color: $_(textColorB); /* black */
+  font-weight: bold;
+  padding: 12px;
+}
+
+.tMoveUp
+{
+  background-image: url(/img/btn_fav_up.png);
+  width:85px;
+  height:38px;
+  text-align:center;
+  background-position:center;
+  vertical-align: middle;
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+.tMoveDown
+{
+  background-image: url(/img/btn_fav_down.png);
+  width:85px;
+  height:38px;
+  text-align:center;
+  vertical-align: middle;
+  background-position:center;
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+.oLine
+{
+  background-color: $_(background); /* #183473 */
+  width: 90%;
+  height: 6px;
+  border-bottom-width: 5px;
+  border-bottom-style: solid;
+  border-bottom-color: $_(white); /* #ffffff */
+}
+
+.sysConfigHeight
+{
+  height: 263px;
+}
+
+.posPreBtn
+{
+  float:left;
+  width: 30px;
+  height: 15px;
+  padding: 2px;
+  margin: 2px;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */
+  text-align:center;
+}
+
+
+.brClear
+{
+  clear:both;
+}
+
+.tButton
+{
+  background-color:$_(clickable);
+  border:solid 1px $_(black); /* black */
+  color: $_(textColorA); /* white */
+  cursor:pointer;
+  width:200px;
+  height:30px;
+  text-align:center;
+}
+
+/* Angaben für die Tabellenspalten und -header */
+
+.thCell
+{ 
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */
+  height:40px;
+  text-align:center;
+  padding: 2px;
+}
+
+.tdCellFilter
+{
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  border:solid 1px $_(black); /* black */
+  height:20px;
+  text-align:center;
+}
+
+/* Weisser Zellenhintergrund für Bilder (Geräteübersicht u.ä.) */
+.WhiteBkgPic {
+  background-color: $_(white); /* #ffffff */
+  color: $_(textColorB); /* black */
+}
+
+/* Weisser Zellenhintergrund (Geräteübersicht u.ä.) */
+.WhiteBkg {
+  background-color: $_(activeBackground); /* #f0f0f0 */
+  color: $_(textColorB); /* black */
+}
+
+/* Grauer Zellenhintergrund (Geräteübersicht u.ä.) */
+.GrayBkg {
+  background-color: $_(activeBackground);
+  color: $_(textColorB); /* black */
+}
+
+
+.OUCFMprop {
+  text-align:left;
+  color: #000000;
+  padding-left: 4px;
+}
+
+.OUCFMcenter {
+  text-align: center;
+  color: #000000;
+}
+
+#_body {
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray);*/
+  background-image: var(--btnGradient);
+
+}
+
+/* Buttons incl. Hilfe-Img. */
+.cpButton {
+    width:230px;
+}
