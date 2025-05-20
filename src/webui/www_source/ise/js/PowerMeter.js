@@ -28,7 +28,7 @@ isePowerMeter.prototype = {
     this.sensorTypeID.iec = "IEC";
     this.sensorTypeID.unknown = "Unknown";
     this.kiloPrefix = "";
-    this.hasFeedIn = (this.opts.chLabel == "HmIP-PSMCO") ? true : false;
+    this.hasFeedIn = ((this.opts.chLabel == "HmIP-PSMCO") || (this.opts.chLabel == "ELV-SH-PSMCI" )) ? true : false;
 
     this.id = id;
     this.summedUpEnergy = 0.0;

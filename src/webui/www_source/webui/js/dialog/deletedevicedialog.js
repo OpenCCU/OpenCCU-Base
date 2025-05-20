@@ -34,7 +34,7 @@ deleteProgSysvarPOWERMETER = function(chId, chAddress, devLabel) {
             homematic("SysVar.deleteSysVarByName", {"name": "svEnergyCounter_" + chId + "_" + chAddress + "_TMP_OLDVAL"}, function () {
               homematic("Program.deleteProgramByName", {"name": "prgEnergyCounter_" + chId + "_" + chAddress}, function () {
                 homematic("Program.deleteProgramByName", {"name": "prgSetEnergyValuesAtMidnight" + chId}, function () {
-                  if ((typeof devLabel == "undefined") || (devLabel != "hmip-psmco")) {
+                  if ((typeof devLabel == "undefined") || (devLabel != "hmip-psmco" && (devLabel != "elv-sh-psmci"))) {
                     conInfo(chAddress + " ProgSysvarPOWERMETER deleted - next: save ObjectModel");
                     window.setTimeout(function () {
                       saveObjectModel();
