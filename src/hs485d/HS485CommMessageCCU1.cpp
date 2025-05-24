@@ -78,20 +78,20 @@ unsigned long HS485CommMessageCCU1::GetType()
 	return GetByteData(index);
 }
 
-unsigned long HS485CommMessageCCU1::GetSenderAddress()
+uint32_t HS485CommMessageCCU1::GetSenderAddress()
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::GetSenderAddress()");
-	unsigned long address;
+	uint32_t address;
 	int index=MapIndex(5);
     if( (index>=0) && GetIntValue(index, 0, 4, 0, &address))return address;
 	if(parent)return GetParent()->GetReceiverAddress();
 	return 0;
 }
 
-unsigned long HS485CommMessageCCU1::GetReceiverAddress()
+uint32_t HS485CommMessageCCU1::GetReceiverAddress()
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::GetReceiverAddress()");
-	unsigned long address;
+	uint32_t address;
 	int index=MapIndex(0);
 	if( (index>=0) && GetIntValue(index, 0, 4, 0, &address))return address;
 	if(parent)return GetParent()->GetSenderAddress();

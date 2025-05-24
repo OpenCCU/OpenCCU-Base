@@ -58,14 +58,14 @@ unsigned long HS485CommMessageLGW::GetType()//protected - maybe not needed here
 	return 0;
 }
 
-unsigned long HS485CommMessageLGW::GetSenderAddress()
+uint32_t HS485CommMessageLGW::GetSenderAddress()
 {
-	return (unsigned long)hmwlgwCommand.getSenderAddress();
+	return (uint32_t)hmwlgwCommand.getSenderAddress();
 }
 
-unsigned long HS485CommMessageLGW::GetReceiverAddress()
+uint32_t HS485CommMessageLGW::GetReceiverAddress()
 {
-	return (unsigned long)hmwlgwCommand.getReceiverAddress();
+	return (uint32_t)hmwlgwCommand.getReceiverAddress();
 }
 
 int HS485CommMessageLGW::GetCtrl()
@@ -79,13 +79,13 @@ void HS485CommMessageLGW::SetCtrl(int flags)
 	hmwlgwCommand.setCtrlByte((unsigned char)flags);
 }
 
-void HS485CommMessageLGW::SetSenderAddress(unsigned long address)
+void HS485CommMessageLGW::SetSenderAddress(uint32_t address)
 {
 	//LOG(Logger::LOG_ALL, "HS485CommMessageLGW::SetSenderAddress()");
 	hmwlgwCommand.setSenderAddress(address);
 }
 
-void HS485CommMessageLGW::SetReceiverAddress(unsigned long address)
+void HS485CommMessageLGW::SetReceiverAddress(uint32_t address)
 {
 	//LOG(Logger::LOG_ALL, "HS485CommMessageLGW::SetReceiverAddress(): Not implemeted yet.");
 	hmwlgwCommand.setReceiverAddress(address);

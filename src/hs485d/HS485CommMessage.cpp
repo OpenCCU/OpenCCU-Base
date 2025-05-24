@@ -79,20 +79,20 @@ unsigned long HS485CommMessage::GetType()
 	return GetByteData(index);
 }
 
-unsigned long HS485CommMessage::GetSenderAddress()
+uint32_t HS485CommMessage::GetSenderAddress()
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::GetSenderAddress()");
-	unsigned long address;
+	uint32_t address;
 	int index=MapIndex(5);
     if( (index>=0) && GetIntValue(index, 0, 4, 0, &address))return address;
 	if(parent)return GetParent()->GetReceiverAddress();
 	return 0;
 }
 
-unsigned long HS485CommMessage::GetReceiverAddress()
+uint32_t HS485CommMessage::GetReceiverAddress()
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::GetReceiverAddress()");
-	unsigned long address;
+	uint32_t address;
 	int index=MapIndex(0);
 	if( (index>=0) && GetIntValue(index, 0, 4, 0, &address))return address;
 	if(parent)return GetParent()->GetSenderAddress();
@@ -115,7 +115,7 @@ void HS485CommMessage::SetCtrl(int flags)
 	if(index>=0)SetByteData(index, flags);
 };
 
-void HS485CommMessage::SetSenderAddress(unsigned long address)
+void HS485CommMessage::SetSenderAddress(uint32_t address)
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::SetSenderAddress()");
 	int index=MapIndex(5);
@@ -123,7 +123,7 @@ void HS485CommMessage::SetSenderAddress(unsigned long address)
 	SetIntValue(index, 0, 4, 0, address);
 };
 
-void HS485CommMessage::SetReceiverAddress(unsigned long address)
+void HS485CommMessage::SetReceiverAddress(uint32_t address)
 {
 //	LOG(Logger::LOG_DEBUG, "HS485CommMessage::SetReceiverAddress(0x%08lX)", address);
 	int index=MapIndex(0);

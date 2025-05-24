@@ -34,8 +34,8 @@ public:
 	HS485CommMessageCCU1(void);
 	virtual ~HS485CommMessageCCU1(void);
 	bool MatchType(unsigned long type);
-	unsigned long GetSenderAddress();
-	unsigned long GetReceiverAddress();
+	uint32_t GetSenderAddress();
+	uint32_t GetReceiverAddress();
 	void SetSenderAddress(unsigned long address);
 	void SetReceiverAddress(unsigned long address);
 	void SetCtrl(int flags);

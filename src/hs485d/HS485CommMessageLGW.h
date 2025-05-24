@@ -30,10 +30,10 @@ public:
 	virtual bool TransformToSimulationMessage();
 
 	virtual bool MatchType(unsigned long type);
-	virtual unsigned long GetSenderAddress();
-	virtual unsigned long GetReceiverAddress();
-	virtual void SetSenderAddress(unsigned long address);
-	virtual void SetReceiverAddress(unsigned long address);
+	virtual uint32_t GetSenderAddress();
+	virtual uint32_t GetReceiverAddress();
+	virtual void SetSenderAddress(uint32_t address);
+	virtual void SetReceiverAddress(uint32_t address);
 	virtual void SetCtrl(int flags);
 	virtual int GetCtrl();
 
