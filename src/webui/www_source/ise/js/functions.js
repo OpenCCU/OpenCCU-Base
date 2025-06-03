@@ -1074,7 +1074,6 @@ writeDeviceAction = function(tdParent, includeChecks, bIsDev, bDelBtn, obj, bIsG
     && (obj['type'] != "HmIPW-WGD-PL")
     && (obj['type'] != "HmIP-ESI")
     && (obj['type'] != "HmIP-DRG-DALI")
-    && (obj['type'] != "ELV-SH-SPS25")
   ) {
 
     if (bIsDev) {
