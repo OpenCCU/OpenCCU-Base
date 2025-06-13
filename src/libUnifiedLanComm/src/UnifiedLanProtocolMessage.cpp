@@ -35,7 +35,7 @@ bool UnifiedLanProtocolMessage::appendDataFromDevice(const std::string data, std
 {
 	nextMessageData.clear(); 
 	//TODO implement me
-	unsigned int index = data.find(msgEndChars);
+	std::string::size_type index = data.find(msgEndChars);
 	if(index == std::string::npos) {
 		messageData.append(data);
 		return false;
