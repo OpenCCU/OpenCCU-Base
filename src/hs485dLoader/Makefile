@@ -42,17 +42,12 @@ TARGET = hs485dLoader
 ifeq "$(DEBUG)" "1"
 OPTIMIZE = -g -O0
 else
-OPTIMIZE = -O2
-endif
-
-ifeq "$(DEBUG)" "1"
-STRIP = true
-else
-STRIP = $(CROSS)strip
+OPTIMIZE = -O2 -g
 endif
 
 CC = $(CROSS)g++
 CXX = $(CROSS)g++
+STRIP = $(CROSS)strip
 
 TARGETOBJS = \
 	$(TARGET).o 
@@ -75,12 +70,13 @@ configure:
 
 $(TARGET): $(TARGETOBJS)
 	$(CXX) -o $(TARGET) $(TARGETOBJS) $(LD_FLAGS)
+	cp -f $(TARGET) $(TARGET).debug || true
+	$(STRIP) $(TARGET)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 	
 install: $(TARGET)
-	$(STRIP) $(TARGET)
 	$(ROMFSINST) -p 755 $(TARGET) /bin/$(TARGET)
 
 	
