@@ -30,7 +30,7 @@ std::map<std::string, std::string> Info::readConfig() {
 		while ( getline(is, line) ) {
 			line = HSSLedUtil::trim(line);
 			if(!line.empty()) {
-				size_t index = line.find_first_of("=",0);
+				std::string::size_type index = line.find_first_of("=",0);
 				if( (index != std::string::npos) && (index+1 < line.size())) {
 					std::string key;
 					std::string value;

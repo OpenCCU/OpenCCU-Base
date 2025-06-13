@@ -81,7 +81,7 @@ bool InfoLed::isProcessRunning(const char *filename, const char *pname, const bo
         if(!cmdLine.empty())
         {
           // Keep first cmdline item which contains the program path
-          size_t pos = cmdLine.find('\0');
+          std::string::size_type pos = cmdLine.find('\0');
           if(pos != std::string::npos)
             cmdLine = cmdLine.substr(0, pos);
           // Keep program name only, removing the path
