@@ -629,9 +629,10 @@ bool HS485Manager::LoadDeviceList()
 					std::string sysinfo;
 					for(unsigned int i=0;(i*2+1)<s.size();i++)sysinfo.append(1, (char)strtol(s.substr(2*i, 2).c_str(), NULL, 16));
 					descr=system_description.GetDeviceBySysinfo(sysinfo);
+					if(!descr)
+						LOG(Logger::LOG_WARNING, "Matching \"sysinfo\" attribute from file %s failed. Trying \"type\" instead.", pEntry->d_name);
 				}
 				if(!descr){
-					LOG(Logger::LOG_WARNING, "Matching \"sysinfo\" attribute from file %s failed. Trying \"type\" instead.", pEntry->d_name);
 					temp=rootNode.getAttribute("type");
 					if(!temp){
 						LOG(Logger::LOG_ERROR, "Missing \"type\" attribute in file %s", pEntry->d_name);
