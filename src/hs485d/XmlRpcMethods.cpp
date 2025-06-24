@@ -18,7 +18,7 @@ public:
 		LOG(Logger::LOG_DEBUG, "XmlRpcMethod %s(%s)", _name.c_str(), params.toText().c_str());
 		do_execute(params, result);
 		LOG(Logger::LOG_DEBUG, "XmlRpcMethod %s(%s)return", _name.c_str(), params.toText().c_str());
-		printf("%s", result.toText().c_str());
+		LOG(Logger::LOG_DEBUG, "%s", result.toText().c_str());
 	}
 	virtual void do_execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)=0;
 };

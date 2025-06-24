@@ -62,7 +62,7 @@ int HS485ControllerCCU1::Discovery(std::vector<uint32_t>* devices)
     pMsg->SetUShortData(0,256);
 	TxQueueAddMessage(pMsg);
     if(!pMsg->WaitUntilSent(NULL)){
-		printf("discovery msg send failure\n");
+      LOG(Logger::LOG_ERROR, "discovery msg send failure");
 	}else{
         int i=0;
 	    CommMessage* response=pMsg->GetResponse(i);

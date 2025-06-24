@@ -47,6 +47,7 @@ char buffer[128];
 #include <PropertyMap.h>
 #include <md5.h>
 
+#include "generated-hs485d-version.h"
 
 using namespace XmlRpc;
 
@@ -79,22 +80,29 @@ static void sigterm_handler(int sig)
 
 static void usage(const char* procname)
 {
-    printf("%s [-f config file] [-h host -p port] [-c] [-l loglevel] [-g] [-s LGWSerialNumber] [-i InterfaceNr]  [-k MYPASSWORD]\n", procname);
-    printf("    -f: Path to hs485d configuration file. Default: /etc/config/hs485d.conf\n");
-    printf("    -h: remote ip host to connect to\n");
-    printf("    -p: remote tcp port to connect to\n");
-    printf("    -c: log to console instead of syslog\n");
-    printf("    -l: set log level\n");
-    printf("    -g: use HM2 wired lan gateway. (Either -s, or -i, or -h and -p must be supplied too.)\n");
-    printf("    -s: HM2 LGW serial number");
-    printf("    -i: HM2 LGW Interface Number. (From /etc/config/hs485d.conf) Use 0 for [Interface 0]\n\n");
-    printf("    -k: Encryption Key. (Only valid for HM2 LGW.)\n");
-    printf("Examples for HM2 Wired LGW:\n");
-    printf("Start with serial number: hs485d -l 5 -g -s ABC1234567 [-k MYPASSWORD]\n");
-    printf("Start with port and ip  : hs485d -l 5 -g -h 192.168.1.2 -p 1000 [-k MYPASSWORD]\n");
-    printf("Start with interface-nr : hs485d -l 5 -g -i 0\n\n");
-	if(logger)delete logger;
-	exit(1);
+  std::cout << "HS485D " << HS485D_VERSION << " (" << __DATE__ << ")" << std::endl
+            << std::endl
+            << "Usage: " << procname << " [-f config file] [-h host -p port] [-c] [-l loglevel] [-g] [-s LGWSerialNumber] [-i InterfaceNr]  [-k MYPASSWORD]" << std::endl
+            << "    -f: Path to hs485d configuration file. Default: /etc/config/hs485d.conf" << std::endl
+            << "    -h: remote ip host to connect to" << std::endl
+            << "    -p: remote tcp port to connect to" << std::endl
+            << "    -c: log to console instead of syslog" << std::endl
+            << "    -l: set log level" << std::endl
+            << "    -g: use HM2 wired lan gateway. (Either -s, or -i, or -h and -p must be supplied too.)" << std::endl
+            << "    -s: HM2 LGW serial number" << std::endl
+            << "    -i: HM2 LGW Interface Number. (From /etc/config/hs485d.conf) Use 0 for [Interface 0]" << std::endl
+            << "    -k: Encryption Key. (Only valid for HM2 LGW.)" << std::endl
+            << std::endl
+            << "Examples for HM2 Wired LGW:" << std::endl
+            << std::endl
+            << "Start with serial number: hs485d -l 5 -g -s ABC1234567 [-k MYPASSWORD]" << std::endl
+            << "Start with port and ip  : hs485d -l 5 -g -h 192.168.1.2 -p 1000 [-k MYPASSWORD]" << std::endl
+            << "Start with interface-nr : hs485d -l 5 -g -i 0" << std::endl;
+
+  if(logger)
+    delete logger;
+
+  exit(1);
 }
 
 static std::string calculateMD5(const std::string& s)
@@ -202,7 +210,6 @@ int main(int argc, char* argv[])
 			}
 			bool done = pLGWPortWrapper->connect(host, port, encryptionKey, "");
 			if(!done) {
-				//printf("Unable to open network connection to HomeMatic Wired Lan Gateway.\n");
 				LOG(Logger::LOG_FATAL_ERROR, "Unable to open network connection to HomeMatic Wired Lan Gateway.");
 				delete pLGWPortWrapper;
 				delete(logger);
@@ -258,7 +265,6 @@ int main(int argc, char* argv[])
 
 				if(!done) {
 					LOG(Logger::LOG_FATAL_ERROR, "Could not gather indispensable information from /etc/config/hs485d.conf");
-					//printf("Could not gather indispensable information from /etc/config/hs485d.conf");
 					delete logger;
 					return 2;//important, hs485dLoader checks that.
 				}
@@ -312,7 +318,6 @@ int main(int argc, char* argv[])
 				bool done = determineIPAddressBySerial(lgwSerialNumber, lgwIPAddress);
 				if(!done) {
 					LOG(Logger::LOG_FATAL_ERROR, "Can't determine ip address for serial number %s", lgwSerialNumber.c_str());
-					//printf("Can't determine ip address for serial number %s\n",lgwSerialNumber.c_str());
 					delete logger;
 					exit(1);
 				}
@@ -321,14 +326,13 @@ int main(int argc, char* argv[])
 				}
 				done = pLGWPortWrapper->connect(lgwIPAddress, 1000, encryptionKey, lgwSerialNumber);
 				if(!done) {
-					printf("Could not connect to HomeMatic Lan Gateway with IP Address %s", lgwIPAddress.c_str());
+					LOG(Logger::LOG_FATAL_ERROR, "Could not connect to HomeMatic Lan Gateway with IP Address %s", lgwIPAddress.c_str());
 					delete logger;
 					exit(1);
 				}
 			}
 			else {
 				LOG(Logger::LOG_FATAL_ERROR, "Neither serial number nor interfaceId of HomeMatic Wired Lan Gateway was given.");
-				//printf("Neither serial number nor interfaceId of HomeMatic Wired Lan Gateway was given.\n");
 				delete logger;
 				exit(1);
 			}
@@ -343,7 +347,6 @@ int main(int argc, char* argv[])
 			UnixSerialPortWrapper* uspw=new UnixSerialPortWrapper();
 			if(uspw->Open(device)<0){
 				LOG(Logger::LOG_FATAL_ERROR, "Unable to open line port");
-				//printf("Unable to open line port\n");
 				delete uspw;
 				delete logger;
 				exit(1);
@@ -491,7 +494,7 @@ bool determineIPAddressBySerial(const std::string& serial, std::string& ip)
 {
 	LDU::LanDeviceUtils ldUtils;
 	LDU::LanDevice lanDevice;
-	//printf("Searching for HomeMatic Lan Gateway with serial number %s.\n", lgwSerialNumber.c_str());
+	LOG(Logger::LOG_DEBUG, "Searching for HomeMatic Lan Gateway with serial number %s.", serial.c_str());
 	bool done = ldUtils.searchDeviceByTypeAndSerial("eQ3-HMW-LGW*", serial, lanDevice);
 	if(!done) {
 		LOG(Logger::LOG_FATAL_ERROR, "Could not find HomeMatic Lan Gateway with serial number %s.", serial.c_str());
