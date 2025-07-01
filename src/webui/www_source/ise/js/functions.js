@@ -3594,7 +3594,7 @@ getExtendedDescription = function(oChannelDescr)  {
     }
   }
 
-  if ((chType == "DISPLAY_INPUT_TRANSMITTER") && (deviceType.toLowerCase() == "hmipw-wgd" || deviceType.toLowerCase() == "hmipw-wgd-pl")) {
+  if ((chType == "DISPLAY_INPUT_TRANSMITTER") && (deviceType.includes("-WGD"))) {
     var oddChn = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39, 41];
     jQuery.each(oddChn, function(index, value) {
       if (channelIndex == value) {
@@ -3620,7 +3620,7 @@ getExtendedDescription = function(oChannelDescr)  {
     });
   }
 
-  if ((chType == "DISPLAY_LEVEL_INPUT_TRANSMITTER") && (deviceType.toLowerCase() == "hmipw-wgd" || deviceType.toLowerCase() == "hmipw-wgd-pl")) {
+  if ((chType == "DISPLAY_LEVEL_INPUT_TRANSMITTER") && (deviceType.includes("-WGD"))) {
     var evenChn = [2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40];
 
     jQuery.each(evenChn, function(index, value) {
@@ -3645,7 +3645,7 @@ getExtendedDescription = function(oChannelDescr)  {
     });
   }
 
-  if ((chType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER") && (deviceType.toLowerCase() == "hmipw-wgd" || deviceType.toLowerCase() == "hmipw-wgd-pl")) {
+  if ((chType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER") && (deviceType.includes("-WGD"))) {
     var oddChn = [43,45,47,49,51],
       evenChn = [42,44,46,48,50];
 

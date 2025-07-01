@@ -81,11 +81,11 @@ proc getMaintenance {chn p descr} {
   append html "[getHorizontalLine]"
 
   # Check how many screens are available (5 or 10)
-  set availableScreens 5 ; # default 5
+  set availableScreens 5 ; # default 6
 
-  set param SCREEN_LAYOUT_PAGE_NUMBER_10
+  set param SCREEN_LAYOUT_PAGE_NUMBER_11
   if { [info exists ps($param)] == 1  } {
-    set availableScreens 10
+    set availableScreens 11
   }
 
   append html "<tr class='hidden'>"
@@ -115,15 +115,16 @@ proc getMaintenance {chn p descr} {
           append html "<th colspan='2'>< Screen 2 ></th>"
           append html "<th colspan='2'>< Screen 3 ></th>"
           append html "<th colspan='2'>< Screen 4 ></th>"
+          append html "<th colspan='2'>< Screen 5 ></th>"
 
         append html "<tr>"
-          for {set loopx 0} {$loopx <= 4} {incr loopx} {
+          for {set loopx 0} {$loopx <= 5} {incr loopx} {
             set loop [expr $loopx + 1]
             incr prn
             append html "<td>"
               append html "<select type='text' id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop' value='$ps(SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop)'>"
-              if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
-              append html "<option value='15'>15</option>"
+              if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
+              append html "<option value='16'>16</option>"
               for {set option 0} {$option <= $maxOption} {incr option} {
                 if {$option == $ps(SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop)} {set selected "selected='selected'"} else {set selected ""}
                 append html "<option value='$option' $selected>$option</option>"
@@ -134,7 +135,7 @@ proc getMaintenance {chn p descr} {
             incr prn
             append html "<td>"
             append html "<select type='text' id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop' value='$ps(SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop)'>"
-              if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
+              if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
               for {set option 0} {$option <= $maxOption} {incr option} {
                 if {$option == $ps(SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop)} {set selected "selected='selected'"} else {set selected ""}
                 append html "<option value='$option' $selected>$option</option>"
@@ -156,7 +157,7 @@ proc getMaintenance {chn p descr} {
             incr prn
             append html "<td>"
               append html "<select id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_PAGE_NUMBER_$loop' value='$ps(SCREEN_LAYOUT_PAGE_NUMBER_$loop)'>"
-                if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
+                if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
                 for {set option 0} {$option <= $maxOption} {incr option} {
                   if {$option == $ps(SCREEN_LAYOUT_PAGE_NUMBER_$loop)} {set selected "selected='selected'"} else {set selected ""}
                   append html "<option value='$option' $selected>$option</option>"
@@ -170,7 +171,7 @@ proc getMaintenance {chn p descr} {
   append html "</tr>"
 
 ####
-  if {$availableScreens == 10} {
+  if {$availableScreens == 11} {
     append html "<tr class='hidden'>"
       append html "<td>"
         append html "tr Nachbar Screens CLIMATE"
@@ -186,15 +187,16 @@ proc getMaintenance {chn p descr} {
             append html "<th colspan='2'>< Screen 7 ></th>"
             append html "<th colspan='2'>< Screen 8 ></th>"
             append html "<th colspan='2'>< Screen 9 ></th>"
+            append html "<th colspan='2'>< Screen 10 ></th>"
           append html "</tr>"
 
           append html "<tr>"
-            for {set loopx 5} {$loopx <= 9} {incr loopx} {
+            for {set loopx 6} {$loopx <= 10} {incr loopx} {
               set loop [expr $loopx + 1]
               incr prn
               append html "<td>"
                 append html "<select type='text' id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop' value='$ps(SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop)'>"
-                  if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
+                  if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
                   append html "<option value='15'>15</option>"
                   for {set option 0} {$option <= $maxOption} {incr option} {
                     if {$option == $ps(SCREEN_LAYOUT_LEFT_NEIGHBOUR_$loop)} {set selected "selected='selected'"} else {set selected ""}
@@ -205,7 +207,7 @@ proc getMaintenance {chn p descr} {
               incr prn
               append html "<td>"
                 append html "<select type='text' id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop' value='$ps(SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop)'>"
-                  if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
+                  if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
                   for {set option 0} {$option <= $maxOption} {incr option} {
                     if {$option == $ps(SCREEN_LAYOUT_RIGHT_NEIGHBOUR_$loop)} {set selected "selected='selected'"} else {set selected ""}
                     append html "<option value='$option' $selected>$option</option>"
@@ -224,11 +226,11 @@ proc getMaintenance {chn p descr} {
         append html "<td>Page Number</td>"
           append html "<td>"
             append html "<table><tr>"
-              for {set loop 6} {$loop <= 10} {incr loop} {
+              for {set loop 7} {$loop <= 11} {incr loop} {
                 incr prn
                 append html "<td>"
                   append html "<select id='separate_CHANNEL_$chn\_$prn' name='SCREEN_LAYOUT_PAGE_NUMBER_$loop' value='$ps(SCREEN_LAYOUT_PAGE_NUMBER_$loop)'>"
-                    if {$availableScreens == 10} {set maxOption 9} else {set maxOption 4}
+                    if {$availableScreens == 11} {set maxOption 10} else {set maxOption 5}
                     for {set option 0} {$option <= $maxOption} {incr option} {
                       if {$option == $ps(SCREEN_LAYOUT_PAGE_NUMBER_$loop)} {set selected "selected='selected'"} else {set selected ""}
                       append html "<option value='$option' $selected>$option</option>"
@@ -266,16 +268,16 @@ proc getMaintenance {chn p descr} {
         # Sortable Screen Elements
         append html "<tr>"
           append html "<td>"
-          if {$availableScreens == 5} {
-              append html "<div id='dragScreen' style='background-color:lightgrey; display: grid; grid-template-columns: repeat(6, auto); grid-column-gap: 10px; height: $sliderHeight;position:relative;'>"
-                for {set loop 0} {$loop <= 4} {incr loop} {
+          if {$availableScreens == 6} {
+              append html "<div id='dragScreen' style='background-color:lightgrey; display: grid; grid-template-columns: repeat(7, auto); grid-column-gap: 10px; height: $sliderHeight;position:relative;'>"
+                for {set loop 0} {$loop <= 5} {incr loop} {
                   append html "<div value='$loop' name='sortScreen' style=$btnStyle><span name='lblScreen' style='font-weight: bold;'>Screen [expr $loop + 1]</span></div>"
                 }
                 append html "<div value='END' name='sortScreen' style=$btnStyle><span name='lblScreen'>|</span></div>"
               append html "</div>"
-          } elseif {$availableScreens == 10} {
-            append html "<div id='dragScreen' style='background-color:lightgrey; display: grid; grid-template-columns: repeat(11, auto); grid-column-gap: 10px; height: $sliderHeight;position:relative;'>"
-              for {set loop 0} {$loop <= 9} {incr loop} {
+          } elseif {$availableScreens == 11} {
+            append html "<div id='dragScreen' style='background-color:lightgrey; display: grid; grid-template-columns: repeat(12, auto); grid-column-gap: 10px; height: $sliderHeight;position:relative;'>"
+              for {set loop 0} {$loop <= 10} {incr loop} {
                 append html "<div value='$loop' name='sortScreen' style=$btnStyle><span name='lblScreen' style='font-weight: bold;'>Screen [expr $loop + 1]</span></div>"
               }
               append html "<div value='END' name='sortScreen' style=$btnStyle><span name='lblScreen'>|</span></div>"
@@ -308,13 +310,13 @@ proc getMaintenance {chn p descr} {
     append html "<td>\${lblLayoutScreenTile}</td>"
     append html "<td><table>"
     append html "<tr>"
-      for {set loop 1} {$loop <= 5} {incr loop} {
+      for {set loop 1} {$loop <= 6} {incr loop} {
         append html "<th>Screen $loop</th>"
       }
     append html "</tr>"
 
     append html "<tr>"
-      for {set loop 1} {$loop <= 5} {incr loop} {
+      for {set loop 1} {$loop <= 6} {incr loop} {
         set param SCREEN_LAYOUT_TILE_LAYOUT_$loop
         incr prn
         array_clear options
@@ -328,19 +330,19 @@ proc getMaintenance {chn p descr} {
    append html "</tr></table></td>"
   append html "</tr>"
 
-  if {$availableScreens == 10} {
+  if {$availableScreens == 11} {
 
   append html "<tr>"
     append html "<td>\${lblLayoutScreenClimateTile}</td>"
     append html "<td><table>"
     append html "<tr>"
-      for {set loop 6} {$loop <= 10} {incr loop} {
+      for {set loop 5} {$loop <= 11} {incr loop} {
         append html "<th>Screen $loop</th>"
       }
     append html "</tr>"
 
     append html "<tr>"
-      for {set loop 6} {$loop <= 10} {incr loop} {
+      for {set loop 5} {$loop <= 11} {incr loop} {
         set param SCREEN_LAYOUT_TILE_LAYOUT_$loop
         incr prn
         array_clear options
