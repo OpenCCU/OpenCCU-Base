@@ -52,7 +52,7 @@ var
       30: ["_921_32_uv-radiation.png",218],
       31: ["_921_33_Wind direction.png",219],
       32: ["_921_35_windvane.png",220],
-      33: ["_921_36_windy.png",221],
+      33: ["_921_36_windy.png",221]
 
 
     };
