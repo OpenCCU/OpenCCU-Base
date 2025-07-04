@@ -1935,11 +1935,16 @@ showParamHelp = function(topic, x , y) {
  MessageBox.show(translateKey("HelpTitle"), translateKey(topic), "", width, height);
 };
 
-selectWGDIcon = function(chn, elmId, activeIcon, category) {
+selectWGDIcon = function(chn, elmId, activeIcon, category, index) {
   var dlg = new WGDSelectIconDialog(translateKey("lblBaseImage"), "<div id='anchor_" + chn + "'></div>", function(btnPress) {
     if (btnPress == this.RESULT_YES) {
       jQuery("#" + elmId).val(this.getSelectedIconNo());
-      jQuery("#image_" + chn ).attr("src", this.getSelectedIcon());
+
+      if (typeof index == "undefined") {
+        jQuery("#image_" + chn).attr("src", this.getSelectedIcon());
+      } else {
+       jQuery("#image_" + index + "_" + chn).attr("src", this.getSelectedIcon());
+      }
     }
   }, "html", category);
   dlg.btnTextNo(translateKey("btnCancel"));
