@@ -1935,7 +1935,7 @@ showParamHelp = function(topic, x , y) {
  MessageBox.show(translateKey("HelpTitle"), translateKey(topic), "", width, height);
 };
 
-selectWGDIcon = function(chn, elmId, activeIcon) {
+selectWGDIcon = function(chn, elmId, activeIcon, category) {
   var dlg = new WGDSelectIconDialog(translateKey("lblBaseImage"), "<div id='anchor_" + chn + "'></div>", function(btnPress) {
     if (btnPress == this.RESULT_YES) {
       jQuery("#" + elmId).val(this.getSelectedIconNo());
@@ -1946,6 +1946,7 @@ selectWGDIcon = function(chn, elmId, activeIcon) {
   dlg.btnTextYes(translateKey("btnOk"));
   dlg.chn = chn;
   dlg.activeIcon = parseInt(activeIcon);
+  dlg.category = category;
 };
 
 

@@ -660,6 +660,74 @@ proc getDisplayThermostatInputTransmitter {chn p descr} {
 
 }
 
+proc getWeatherDisplayReceiver {chn p descr} {
+
+  global dev_descr env
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar special_input_id special_input_id
+
+  set prn 0
+  set devType $dev_descr(TYPE)
+  set specialID "[getSpecialID $special_input_id]"
+  set html ""
+
+  set isWired [string first "HmIPW-" $devType]
+
+  set param BASE_IMAGE
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblBaseImage}</td>"
+      append html "<td><table><tr>"
+        # append html "<td>[getButton btnImage_$chn 'IMAGE' selectWGDIcon(\"$chn\",\"separate_$special_input_id\_$prn\",\"$ps($param)\")]</td>"
+        append html "<td style='border: 1px solid black;'><div style='background-color:gray; padding:5px; cursor: pointer;' onclick='selectWGDIcon(\"$chn\",\"separate_$special_input_id\_$prn\",\"$ps($param)\", \"weather\");'><img id=\"image_$chn\" width='24' height='24' src=''></div></td>"
+        # This textfield is necessary but should not be invisible.
+        append html  "<td class='hidden' style='padding-left:60px;'>[getTextField $param $ps($param) $chn $prn]&nbsp;<span class='attention'>(only visible for testing)</span></td>"
+      append html "</tr></table></td>"
+
+      append html "<script type=\"text/javascript\">"
+      append html "if (typeof imageCollection == 'undefined') {"
+        append html "imageCollection = getWGDImageCollection('weather');"
+      append html "}"
+      append html "jQuery.each(imageCollection, function(index, val) {"
+        append html "if (parseInt($ps($param)) == val\[1\]) {"
+          append html "jQuery(\"\#image_$chn\").attr(\"src\", getWGDImagePath('weather') + val\[0\]);"
+          append html "return false;" ;# return each loop
+        append html "} else {"
+          append html "jQuery(\"\#image_$chn\").attr(\"src\", getWGDImagePath('weather') + getWGDDefaultImage('weather'));"
+        append html "}"
+      append html "});"
+      append html "</script>"
+
+    append html "</tr>"
+  }
+
+
+  set param MAIN_TEXT
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "[getHorizontalLine]"
+    append html "<tr>"
+      append html "<td>\${lblMainText}</td>"
+      append html  "<td>[getTextField $param $ps($param) $chn $prn]</td>"
+    append html "</tr>"
+  }
+
+  set param SUB_TEXT
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblSubText}</td>"
+      append html  "<td>[getTextField $param $ps($param) $chn $prn]</td>"
+    append html "</tr>"
+  }
+
+  return $html
+
+}
+
 proc getNoParametersToSet {} {
   set html "<tr><td name=\"noParamElm\" class=\"CLASS22003\"><div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div></td></tr>"
   # center content

@@ -1,23 +1,50 @@
 var
-  getWGDImagePath = function() {
-    return "/ise/img/icons_hmipw_wgd/";
+  getWGDImagePath = function(category) {
+    var path = "";
+
+    if (typeof  category == "undefined") {
+      path = "/ise/img/icons_hmipw_wgd/";
+    } else if (category == "weather") {
+      path = path = "/ise/img/icons_hmipw_wgd/weather";
+    }
+
+    return path;
   },
-  getWGDDefaultImage = function() {
+  getWGDDefaultImage = function(category) {
     return "_0000_fallback.png";
   },
-  getWGDImageCollection = function() {
-  var image = {
-    0 : ["_0000_fallback.png",0],
-    1 : ["_000_000_lightbulb0.png",1],
-    2 : ["_001_000_tablelamp0.png",12],
-    3 : ["_002_000_spotoff.png",23],
-    4 : ["_010_000_socket_off.png",25],
-    5 : ["_020_000_shutter0.png",27]
-    /*  Not desired according to discussion with PM and Developer.
-    5 : ["_050_20_windows_closed.png",43],
-    6 : ["_050_64_window_closed.png",52]
-     */
+
+  getWGDImageCollectionWeather = function() {
+    var image = {
+      0: ["_0000_fallback.png",0],
+      1: ["_921_00_attention.png",1],
+      2: ["_921_01_cloud sun rain.png",2],
+      3: ["_921_02_cloud.png",3],
+      4: ["_921_03_cloud-lightning.png",4]
+    };
+    return image;
   };
+
+  getWGDImageCollection = function(category) {
+  var image;
+  if (typeof  category == "undefined") {
+    image = {
+      0: ["_0000_fallback.png", 0],
+      1: ["_000_000_lightbulb0.png", 1],
+      2: ["_001_000_tablelamp0.png", 12],
+      3: ["_002_000_spotoff.png", 23],
+      4: ["_010_000_socket_off.png", 25],
+      5: ["_020_000_shutter0.png", 27]
+      /*  Not desired according to discussion with PM and Developer.
+      5 : ["_050_20_windows_closed.png",43],
+      6 : ["_050_64_window_closed.png",52]
+       */
+    };
+  }
+
+  if (category == "weather") {
+    image = getWGDImageCollectionWeather();
+  }
   return image;
 };
 
