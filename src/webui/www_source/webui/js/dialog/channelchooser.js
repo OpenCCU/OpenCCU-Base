@@ -187,10 +187,16 @@ ChannelChooser = Singleton.create({
 
     }
 
-    if (((channel.channelType == "DISPLAY_INPUT_TRANSMITTER") || (channel.channelType == "DISPLAY_LEVEL_INPUT_TRANSMITTER") || (channel.channelType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER")) && ((channelTypeName.indexOf("-wgd") != -1))) {
-      var wgdScreenOrder, screenEndID = "END", counter, chnDescription, curDevice, tilesA = [1, 3, 7], tilesB = [0, 1],
-        loop,
+    if (((channel.channelType == "DISPLAY_INPUT_TRANSMITTER")
+      || (channel.channelType == "DISPLAY_LEVEL_INPUT_TRANSMITTER")
+      || (channel.channelType == "DISPLAY_THERMOSTAT_INPUT_TRANSMITTER")
+      || (channel.channelType == "WEATHER_DISPLAY_RECEIVER")
+    ) && ((channelTypeName.indexOf("-wgd") != -1))) {
+
+      var wgdScreenOrder, screenEndID = "END", counter, chnDescription, curDevice, tilesA = [1, 3, 7], tilesB = [0, 1],loop,
+        isWired = channelTypeName.indexOf("hmipw") != -1,
         self = this;
+
       if (channel.index == 41) {
         arChannels.push(channel);
       } else {
@@ -200,23 +206,21 @@ ChannelChooser = Singleton.create({
           oDevice = DeviceList.getDeviceByAddress(channel.address.split(":")[0]); // The device stores the screen order
           wgdScreenOrder = homematic("Interface.getMetadata", {"objectId": oDevice.id, "dataId": "screenOrder"});
           this.arWGDScreenOrder = wgdScreenOrder.split(",");
-          this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 10) ? {
-            0: 1,
-            1: 9,
-            2: 17,
-            3: 25,
-            4: 33
-          } : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50};
+          if (isWired) {
+            this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 10) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50};
+          } else {
+            this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 11) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 35} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50, 10:52};
+          }
           this.WGDChannelInUse = [];
           this.arWGDTiles = [];
 
           // Get number of tiles
-          chnDescription = homematic("Interface.getParamset", {
-            "interface": "HmIP-RF",
-            "address": curDevice + ":0",
-            "paramsetKey": "MASTER"
-          });
-          loop = ((this.arWGDScreenOrder.length < 10)) ? 5 : 10;
+          chnDescription = homematic("Interface.getParamset", {"interface": "HmIP-RF", "address": curDevice + ":0", "paramsetKey": "MASTER"});
+          if (isWired) {
+            loop = ((this.arWGDScreenOrder.length < 10)) ? 5 : 10;
+          } else {
+            loop = ((this.arWGDScreenOrder.length < 11)) ? 6 : 11;
+          }
 
           for (var loopx = 1; loopx <= loop; loopx++) {
             this.arWGDTiles.push(chnDescription["SCREEN_LAYOUT_TILE_LAYOUT_" + loopx]);
@@ -224,13 +228,15 @@ ChannelChooser = Singleton.create({
 
           jQuery.each(this.arWGDScreenOrder, function (index, screen) {
             if ((!endOfScreens) && (screen != screenEndID)) {
-              counter = (screen <= 4) ? tilesA[self.arWGDTiles[screen]] : tilesB[self.arWGDTiles[screen]];
+              if (isWired) {
+                counter = (screen <= 4) ? tilesA[self.arWGDTiles[screen]] : tilesB[self.arWGDTiles[screen]];
+              } else {
+                counter = (screen <= 5) ? tilesA[self.arWGDTiles[screen]] : tilesB[self.arWGDTiles[screen]];
+              }
               for (loop = self.WGDStartChannelPerScreen[screen]; loop <= (self.WGDStartChannelPerScreen[screen] + counter); loop++) {
                 self.WGDChannelInUse.push(loop);
               }
-            } else {
-              endOfScreens = true;
-            } // return false doesn't work because of a problem with the build-system
+            } else {endOfScreens = true;} // return false doesn't work because of a problem with the build-system
           });
         }
 
