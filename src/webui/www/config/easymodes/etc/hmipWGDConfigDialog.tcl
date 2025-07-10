@@ -329,8 +329,10 @@ proc getMaintenance {chn p descr} {
         incr prn
         array_clear options
         set options(0) "\${option1Tile}"
-        set options(1) "\${option2Tiles}"
-        set options(2) "\${option4Tiles}"
+        if {$loop < $loopMax} {
+          set options(1) "\${option2Tiles}"
+          set options(2) "\${option4Tiles}"
+        }
         append html "<td>"
           append html "[get_ComboBox options $param separate_$special_input_id\_$prn ps $param]"
         append html "</td>"

@@ -209,7 +209,7 @@ ChannelChooser = Singleton.create({
           if (isWired) {
             this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 10) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50};
           } else {
-            this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 11) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 35} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50, 10:52};
+            this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 11) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50, 10:52};
           }
           this.WGDChannelInUse = [];
           this.arWGDTiles = [];
@@ -387,7 +387,7 @@ ChannelChooser = Singleton.create({
             if (isWired) {
               this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 10) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50};
             } else {
-              this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 11) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 35} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50, 10:52};
+              this.WGDStartChannelPerScreen = (this.arWGDScreenOrder.length < 11) ? {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42} : {0: 1, 1: 9, 2: 17, 3: 25, 4: 33, 5: 42, 6: 44, 7: 46, 8: 48, 9: 50, 10:52};
             }
             this.WGDChannelInUse = [];
             this.arWGDTiles = [];

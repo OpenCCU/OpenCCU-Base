@@ -79,7 +79,7 @@ showOnlyActiveChannels = function(screenOrder, wired) {
     if (isWired) {
      screenChannels = (arScreenOrder.length < 10) ? {0:1, 1:9, 2:17, 3:25, 4:33} : {0:1, 1:9, 2:17, 3:25, 4:33, 5:42, 6:44, 7:46, 8: 48, 9:50};
     } else {
-      screenChannels = (arScreenOrder.length < 11) ? {0:1, 1:9, 2:17, 3:25, 4:33, 5:41} : {0:1, 1:9, 2:17, 3:25, 4:33, 5:42, 6:44, 7:46, 8: 48, 9:50, 10:52};
+      screenChannels = (arScreenOrder.length < 11) ? {0:1, 1:9, 2:17, 3:25, 4:33, 5:42} : {0:1, 1:9, 2:17, 3:25, 4:33, 5:42, 6:44, 7:46, 8: 48, 9:50, 10:52};
     }
 
   // Hide the config params of all channels except 0 and 41
@@ -109,7 +109,7 @@ storeSelectedScreenOrder = function(devAddress) {
 
   var arScreenElements = jQuery("[name='sortScreen']");
   jQuery.each(arScreenElements, function (index, elm) {
-    screenOrder+=jQuery(elm).attr("value") + ","
+    screenOrder+=jQuery(elm).attr("value") + ",";
   });
 
   screenOrder = screenOrder.slice(0, -1); // remove the last comma
