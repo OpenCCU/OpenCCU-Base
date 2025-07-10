@@ -545,6 +545,7 @@ iseHmIPWeeklyProgram.prototype = {
       if (
         channelType == "DIMMER_VIRTUAL_RECEIVER" ||
         channelType == "SWITCH_VIRTUAL_RECEIVER" ||
+        channelType == "WATER_SWITCH_VIRTUAL_RECEIVER" ||
         channelType == "BLIND_VIRTUAL_RECEIVER" ||
         channelType == "SHUTTER_VIRTUAL_RECEIVER" ||
         channelType == "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER" ||
