@@ -133,6 +133,7 @@ jQuery.extend(true, langJSON, {
 
     "comment" : "Release C/2025 not yet translated",
     "stringTableWeatherReceiverDataId" : "Picture ID",
+    "optionPictureID" : "ID&nbsp;",
 
     "noMoreKeys" : ""
   }
