@@ -71,7 +71,7 @@ jQuery.extend(true, langJSON, {
     "optionSetpoint" : "Setpoint temperature",
     "optionActualHumidity" : "Current temperature/humidity",
     "optionCO2" : "CO2",
-    "optionActualHimidityCO2" : "Current temperature/humidity/CO2",
+    "optionActualHumidityCO2" : "Current temperature/humidity/CO2",
     "optionHumidity" : "Humidity",
 
     "modeBWTH" : "Wall Thermostat",
@@ -81,7 +81,7 @@ jQuery.extend(true, langJSON, {
     "stringTableWaterVolume" : "Total water volume",
     "stringTableWaterVolumeSinceOpen" : "Water volume since opening",
 
-    "stringTableWaterFlowStatus" : "Status currend flow",
+    "stringTableWaterFlowStatus" : "Status current flow",
     "stringTableWaterFlowOverflowFalse" : "Counter overflow: No",
     "stringTableWaterFlowOverflowTrue" : "Counter overflow: Yes",
     "stringTableWaterVolumeSinceOpenOverflowFalse" : "Counter overflow since opening: no",

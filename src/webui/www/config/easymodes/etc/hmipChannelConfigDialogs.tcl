@@ -2945,7 +2945,7 @@ proc getHeatingClimateControlTransceiver {chn p descr address {extraparam ""}} {
           set options(1) "\${optionSetpoint}"
           set options(2) "\${optionActualHumidity}"
           set options(3) "\${optionCO2}"
-          set options(4) "\${optionActualHimidityCO2}"
+          set options(4) "\${optionActualHumidityCO2}"
           set options(5) "\${optionHumidity}"
         } else {
           set options(0) "\${optionActual}"

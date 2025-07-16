@@ -33,8 +33,7 @@ WGDWeatherCombinedParamDialog = Class.create(YesNoDialog,{
   },
 
   getConfigString: function() {
-    var result = "DDI=" + this.DDI_Elm.val() + ",DDS=" + this.DDS_Elm.val();
-    return result;
+    return  "DDI=" + this.DDI_Elm.val() + ",DDS=" + this.DDS_Elm.val();
   }
 
 });

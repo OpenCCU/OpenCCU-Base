@@ -77,7 +77,7 @@ jQuery.extend(true, langJSON, {
     "optionSetpoint" : "Solltemperatur",
     "optionActualHumidity" : "Aktuelle Temperatur / Feuchtigkeit",
     "optionCO2" : "CO2",
-    "optionActualHimidityCO2" : "Aktuelle Temperatur / Feuchtigkeit / CO2",
+    "optionActualHumidityCO2" : "Aktuelle Temperatur / Feuchtigkeit / CO2",
     "optionHumidity" : "Feuchtigkeit",
 
     "modeBWTH" : "Wandthermostat",
