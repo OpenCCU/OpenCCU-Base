@@ -46,6 +46,7 @@
   string servoVirtualReceiver = "SERVO_VIRTUAL_RECEIVER";
   string switchVirtualReceiver = "SWITCH_VIRTUAL_RECEIVER";
   string universalLightReceiver = "UNIVERSAL_LIGHT_RECEIVER";
+  string weatherDisplayReceiver = "WEATHER_DISPLAY_RECEIVER";
 
 
   string windowDriveReceiver = "WINDOW_DRIVE_RECEIVER";
@@ -557,6 +558,7 @@
             integer i_hmip_WeekProfile = oCH.HssType().Find(hmIPWeekProfile);
             integer i_maintenance = oCH.HssType().Find(maintenance);
             integer i_backLightingReceiver = oCH.HssType().Find(backLightingReceiver);
+            integer i_weatherDisplayReceiver = oCH.HssType().Find(weatherDisplayReceiver);
 
             integer ePaperAcousticDisplay = chLabel.Find(hmip_wrcd);
 
@@ -577,6 +579,7 @@
               || (i_backLightingReceiver != -1)
               || (i_servoVirtualReceiver != -1)
               || (i_windowDriveReceiver != -1)
+              || (i_weatherDisplayReceiver != -1)
               || (i_hmip_WeekProfile != -1)
               || (i_maintenance != -1))
               ) {
@@ -777,6 +780,13 @@
                   iV = "VL=1,OT=0";
                 }
                 Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWindowDriveReceiverLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+              }
+
+              if ((i_weatherDisplayReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
+                if (iV.Find("DDI=") == -1) {
+                  iV = "DDI=0,DDS=Text";
+                }
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWeatherDisplayReceiverController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               ! SPHM-767
