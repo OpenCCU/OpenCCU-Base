@@ -255,6 +255,9 @@ jQuery.extend(true,langJSON, {
     "HmIP-SWO-B": "Homematic IP Weather Sensor - basic",
     "HmIP-SWO-PL": "Homematic IP Weather Sensor - plus",
     "HmIP-SWO-PR": "Homematic IP Weather Sensor - pro",
+
+    "HmIP-UDI-PB2" : "en* Homematic IP Universal Dimmeraufsatz - Taster",
+
     "HmIP-USBSM" : "Homematic IP Switch Actuator and Meter for USB",
     "HmIP-WGC": "Homematic IP Garage Door Controller",
     "HmIP-WGD" : "Homematic IP Wireless Glass Display",
