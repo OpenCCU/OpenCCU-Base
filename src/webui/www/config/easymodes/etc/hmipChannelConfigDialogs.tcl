@@ -7053,6 +7053,54 @@ proc getSoilMoistureTransmitter {chn p descr} {
   return $html
 }
 
+proc getDoorStateTranseiver {chn p descr} {
+
+  global env dev_descr
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar special_input_id special_input_id
+
+  set CHANNEL $special_input_id
+
+  set specialID "[getSpecialID $special_input_id]"
+
+  set html ""
+  set specialParam 0
+  set prn 0
+
+  set param CHANNEL_OPERATION_MODE
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${stringTableDigitalAnalogInputCalibration}</td>"
+      array_clear options
+      set options(0) "\${stringTableOFF}"
+      set options(1) "\${stringTableON}"
+      set options(2) "\${lblAutoCalibration}"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_door_lock]</td>"
+    append html "</tr>"
+  }
+
+    set param SAMPLE_INTERVAL
+    if { [info exists ps($param)] == 1  } {
+      incr prn
+      append html "<tr>"
+        append html "<td>\${genericSampleInterval}</td>"
+       append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getUnit $param]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_door_lock]</td>"
+      append html "</tr>"
+    }
+
+  set param SENSOR_SENSITIVITY
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${stringTableDeviceSensorSensibility}</td>"
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_door_lock]</td>"
+    append html "</tr>"
+  }
+
+}
 
 proc getNoParametersToSet {} {
   set html "<tr><td name=\"noParamElm\" class=\"CLASS22003\"><div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div></td></tr>"
