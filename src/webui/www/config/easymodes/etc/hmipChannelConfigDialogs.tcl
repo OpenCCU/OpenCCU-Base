@@ -4532,11 +4532,11 @@ proc getAccelerationTransceiver {chn p descr address} {
     # Enum values are e. g. SENSOR_RANGE_16G SENSOR_RANGE_8G .... SENSOR_RANGE_2G_2PLUS_SENSE (e. g. HmIP-SAM or HmIP-FLC)
     # The HmIP-DLP(-A) e. g. is using a float value (0.0 - 255.0)
 
-    # convert float to int (0.0 = 0)
-    set maxValue [expr {int([expr [getMaxValue $param]])}]
+    # convert float to int (0.0 = 0) - when valType == 1 the the parameter is an enum
+    set valType [catch {set maxValue [expr {int([expr [getMaxValue $param]])}]}]
 
     append html "<tr>"
-    if {$maxValue >= 200} {
+    if {$valType == 0} {
       append html "<tr>"
         append html "<td>\${stringTableDeviceSensorSensibility}</td>"
         append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_door_lock]</td>"
