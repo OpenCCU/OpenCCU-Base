@@ -145,6 +145,23 @@ jQuery.extend(true, langJSON, {
     "optionTrailingEdge" : "Phasenabschnitt",
     "optionLeadingEdge" : "Phasenanschnitt",
 
+    "lblDoorLockDirection" : "Drehrichtung zum Verschlie%DFen",
+    "lblDoorEndStopOffsetLocked" : "Winkel von neutral unverschlossen nach geschlossen",
+    "lblDoorEndStopOffsetOpen" : "Winkel von neutral unverschlossen nach offen",
+    "lblDoorLockTurns" : "Umdrehungen von unverschlossen nach verschlossen",
+    "lblDoorLockNeutralPos" : "Neutrale Schl%FCsselposition",
+    "lblDoorOpeningDirection" : "%D6ffnungsrichtung",
+
+    "lblAutomaticLock" : "Automatisches Verriegeln",
+
+    "optionIgnoreDoorOpen" : "T%FCrzustand ignorieren",
+    "optionSkipHoldTimeOpening" : "Fallen-Haltezeit %FCberspringen",
+    "optionSkipRelockDelayClosing" : "Auto-Relock-Delay %FCberspringen",
+    "optionSkipHoldTimeOpeningRelockDelayClosing" : "Fallen-Haltezeit und Auto-Relock-Delay %FCberspringen ",
+
+    "optionInwards" : "Innen",
+    "optionOutwards" : "Aussen",
+
     "noMoreKeys" : ""
   }
 });
