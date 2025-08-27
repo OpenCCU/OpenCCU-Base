@@ -307,7 +307,7 @@ function ::CreateDoorStateTranseiver() {
       WriteLine("<table width='100%' _height='100%' cellspacing='4'>");
         WriteLine("<tr>");
           WriteLine("<td>");
-            WriteLine("<div class='ControlBtnOff CLASS02550' style='line-height:35px' id='"#chnId#"resetEnergyCounter' onclick='calibrate();' >${stringTableDigitalAnalogInputCalibration}</div>");
+            WriteLine("<div class='ControlBtnOff CLASS02550' style='line-height:35px' id='"#chnId#"resetEnergyCounter' onclick='calibrate(this);' >${stringTableDigitalAnalogInputCalibration}</div>");
           WriteLine("</td>");
         WriteLine("</tr>");
       WriteLine("</table>");
@@ -315,7 +315,9 @@ function ::CreateDoorStateTranseiver() {
 
     WriteLine("<script type='text/javascript'>");
       WriteLine("calibrate = function(elm) {");
+        WriteLine("JControlBtn.on(jQuery(elm));");
         WriteLine("setDpState("#oLockCalibrate.ID()#", 0);");
+        WriteLine("window.setTimeout(function() {JControlBtn.off(jQuery(elm));},500);");
       WriteLine("}");
     WriteLine("</script>");
   }
