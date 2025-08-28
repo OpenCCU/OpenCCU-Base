@@ -162,6 +162,9 @@ jQuery.extend(true, langJSON, {
     "optionInwards" : "Innen",
     "optionOutwards" : "Aussen",
 
+    "btnAutoRelockOff" : "Auto Relock Aus",
+    "btnAutoRelockOn" : "Auto Relock Ein",
+
     "noMoreKeys" : ""
   }
 });

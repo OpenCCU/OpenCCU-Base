@@ -156,6 +156,9 @@ jQuery.extend(true, langJSON, {
     "optionInwards" : "en* Innen",
     "optionOutwards" : "en* Aussen",
 
+    "btnAutoRelockOff" : "en* Auto Relock Off",
+    "btnAutoRelockOn" : "en* Auto Relock On",
+
     "noMoreKeys" : ""
   }
 });
