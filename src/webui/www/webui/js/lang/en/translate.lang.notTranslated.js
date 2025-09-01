@@ -163,6 +163,11 @@ jQuery.extend(true, langJSON, {
 
     "helpLockTargetLevel" : "en* Hier steht eine Beschreibung des Parameters....",
 
+    "errorJammed" : "en* errorJammed",
+    "errorLoadTooLow" : "en* errorLoadTooLow",
+    "errorNoEndStopLock" : "en* errorNoEndStopLock",
+    "errorNoEndStopUnlock" : "en* errorNoEndStopUnlock",
+
     "noMoreKeys" : ""
   }
 });

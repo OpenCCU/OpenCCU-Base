@@ -167,6 +167,11 @@ jQuery.extend(true, langJSON, {
 
     "dialogSetDLPTargetLevelTitle" : "Lock Target Level",
 
+    "errorJammed" : "errorJammed",
+    "errorLoadTooLow" : "errorLoadTooLow",
+    "errorNoEndStopLock" : "errorNoEndStopLock",
+    "errorNoEndStopUnlock" : "errorNoEndStopUnlock",
+
     "helpLockTargetLevel" : "Hier steht eine Beschreibung des Parameters....",
 
     "noMoreKeys" : ""
