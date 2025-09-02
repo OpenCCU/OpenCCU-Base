@@ -484,12 +484,8 @@ function ::CreateAutoRelockTransceiver() {
       btnOnState = "ControlBtnOff";
     }
 
-
     WriteLine("<td>");
-    WriteLine("</td>");
-
-    WriteLine("<td>");
-      WriteLine("<table width='100%' _height='100%' cellspacing='4'>");
+      WriteLine("<table width='100%'>");
         WriteLine("<tr>");
           WriteLine("<td>");
             WriteLine("<div class='"#btnOffState#"' style='line-height:50px; cursor:pointer;' id='"#chnId#"setAutoRelockOff' onclick='setAutoRelock(this, 0);' >${btnAutoRelockOff}</div>");
