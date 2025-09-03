@@ -210,6 +210,27 @@ jQuery.extend(true, langJSON, {
     "dlpLockTeachInState_11" : "ERROR_TEACH_IN_DRIVE_CANCELED",
     "dlpLockTeachInState_12" : "ERROR_TEACH_IN_DRIVE_BATTERY_LOW",
 
+    "stringTableErrorDoorLockedWhileOpen" : "Verschlossen bei offener T%FCr",
+    "stringTableErrorDoorOpenedWhileLocked" : "T%FCr im verschlossenem Zustand ge%F6ffnet",
+    "stringTableSabotageAcceleration" : "Sabotage Beschleunigungssensor",
+    "stringTableSabotageBattery" : "Sabotage Batterie",
+    "stringTableSabotageMagneticField" : "Sabotage Magnetsensor",
+    "stringTableSabotageVertical" : "Sabotage Tilt-Sensor",
+
+    "stringTableDoorStateTransceiverCalibrate" : "Kalibrieren",
+
+    "stringTableDoorLockStateTransceiverLockTargetLevelResetTeachIn" : "RESET_TEACH_IN",
+    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralLocked" : "SET_NEUTRAL_LOCKED",
+    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralUnlocked" : "SET_NEUTRAL_UNLOCKED",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTestrunSaveLockUnlock" : "TESTRUN_SAVE_LOCK_UNLOCK",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_UNLOCKED",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_VERTICAL",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZONTAL",
+    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor" : "LOAD_CALIBRATION_CLOSED_DOOR",
+    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor" : "LOAD_CALIBRATION_OPEN_DOOR",
+
+    "stringTableAutoRelockState" : "AUTO_RELOCK_STATE",
+
     "noMoreKeys" : ""
   }
 });

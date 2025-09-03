@@ -184,6 +184,10 @@ ATC_ON	${stringTableON}
 
 AUTO_HYDRAULIC_ADJUSTMENT	${stringTableAutoHydraulicAdjustment}
 AUTO_MODE	${stringTableClimateControlRTTransceiverAutoMode}
+
+AUTO_RELOCK_TRANSCEIVER|AUTO_RELOCK_STATE=TRUE	${stringTableAutoRelockState}: ${lblYes}
+AUTO_RELOCK_TRANSCEIVER|AUTO_RELOCK_STATE=FALSE	${stringTableAutoRelockState}: ${lblNo}
+
 AVERAGE_ILLUMINATION	${stringTableAverageIllumination}
 AVERAGE_ILLUMINATION_STATUS=NORMAL	${lblValue} ${stringTableAverageIllumination}: ${lblNormal}
 AVERAGE_ILLUMINATION_STATUS=0	${lblValue} ${stringTableAverageIllumination}: ${lblNormal}
@@ -718,11 +722,31 @@ DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateT
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
 
+
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelLocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
+
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=RESET_TEACH_IN	${stringTableDoorLockStateTransceiverLockTargetLevelResetTeachIn}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=SET_NEUTRAL_LOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralLocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=SET_NEUTRAL_UNLOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TESTRUN_SAVE_LOCK_UNLOCK	${stringTableDoorLockStateTransceiverLockTargetLevelTestrunSaveLockUnlock}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_UNLOCKED	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_VERTICAL	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZONTAL	${stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_CLOSED_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor}
+DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_OPEN_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor}
+
+
+
+
 DOOR_RECEIVER	${stringTableDoorReceiverTitle}
 DOOR_STATE=CLOSED	${stringTableDoorStateClose}
 DOOR_STATE=OPEN	${stringTableDoorStateOpen}
 DOOR_STATE=POSITION_UNKNOWN	${stringTableDoorStateUnknown}
 DOOR_STATE=VENTILATION_POSITION	${stringTableDoorStateVentilationPosition}
+
+DOOR_STATE_TRANSCEIVER=CALIBRATE_DOOR_STATE=CALIBRATE	${stringTableDoorStateTransceiverCalibrate}
 
 DUAL_WHITE_BRIGHTNESS	${stringTableDualWhiteBrightnessTitle}
 DUAL_WHITE_COLOR	${stringTableDualWhiteColorTitle}
@@ -1208,10 +1232,34 @@ MAINTENANCE|CODE_USED_20=TRUE	${stringTableAccessTransCodeSCodeUsed20True}
 MAINTENANCE|CONFIG_PENDING	${stringTableConfigPending}
 MAINTENANCE|ERROR_BATTERY=BATTERY_DEFECT	${stringTableBatteryFailure}
 MAINTENANCE|ERROR_BATTERY=NO_ERROR	${stringTableBatteryOk}
-MAINTENANCE|ERROR_JAMMED	${stringTableErrorJammed}
 
-MAINTENANCE|ERROR_JAMMED=FALSE	${stringTableErrorJammedFalse}
-MAINTENANCE|ERROR_JAMMED=TRUE	${stringTableErrorJammedTrue}
+MAINTENANCE|ERROR_JAMMED	${stringTableErrorJammed}
+MAINTENANCE|ERROR_JAMMED=FALSE	${stringTableErrorJammed}: ${lblNo}
+MAINTENANCE|ERROR_JAMMED=TRUE	${stringTableErrorJammed}: ${lblYes}
+
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN	${stringTableErrorDoorLockedWhileOpen}
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN=TRUE	${stringTableErrorDoorLockedWhileOpen}: ${lblYes}
+MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN=FALSE	${stringTableErrorDoorLockedWhileOpen}:${lblNo}
+
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED	${stringTableErrorDoorOpenedWhileLocked}
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED=TRUE	${stringTableErrorDoorOpenedWhileLocked}: ${lblYes}
+MAINTENANCE|ERROR_DOOR_OPENED_WHILE_LOCKED=FALSE	${stringTableErrorDoorOpenedWhileLocked}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_ACCELERATION	${stringTableSabotageAcceleration}
+MAINTENANCE|SABOTAGE_ACCELERATION=TRUE	${stringTableSabotageAcceleration}: ${lblYes}
+MAINTENANCE|SABOTAGE_ACCELERATION=FALSE	${stringTableSabotageAcceleration}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_BATTERY	${stringTableSabotageBattery}
+MAINTENANCE|SABOTAGE_BATTERY=TRUE	${stringTableSabotageBattery}: ${lblYes}
+MAINTENANCE|SABOTAGE_BATTERY=FALSE	${stringTableSabotageBattery}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD	${stringTableSabotageMagneticField}
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD=TRUE	${stringTableSabotageMagneticField}: ${lblYes}
+MAINTENANCE|SABOTAGE_MAGNETIC_FIELD=FALSE	${stringTableSabotageMagneticField}: ${lblNo}
+
+MAINTENANCE|SABOTAGE_VERTICAL	${stringTableSabotageVertical}
+MAINTENANCE|SABOTAGE_VERTICAL=TRUE	${stringTableSabotageVertical}: ${lblYes}
+MAINTENANCE|SABOTAGE_VERTICAL=FALSE	${stringTableSabotageVertical}: ${lblNo}
 
 MAINTENANCE|ERROR_OVERHEAT	${stringTableErrorOverheatTrue}
 MAINTENANCE|HMW_STICKY_UNREACH	${stringTableStickyUnreach}
