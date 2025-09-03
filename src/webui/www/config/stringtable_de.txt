@@ -722,7 +722,6 @@ DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateT
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
 DOOR_LOCK_STATE_TRANSMITTER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
 
-
 DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelLocked}
 DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=UNLOCKED	${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}
 DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=OPEN	${stringTableDoorLockStateTransmitterLockTargetLevelOpen}
@@ -737,16 +736,15 @@ DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZON
 DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_CLOSED_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor}
 DOOR_LOCK_TRANSCEIVER|LOCK_TARGET_LEVEL=LOAD_CALIBRATION_OPEN_DOOR	${stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor}
 
-
-
-
 DOOR_RECEIVER	${stringTableDoorReceiverTitle}
 DOOR_STATE=CLOSED	${stringTableDoorStateClose}
 DOOR_STATE=OPEN	${stringTableDoorStateOpen}
 DOOR_STATE=POSITION_UNKNOWN	${stringTableDoorStateUnknown}
 DOOR_STATE=VENTILATION_POSITION	${stringTableDoorStateVentilationPosition}
 
-DOOR_STATE_TRANSCEIVER=CALIBRATE_DOOR_STATE=CALIBRATE	${stringTableDoorStateTransceiverCalibrate}
+DOOR_STATE_TRANSCEIVER|STATE=CLOSED	${stringTableDoorStateTransceiverState} ${stringTableKeyMaticStateFalse}
+DOOR_STATE_TRANSCEIVER|STATE=OPEN	${stringTableDoorStateTransceiverStateOpen} ${stringTableKeyMaticStateTrue}
+DOOR_STATE_TRANSCEIVER|CALIBRATE_DOOR_STATE=CALIBRATE	${stringTableDoorStateTransceiverCalibrate}
 
 DUAL_WHITE_BRIGHTNESS	${stringTableDualWhiteBrightnessTitle}
 DUAL_WHITE_COLOR	${stringTableDualWhiteColorTitle}
