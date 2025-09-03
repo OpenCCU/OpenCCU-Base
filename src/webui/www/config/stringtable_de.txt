@@ -742,8 +742,8 @@ DOOR_STATE=OPEN	${stringTableDoorStateOpen}
 DOOR_STATE=POSITION_UNKNOWN	${stringTableDoorStateUnknown}
 DOOR_STATE=VENTILATION_POSITION	${stringTableDoorStateVentilationPosition}
 
-DOOR_STATE_TRANSCEIVER|STATE=CLOSED	${stringTableDoorStateTransceiverState} ${stringTableKeyMaticStateFalse}
-DOOR_STATE_TRANSCEIVER|STATE=OPEN	${stringTableDoorStateTransceiverStateOpen} ${stringTableKeyMaticStateTrue}
+DOOR_STATE_TRANSCEIVER|STATE=CLOSED	${stringTableDoorStateClose}
+DOOR_STATE_TRANSCEIVER|STATE=OPEN	${stringTableDoorStateOpen}
 DOOR_STATE_TRANSCEIVER|CALIBRATE_DOOR_STATE=CALIBRATE	${stringTableDoorStateTransceiverCalibrate}
 
 DUAL_WHITE_BRIGHTNESS	${stringTableDualWhiteBrightnessTitle}
