@@ -60,5 +60,5 @@ iseDoorLockTransceiver.prototype = {
     html += "</table>";
 
     return html;
-  },
+  }
 };
