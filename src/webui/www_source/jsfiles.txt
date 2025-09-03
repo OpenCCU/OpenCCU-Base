@@ -186,6 +186,7 @@ ise/js/iseHmIPServo.js
 ise/js/iseHmIPWiegandIface.js
 ise/js/iseHmIPUniversalLightReceiver.js
 ise/js/iseHmIPUniversalLightRGBWSlider.js
+ise/js/iseDoorLockTransceiver.js
 
 # eQ-3(alt)
 #config/devdescr/jsDevDescr.cgi
