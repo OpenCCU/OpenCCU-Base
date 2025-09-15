@@ -162,8 +162,8 @@ jQuery.extend(true, langJSON, {
     "optionInwards" : "Innen",
     "optionOutwards" : "Aussen",
 
-    "btnAutoRelockOff" : "Auto Relock Aus",
-    "btnAutoRelockOn" : "Auto Relock Ein",
+    "btnAutoRelockOff" : "Auto-Relock Aus",
+    "btnAutoRelockOn" : "Auto-Relock Ein",
 
     "dialogSetDLPTargetLevelTitle" : "Lock Target Level",
 
@@ -190,7 +190,7 @@ jQuery.extend(true, langJSON, {
     "dlpLockState_1" : "verriegelt",
     "dlpLockState_2" : "entriegelt",
     //"dlpLockState_3" : "INVALID",
-    "dlpLockState_3" : "unbekannt",
+    "dlpLockState_3" : "ung%FCltig",
 
     /*
     "dlpLockStateReason_0" : "UNKNOWN",
@@ -207,30 +207,31 @@ jQuery.extend(true, langJSON, {
     */
 
     "dlpLockStateReason_0" : "unbekannt",
-    "dlpLockStateReason_1" : "MOTOR",
-    "dlpLockStateReason_2" : "MOTOR_INTERNAL_KEY",
-    "dlpLockStateReason_3" : "MOTOR_INTERNAL_PROFILE",
-    "dlpLockStateReason_4" : "MOTOR_AUTO_RELOCK_TIMER",
-    "dlpLockStateReason_5" : "MOTOR_AUTO_RELOCK_STATE",
-    "dlpLockStateReason_6" : "MOTOR_AFTER_OPEN_ACKED",
-    "dlpLockStateReason_7" : "MOTOR_AFTER_OPEN",
-    "dlpLockStateReason_8" : "MOTOR_AFTER_OPEN_INTERNAL_KEY",
-    "dlpLockStateReason_9" : "MANUAL_INSIDE",
-    "dlpLockStateReason_10" : "MANUAL",
+    "dlpLockStateReason_1" : "Motorisch",
+    "dlpLockStateReason_2" : "Motorisch, durch interne Taste",
+    "dlpLockStateReason_3" : "Motorisch, durch Wochenprogramm",
+    "dlpLockStateReason_4" : "Motorisch, durch Auto-Relock nach Timeout",
+    "dlpLockStateReason_5" : "Motorisch, durch Auto-Relock nach T%FCrzustands%E4nderung",
+    "dlpLockStateReason_6" : "Motorisch, nach Open, ACKed (kein neues Open-Ereignis)",
+    "dlpLockStateReason_7" : "Motorisch nach Open",
+    "dlpLockStateReason_8" : "Motorisch nach Open durch interne Taste",
+    "dlpLockStateReason_9" : "Manuell, von au%DFen",
+    "dlpLockStateReason_10" : "Manuell, von innen",
+    "dlpLockStateReason_11" : "Manuell",
 
-    "dlpLockTeachInState_0" : "TEACH_IN_INACTIVE",
-    "dlpLockTeachInState_1" : "NEUTRAL_POSITION_LOCKED_SET",
-    "dlpLockTeachInState_2" : "NEUTRAL_POSITION_UNLOCKED_SET",
-    "dlpLockTeachInState_3" : "NEUTRAL_POSITION_BOTH_SET",
-    "dlpLockTeachInState_4" : "TEACH_IN_DRIVE_RUNNING",
-    "dlpLockTeachInState_5" : "TEACH_IN_SUCCESSFUL",
-    "dlpLockTeachInState_6" : "ERROR_NEUTRAL_POSITION_INCOMPLETE_TURNS",
-    "dlpLockTeachInState_7" : "ERROR_NEUTRAL_POSITION_LESS_ONE_TURN",
-    "dlpLockTeachInState_8" : "ERROR_END_STOP_DRIVE_LOCK_BEFORE_NEUTRAL_POSITION",
-    "dlpLockTeachInState_9" : "ERROR_END_STOP_DRIVE_UNLOCK_BEFORE_NEUTRAL_POSITION",
-    "dlpLockTeachInState_10" : "ERROR_END_STOP_DRIVE_UNLOCK_BEFORE_NEUTRAL_POSITION",
-    "dlpLockTeachInState_11" : "ERROR_TEACH_IN_DRIVE_CANCELED",
-    "dlpLockTeachInState_12" : "ERROR_TEACH_IN_DRIVE_BATTERY_LOW",
+    "dlpLockTeachInState_0" : "T%FCrschloss-Anlern-Prozedur nicht (mehr) aktiv",
+    "dlpLockTeachInState_1" : "Neutralstellung Verriegelt vorgemerkt",
+    "dlpLockTeachInState_2" : "Neutralstellung Entriegelt vorgemerkt",
+    "dlpLockTeachInState_3" : "beide Neutralstellungen vorgemerkt, bereit f%FCr Endanschlagsfahrt",
+    "dlpLockTeachInState_4" : "Anlernfahrt l%E4uft",
+    "dlpLockTeachInState_5" : "T%FCrschloss-Anlern-Prozedur erfolgreich abgeschlossen (keine Aussage %FCber Parameter-%DCbertragung)",
+    "dlpLockTeachInState_6" : "Neutralstellungen Fehler: ganzzahliges Vielfaches von 360° zwischen Ver- und Entriegelt",
+    "dlpLockTeachInState_7" : "Neutralstellungen Fehler: weniger als 1 Umdrehung zwischen Ver- und Entriegelt",
+    "dlpLockTeachInState_8" : "Endanschlagsfahrt Fehler: Endanschlag lock vor Neutralstellung Verriegelt",
+    "dlpLockTeachInState_9" : "Endanschlagsfahrt Fehler: Endanschlag open vor Neutralstellung Entriegelt",
+    "dlpLockTeachInState_10" : "Anlernfahrt Fehler: Abbruch durch anderes Kommando / Ereignis",
+    "dlpLockTeachInState_11" : "Anlernfahrt Fehler: Batterien zu schwach",
+    "dlpLockTeachInState_12" : "T%FCrschloss-Anlern-Prozedur Fehler: sonstige",
 
     "stringTableErrorDoorLockedWhileOpen" : "Verschlossen bei offener T%FCr",
     "stringTableErrorDoorOpenedWhileLocked" : "T%FCr im verschlossenem Zustand ge%F6ffnet",
@@ -241,17 +242,20 @@ jQuery.extend(true, langJSON, {
 
     "stringTableDoorStateTransceiverCalibrate" : "Kalibrieren",
 
-    "stringTableDoorLockStateTransceiverLockTargetLevelResetTeachIn" : "RESET_TEACH_IN",
-    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralLocked" : "SET_NEUTRAL_LOCKED",
-    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralUnlocked" : "SET_NEUTRAL_UNLOCKED",
-    "stringTableDoorLockStateTransceiverLockTargetLevelTestrunSaveLockUnlock" : "TESTRUN_SAVE_LOCK_UNLOCK",
-    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_UNLOCKED",
-    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_VERTICAL",
-    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal" : "TEACH_IN_DRIVE_OPEN_DOOR_NEUTRAL_HORIZONTAL",
-    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor" : "LOAD_CALIBRATION_CLOSED_DOOR",
-    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor" : "LOAD_CALIBRATION_OPEN_DOOR",
+    "stringTableDoorLockStateTransceiverLockTargetLevelResetTeachIn" : "T%FCrschloss-Anlern-Prozedur zur%FCcksetzen",
+    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralLocked" : "Vormerken als Neutralstellung Verriegelt",
+    "stringTableDoorLockStateTransceiverLockTargetLevelSetNeutralUnlocked" : "Vormerken als Neutralstellung Entriegelt",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTestrunSaveLockUnlock" : "Endanschl%E4ge pr%FCfen (Fahrt: lock, open) und als Konfiguration speichern",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked" : "Anlernfahrt (inkl. Schlosslast) starten bei ge%F6ffneter T%FCr\n" +
+      "und Schloss in Neutralstellung Entriegelt und als Konfiguration speichern",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "Anlernfahrt (inkl. Schlosslast) starten bei ge%F6ffneter T%FCr (entriegelt)\n" +
+      "bei Schloss mit Neutralstellung vertical und als Konfiguration speichern",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal" : "Anlernfahrt (inkl. Schlosslast)starten bei ge%F6ffneter T%FCr (entriegelt)\n" +
+      "bei Schloss mit Neutralstellung horizontal und als Konfiguration speichern",
+    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor" : "Anlernen der Schlosslast bei geschlossener T%FCr (Fahrt: lock, unlock)",
+    "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationOpenDoor" : "Anlernen der Schlosslast bei ge%F6ffneter T%FCr (Fahrt: lock, unlock)",
 
-    "stringTableAutoRelockState" : "AUTO_RELOCK_STATE",
+    "stringTableAutoRelockState" : "Auto-Relock aktiv: ",
 
     "noMoreKeys" : ""
   }
