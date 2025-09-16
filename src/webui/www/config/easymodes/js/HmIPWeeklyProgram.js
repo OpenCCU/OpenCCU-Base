@@ -83,7 +83,9 @@ getOnlyExpertChannels = function(channelType, channelNr) {
   } else if (
     (channelType == "ACCESS_RECEIVER")
     || (channelType == "ACCESS_TRANSCEIVER")
+    || (channelType == "AUTO_RELOCK_TRANSCEIVER")
     || (channelType == "DOOR_LOCK_STATE_TRANSMITTER")
+    || (channelType == "DOOR_LOCK_TRANSCEIVER")
     || (channelType == "OPTICAL_SIGNAL_RECEIVER")
   ) {
     return channelNr;
@@ -206,6 +208,8 @@ getWPVirtualChannels = function(channels, expert) {
       OpticalSignalID = "OPTICAL_SIGNAL_RECEIVER", // HmIPW-WRC6
       PermissionTranseiverID = "PERMISSION_TRANSCEIVER", // HmIP-FLC/FLD
       SwitchTranseiverID = "SWITCH_TRANSCEIVER", // HmIP-FLC/FLD
+      AutoRelock_Transceiver = "AUTO_RELOCK_TRANSCEIVER", // HmIP-FLC/FLD
+      DoorLockTransceiver = "DOOR_LOCK_TRANSCEIVER", // HmIP-FLC/FLD
       expertChn;
     if (
       (chn.channelType.indexOf(virtualChID) !== -1)
@@ -215,6 +219,8 @@ getWPVirtualChannels = function(channels, expert) {
       || (chn.channelType.indexOf(OpticalSignalID) !== -1)
       || (chn.channelType.indexOf(PermissionTranseiverID) !== -1)
       || (chn.channelType.indexOf(SwitchTranseiverID) !== -1)
+      || (chn.channelType.indexOf(AutoRelock_Transceiver) !== -1)
+      || (chn.channelType.indexOf(DoorLockTransceiver) !== -1)
     ) {
       if (expert == 1) {
         result.push(index);
@@ -290,7 +296,7 @@ HmIPWeeklyProgram.prototype = {
     this.defaultDoorLockMode = "DoorLockMode";
     this.userDoorLockMode = "UserMode";
     this.selectedMode_RGBW = "";
-    this.selectedMode_FLC = [];
+    this.metaSelectedMode = [];
     //this.arChangedMode_FLC = [];
     this.currentLevel = [];
 
@@ -314,6 +320,7 @@ HmIPWeeklyProgram.prototype = {
       (! this._isDeviceType(this.UNIVERSAL_LIGHT_RECEIVER_RGBW))
       && (! this._isDeviceType("HmIP-FLC"))
       && (! this._isDeviceType("HmIP-FDC"))
+      && (! this.isDLP)
     ) ? sessionIsExpert : 1;
 
     this.prn = 0;
@@ -660,6 +667,10 @@ HmIPWeeklyProgram.prototype = {
       programEntry += this._getFLCModeSelector(number);
     }
 
+    if (this.isDLP) {
+      programEntry += this._getDLPModeSelector(number);
+    }
+
     // RAMPTIME / LEVEL
     programEntry += "<tr id='trLevel_" + number + "'>";
     if (((this.chnType == this.DIMMER) && (! this.WINDOW_DRIVE_RECEIVER)) || (this.chnType == this.SERVO) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER)) {
@@ -872,7 +883,7 @@ HmIPWeeklyProgram.prototype = {
       programEntry += "<td colspan='5'>" + translateKey('hintWeeklyProgramActiveExpertChannel') + "</td>";
       programEntry += "</tr>";
 
-      if ((! this._isDeviceType("HmIP-FLC")) && (! this._isDeviceType("HmIP-FDC")) && (! this.isWGS) && (! this.isWGT)) {
+      if ((! this._isDeviceType("HmIP-FLC")) && (! this._isDeviceType("HmIP-FDC")) && (! this.isWGS) && (! this.isWGT) && (! this.isDLP)) {
         programEntry += "<tr name='panelTargetChannel_" + number + "'>";
         if (!this.isAccessTransmitterHmIP_FWI) {
           if ((!this.isDoorLockDrive) && (!this.isAccessTransceiver_WKP)) {
@@ -1754,7 +1765,7 @@ HmIPWeeklyProgram.prototype = {
         val2Send = 0,
         jChn;
 
-      self.selectedMode_FLC[no] = (val == 0) ? "SWITCH" : "PERMISSION";
+      self.metaSelectedMode[no] = (val == 0) ? "SWITCH" : "PERMISSION";
 
       // At first unset all target channels
       arTargetChn.prop('checked', false);
@@ -1809,6 +1820,125 @@ HmIPWeeklyProgram.prototype = {
 
     return result;
   },
+
+
+  _getDLPModeSelector: function(number) {
+    var self = this,
+      result = "",
+      selectedMode, permissionSelected = "", doorLockSelected = "", autoReLockSelected = "",
+
+    /*
+      lblState0 = translateKey("lblStatusPermission"),
+      lblState1 = translateKey("lblStatusDoorLock"),
+      lblState2 = translateKey("lblStatusAutoRelock"),
+      lblMode = translateKey("lblMode");
+    */
+
+    lblState0 = translateKey("lblStatus"), lblState1 = lblState0, lblState2 = lblState0,
+    lblMode = translateKey("lblMode");
+
+    setDLPMode = function(val, no) {
+      // val = 0 > Switch Actor channels, val = 1 > Permission channels
+      var nr = self._addLeadingZero(no),
+        lblStateElm = jQuery("#lblState_" + nr),
+        onOffElm = jQuery("[name='"+nr+"_WP_LEVEL']"),
+        WPTargetChannelsElm = jQuery("[name='"+nr+"_WP_TARGET_CHANNELS']"),
+        arTargetChn = jQuery("[name='targetChannel"+self.chn+"_"+nr+"']"),
+        val2Send = 0,
+        jChn;
+
+      var optOff = translateKey("optionStateOFF"),
+      optOn = translateKey("optionStateON"),
+        optLocked = translateKey("optionLocked"),
+        optUnLocked = translateKey("optionUnlocked");
+
+      switch (val) {
+        case 0:
+          self.metaSelectedMode[no] = "PERMISSION";
+          onOffElm.empty().append(new Option(optOff,0)).append(new Option(optOn,1));
+          break;
+        case 1:
+          self.metaSelectedMode[no] = "DOOR_LOCK";
+          onOffElm.empty().append(new Option(optLocked,0)).append(new Option(optUnLocked,1));
+          break;
+        case 2:
+          self.metaSelectedMode[no] = "AUTO_RELOCK";
+          onOffElm.empty().append(new Option(optOff,0)).append(new Option(optOn,1));
+          break;
+      }
+
+      // At first unset all target channels
+      arTargetChn.prop('checked', false);
+      WPTargetChannelsElm.val(0);
+
+      jQuery.each(arTargetChn, function(i, chn) {
+        jChn = jQuery(chn);
+        if (val == 0) {
+          if (chn.attributes.data.value == "PERMISSION_TRANSCEIVER") {
+            lblStateElm.text(lblState0);
+            jChn.parent().show();
+          } else {
+            jChn.parent().hide();
+          }
+        } else if (val == 1) {
+          if (chn.attributes.data.value == "DOOR_LOCK_TRANSCEIVER") {
+            lblStateElm.text(lblState1);
+            jChn.parent().show();
+          } else {
+            jChn.parent().hide();
+          }
+        } else if (val == 2) {
+          if (chn.attributes.data.value == "AUTO_RELOCK_TRANSCEIVER") {
+            lblStateElm.text(lblState2);
+            jChn.parent().show();
+          } else {
+            jChn.parent().hide();
+          }
+        }
+
+        window.setTimeout(function () {
+          if (chn.checked) {
+            val2Send += parseInt(chn.value);
+          }
+          WPTargetChannelsElm.val(val2Send);
+        },50);
+      });
+    };
+    if ((this.activeEntries[number] == true)) {
+      selectedMode = homematic("Interface.getMetadata", {"objectId": self.device.id, "dataId": "wpMode_" + number});
+
+      switch (selectedMode) {
+        case "PERMISSION":
+          permissionSelected = "selected", doorLockSelected = "", autoReLockSelected = "";
+          break;
+        case "DOOR_LOCK":
+          permissionSelected = "", doorLockSelected = "selected", autoReLockSelected = "";
+          break;
+        case "AUTO_RELOCK":
+          permissionSelected = "", doorLockSelected = "", autoReLockSelected = "selected";
+          break;
+        default:
+          permissionSelected = "selected", doorLockSelected = "", autoReLockSelected = "";
+      }
+    }
+    result += "<tr>";
+    result += "<td>"+lblMode+"</td>";
+    result += "<td>";
+    result += "<select id='dlpModeSelector_"+number+"' onchange='setDLPMode(parseInt(this.value),"+number+")'>";
+    result += "<option value='0' " +permissionSelected+ "+>"+translateKey('optionPermission')+"</option>";
+    result += "<option value='1' " +doorLockSelected+ ">"+translateKey('optionDoorLock')+"</option>";
+    result += "<option value='2' " +autoReLockSelected+ ">"+translateKey('optionAutoRelock')+"</option>";
+    result += "</select>";
+    result += "</td>";
+    result += "</tr>";
+
+    window.setTimeout(function() {
+      jQuery("#dlpModeSelector_" + number).change();
+    },50);
+
+    return result;
+  },
+
 
   _showHideWPLevel: function (number, mode) {
     var wpLevelElm = jQuery("[name='" + number + "_WP_LEVEL']");
@@ -2040,6 +2170,7 @@ HmIPWeeklyProgram.prototype = {
         result += "<select id='doorLockPermissionActionSelector" + this.chn + "_" + number + "' onchange='setDoorLockActionValues(" + number + ", this.value);'>";
       }
     }
+
     if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.chnType == this.SERVO) || (this.chnType == this.BLIND)) {
       var loop;
       if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.chnType == this.SERVO)) {
@@ -2234,7 +2365,6 @@ HmIPWeeklyProgram.prototype = {
 
 
     this.prn++ ;
-    // result += "<select id='separate_CHANNEL_" + this.chn + "_" + this.prn + "' name='" + paramID + "' onchange='showHideDuration(this.value, " + number + ");showFreeValue(this.value, " + number + ");'>";
     result += "<select id='separate_CHANNEL_" + this.chn + "_" + this.prn + "' name='" + paramID + "' onchange='showFreeValue(this.value, " + number + ");'>";
       result += (val == 0) ? "<option value='0' selected='selected'>" + translateKey('optionOFF') + "</option>" : "<option value='0'>" + translateKey('optionOFF') + "</option>";
       for (loop = 5; loop <= 100; loop += 5) {
@@ -3222,10 +3352,10 @@ HmIPWeeklyProgram.prototype = {
           });
         });
       });
-    } else if ((this._isDeviceType("HmIP-FLC")) || (this._isDeviceType("HmIP-FDC"))) {
+    } else if ((this._isDeviceType("HmIP-FLC")) || (this._isDeviceType("HmIP-FDC")) || (this.isDLP)) {
       jQuery("#footerButtonTake, #footerButtonOK").click(function () {
         window.setTimeout(function() {
-          jQuery.each(self.selectedMode_FLC, function (index, val) {
+          jQuery.each(self.metaSelectedMode, function (index, val) {
             if (val != undefined) {
             var x =  homematic("Interface.setMetadata", {
                 "objectId": self.device.id,

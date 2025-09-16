@@ -230,6 +230,13 @@ jQuery.extend(true, langJSON, {
 
     "stringTableAutoRelockState" : "en* Auto-Relock aktiv: ",
 
+    "optionPermission" : "en* Berechtigung",
+    "optionDoorLock" : "en* Türschloss",
+    "optionAutoRelock" : "en* Auto-Relock",
+
+    "optionLocked" : "en* Verriegelt",
+    "optionUnlocked" : "en* Entriegelt",
+
     "noMoreKeys" : ""
   }
 });
