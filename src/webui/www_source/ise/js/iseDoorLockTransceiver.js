@@ -87,25 +87,25 @@ iseDoorLockTransceiver.prototype = {
 
       html += "<tr>";
         html += "<td>";
-          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_STATE}: ${dlpLockState_"+this.opts.infoLockState+"}</div>"
+          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_STATE}: ${dlpLockState_"+this.opts.infoLockState+"}</div>";
         html += "</td>";
       html += "</tr>";
 
       html += "<tr>";
         html += "<td>";
-          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_STATE_REASON}: ${dlpLockStateReason_"+this.opts.infoReason+"}</div>"
+          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_STATE_REASON}: ${dlpLockStateReason_"+this.opts.infoReason+"}</div>";
         html += "</td>";
       html += "</tr>";
 
       html += "<tr>";
         html += "<td>";
-          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_TEACH_IN_STATE}: ${dlpLockTeachInState_"+this.opts.infoTeachInState+"}</div>"
+          html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LOCK_TEACH_IN_STATE}: ${dlpLockTeachInState_"+this.opts.infoTeachInState+"}</div>";
         html += "</td>";
       html += "</tr>";
 
       html += "<tr>";
         html += "<td>";
-         html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LAST_LOCK_DRIVE_LOAD}: "+this.opts.infoLastLockDriveLoad+"</div>"
+         html += "<div class='ControlBtnInfo' style='line-height:50px;'>${dlp_LAST_LOCK_DRIVE_LOAD}: "+this.opts.infoLastLockDriveLoad+"</div>";
         html += "</td>";
       html += "</tr>";
 
