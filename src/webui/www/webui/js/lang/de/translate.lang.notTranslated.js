@@ -167,10 +167,9 @@ jQuery.extend(true, langJSON, {
 
     "dialogSetDLPTargetLevelTitle" : "Lock Target Level",
 
-    "errorJammed" : "errorJammed",
-    "errorLoadTooLow" : "errorLoadTooLow",
-    "errorNoEndStopLock" : "errorNoEndStopLock",
-    "errorNoEndStopUnlock" : "errorNoEndStopUnlock",
+    "stringTableLoadTooLow" : "LoadTooLow",
+    "stringTableNoEndStopLock" : "NoEndStopLock",
+    "stringTableNoEndStopUnLock" : "NoEndStopUnLock",
 
     "helpLockTargetLevel" : "Hier steht eine Beschreibung des Parameters....",
 
@@ -179,32 +178,10 @@ jQuery.extend(true, langJSON, {
     "dlp_LOCK_TEACH_IN_STATE" : "LOCK_TEACH_IN_STATE",
     "dlp_LAST_LOCK_DRIVE_LOAD" : "LAST_LOCK_DRIVE_LOAD",
 
-    /*
-    "dlpLockState_0" : "UNKNOWN",
-    "dlpLockState_1" : "LOCKED",
-    "dlpLockState_2" : "UNLOCKED",
-    "dlpLockState_3" : "INVALID",
-    */
-
     "dlpLockState_0" : "ubekannt",
     "dlpLockState_1" : "verriegelt",
     "dlpLockState_2" : "entriegelt",
-    //"dlpLockState_3" : "INVALID",
     "dlpLockState_3" : "ung%FCltig",
-
-    /*
-    "dlpLockStateReason_0" : "UNKNOWN",
-    "dlpLockStateReason_1" : "MOTOR",
-    "dlpLockStateReason_2" : "MOTOR_INTERNAL_KEY",
-    "dlpLockStateReason_3" : "MOTOR_INTERNAL_PROFILE",
-    "dlpLockStateReason_4" : "MOTOR_AUTO_RELOCK_TIMER",
-    "dlpLockStateReason_5" : "MOTOR_AUTO_RELOCK_STATE",
-    "dlpLockStateReason_6" : "MOTOR_AFTER_OPEN_ACKED",
-    "dlpLockStateReason_7" : "MOTOR_AFTER_OPEN",
-    "dlpLockStateReason_8" : "MOTOR_AFTER_OPEN_INTERNAL_KEY",
-    "dlpLockStateReason_9" : "MANUAL_INSIDE",
-    "dlpLockStateReason_10" : "MANUAL",
-    */
 
     "dlpLockStateReason_0" : "unbekannt",
     "dlpLockStateReason_1" : "Motorisch",

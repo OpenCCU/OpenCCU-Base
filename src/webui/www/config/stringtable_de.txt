@@ -1231,9 +1231,21 @@ MAINTENANCE|CONFIG_PENDING	${stringTableConfigPending}
 MAINTENANCE|ERROR_BATTERY=BATTERY_DEFECT	${stringTableBatteryFailure}
 MAINTENANCE|ERROR_BATTERY=NO_ERROR	${stringTableBatteryOk}
 
-MAINTENANCE|ERROR_JAMMED	${stringTableErrorJammed}
-MAINTENANCE|ERROR_JAMMED=FALSE	${stringTableErrorJammed}: ${lblNo}
-MAINTENANCE|ERROR_JAMMED=TRUE	${stringTableErrorJammed}: ${lblYes}
+ERROR_JAMMED	${stringTableErrorJammed}
+ERROR_JAMMED=FALSE	${stringTableErrorJammed}: ${lblNo}
+ERROR_JAMMED=TRUE	${stringTableErrorJammed}: ${lblYes}
+
+ERROR_LOAD_TOO_LOW	${stringTableLoadTooLow}
+ERROR_LOAD_TOO_LOW=FALSE	${stringTableLoadTooLow}: ${lblNo}
+ERROR_LOAD_TOO_LOW=TRUE	${stringTableLoadTooLow}: ${lblYes}
+
+ERROR_NO_END_STOP_LOCK	${stringTableNoEndStopLock}
+ERROR_NO_END_STOP_LOCK=FALSE	${stringTableNoEndStopLock}: ${lblNo}
+ERROR_NO_END_STOP_LOCK=TRUE	${stringTableNoEndStopLock}: ${lblYes}
+
+ERROR_NO_END_STOP_UNLOCK	${stringTableNoEndStopUnLock}
+ERROR_NO_END_STOP_UNLOCK=FALSE	${stringTableNoEndStopUnLock}: ${lblNo}
+ERROR_NO_END_STOP_UNLOCK=TRUE	${stringTableNoEndStopUnLock}: ${lblYes}
 
 MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN	${stringTableErrorDoorLockedWhileOpen}
 MAINTENANCE|ERROR_DOOR_LOCKED_WHILE_OPEN=TRUE	${stringTableErrorDoorLockedWhileOpen}: ${lblYes}
