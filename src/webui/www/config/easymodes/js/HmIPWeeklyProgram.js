@@ -3167,7 +3167,7 @@ HmIPWeeklyProgram.prototype = {
   },
 
   _initTargetChannels: function(number) {
-    var arTargetChannels = jQuery("[name='targetChannel" + this.chn + "_" + this._addLeadingZero(parseInt(number + 1)) + "']"),
+    var arTargetChannels = jQuery("[name='targetChannel" + this.chn + "_" + this._addLeadingZero(parseInt(number + 1)) + "']:visible"),
       elmTargetValue = jQuery("[name='" + this._addLeadingZero(parseInt(number + 1)) + "_WP_TARGET_CHANNELS']"),
       targetValue = 0,
       virtChnCounter = 0,
