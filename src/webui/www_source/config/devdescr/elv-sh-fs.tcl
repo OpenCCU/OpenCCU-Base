@@ -13,11 +13,9 @@ set DESCRIPTION "ELV-SH-FS"
 #lappend PATHLIST <Pixellänge maximale Ausdehnung> <Pfad zum Bild>
 #-----------------------------------------------------------------------
 set     PATHLIST ""
-lappend PATHLIST [list  50	"/config/img/devices/50/unknown_device_thumb.png"]
-lappend PATHLIST [list  250	"/config/img/devices/250/unknown_device.png"]
+lappend PATHLIST [list  50	"/config/img/devices/50/257_ELV-SH-FSI_thumb.png"]
+lappend PATHLIST [list  250	"/config/img/devices/250/257_ELV-SH-FSI.png"]
 
-#Koordinaten für Highlight:
-#P {<Formname> <Formtyp> <x,y,dx,dy,r je nach Formtyp>}
 
 set P ""
 
