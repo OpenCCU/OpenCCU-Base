@@ -2795,7 +2795,6 @@ HmIPWeeklyProgram.prototype = {
       click = "";
 
     jQuery.each(this.virtualChannels, function (index, value) {
-
       if (!self.ignoreExpertMode.includes(self.device.deviceType.id) && (self.device.deviceType.id != self.ACCESS_TRANSMITTER_HmIP_FWI) && (! self.isWGS) && (! self.isWGT)) {
         if (self.sessionIsExpert) {
           valCheckBox = Math.pow(2, index);
@@ -2823,8 +2822,16 @@ HmIPWeeklyProgram.prototype = {
           cssColor = (value % 2 == 0) ? colorVeryLight : colorDark;
         }
         if (!self._isDeviceType("HmIP-FWI")) {
-          // e. g. HmIP-DLD or HmIPW-WRC6 - no virtual channels
-          valCheckBox = Math.pow(2, index);
+          if (! self.isWRC6230) {
+            // e. g. HmIP-DLD or HmIPW-WRC6 - no virtual channels
+            valCheckBox = Math.pow(2, index);
+          } else {
+            if (self.sessionIsExpert) {
+              valCheckBox = Math.pow(2, index);
+            } else {
+              if (index == 0) {valCheckBox = Math.pow(2, index);} else {valCheckBox = Math.pow(2, index + 2);}
+            }
+          }
         } else {
           // HmIP-FWI
           valCheckBox = valHmIP_FWI[index];
