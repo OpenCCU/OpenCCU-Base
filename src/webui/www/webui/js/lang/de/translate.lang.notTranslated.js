@@ -159,8 +159,8 @@ jQuery.extend(true, langJSON, {
     "optionSkipRelockDelayClosing" : "Auto-Relock-Delay %FCberspringen",
     "optionSkipHoldTimeOpeningRelockDelayClosing" : "Fallen-Haltezeit und Auto-Relock-Delay %FCberspringen ",
 
-    "optionInwards" : "Innen",
-    "optionOutwards" : "Aussen",
+    "optionInwards" : "nach innen",
+    "optionOutwards" : "nach au%DFen",
 
     "btnAutoRelockOff" : "Auto-Relock Aus",
     "btnAutoRelockOn" : "Auto-Relock Ein",
@@ -265,6 +265,12 @@ jQuery.extend(true, langJSON, {
     "stringTableEventFilterNumberDLP_A" : "Meldung bei",
     "stringTableEventFilterNumberDLP_B" : "Ersch%FCtterungen",
 
+    "lblSensorSensibility_A" : "Schlosslast-Empfindlichkeit",
+
+    "optionAutoCalibration" : "Automatische Kalibrierung",
+    "optionDriftCompensationOn" : "Driftkompensation aktiv",
+    "optionDriftCompensationAndCalibrationOn" : "Driftkompensation und Kalibrierung nach Schlosslasterkennung aktiv",
+    "lblTableDeviceMagnetSensibility" : "Magnetfeld-Empfindlichkeit",
 
     "noMoreKeys" : ""
   }

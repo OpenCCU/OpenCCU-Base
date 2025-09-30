@@ -7241,11 +7241,13 @@ proc getDoorStateTranseiver {chn p descr} {
   if { [info exists ps($param)] == 1 } {
     incr prn
     append html "<tr>"
-      append html "<td>\${stringTableDigitalAnalogInputCalibration}</td>"
+      append html "<td>\${lblAutoCalibration}</td>"
       array_clear options
-      set options(0) "\${stringTableOFF}"
-      set options(1) "\${stringTableON}"
-      set options(2) "\${lblAutoCalibration}"
+      set options(0) "\${optionDisable}"
+
+      set options(0) "\${optionDisable}"
+      set options(1) "\${optionDriftCompensationOn}"
+      set options(2) "\${optionDriftCompensationAndCalibrationOn}"
       append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_door_state]</td>"
     append html "</tr>"
   }
@@ -7263,7 +7265,7 @@ proc getDoorStateTranseiver {chn p descr} {
   if { [info exists ps($param)] == 1 } {
     incr prn
     append html "<tr>"
-      append html "<td>\${stringTableDeviceSensorSensibility}</td>"
+      append html "<td>\${lblTableDeviceMagnetSensibility}</td>"
     append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_door_state]</td>"
     append html "</tr>"
   }
@@ -7490,7 +7492,7 @@ proc getDoorLockTranseiver {chn p descr} {
   if { [info exists ps($param)] == 1 } {
     incr prn
     append html "<tr>"
-      append html "<td>\${stringTableDeviceSensorSensibility}</td>"
+      append html "<td>\${lblSensorSensibility_A}</td>"
       append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_door_lock]</td>"
     append html "</tr>"
   }
