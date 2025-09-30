@@ -4609,6 +4609,141 @@ proc getAccelerationTransceiver {chn p descr address} {
   return $html
 }
 
+# ACCELERATION_TRANSCEIVER e. g. DLP
+proc getAccelerationTransceiver_A {chn p descr address} {
+
+  global dev_descr
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar prn prn
+  upvar special_input_id special_input_id
+
+  set CHANNEL $special_input_id
+
+  set specialID "[getSpecialID $special_input_id]"
+
+  set parent [lindex [split $address :] 0]
+
+  set newFw false
+
+  set Fw [getDevFwMajorMinorPatch]
+  set fwMajor [lindex $Fw 0]
+  set fwMinor [lindex $Fw 1]
+  # not needed - set fwPatch [lindex $Fw 2]
+
+  set devType $dev_descr(TYPE)
+
+  set hlpBoxWidth 450
+  set hlpBoxHeight 160
+
+
+
+  set prn 0
+
+  set operationMode $ps(CHANNEL_OPERATION_MODE)
+  set html ""
+
+  set param CHANNEL_OPERATION_MODE
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    array_clear options
+    set options(0) "\${optionInactiv}"
+    set options(1) "\${optionVibrationControl}"
+    set options(2) "\${optionPositionControl}"
+    set options(3) "\${optionPositionVibrationControl}"
+    append html "<tr><td>\${lblSabotage_A}</td><td>"
+      append html [get_ComboBox options $param separate_$CHANNEL\_$prn ps $param]
+    append html "</td></tr>"
+    append html "[getHorizontalLine]"
+  }
+
+  set param EVENT_TIMEOUT_BASE
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${lblEventTimeOut_DLP}</td>"
+    append html [getComboBox $chn $prn "$specialID" "delayShort"]
+    append html "</tr>"
+
+    #param = EVENT_TIMEOUT_BASE
+    append html [getTimeUnitComboBoxShort $param $ps($param) $chn $prn $special_input_id]
+
+    incr prn
+    set param EVENT_TIMEOUT_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableEventTimeoutValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOption($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param EVENT_FILTER_NUMBER
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    set prnA [expr $prn + 1]
+
+    # convert float to int (0.0 = 0)
+    set min [expr {int([expr [getMinValue $param]])}]
+    set max [expr {int([expr [getMaxValue $param]])}]
+    array_clear options
+    for {set val $min} {$val <= $max} {incr val 1} {
+        set options($val) "$val"
+    }
+
+    append html "<tr>"
+    append html "<td>\${lblEventFilterPeriodB1}</td>"
+     append html "<td>[get_ComboBox options $param separate_$CHANNEL\_$prn ps $param]&nbsp;\${lblEventFilterPeriodB2}&nbsp;[getTextField EVENT_FILTER_PERIOD $ps(EVENT_FILTER_PERIOD) $chn $prnA]&nbsp;[getUnit EVENT_FILTER_PERIOD]&nbsp;[getMinMaxValueDescr EVENT_FILTER_PERIOD]</td>"
+    append html "</tr>"
+    incr prn
+   # append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentEventFilterTime($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param SENSOR_SENSITIVITY
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblDeviceSensorSensibility_DLP}</td>"
+      append html  "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_DLP 320 100]</td>"
+    append html "</tr>"
+  }
+
+  append html "[getHorizontalLine]"
+
+  set param EVENT_DELAY_UNIT
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${lblEventDelay_A}</td>"
+    append html [getComboBox $chn $prn "$specialID" "eventDelay"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxShortwoHour $param $ps($param) $chn $prn $special_input_id]
+    incr prn
+    set param EVENT_DELAY_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+      append html "<td>\${stringTableEventDelayValue}</td>"
+      append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelB($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param TRIGGER_ANGLE
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblTriggerAngle_DLP}</td>"
+      append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getUnit $param]&nbsp;<span id='triggerAngleMinMax'>[getMinMaxValueDescr $param]</span>&nbsp;[getHelpIcon $param 320 100]</td>"
+    append html "</tr>"
+  }
+
+  return $html
+}
+
 proc getClimateControlFloorDirectTransmitter {chn p descr} {
   upvar $p ps
   upvar $descr psDescr

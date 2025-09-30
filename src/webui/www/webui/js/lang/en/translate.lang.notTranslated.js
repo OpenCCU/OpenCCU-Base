@@ -240,6 +240,25 @@ jQuery.extend(true, langJSON, {
     "btnTeachInDoorLock" : "en* T%FCrschloss anlernen",
     "btnInfo" : "en* Info",
 
+    "lblSabotage_A" : "en* Sabotage-Erkennung",
+    "lblEventDelay_A" : "en* Meldeverz%F6gerung f%FCr Lageerkennung",
+
+    "lblEventTimeOut_DLP" : "en* Meldedauer bei Ersch%FCtterung",
+
+    "lblTriggerAngle_DLP" : "en* Lagetoleranz",
+
+    "lblEventFilterPeriodB1" : "en* Meldungen bei ",
+    "lblEventFilterPeriodB2" : "en* Ersch%FCtterungen innerhalb ",
+
+    "optionPositionControl" : "en* Lage-%DCberwachung",
+    "optionVibrationControl" : "en* Ersch%tterungs-%DCberwachung",
+    "optionPositionVibrationControl" : "en* Lage- und Ersch%FCtterungs-%DCberwachung",
+    "lblDeviceSensorSensibility_DLP" : "en* Ersch%FCtterungs-Empfindlichkeit",
+    "triggerAngleDLP" : "en* Lagetoleranz",
+
+    "stringTableEventFilterNumberDLP_A" : "en* Meldung bei",
+    "stringTableEventFilterNumberDLP_B" : "en* Ersch%FCtterungen",
+
     "noMoreKeys" : ""
   }
 });
