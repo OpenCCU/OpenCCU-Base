@@ -767,7 +767,7 @@ HmIPWeeklyProgram.prototype = {
     programEntry += "</tr>";
 
     // DURATION
-    if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || ((this.chnType == this.SWITCH) && (!this.isDoorLockDrive))) {
+    if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || ((this.chnType == this.SWITCH) && (! this.isDoorLockDrive)) && (! this.isDLP)) {
       programEntry += "<tr id='trDurationMode" + number + "'>";
 
       if (! this.WINDOW_DRIVE_RECEIVER) {
@@ -2162,7 +2162,11 @@ HmIPWeeklyProgram.prototype = {
 
     this.prn++;
     if (!this.isDoorLockDrive) {
-      result += "<select id='separate_CHANNEL_" + this.chn + "_" + this.prn + "' name='" + paramID + "' onchange='showHideDuration(this.value, " + number + ");showFreeValue(this.value, " + number + ");'>";
+      if (! this.isDLP) {
+        result += "<select id='separate_CHANNEL_" + this.chn + "_" + this.prn + "' name='" + paramID + "' onchange='showHideDuration(this.value, " + number + ");showFreeValue(this.value, " + number + ");'>";
+      } else {
+        result += "<select id='separate_CHANNEL_" + this.chn + "_" + this.prn + "' name='" + paramID + "'>";
+      }
     } else {
       if (this.DoorLockWPMode[this.devAddress][number] == this.userDoorLockMode) {
         result += "<select id='doorLockPermissionActionSelector" + this.chn + "_" + number + "' onchange='setDoorLockPermissionValues(" + number + ", this.value);'>";
@@ -2285,11 +2289,14 @@ HmIPWeeklyProgram.prototype = {
         "<input type='text' class='hidden' id='separate_CHANNEL_" + this.chn + "_" + (parseInt(this.prn) + 2) + "' name='" + number + "_WP_DURATION_FACTOR' value=" + this.ps[durationFactorID] + ">";
       this.prn += 2;
     }
-    result += "<script type='text/javascript'>";
-    result += "window.setTimeout(function(){";
-    result += "showHideDuration(" + val + "," + number + ");";
-    result += "},100);";
-    result += "</script>";
+
+    if (! this.isDLP) {
+      result += "<script type='text/javascript'>";
+      result += "window.setTimeout(function(){";
+        result += "showHideDuration(" + val + "," + number + ");";
+      result += "},100);";
+      result += "</script>";
+    }
     return result;
 
   },
