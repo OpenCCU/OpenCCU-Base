@@ -12,8 +12,11 @@ set DESCRIPTION "HmIP-DLP"
 #lappend PATHLIST <Pixellänge maximale Ausdehnung> <Pfad zum Bild>
 #-----------------------------------------------------------------------
 set     PATHLIST ""
-lappend PATHLIST [list  50	"/config/img/devices/50/248_hmip-dlp_thumb.png"]
-lappend PATHLIST [list  250	"/config/img/devices/250/248_hmip-dlp.png"]
+# lappend PATHLIST [list  50	"/config/img/devices/50/248_hmip-dlp_thumb.png"]
+# lappend PATHLIST [list  250	"/config/img/devices/250/248_hmip-dlp.png"]
+
+lappend PATHLIST [list  50	"/config/img/devices/50/unknown_device_thumb.png"]
+lappend PATHLIST [list  250	"/config/img/devices/250/unknown_device.png"]
 
 set P ""
 
