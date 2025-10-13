@@ -19,6 +19,9 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
 
     this.doorLockStateTransmitterID = "DOOR_LOCK_STATE_TRANSMITTER";
     this.accessReceiverID  = "ACCESS_RECEIVER";
+    this.permissionTransceiverID  = "PERMISSION_TRANSCEIVER";
+    this.doorlockTransceiverID  = "DOOR_LOCK_TRANSCEIVER";
+    this.autoRelockTransceiverID  = "AUTO_RELOCK_TRANSCEIVER";
 
     this.expert = (! this.opts.userEasyLinkMode) ? true : false;
 
@@ -27,14 +30,19 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
     this.device = this.getDevice(this.opts.deviceID);
     this.relevantChn = this.getRelevantChannels();
 
+    this.isDLP = (this.devLabel.indexOf("HmIP-DLP") == -1) ? false : true;
+
     // This can be used for later devices that require special treatment.
     /*if (this.isDeviceType("HmIP-XXX")) {
       this.relevantChn = (this.expert) ? [4, 5, 6] : [4];
     }*/
 
     this.anchor = jQuery("#anchor_"+this.id);
-    this.anchor.html(this.getMainHtml(this.doorLockStateTransmitterID) + this.getMainHtml(this.accessReceiverID));
-
+    if (! this.isDLP) {
+      this.anchor.html(this.getMainHtml(this.doorLockStateTransmitterID) + this.getMainHtml(this.accessReceiverID));
+    } else {
+      this.anchor.html(this.getMainHtml(this.permissionTransceiverID) + this.getMainHtml(this.doorlockTransceiverID) + this.getMainHtml(this.autoRelockTransceiverID));
+    }
     this.initChannelState();
 
     jQuery("#weekprg_"+this.id).show();
@@ -101,16 +109,18 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
   initChannelState: function() {
     var self = this,
       binChannelState = this.getBinChannelState(),
-      chState;
+      chState, bit;
 
-    jQuery.each(this.relevantChn, function(index, value){
+    jQuery.each(this.relevantChn, function(index, value) {
       chState = (binChannelState[index]) ? binChannelState[index] : "0";
+      bit = (! self.isDLP) ? index + 1 : index;
 
       if (chState == "1") {
-        jQuery("#"+self.id+"_bit"+(index+1)+"1").attr("checked",true);
+        jQuery("#"+self.id+"_bit"+bit+"1").attr("checked",true);
       } else {
-        jQuery("#"+self.id+"_bit"+(index+1)+"0").attr("checked",true);
+        jQuery("#"+self.id+"_bit"+bit+"0").attr("checked",true);
       }
+
     });
   },
 
@@ -122,21 +132,27 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
 
     var chType = this.getChannelOfType(chnType);
 
-    if (chnType == this.accessReceiverID) {
+    if (chnType == this.accessReceiverID || chnType == this.permissionTransceiverID) {
       html += "<hr>";
       html += "<div style='color:white;'><u>"+translateKey('optionDoorLockUser')+"</u></div>";
-    } else if (chnType == this.doorLockStateTransmitterID) {
+    } else if (chnType == this.doorLockStateTransmitterID || chnType == this.doorlockTransceiverID) {
       html += "<div style='color:white;'><u>"+translateKey('optionDoorLockAction')+"</u></div>";
+    } else if (chnType == this.autoRelockTransceiverID) {
+      html += "<div style='color:white;'><u>"+translateKey('optionAutoRelock')+"</u></div>";
     }
 
     html += "<table style='width: 100%'>";
       html += "<thead>";
         // channel number
         html += "<tr>";
-        if (chnType == this.accessReceiverID) {
+        if (chnType == this.accessReceiverID || chnType == this.permissionTransceiverID) {
           html += "<td style='text-align: left'>"+translateKey('lblUser')+"</td>";
           jQuery.each(chType, function (index, val) {
-            html += "<td>" + (parseInt(val) - 1) + "</td>";
+            if (chnType == self.accessReceiverID) {
+              html += "<td>" + (parseInt(val) - 1) + "</td>";
+            } else {
+              html += "<td>" + (parseInt(val)) + "</td>";
+            }
           });
         }
         html += "</tr>";
@@ -148,7 +164,12 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
           html += "<td style='text-align: left; width: 1%; white-space: nowrap;'>"+translateKey("stringTableClimateControlRTTransceiverAutoMode")+"</td>";
           jQuery.each(chType, function(index,val){
             html += "<td style='text-align: left;'>";
-            html += "<input id='"+self.id+"_bit"+val+"0'  type='radio' name='"+self.id+"_bit"+val+"' value=0 disabled='disabled'>";
+            if (! self.isDLP) {
+              html += "<input id='" + self.id + "_bit" + val + "0'  type='radio' name='" + self.id + "_bit" + val + "' value=0 disabled='disabled'>";
+            } else {
+              tmpVal = parseInt(val) - 4;
+              html += "<input id='" + self.id + "_bit" + tmpVal + "0'  type='radio' name='" + self.id + "_bit" + tmpVal + "' value=0 disabled='disabled'>";
+            }
             html += "</td>";
           });
         html += "</tr>";
@@ -158,14 +179,25 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
           html += "<td style='text-align: left; width: 1%; white-space: nowrap'>"+translateKey("stringTableClimateControlRTTransceiverManuMode")+"</td>";
           // This works if only one doorLockStateTransmitter channel is available.
           // For new devices with more of this channels this must be reworked.
-          jQuery.each(chType, function(index,val){
-            if (chnType == self.doorLockStateTransmitterID) {
-              valCheckBox = 1; //
-            } else if (chnType == self.accessReceiverID) {
-              valCheckBox = Math.pow(2, (index + 1));
+          jQuery.each(chType, function(index,val) {
+            if (chnType == self.doorLockStateTransmitterID || chnType == self.doorlockTransceiverID || chnType == self.permissionTransceiverID) {
+              valCheckBox = (chnType == self.doorLockStateTransmitterID) ? 1 : 256; // DLD : DLP
+            } else if (chnType == self.accessReceiverID || chnType == self.permissionTransceiverID ) {
+              if (chnType == self.accessReceiverID) {
+                valCheckBox = Math.pow(2, (index + 1));
+              } else {
+                valCheckBox = Math.pow(2, (index));
+              }
+            } else if (chnType == self.autoRelockTransceiverID) {
+              valCheckBox = 512;
             }
             html += "<td style='text-align: left;'>";
-            html += "<input id='"+self.id+"_bit"+val+"1'  type='radio' name='"+self.id+"_bit"+val+"' value="+valCheckBox+" disabled='disabled'>";
+            if (! self.isDLP) {
+              html += "<input id='" + self.id + "_bit" + val + "1'  type='radio' name='" + self.id + "_bit" + val + "' value=" + valCheckBox + " disabled='disabled'>";
+            } else {
+              tmpVal = parseInt(val) - 4;
+              html += "<input id='" + self.id + "_bit" + tmpVal + "1'  type='radio' name='" + self.id + "_bit" + tmpVal + "' value=" + valCheckBox + " disabled='disabled'>";
+            }
             html += "</td>";
           });
         html += "</tr>";
@@ -238,12 +270,18 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
     var self = this,
     result = [],
     AccessReceiverID = "ACCESS_RECEIVER", // HmIP-DLD :2 - :9 = User access
-    DoorLockTransmitterID = "DOOR_LOCK_STATE_TRANSMITTER"; // HmIP-DLD :1 = Device behaviour
+    DoorLockTransmitterID = "DOOR_LOCK_STATE_TRANSMITTER", // HmIP-DLD :1 = Device behaviour
+    PermissionTransceiver = "PERMISSION_TRANSCEIVER", // HmIP-DLP :4 - :11 = User access
+    DoorLockTransceiver = "DOOR_LOCK_TRANSCEIVER", // HmIP-DLP :12 = Device behaviour
+    AutoRelockTransceiver = "AUTO_RELOCK_TRANSCEIVER"; // HmIP-DLP :13 = Auto Relock
 
     jQuery.each(this.device.channels, function(index,chn) {
       if (
         (chn.channelType.indexOf(AccessReceiverID) !== -1)
         || (chn.channelType.indexOf(DoorLockTransmitterID) !== -1)
+        || (chn.channelType.indexOf(PermissionTransceiver) !== -1)
+        || (chn.channelType.indexOf(DoorLockTransceiver) !== -1)
+        || (chn.channelType.indexOf(AutoRelockTransceiver) !== -1)
       ) {
           result.push(index);
       }
