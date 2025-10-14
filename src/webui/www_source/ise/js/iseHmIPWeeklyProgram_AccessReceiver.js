@@ -66,8 +66,14 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
   },
 
   getModeDialog: function() {
-    var that = this;
-    var sOutput = this.getDialogHtml(this.doorLockStateTransmitterID) + this.getDialogHtml(this.accessReceiverID);
+    var that = this,
+    sOutput;
+
+    if (! this.isDLP) {
+      sOutput = this.getDialogHtml(this.doorLockStateTransmitterID) + this.getDialogHtml(this.accessReceiverID);
+    } else {
+      sOutput = this.getDialogHtml_DLP(this.permissionTransceiverID) + this.getDialogHtml_DLP(this.doorlockTransceiverID) + this.getDialogHtml_DLP(this.autoRelockTransceiverID);
+    }
 
      var dlg = new YesNoDialog(translateKey("dialogSetWPModeTitle"), sOutput, function(result) {
       var selectedMode = that.modeElm.val(),
@@ -252,6 +258,63 @@ iseHmIPWeeklyProgramAccessReceiver.prototype = {
     html += "</tr>";
 
     if (chnType == this.accessReceiverID) {
+      html += "</table>";
+    }
+
+    return html;
+  },
+
+  getDialogHtml_DLP: function(chnType) {
+
+    var self = this,
+      valCheckBox,
+      html = "";
+
+    if (chnType == this.permissionTransceiverID) {
+      html += "<table align='center'>";
+      html += "<tr>";
+      html += "<td>" + translateKey("lblMode") + ": </td>";
+      html += "<td>";
+      html += "<select id='wpChannelMode_" + self.id + "'>";
+      html += "<option value='MANU_MODE'>" + translateKey("stringTableClimateControlRTTransceiverManuMode") + "</option>";
+      //html += "<option value='AUTO_MODE_WITH_RESET'>AUTO_WITH_RESET</option>";
+      html += "<option value='AUTO_MODE_WITHOUT_RESET'>" + translateKey("stringTableClimateControlRTTransceiverAutoMode") + "</option>";
+      html += "</select>";
+      html += "<img src='/ise/img/help.png' style='cursor: pointer; width:18px; height:18px; position:relative; top:2px' onclick=showParamHelp(translateKey('helpWeeklyProgramDlg'),450,100)>";
+      html += "</td>";
+      html += "</tr>";
+    }
+
+    html += "<tr>";
+
+    if (chnType == this.permissionTransceiverID) {
+      html += "<td>" + translateKey("optionDoorLockUser") + ": </td>";
+    } else if (chnType == this.doorlockTransceiverID) {
+      html += "<td>" + translateKey("lblDoorLock") + ": </td>";
+    } else if (chnType == this.autoRelockTransceiverID) {
+      html += "<td>" + translateKey("optionAutoRelock") + ": </td>";
+    }
+
+    html += "<td>";
+    if (chnType == this.permissionTransceiverID) {
+      jQuery.each(this.relevantChn, function (index, val) {
+        if (index <= 7) {
+          valCheckBox = Math.pow(2, index);
+          html += "<input name='wpChannelSel_" + self.id + "' value='" + valCheckBox + "' type='checkbox'>";
+          html += "<label for='wpChannelSel_" + self.id + "'>" + parseInt(val) + "</label>";
+        }
+      });
+    } else if (chnType == this.doorlockTransceiverID) {
+      html += "<input name='wpChannelSel_" + self.id + "' value='256' type='checkbox'>";
+      html += "<label for='wpChannelSel_" + self.id + "'>"+this.relevantChn[8]+"</label>";
+    } else if (chnType == this.autoRelockTransceiverID) {
+      html += "<input name='wpChannelSel_" + self.id + "' value='512' type='checkbox'>";
+      html += "<label for='wpChannelSel_" + self.id + "'>"+this.relevantChn[9]+"</label>";
+    }
+
+    html += "</td>";
+    html += "</tr>";
+    if (chnType == this.autoRelockTransceiverID) {
       html += "</table>";
     }
 
