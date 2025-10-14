@@ -1442,15 +1442,16 @@ proc getClimateReceiver {chn p descr} {
   puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HEATINGTHERMOSTATE_2ND_GEN_HELP.js');</script>"
 
   set param TEMPERATURE_OFFSET
-  append html "<tr>"
-    array_clear options
-    for {set val -3.5} {$val <= 3.5} {set val [expr $val + 0.5]} {
-      set options($val) "$val &#176;C"
-    }
-    append html "<td>\${stringTableTemperatureOffset}</td>"
-    append html "<td>[get_ComboBox options $param separate_$CHANNEL\_$prn ps $param]&nbsp;[getHelpIcon $param]</td>"
-  append html "</tr>"
-
+  if { [info exists ps($param)] == 1  } {
+    append html "<tr>"
+      array_clear options
+      for {set val -3.5} {$val <= 3.5} {set val [expr $val + 0.5]} {
+        set options($val) "$val &#176;C"
+      }
+      append html "<td>\${stringTableTemperatureOffset}</td>"
+      append html "<td>[get_ComboBox options $param separate_$CHANNEL\_$prn ps $param]&nbsp;[getHelpIcon $param]</td>"
+    append html "</tr>"
+  }
   return $html
 }
 
