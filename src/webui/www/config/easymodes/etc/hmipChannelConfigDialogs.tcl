@@ -1463,7 +1463,6 @@ proc getClimateReceiver {chn p descr} {
         append html  "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getUnit $param]&nbsp;[getMinMaxValueDescr $param]&nbsp;[getHelpIcon $param\_STE2]</td>"
       append html "</tr>"
     }
-
   }
 
   set param TX_MINDELAY_UNIT
