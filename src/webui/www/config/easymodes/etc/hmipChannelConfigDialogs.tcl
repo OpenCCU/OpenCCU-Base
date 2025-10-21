@@ -1466,7 +1466,7 @@ proc getClimateReceiver {chn p descr} {
   }
 
   set param TX_MINDELAY_UNIT
-  if { [info exists ps($param)] == 1  } {
+  if { ([info exists ps($param)] == 1)  && ([string equal $dev_descr(TYPE) "ELV-SH-PTI2"] == 0) } {
     incr prn
     append html "<tr>"
     append html "<td>\${stringTableTxMinDelay}</td>"
@@ -1485,6 +1485,10 @@ proc getClimateReceiver {chn p descr} {
     append html "</tr>"
     append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
     append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelA($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  if {[string length $html] == 0} {
+    append html "[getNoParametersToSet]"
   }
 
   return $html
