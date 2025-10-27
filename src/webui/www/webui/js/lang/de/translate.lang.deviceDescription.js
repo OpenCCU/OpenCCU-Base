@@ -216,6 +216,8 @@ jQuery.extend(true,langJSON, {
     "HmIP-FCI6": "Homematic IP Kontakt-Schnittstelle Unterputz - 6-fach",
     "HmIP-FLC" : "Homematic IP Universal Motorschloss Controller",
     "HmIP-FROLL": "Homematic IP Rollladenaktor, Unterputzmontage",
+    "HmIP-FS" : "Homematic IP Schaltaktor - Unterputz",
+    "HmIP-FSI6" : "Homematic IP Schaltaktor mit Tastereingang – Unterputz",
     "HmIP-FSI16" : "Homematic IP Schaltaktor mit Tastereingang (16 A) - Unterputz",
     "HmIP-FWI" : "Homematic IP Wiegand-Schnittstelle",
     "HmIP-HAP" : "LAN ROUTER",

@@ -214,6 +214,8 @@ jQuery.extend(true,langJSON, {
     "HmIP-FCI6": "Homematic IP Contact Interface flush-mount - 6 channels",
     "HmIP-FLC" : "Homematic IP Universal Lock Controller",
     "HmIP-FROLL": "Homematic IP Blind Actuator, flush-mount",
+    "HmIP-FS" : "Homematic IP switch actuator - flush-mount",
+    "HmIP-FSI6" : "Homematic IP switch actuator with push-button input – flush-mount",
     "HmIP-FSI16" : "Homematic IP Switch Actuator with Push-button Input (16 A) - flush-mount",
     "HmIP-FWI" : "Homematic IP Wiegand Interface",
     "HmIP-HAP" : "LAN ROUTER",
