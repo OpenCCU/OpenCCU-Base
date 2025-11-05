@@ -520,7 +520,7 @@ proc getDisplayInputTransmitter {chn p descr} {
       set options(10) "\${optionAccessDayNight}"
       set options(11) "\${optionAccessOpen}"
 
-      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param 550 400]</td>"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_A 550 500]</td>"
     append html "</tr>"
   }
 
