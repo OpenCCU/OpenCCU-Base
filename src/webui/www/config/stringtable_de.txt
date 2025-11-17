@@ -884,6 +884,10 @@ ERROR_TEMP_OR_HUMIDITY_MEASUREMENT=FALSE	${stringTableErrorTempOrHumidityMeasure
 ERROR_TEMP_OR_HUMIDITY_MEASUREMENT=TRUE	${stringTableErrorTempOrHumidityMeasurementTrue}
 ERROR_TEMP_SENSOR=FALSE	${stringTableErrorTempSensorFalse}
 ERROR_TEMP_SENSOR=TRUE	${stringTableErrorTempSensorTrue}
+
+ERROR_TEMP_SENSOR_2=FALSE	${stringTableErrorTempSensor2False}
+ERROR_TEMP_SENSOR_2=TRUE	${stringTableErrorTempSensor2True}
+
 ERROR_UNDERVOLTAGE	${stringTableErrorUndervoltageTrue}
 ERROR_UNDERVOLTAGE=FALSE	${stringTableErrorUndervoltageFalse}
 ERROR_UNDERVOLTAGE=TRUE	${stringTableErrorUndervoltageTrue}

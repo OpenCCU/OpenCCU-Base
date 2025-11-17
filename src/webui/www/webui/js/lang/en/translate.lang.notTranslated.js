@@ -62,6 +62,9 @@ jQuery.extend(true, langJSON, {
     "stringTableErrorTempSensorFalse" : "Temperature sensor ok",
     "stringTableErrorTempSensorTrue" : "Temperature sensor not ok",
 
+    "stringTableErrorTempSensor2False" : "Temperature sensor 2 ok",
+    "stringTableErrorTempSensor2True" : "Temperature sensor 2 not ok",
+
     "lblDisplayLayoutMode" : "Display layout",
 
     "hintPrgExists_WGT" : "There is at least one program. Therefore, switching the mode (channel 4) is disabled.",
