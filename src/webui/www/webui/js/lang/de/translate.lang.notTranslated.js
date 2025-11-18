@@ -65,9 +65,11 @@ jQuery.extend(true, langJSON, {
 
     "stringTableActivateLevelOnTime" : "Einheit Einschaltdauer",
 
+    "stringTableErrorTempSensor": "Temperatursensor",
     "stringTableErrorTempSensorFalse" : "Temperatursensor Ok",
     "stringTableErrorTempSensorTrue" : "Temperatursensor nicht Ok",
 
+    "stringTableErrorTempSensor2" : "Temperatursensor 2",
     "stringTableErrorTempSensor2False" : "Temperatursensor 2 Ok",
     "stringTableErrorTempSensor2True" : "Temperatursensor 2 nicht Ok",
 
