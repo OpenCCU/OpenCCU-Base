@@ -2,7 +2,6 @@
  * UdpCannel.h
  *
  *  Created on: 17.01.2013
- *      Author: willms
  */
 
 #ifndef UDPCANNEL_H_

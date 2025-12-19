@@ -2,7 +2,6 @@
  * hss_led.cpp
  *
  *  Created on: 17.01.2013
- *      Author: willms
  */
 #include <stdio.h>
 #include <stdlib.h>

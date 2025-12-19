@@ -2,7 +2,7 @@
  * AlarmMessage.cpp
  *
  *  Created on: 18.01.2013
- *      Author: willms
+ *      
  */
 
 #include "AlarmMessage.h"

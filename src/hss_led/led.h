@@ -2,7 +2,6 @@
  * led.h
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #ifndef LED_H_

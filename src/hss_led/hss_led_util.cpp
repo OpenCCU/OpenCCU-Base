@@ -1,6 +1,5 @@
 /*
 * Copyright (C) 2018 eQ-3 Entwicklung GmbH
-* Author: Christian Niclaus
 */
 #include "hss_led_util.h"
 #include <sstream>

@@ -1,6 +1,5 @@
 /*
 * Copyright (C) 2018 eQ-3 Entwicklung GmbH
-* Author: Christian Niclaus
 */
 #ifndef _HSS_LED_UTIL_H_
 #define _HSS_LED_UTIL_H_ 

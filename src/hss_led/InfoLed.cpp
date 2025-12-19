@@ -2,7 +2,6 @@
  * InfoLed.cpp
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #include "InfoLed.h"

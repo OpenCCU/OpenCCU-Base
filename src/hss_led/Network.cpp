@@ -2,7 +2,6 @@
  * Network.cpp
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #include "Network.h"

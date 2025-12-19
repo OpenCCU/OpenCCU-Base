@@ -2,7 +2,6 @@
  * AlarmMessage.h
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #ifndef ALARMMESSAGE_H_

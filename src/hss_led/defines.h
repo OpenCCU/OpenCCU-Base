@@ -2,7 +2,6 @@
  * defines.h
  *
  *  Created on: 17.01.2013
- *      Author: willms
  */
 
 #ifndef DEFINES_H_

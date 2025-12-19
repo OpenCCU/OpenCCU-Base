@@ -2,7 +2,6 @@
  * Info.h
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #ifndef INFO_H_

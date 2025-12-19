@@ -2,7 +2,6 @@
  * InternetLed.h
  *
  *  Created on: 18.01.2013
- *      Author: willms
  */
 
 #ifndef INTERNETLED_H_

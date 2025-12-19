@@ -2,7 +2,6 @@
  * UdpCannel.cpp
  *
  *  Created on: 17.01.2013
- *      Author: willms
  */
 
 #include <Logger.h>
