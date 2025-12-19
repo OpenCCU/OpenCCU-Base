@@ -3,7 +3,7 @@
  * \brief Liefert die Anzahl der Sekunden seit Systemstart
  *
  * (c) 2009, eQ-3 Entwicklung GmbH
- * \author F. Werner 
+ *
  ******************************************************************************/
 
 /*############################################################################*/
@@ -20,13 +20,13 @@
 /*# Definitionen                                                             #*/
 /*############################################################################*/
 
-// Um herauszubekommen, ob CLOCK_MONOTONIC verfügbar ist, musste ich zu einem
+// Um herauszubekommen, ob CLOCK_MONOTONIC verfï¿½gbar ist, musste ich zu einem
 // kleinen Trick greifen:
-//   * In der ursprünglichen Toolchain wurde GCC 3.x verwendet. Dort war die
+//   * In der ursprï¿½nglichen Toolchain wurde GCC 3.x verwendet. Dort war die
 //     Konstante CLOCK_MONOTONIC bereits vorhanden, aber nicht nutzbar. 
 //   * Mit der neuen Toolchain kann dann CLOCK_MONOTIC genutzt werden. Hier 
 //     wird GCC 4.x verwendet.
-// ==> Daher kann von der GCC-Version auf die Verfügbarkeit von CLOCK_MONOTONIC
+// ==> Daher kann von der GCC-Version auf die Verfï¿½gbarkeit von CLOCK_MONOTONIC
 //     geschlossen werden.
 #if __GNUC__ >= 4
 #  define TCLTICKS_CLOCK CLOCK_MONOTONIC
