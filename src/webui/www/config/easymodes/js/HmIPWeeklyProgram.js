@@ -291,8 +291,8 @@ HmIPWeeklyProgram.prototype = {
 
     this.DIMMER_WEEK_PROFILE_HmIP_WUA = (this._isDeviceType("HmIP-WUA") || (this._isDeviceType("ELV-SH-WUA"))) ? "HmIP-WUA" : "";
 
-    this.ignoreExpertMode = ["HmIP-DLD", "HmIP-DLD-A", "HmIP-DLD-S", "HmIPW-WRC6", "HmIPW-WRC6-A", "HmIP-WRC6-230", "HmIP-WRC6-230-A", "HmIP-WKP", "HmIP-RGBW", "HmIP-DRG-DALI", "HmIP-LSC", "HmIP-FLC", "HmIP-FDC", "HmIP-DLP", "HmIP-DLP-A"];
-    this.ignoreVirtualChannels = ["HmIP-DLD", "HmIP-DLD-A", "HmIP-DLD-S", "HmIPW-WRC6", "HmIPW-WRC6-A", "HmIP-WRC6-230", "HmIP-WRC6-230-A", "HmIP-FWI", "HmIP-WKP", "HmIP-RGBW", "HmIP-DRG-DALI", "HmIP-LSC", "HmIP-FLC", "HmIP-FDC", "HmIP-WGS", "HmIP-WGS-A", "HmIP-WGT" , "HmIP-WGT-A", "HmIP-DLP", "HmIP-DLP-A"];
+    this.ignoreExpertMode = ["HmIP-DLD", "HmIP-DLD-A", "HmIP-DLD-S", "HmIPW-WRC6", "HmIPW-WRC6-A", "HmIP-WRC6-230", "HmIP-WRC6-230-A", "HmIP-WKP", "HmIP-RGBW", "HmIP-DRG-DALI", "HmIP-LSC", "HmIP-FLC", "HmIP-FDC", "HmIP-DLP", "HmIP-DLP-A", "HmIP-DLP-AS", "HmIP-DLP-WS"];
+    this.ignoreVirtualChannels = ["HmIP-DLD", "HmIP-DLD-A", "HmIP-DLD-S", "HmIPW-WRC6", "HmIPW-WRC6-A", "HmIP-WRC6-230", "HmIP-WRC6-230-A", "HmIP-FWI", "HmIP-WKP", "HmIP-RGBW", "HmIP-DRG-DALI", "HmIP-LSC", "HmIP-FLC", "HmIP-FDC", "HmIP-WGS", "HmIP-WGS-A", "HmIP-WGT" , "HmIP-WGT-A", "HmIP-DLP", "HmIP-DLP-A", "HmIP-DLP-AS", "HmIP-DLP-WS"];
     this.defaultDoorLockMode = "DoorLockMode";
     this.userDoorLockMode = "UserMode";
     this.selectedMode_RGBW = "";
