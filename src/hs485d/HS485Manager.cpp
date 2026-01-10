@@ -411,7 +411,7 @@ std::string HS485Manager::BuildStringAddress(uint32_t address, int channel/*=-1*
 	t_address_map::iterator it=address_map.find(address);
 	if(it==address_map.end()){
 		char buffer[12];
-		snprintf(buffer, sizeof(buffer), "@%08" PRIu32, address);
+		snprintf(buffer, sizeof(buffer), "@%08" PRIX32, address);
 		return BuildStringAddress(buffer, channel);
 	}
 	return BuildStringAddress(it->second->GetSerial(), channel);
