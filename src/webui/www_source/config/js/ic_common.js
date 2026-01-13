@@ -30,11 +30,14 @@ AddProfileValues = function(prefix)
 
 AddSeparateSettings = function(prefix, pnr)
 {
-  var i = 1;
-  
+  var i = 1,
+  elem;
   while (document.getElementById(prefix + pnr + '_' + i))
   {
-    AddParam(document.getElementById(prefix + pnr + '_' + i));
+    elem = document.getElementById(prefix + pnr + '_' + i);
+    if (IsDirty(elem)) {
+      AddParam(document.getElementById(prefix + pnr + '_' + i));
+    }
     i++;
   }
 };
