@@ -1917,8 +1917,6 @@ HmIPWeeklyProgram.prototype = {
       },150);
     };
 
-
-
     if ((this.activeEntries[number] == true)) {
       selectedMode = homematic("Interface.getMetadata", {"objectId": self.device.id, "dataId": "wpMode_" + number});
 
@@ -1947,13 +1945,8 @@ HmIPWeeklyProgram.prototype = {
     result += "</td>";
     result += "</tr>";
 
-    window.setTimeout(function() {
-      jQuery("#dlpModeSelector_" + number).change();
-    },50);
-
     return result;
   },
-
 
   _showHideWPLevel: function (number, mode) {
     var wpLevelElm = jQuery("[name='" + number + "_WP_LEVEL']");
@@ -1965,7 +1958,6 @@ HmIPWeeklyProgram.prototype = {
       wpLevelElm.show();
       wpLevelElm.parent().parent().show();
     }
-
   },
 
   _showHideTargetChannels: function (number, mode, setVal) {
@@ -3180,6 +3172,13 @@ HmIPWeeklyProgram.prototype = {
         self._setWGSPanel(self._addLeadingZero(nextNumber));
       }
 
+      if (self.isDLP) {
+        window.setTimeout(function() {
+          jQuery("#dlpModeSelector_" + self._addLeadingZero(parseInt(nextNumber))).change();
+      },50);
+
+      }
+
     };
 
     if (mode == "DEL") {
@@ -3329,6 +3328,15 @@ HmIPWeeklyProgram.prototype = {
   _setEntryVisibility: function(number) {
     var val = parseInt(this.ps[number +"_WP_WEEKDAY"]);
     this.activeEntries[number] = (val == 0) ? false : true ;
+
+    if (this.isDLP && (val > 0)) {
+      var iNumber = parseInt(number);
+      var delay = (iNumber < 5) ? 250 : 2000; //set the mode of the first 5 entries after 250 ms
+      window.setTimeout(function() {
+        jQuery("#dlpModeSelector_" + self._addLeadingZero(iNumber)).change();
+      },delay);
+
+    }
   },
 
   _addLeadingZero: function(val) {
