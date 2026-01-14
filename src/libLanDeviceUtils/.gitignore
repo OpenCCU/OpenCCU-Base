@@ -1,0 +1,5 @@
+config.mk
+*.o
+*.a
+*.so
+*.so.debug
