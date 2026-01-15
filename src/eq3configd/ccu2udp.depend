@@ -1,0 +1,48 @@
+# depslib dependency file v1.0
+1353514642 source:/home/user/src/ccu2udp/main.cpp
+	<sys/socket.h>
+	<sys/types.h>
+	<sys/uio.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"include/udpframe.h"
+
+1353413795 /home/user/src/ccu2udp/include/udpframe.h
+	<string>
+
+1353413795 source:/home/user/src/ccu2udp/src/udpframe.cpp
+	"../include/udpframe.h"
+	<stdio.h>
+
+1354191418 source:/home/user/src/udp_config/main.cpp
+	<sys/socket.h>
+	<sys/types.h>
+	<sys/uio.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"include/udpframe.h"
+	"include/networkconfig.h"
+
+1353659910 /home/user/src/udp_config/include/udpframe.h
+	<string>
+
+1353659910 source:/home/user/src/udp_config/src/udpframe.cpp
+	"../include/udpframe.h"
+	<stdio.h>
+
+1354105766 /home/user/src/udp_config/include/networkconfig.h
+	<string>
+
+1354190820 source:/home/user/src/udp_config/src/networkconfig.cpp
+	"../include/networkconfig.h"
+	<fstream>
+	<sstream>
+
