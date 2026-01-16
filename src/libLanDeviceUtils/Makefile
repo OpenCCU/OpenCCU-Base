@@ -45,8 +45,10 @@ BIDCOSUTILSPATH = ../elvutils
 #BIDCOSUTILSPATH = $(ELVUTILS_DIR)
 BIDCOSUTILSLIB = elvutils
 
-OPENSSL=-L ../openssl
-#OPENSSL=
+#OPENSSL=-L ../openssl
+OPENSSL=
+#OPENSSLINCLUDE=-I../openssl/include
+OPENSSLINCLUDE=""
 
 # Inlcude dirs for this target (libLanDeviceUtils.so)
 INCL = -Iinclude -Isrc
@@ -75,7 +77,7 @@ CC = $(CROSS)g++
 CXX = $(CROSS)g++
 STRIP = $(CROSS)strip
 
-CPPFLAGS += -I./include -I./src -I$(BIDCOSUTILSPATH) -I../openssl/include -Wall $(MACHINE_OPTION) -fPIC
+CPPFLAGS += -I./include -I./src -I$(BIDCOSUTILSPATH) $(OPENSSLINCLUDE) -Wall $(MACHINE_OPTION) -fPIC
 
 ifeq ($(CXXFLAGS),)
 CXXFLAGS=$(OPTIMIZE)
