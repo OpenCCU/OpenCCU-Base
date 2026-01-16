@@ -48,7 +48,7 @@ STRIP = $(CROSS)strip
 ROMFSINST = /usr/bin/romfs-inst.sh
 
 #LIBCRYPTO=-L../../crypttool
-LIBCRYPTO=""
+LIBCRYPTO=
 
 LD_FLAGS= -L $(EQ3CONFIGCMDMODULES_PATH) -l $(EQ3CONFIGCMDMODULES_LIB) -l pthread $(LIBCRYPTO) -lcrypto
 
