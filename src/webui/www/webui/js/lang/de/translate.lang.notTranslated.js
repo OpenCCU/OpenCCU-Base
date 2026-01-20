@@ -306,6 +306,8 @@ jQuery.extend(true, langJSON, {
     "lblHeight" : "H%F6he",
     "lblDistance" : "Distanz",
 
+    "optionSensitive" : "Empfindlich",
+
     "noMoreKeys" : ""
   }
 });
