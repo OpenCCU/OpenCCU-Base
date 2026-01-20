@@ -1897,6 +1897,17 @@ proc getShutterTransmitter {chn p descr address} {
     }
   }
 
+  set param SENSOR_SENSITIVITY
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${stringTableSensorSensivity}</td>"
+            set options(0) "\${optionNormal}"
+            set options(1) "\${optionSensitive}"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_shutterTrans]</td>"
+    append html "</tr>"
+  }
+
   set param ENDPOSITION_AUTO_DETECT
   if { [info exists ps($param)] == 1 } {
     incr prn
@@ -1904,9 +1915,8 @@ proc getShutterTransmitter {chn p descr address} {
       append html "<td>\${stringTableBlindEndPositionAutoDetect}</td>"
       append html  "<td>[getCheckBox '$param' $ps($param) $chn $prn onchange=setVisibilityAutoCalibration(this);]</td>"
     append html "</tr>"
+    append html "[getHorizontalLine]"
   }
-
-  append html "[getHorizontalLine]"
 
   set cssAutoCalibration "hidden"
   if {$fwMajor == 1 && $fwMinor == 0 && $fwPatch <= 10 } {
@@ -2008,7 +2018,10 @@ proc getShutterTransmitter {chn p descr address} {
       }
 
       # Show the checkbox 'Auto discover' only when the parameter ENDPOSITION_AUTO_DETECT is available
-      if { [info exists ps(ENDPOSITION_AUTO_DETECT)] != 1 } {
+      if {
+        ([info exists ps(ENDPOSITION_AUTO_DETECT)] != 1) &&
+        (([string equal $dev_descr(TYPE) "HmIP-M-TD15"] != 1) && ([string equal $dev_descr(TYPE) "RM-110-45"] != 1)  && ([string equal $dev_descr(TYPE) "RM-110-15"] != 1))
+      } {
         append html "jQuery(\"\[name='trAutoCompensate'\]\").hide();"
       }
 
