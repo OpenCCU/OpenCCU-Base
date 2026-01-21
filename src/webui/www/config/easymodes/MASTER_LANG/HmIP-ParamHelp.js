@@ -208,6 +208,12 @@ jQuery.extend(true,langJSON, {
     "Einstellung 100%: Es reicht ein kleiner Tropfen ( von ca. 70mm&sup3; ) f%FCr ein Ausl%F6sen des Sensors aus ( je nach Region mehr oder weniger ).<br/><br/>" +
     "<b>Achtung:</b><br/>Wenn f%FCr einen Test des Sensors Trinkwasser verwendet wird, reduziert sich die Menge an notwendigem Wasser f%FCr eine Ausl%F6sung, da dessen Leitwert i.d.R. um mehrere 10er Potenzen h%F6her liegt.",
 
+    "SENSOR_SENSITIVITY_shutterTrans" :
+      "Bei der Erkennung eines Hindernisses, h%E4lt der Aktor sofort an, um eine Besch%E4digung der Rollladen oder des Hindernisses zu vermeiden.<br/><br/>" +
+      "Mit diesem Parameter legen Sie die Empfindlichkeit der Hindernis-Erkennung fest. Im Normalfall sollte die Einstellung <b>Normal</b> gew%E4hlt werden.<br><br/>" +
+      "Wenn Sie der Meinung sind, dass das nicht ausreicht, w%E4hlen Sie die Einstellung <b>Empfindllich</b>. Hier besteht jedoch die M%F6glichkeit, dass der " +
+      "Aktor dann auch bei 'Nichtigkeiten' anh%E4lt.",
+
     "TRIGGER_ANGLE" : "Bei Verwendung als Lageerkennungssensor, bestimmt dieser Parameter, um wieviel Grad sich der Winkel der Ober-/Unterseite des Sensors in Bezug zur Waagerechten %E4ndern muss, " +
       "damit ein Event ausgel%F6st wird.",
 
@@ -757,6 +763,12 @@ jQuery.extend(true,langJSON, {
       "Setting 0%:   Almost the entire sensor surface must be covered with rainwater for the sensor to trigger.<br/><br/>" +
       "Setting 100%: A small drop (of approx. 70mm&sup3;) is sufficient to trigger the sensor (more or less, depending on the area).<br/><br/>" +
       "<b>Please note:</b><br/>If drinking water is used for a test of the sensor, the amount of water required for triggering is reduced, as its conductance value is usually several potencies of 10 higher.",
+
+    "SENSOR_SENSITIVITY_shutterTrans" :
+      "en* Bei der Erkennung eines Hindernisses, h%E4lt der Aktor sofort an, um eine Besch%E4digung der Rollladen oder des Hindernisses zu vermeiden.<br/><br/>" +
+      "Mit diesem Parameter legen Sie die Empfindlichkeit der Hindernis-Erkennung fest. Im Normalfall sollte die Einstellung <b>Normal</b> gew%E4hlt werden.<br><br/>" +
+      "Wenn Sie der Meinung sind, dass das nicht ausreicht, w%E4hlen Sie die Einstellung <b>Empfindllich</b>. Hier besteht jedoch die M%F6glichkeit, dass der " +
+      "Aktor dann auch bei 'Nichtigkeiten' anh%E4lt.",
 
 
     "TRIGGER_ANGLE" : "When used as position detection sensor, this parameter determines by how many degrees the angle of the top/bottom of the sensor has to change in relation to the horizontal, " +

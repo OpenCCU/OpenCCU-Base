@@ -1904,7 +1904,7 @@ proc getShutterTransmitter {chn p descr address} {
       append html "<td>\${stringTableSensorSensivity}</td>"
             set options(0) "\${optionNormal}"
             set options(1) "\${optionSensitive}"
-      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_shutterTrans]</td>"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_shutterTrans 450 160]</td>"
     append html "</tr>"
   }
 
