@@ -12,11 +12,8 @@ set DESCRIPTION "ELV-SH-CWD"
 #lappend PATHLIST <Pixellänge maximale Ausdehnung> <Pfad zum Bild>
 #-----------------------------------------------------------------------
 set     PATHLIST ""
-lappend PATHLIST [list  50	"/config/img/devices/50/unknown_device_thumb.png"]
-lappend PATHLIST [list  250	"/config/img/devices/250/unknown_device.png"]
+lappend PATHLIST [list  50	"/config/img/devices/50/243_elv-sh-crc_thumb.png"]
+lappend PATHLIST [list  250	"/config/img/devices/250/243_elv-sh-crc.png"]
 
-#Koordinaten für Highlight:
-#P {<Formname> <Formtyp> <x,y,dx,dy,r je nach Formtyp>}
-#-----------------------------------------------------------------------
 set P ""
 
