@@ -44,11 +44,7 @@ set PROFILE_0(UI_TEMPLATE)  "Expertenprofil"
 
 
 proc getDescription {longAvailable prn} {
-  if {$longAvailable} {
-    return "\${description_$prn}"
-  } else {
-    return "\${description_noLong_$prn}"
-  }
+  return "\${profileDescr}"
 }
 
 proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
@@ -80,10 +76,10 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   set cur_profile [get_cur_profile2 ps PROFILES_MAP PROFILE_TMP $peer_type]
 
 # die Texte der Platzhalter einlesen
-  set right 2
-  puts "<script type=\"text/javascript\">getLangInfo('$dev_descr_sender(TYPE)_$right', '$dev_descr_receiver(TYPE)');</script>"
+  set left 3
+  puts "<script type=\"text/javascript\">getLangInfo('$dev_descr_sender(TYPE)_$left', '$dev_descr_receiver(TYPE)');</script>"
   puts "<script type=\"text/javascript\">getLangInfo_Special('HmIP_DEVICES.txt');</script>"
-  puts "<script type=\"text/javascript\">jQuery('#dev_descr_sender_tmp').val('$dev_descr_sender(TYPE)_$right');</script>"
+  puts "<script type=\"text/javascript\">jQuery('#dev_descr_sender_tmp').val('$dev_descr_sender(TYPE)_$left');</script>"
   puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js');</script>"
   puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/js/ic_effects.js');</script>"
 
@@ -231,7 +227,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   if {([string equal $dev_descr_receiver(PARENT_TYPE) "HmIP-LSC"] == 1)} {
     # Select Color or Color Temperature
@@ -413,7 +409,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
 
   if {$longKeypressAvailable} {
@@ -482,7 +478,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
 set comment { Request from KB (developer)
   # ON_TIME
@@ -647,7 +643,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_DELAY ps PROFILE_$prn delay $prn $special_input_id SHORT_OFFDELAY_TIME TIMEBASE_LONG]"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   incr pref
   append HTML_PARAMS(separate_$prn) "<tr>"
@@ -774,7 +770,7 @@ set comment {
 
   set pref 0
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME_ON ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME_ON ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME_FACTOR_DESCR ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -795,7 +791,7 @@ set comment {
 
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME_OFF ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector COLOR_CHANGE_RAMPTIME_OFF ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   incr pref
   append HTML_PARAMS(separate_$prn) "<tr>"
@@ -925,7 +921,7 @@ set comment {
 
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_DELAY ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_DELAY ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   # append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME_FACTOR_DESCR ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1010,7 +1006,7 @@ set comment {
 
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_OFFTIME_CHANGE_DELAY ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_OFFTIME_CHANGE_DELAY ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   # OFF_TIME
   # append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME_FACTOR_DESCR ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1096,7 +1092,7 @@ set comment {
 
   set pref 0
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_ON_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_ON_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1112,7 +1108,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_DELAY ps PROFILE_$prn delay $prn $special_input_id SHORT_OFFDELAY_TIME TIMEBASE_LONG]"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_OFF_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_OFF_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   incr pref
   append HTML_PARAMS(separate_$prn) "<tr><td>\${SATURATION_OFF_LEVEL}</td><td>"
@@ -1192,7 +1188,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "<tr><td colspan =\"2\" style=\"padding-bottom:10px;\"><hr>\${description_fastRotation}</td></tr>"
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_COLOR_TEMP_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_COLOR_TEMP_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1247,7 +1243,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "<tr><td colspan =\"2\" style=\"padding-bottom:10px;\"><hr>\${description_fastRotation}</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_COLOR_TEMP_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_COLOR_TEMP_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   # SHORT/LONG_OFF_COLOR_TEMPERATURE
   incr pref
@@ -1298,7 +1294,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "<tr><td colspan =\"2\" style=\"padding-bottom:10px;\"><hr>\${description_fastRotation}</td></tr>"
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_ON_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_ON_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1309,7 +1305,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "[getColorTempSlider ps SHORT ON ON]"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_OFF_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMP_ONTIME_CHANGE_OFF_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   # SHORT/LONG_OFF_COLOR_TEMPERATURE
   incr pref
@@ -1382,7 +1378,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "<td colspan =\"2\"><hr></td>"
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
 
   # ON_TIME
@@ -1478,7 +1474,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   set param _SHORT_OUTPUT_BEHAVIOUR
   if {[info exists ps($param)] == 1} {
@@ -1552,7 +1548,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "<td colspan =\"2\"><hr></td>"
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1577,7 +1573,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
 
   if {$longKeypressAvailable} {    ## LONG KEYPRESS
@@ -1651,7 +1647,7 @@ set comment {
 
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
 
   # ON_TIME
@@ -1746,7 +1742,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   set param _SHORT_OUTPUT_BEHAVIOUR
   if {[info exists ps($param)] == 1} {
@@ -1821,7 +1817,7 @@ set comment {
 
 
   # RAMPON_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPON_TIME ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPON_TIME TIMEBASE_LONG]"
 
   # ON_TIME
   append HTML_PARAMS(separate_$prn) "[getTimeSelector ON_TIME ps PROFILE_$prn timeOnOff $prn $special_input_id SHORT_ON_TIME TIMEBASE_LONG]"
@@ -1851,7 +1847,7 @@ set comment {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   # RAMPOFF_TIME
-  append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
+  ##append HTML_PARAMS(separate_$prn) "[getTimeSelector RAMPOFF_TIME_FACTOR_DESCR ps PROFILE_$prn rampOnOff $prn $special_input_id SHORT_RAMPOFF_TIME TIMEBASE_LONG]"
 
   if {$longKeypressAvailable} {
     ## LONG KEYPRESS
@@ -1906,8 +1902,8 @@ set comment {
   set pref 0
   if {$cur_profile == $prn} then {array set PROFILE_$prn [array get ps]}
   append HTML_PARAMS(separate_$prn) "<div id=\"param_$prn\"><textarea id=\"profile_$prn\" style=\"display:none\">"
-    append HTML_PARAMS(separate_$prn) "\${description_$prn}"
-    # append HTML_PARAMS(separate_$prn) "[getDescription $longKeypressAvailable $prn]"
+    # append HTML_PARAMS(separate_$prn) "\${description_$prn}"
+    append HTML_PARAMS(separate_$prn) "[getDescription $longKeypressAvailable $prn]"
     append HTML_PARAMS(separate_$prn) "<table class=\"ProfileTbl\">"
       incr pref
       append HTML_PARAMS(separate_$prn) "<tr>"
