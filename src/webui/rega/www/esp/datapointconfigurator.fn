@@ -1125,7 +1125,7 @@ function ::dcCreate()
           }
 
           !# SWITCH
-          bIsControl = ( sControlName.Find(CN_SWITCH) > -1 );
+          bIsControl = ( sControlName.Find(CN_SWITCH) == 0 );
           if( bIsControl && (sLastControlName != CN_SWITCH) )
           {
             isKnownControl = true;
@@ -1138,7 +1138,7 @@ function ::dcCreate()
             if (isWGT) {wgtChMode = ch.MetaData("channelMode");}
 
             if (((ch.Label().Substr(5,4) != "BWTH") && (! isWGT)) || ((isWGT) && (wgtChMode == "modeSWITCH"))) {
-              WriteLine( "<script>conInfo('Control SWITCH found.');</script>" );
+              WriteLine( "<script>conInfo('Control CN_SWITCH found. "#ch.Address()#"');</script>" );
               Call("/esp/controls/switch.fn::CreateBinaryActuator()");
             } else {
               ! If the device is a HmIP-BWTH* or HmIP-WGT*
@@ -1151,18 +1151,17 @@ function ::dcCreate()
           bIsControl = ( sControlName.Find(CN_WATER_SWITCH) > -1 );
           if( bIsControl && (sLastControlName != CN_WATER_SWITCH))
           {
-            WriteLine( "<script>conInfo('Control CN_WATER_SWITCH found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_WATER_SWITCH found. "#ch.Address()#"');</script>" );
             isKnownControl = true;
             sLastControlName = CN_WATER_SWITCH;
             Call("/esp/controls/switch.fn::CreateWaterSwitch()");
           }
 
-
           !# SWITCH_TRANSMITTER
           bIsControl = ( sControlName.Find(CN_SWITCH_TRANSM) > -1 );
           if( bIsControl && (sLastControlName != CN_SWITCH_TRANSM) )
           {
-            WriteLine( "<script>conInfo('Control SWITCH_TRANSMITTER found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_SWITCH_TRANSM found.');</script>" );
             isKnownControl = true;
             sLastControlName = CN_SWITCH_TRANSM;
             Call("/esp/controls/switch.fn::CreateSwitchTansmitter()");
@@ -1172,7 +1171,7 @@ function ::dcCreate()
           bIsControl = ( sControlName.Find(CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER) > -1 );
           if( bIsControl && (sLastControlName != CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER) )
           {
-            WriteLine( "<script>conInfo('Control TEMP_HUM_PARTICLE_MATTER_TRANSMITTER found.');</script>" );
+            WriteLine( "<script>conInfo('Control CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER found.');</script>" );
             isKnownControl = true;
             sLastControlName = CN_TEMP_HUMIDITY_PARTICULATE_MATTER_TRANSMITTER;
             Call("/esp/controls/weather_sensor.fn::CreateTempHuminityParticulateMatterTransmitter()");
