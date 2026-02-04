@@ -308,6 +308,9 @@ jQuery.extend(true, langJSON, {
     "lblDewPointControl" : "Dew point control",
     "lblDewPointTemp" : "Dew point temperature",
 
+    "lblSpeedSeclect_1" : "SPEED_SELECT_1",
+    "lblSpeedSeclect_2" : "SPEED_SELECT_2",
+
     "noMoreKeys" : ""
   }
 });
