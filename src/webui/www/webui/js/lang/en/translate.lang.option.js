@@ -215,7 +215,7 @@ jQuery.extend(true, langJSON, {
     "optionWindowDriveLevelOn" : "Open",
     "optionWindowDriveLevelOnDelay" : "Delayed opening",
 
-    "optionWhisper" : "Whisper mode",
+    "optionWhisper" : "Slowly",
 
     "noMoreKeys" : ""
   }

@@ -7731,7 +7731,7 @@ proc getAutoRelockTransceiver {chn p descr} {
       set options(0) "\${optionOFF}"
       set options(1) "\${optionON}"
       set options(2) "\${optionDisable}"
-      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_door_state]</td>"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]</td>"
     append html "</tr>"
   }
 
@@ -7743,7 +7743,7 @@ proc getAutoRelockTransceiver {chn p descr} {
       array_clear options
       set options(0) "\${optionNormal}"
       set options(1) "\${optionWhisper}"
-      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_door_state]</td>"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon SPEED_SELECT_door_state]</td>"
     append html "</tr>"
   }
 
@@ -7755,7 +7755,7 @@ proc getAutoRelockTransceiver {chn p descr} {
       array_clear options
       set options(0) "\${optionNormal}"
       set options(1) "\${optionWhisper}"
-      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_door_state]</td>"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon SPEED_SELECT_door_state]</td>"
     append html "</tr>"
   }
 

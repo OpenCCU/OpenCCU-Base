@@ -314,8 +314,8 @@ jQuery.extend(true, langJSON, {
     "lblDewPointControl" : "Taupunktkontrolle",
     "lblDewPointTemp" : "Taupunkttemperatur",
 
-    "lblSpeedSeclect_1" : "SPEED_SELECT_1",
-    "lblSpeedSeclect_2" : "SPEED_SELECT_2",
+    "lblSpeedSeclect_1" : "Geschwindigkeit f%FCr fremdausgel%F6ste Fahrten",
+    "lblSpeedSeclect_2" : "Geschwindigkeit f%FCr selbstausgel%F6ste Fahrten",
 
     "noMoreKeys" : ""
   }

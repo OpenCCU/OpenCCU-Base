@@ -212,7 +212,7 @@ jQuery.extend(true,langJSON, {
       "Bei der Erkennung eines Hindernisses, h%E4lt der Aktor sofort an, um eine Besch%E4digung der Rollladen oder des Hindernisses zu vermeiden.<br/><br/>" +
       "Mit diesem Parameter legen Sie die Empfindlichkeit der Hindernis-Erkennung fest. Im Normalfall sollte die Einstellung <b>Normal</b> gew%E4hlt werden.<br><br/>" +
       "Sollte eine sensiblere Einstellung notwendig sein, w%E4hlen Sie die Einstellung <b>Empfindllich</b>. "+
-      "Hier besteht jedoch die M%F6glichkeit, dass der Aktor dann auch bei 'geringfügigen Widerständen' anh%E4lt.",
+      "Hier besteht jedoch die M%F6glichkeit, dass der Aktor dann auch bei 'geringf%FCgigen Widerst%E4nden' anh%E4lt.",
 
     "TRIGGER_ANGLE" : "Bei Verwendung als Lageerkennungssensor, bestimmt dieser Parameter, um wieviel Grad sich der Winkel der Ober-/Unterseite des Sensors in Bezug zur Waagerechten %E4ndern muss, " +
       "damit ein Event ausgel%F6st wird.",
@@ -561,6 +561,12 @@ jQuery.extend(true,langJSON, {
       "<b>Referenzh%F6he</b><br/><br/>" +
       "Abstand des Sensors zum Referenzpunkt, welcher als H%F6he Null angezeigt werden soll. " + 
       "Bei Montage an einer Decke mit Blickrichtung Boden wird hier im Normalfall die Distanz zwischen Sensor und Boden eingetragen.",
+
+    "SPEED_SELECT_door_state" :
+    "Der T%FCrschlossantrieb f%E4hrt mit der eingestellten Geschwindigkeit, sofern der Auto-Relock-Kanal aktiviert ist.<br/><br/>" +
+    "Zu fremdausgel%F6sten Fahrten geh%F6ren Fahrten, die durch eingehende Befehle oder durch einen Tastendruck ausgel%F6st werden.<br/><br/>" +
+    "Zu selbstausgel%F6sten Fahrten geh%F6ren Auto-Relock Fahrten und Fahrten, die durch das interne Wochenprogramm ausgel%F6st werden.<br/><br/>" +
+    "Die eingestellte Geschwindigkeit kann auch ohne Auto-Relock-Funktion genutzt werden, indem die <i>Wartezeit vor Auto-Relock</i> auf <i>dauerhaft</i> eingestellt wird und <i>Automatisches Verriegeln</i> auf <i>T%FCrzustand ignorieren</i> (Kanal 12).",
 
     "noMoreHelp" : ""
   },
@@ -1119,6 +1125,12 @@ jQuery.extend(true,langJSON, {
       "<b>Reference height</b><br/><br/>" +
       "Distance between the sensor and the reference point, which should be displayed as zero height. " +
       "When mounted on a ceiling with the viewing direction toward the floor, the distance between the sensor and the floor is normally entered here.",
+
+    "SPEED_SELECT_door_state" :
+    "The door lock drive operates at the set speed if the auto-relock channel is activated.<br/><br/>" +
+     "Externally triggered movements include movements triggered by incoming commands or by pressing a button.<br/><br/>" +
+     "Self-triggered movements include auto-relock movements and movements triggered by the internal weekly programme.<br/><br/> " +
+     "The set speed can also be used without the auto-relock function by setting the <i>Wait time before auto-relock</i> to <i>Permanent</i> and <i>Automatic locking<i> to <i>Ignore door status</i> (channel 12).",
 
     "noMoreHelp" : ""
     }
