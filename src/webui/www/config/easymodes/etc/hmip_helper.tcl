@@ -3017,15 +3017,15 @@ proc isLongKeypressAvailable {sender sender_address url} {
 }
 
 proc devIsPowerMeter {devType} {
-  # puts "devType: $devType<br/>"
-
   switch [string tolower $devType] {
-    hmip-bsm  {return true}
-    hmip-fsm  {return true}
-    hmip-fsm16  {return true}
-    hmip-psm  {return true}
-    hmip-psm-2  {return true}
-    "hmip-psm-2 qhj"  {return true}
+    hmip-bsm -
+    hmip-fsm -
+    hmip-fsm16 -
+    hmip-psm -
+    hmip-psm-2 -
+    "hmip-psm-2 qhj" -
+    hmip-psmco -
+    elv-sh-psmci -
     hmip-usbsm  {return true}
     default {return false}
   }
