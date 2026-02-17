@@ -2768,8 +2768,9 @@ proc getHeatingClimateControlSwitchTransmitter {chn p descr {extraparam ""}} {
     append html "</tr>"
   }
 
-  ### DewPoint
-  set param DEW_POINT_CONTROL_ENABLED
+  ### DewPoint - currently not active - see SPHM-1476 and - 1500
+
+  set param _DEW_POINT_CONTROL_ENABLED
   if { [info exists ps($param)] == 1  } {
     incr prn
     append html "<tr id='dewPointControl' class=$paramVisibility>"
@@ -2780,7 +2781,7 @@ proc getHeatingClimateControlSwitchTransmitter {chn p descr {extraparam ""}} {
     append html "</tr>"
   }
 
-  set param DEW_POINT_TEMPERATURE
+  set param _DEW_POINT_TEMPERATURE
   if { [info exists ps($param)] == 1 } {
     incr prn
     append html "<tr id='dewPointTemp' class=$paramVisibility>"
