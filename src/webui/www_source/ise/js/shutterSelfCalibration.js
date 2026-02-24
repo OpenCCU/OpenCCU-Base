@@ -1,9 +1,9 @@
 shutterSelfCalibration = Class.create();
 shutterSelfCalibration.prototype = {
-  initialize: function (chnId, interface, chAddress) {
+  initialize: function (chnId, iface, chAddress) {
     self = this;
 
-    this.iface = interface;
+    this.iface = iface;
     this.chAddress = chAddress;
     this.chMaintenance = chAddress.split(":").first() + ":0";
 
