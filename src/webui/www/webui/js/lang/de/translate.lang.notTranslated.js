@@ -178,7 +178,7 @@ jQuery.extend(true, langJSON, {
     "stringTableNoEndStopUnLock" : "NoEndStopUnLock",
 
     "stringTableLockState" : "Schlosszustand",
-    "stringTableLockStateReason" : "Ausl%F6ser",
+    "stringTableLockStateReason" : "Antriebsart",
 
     "stringTableLockTeachInState" : "Status Anlernprozess T%FCrschloss",
 
@@ -246,7 +246,7 @@ jQuery.extend(true, langJSON, {
     "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked" : "Anlernfahrt starten bei ge%F6ffneter T%FCr (entriegelt)\n" +
       "und Schloss aktuell in Neutralstellung",
     "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "Anlernfahrt  starten bei ge%F6ffneter T%FCr (entriegelt)\n" +
-      "und Schloss mit Neutralstellung vertikal",
+      "und Schloss mit Neutralstellung vertikal oder Knaufzylinder",
     "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal" : "Anlernfahrt starten bei ge%F6ffneter T%FCr (entriegelt)\n" +
       "und Schloss mit Neutralstellung horizontal",
     "stringTableDoorLockStateTransceiverLockTargetLevelLoadCalibrationClosedDoor" : "Anlernen der Schlosslast bei geschlossener T%FCr (entriegelt)",
@@ -317,7 +317,11 @@ jQuery.extend(true, langJSON, {
     "lblSpeedSeclect_1" : "Geschwindigkeit f%FCr fremdausgel%F6ste Fahrten",
     "lblSpeedSeclect_2" : "Geschwindigkeit f%FCr selbstausgel%F6ste Fahrten",
 
+    "stringTableDLPCalibration" : "Kalibrierung T%FCr geschlossen",
+
     "comment" : "Release B/2026",
+
+
     "btnSelfCalibration" : "Kalibrierung der Endlagen",
 
     "btnChangeMotorDir" : "Drehrichtung des Motors wechseln",

@@ -7513,7 +7513,7 @@ proc getDoorLockTranseiver {chn p descr} {
     append html "<tr>"
       append html "<td>\${stringTableDoorLockNeutralPos}</td>"
       array_clear options
-      set options(0) "\${lblVerticalA}"
+      set options(0) "\${lblVerticalB}"
       set options(1) "\${lblHorizontalA}"
       append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param 320 75]</td>"
     append html "</tr>"

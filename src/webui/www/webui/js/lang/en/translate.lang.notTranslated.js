@@ -143,6 +143,9 @@ jQuery.extend(true, langJSON, {
     "optionTrailingEdge" : "Trailing edge",
     "optionLeadingEdge" : "Leading edge",
 
+    "stringTableDLPCalibration" : "Calibration door closed",
+
+
     "comment" : "Release A/2026",
 
     "lblDoorLockDirection" : "Direction of turning for closing ",
@@ -172,7 +175,7 @@ jQuery.extend(true, langJSON, {
     "stringTableNoEndStopUnLock" : "No end stop unLock",
 
     "stringTableLockState" : "Lock status",
-    "stringTableLockStateReason" : "Trigger",
+    "stringTableLockStateReason" : "Drive type",
 
     "stringTableLockTeachInState" : "Status pairing process door lock",
 
@@ -239,7 +242,7 @@ jQuery.extend(true, langJSON, {
 
     "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralUnlocked" : "Start configuration drive with door open (unlocked) \\nand lock in neutral position",
 
-    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "Start configuration drive with door open (unlocked) \\nand lock with vertical neutral position",
+    "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralVertical" : "Start configuration drive with door open (unlocked) \\nand lock with vertical neutral position or knob cylinder",
 
     "stringTableDoorLockStateTransceiverLockTargetLevelTeachInDriveOpenDoorNeutralHorizontal" : "Start configuration drive with door open (unlocked) \\nand lock with horizontal neutral position",
 

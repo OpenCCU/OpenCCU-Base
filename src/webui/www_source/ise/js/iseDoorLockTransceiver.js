@@ -42,7 +42,7 @@ iseDoorLockTransceiver.prototype = {
 
     dlg.btnTextNo(translateKey("dialogBack"));
     dlg.btnTextYes(translateKey("btnOk"));
-    dlg.setWidth(600);
+    dlg.setWidth(700);
 
   },
 

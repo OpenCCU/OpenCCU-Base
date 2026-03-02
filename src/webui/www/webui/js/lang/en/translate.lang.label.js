@@ -331,6 +331,7 @@ jQuery.extend(true,langJSON, {
     "lblValue" : "Value",
     "lblVertical" : "Vertical",
     "lblVerticalA" : "Vertical",
+    "lblVerticalB" : "Vertical or knob cylinder",
     "lblVibration" : "Vibration",
     "lblVoltageStatus_0": "Normal",
     "lblVoltageStatus_1": "Unknown",
