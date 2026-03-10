@@ -1912,9 +1912,14 @@ proc getShutterTransmitter {chn p descr address} {
   if { [info exists ps($param)] == 1  } {
     incr prn
     append html "<tr>"
-      append html "<td>\${stringTableSensorSensivity}</td>"
-            set options(0) "\${optionNormal}"
-            set options(1) "\${optionSensitive}"
+      append html "<td>\${stringTableSensorSensivityObstacle}</td>"
+      set options(0) "\${optionOff}"
+      set options(1) "\${optionVeryInsensitive}"
+      set options(2) "\${optionInsensitive}"
+      set options(3) "\${optionStandard}"
+      set options(4) "\${optionSensitive}"
+      set options(5) "\${optionVerySensitive}"
+
       append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]&nbsp;[getHelpIcon $param\_shutterTrans 450 160]</td>"
     append html "</tr>"
   }

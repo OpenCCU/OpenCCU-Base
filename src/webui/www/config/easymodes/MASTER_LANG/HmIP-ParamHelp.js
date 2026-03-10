@@ -209,10 +209,10 @@ jQuery.extend(true,langJSON, {
     "<b>Achtung:</b><br/>Wenn f%FCr einen Test des Sensors Trinkwasser verwendet wird, reduziert sich die Menge an notwendigem Wasser f%FCr eine Ausl%F6sung, da dessen Leitwert i.d.R. um mehrere 10er Potenzen h%F6her liegt.",
 
     "SENSOR_SENSITIVITY_shutterTrans" :
-      "Bei der Erkennung eines Hindernisses, h%E4lt der Aktor sofort an, um eine Besch%E4digung der Rollladen oder des Hindernisses zu vermeiden.<br/><br/>" +
-      "Mit diesem Parameter legen Sie die Empfindlichkeit der Hindernis-Erkennung fest. Im Normalfall sollte die Einstellung <b>Normal</b> gew%E4hlt werden.<br><br/>" +
-      "Sollte eine sensiblere Einstellung notwendig sein, w%E4hlen Sie die Einstellung <b>Empfindllich</b>. "+
-      "Hier besteht jedoch die M%F6glichkeit, dass der Aktor dann auch bei 'geringf%FCgigen Widerst%E4nden' anh%E4lt.",
+      "Der Parameter erlaubt die Empfindlichkeit der Hinderniserkennung einzustellen bzw. diese abzuschalten. " +
+      "Es wird empfohlen zun%E4chst mit der Standardeinstellung zu arbeiten.<br><br/>" +
+      "Sollte der Rollladen h%E4ufig ohne Einwirkung eines Hindernis stehen bleiben, kann die Empfindlichkeit der Hinderniserkennung reduziert werden. "+
+      "Dieses sollte schrittweise passieren. Ebenso kann die Empfindlichkeit erh%F6ht werden, falls dieses erw%FCnscht ist.",
 
     "SENSOR_SENSITIVITY_DLP" :
       "Dieser Parameter bestimmt die Empfindlichkeit der Ersch%FCtterungs-%DCberwachung.<br/><br/>" +
@@ -820,10 +820,10 @@ jQuery.extend(true,langJSON, {
       "<b>Please note:</b><br/>If drinking water is used for a test of the sensor, the amount of water required for triggering is reduced, as its conductance value is usually several potencies of 10 higher.",
 
     "SENSOR_SENSITIVITY_shutterTrans" :
-      "When detecting an obstacle the actuator stops in order to prevent damage to the shutters and the obstacle.<br/><br/>" +
-      "With these parameters the sensitivity of the obstacle detection ist set. Normally the setting <b>Normal</b> should be selected.<br><br/>" +
-      "If a more sensitive setting is necessary, select the setting <b>Sensitivity</b>. " +
-      "However, there is a possibility that the actuator will stop even if there is only 'slight resistance'.",
+      "en* Der Parameter erlaubt die Empfindlichkeit der Hinderniserkennung einzustellen bzw. diese abzuschalten. " +
+      "Es wird empfohlen zun%E4chst mit der Standardeinstellung zu arbeiten.<br><br/>" +
+      "Sollte der Rollladen h%E4ufig ohne Einwirkung eines Hindernis stehen bleiben, kann die Empfindlichkeit der Hinderniserkennung reduziert werden. "+
+      "Dieses sollte schrittweise passieren. Ebenso kann die Empfindlichkeit erh%F6ht werden, falls dieses erw%FCnscht ist.",
 
     "SENSOR_SENSITIVITY_DLP" :
       "This parameter determines the sensitivity of the vibration monitoring.<br/><br/>" +

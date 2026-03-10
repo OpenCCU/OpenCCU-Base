@@ -973,6 +973,7 @@ jQuery.extend(true,langJSON, {
     "stringTableATCAdaptionInterval" : "Intervall f%FCr Temperaturkompensation der Sensoren",
     "stringTableATCMode" : "Temperaturkompensation der Sensoren",
     "stringTableSensorSensivity" : "Sensorempfindlichkeit",
+    "stringTableSensorSensivityObstacle" : "Sensorempfindlichkeit Hinderniserkennung",
     "stringTableCurrentIllumination" :           "Ungefilterte, aktuelle Helligkeit",
     "stringTableAverageIllumination" :            "Durchschnittliche Helligkeit",
     "stringTableHighestIllumination" :           "Maximale Helligkeit",

@@ -303,8 +303,6 @@ jQuery.extend(true, langJSON, {
     "lblHeight" : "Height",
     "lblDistance" : "Distance",
 
-    "optionSensitive" : "Sensitive",
-
     "stringTableErrorObstacleFalse": "No obstacle detected",
     "stringTableErrorObstacleTrue": "Obstacle detected",
 
@@ -335,6 +333,13 @@ jQuery.extend(true, langJSON, {
     "hintEndPositionSaved" :
       "en* Die Endlagen wurden gespeichert.<br><br>" +
       "Der Rohrmotor kann nun genutzt werden.<br/><br/>",
+
+    "optionOff" : "en* Deaktiviert",
+    "optionVeryInsensitive" : "en* Sehr unempfindlich",
+    "optionInsensitive" : "en* Unempfindlich",
+    "optionStandard" : "en* Standard",
+    "optionSensitive" : "Sensitive",
+    "optionVerySensitive" : "en* Sehr empfindlich",
 
     "noMoreKeys" : ""
   }
