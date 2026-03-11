@@ -348,6 +348,10 @@ jQuery.extend(true, langJSON, {
     "optionSensitive" : "Empfindlich",
     "optionVerySensitive" : "Sehr empfindlich",
 
+    "helpHeatingCooling" :
+      "Damit das Homematic IP System zuverl%E4ssig funktioniert, m%FCssen immer alle Komponenten, welche miteinander verkn%FCpft sind, gemeinsam in den Heiz- bzw. K%FChlmodus gesetzt werden. " +
+      "Wenn dies nicht passiert, kann der Zustand durch eine andere Komponente wieder %FCberschrieben werden.<br/><br/>" +
+      "Beispielsweise verteilt die HmIP-MIOB diesen Zustand zyklisch an die Fu%DFbodenheizungsaktoren und diese verteilen die Information weiter an die Wandthermostate.",
 
     "noMoreKeys" : ""
   }
