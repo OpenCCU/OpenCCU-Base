@@ -947,8 +947,16 @@ function ::dcCreate()
             isKnownControl = true;
             sLastControlName = CN_POWERMETER_PSM;
 
-            if (ch.Label() != "HmIP-ESI") {
+            if ((ch.Label() != "HmIP-ESI") && (ch.Label() != "HmIP-ESI-IND")) {
               Call("/esp/controls/powermeter.fn::CreatePowermeterPSMControl()");
+            } elseif (ch.Label() == "HmIP-ESI-IND") {
+                if (chnNumber == 1) {
+                  Call("/esp/controls/powermeter.fn::CreatePowermeterESIIndControl_1()");
+                }
+                if (chnNumber == 2) {
+                  Call("/esp/controls/powermeter.fn::CreatePowermeterESIIndControl_2()");
+                }
+
             } else {
               string esiSensor;
               string sensorState = "SENSOR_UNKNOWN,SENSOR_ES_GAS,SENSOR_ES_LED,SENSOR_ES_IEC,SENSOR_ES_IEC_SML,SENSOR_ES_IEC_SML_WH,SENSOR_ES_IEC_D0_A,SENSOR_ES_IEC_D0_B,SENSOR_ES_IEC_D0_C,SENSOR_ES_IEC_D0_D";

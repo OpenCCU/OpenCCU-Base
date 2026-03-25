@@ -1721,3 +1721,99 @@ function ::CreatePowermeterESIControl_ESI_IEC() {
 
   return;
 }
+
+! HmIP-ESI-IND chn 1
+function ::CreatePowermeterESIIndControl_1() {
+  !not necessary  object oSelfCal = cObj.DPByControl("POWERMETER_PSM.SELF_CALIBRATION");
+  !not necessary object oSelfCalResult = cObj.DPByControl("POWERMETER_PSM.SELF_CALIBRATION_RESULT");
+  object oChannelOperationMode = cObj.DPByControl("POWERMETER_PSM.CHANNEL_OPERATION_MODE");
+  object oEnergy = cObj.DPByControl("POWERMETER_PSM.GAS_FLOW");
+  object oEnergyStatus = cObj.DPByControl("POWERMETER_PSM.GAS_FLOW_STATUS");
+
+  object oChannel = dom.GetObject(chnId);
+  string chAddress = oChannel.Address();
+  object oDevice = dom.GetObject(cObj.Device());
+  string modeGasWater = oDevice.MetaData("modeGasWater"); ! 0 or 'null' = Gas, 1 = Water
+
+  string arDeviceState = "${lblOK},${lblUnknown},${lblOverflow},${lblUnderflow}";
+  string unit = "m<sup>3</sup>/h";
+  string lblHeader = "${powerMeasurementA}";
+  string curConsumption = "--";
+  string curStatus = "${lblUnknown}";
+  string ctrHidden = "hidden";
+
+  !WriteLine( "<script>console.log('CreatePowermeterESIIndControl_1 - mode: "#modeGasWater#"', 'chAddress: "#chAddress#"');</script>" );
+
+  if (oEnergy) {
+   curConsumption = oEnergy.State().ToString(3);
+  }
+
+  if (oChannelOperationMode) {
+    if (oChannelOperationMode.Value() == 0) {
+      lblHeader = "${optionSensorError}";
+      curConsumption = "";
+      unit = "";
+    }
+  }
+
+  if (oEnergyStatus) {
+    curStatus = arDeviceState.StrValueByIndex(',',oEnergyStatus.Value());
+    if (oEnergyStatus.Value() > 0) {
+      ! curConsumption = curStatus;
+      ctrHidden = "visible";
+      unit = "";
+    }
+  }
+  WriteLine("<td>");
+    WriteLine("<table>");
+      WriteLine("<tr name='curConsumptionPanel_"#chnId#"'>");
+        WriteLine("<td>");
+          WriteLine("<table width='100%' cellspacing='4'>");
+            WriteLine("<tr>");
+              if (oEnergy) {
+
+                WriteLine("<td>");
+                  WriteLine("<table class='ControlBtnInfo' style='min-width: 240px;'>");
+                    WriteLine("<tr>");
+                      WriteLine("<td>");
+                        WriteLine("<span>"#lblHeader#"</span>");
+                      WriteLine("</td>");
+                    WriteLine("</tr>");
+                    WriteLine("<tr>");
+                      WriteLine("<td>");
+                        WriteLine("<span>"#curConsumption#" "#unit#"</span>");
+                      WriteLine("</td>");
+                    WriteLine("</tr>");
+                  WriteLine("</table>");
+                WriteLine("</td>");
+
+              }
+              if (oEnergyStatus) {
+                !STATUS
+                WriteLine("<td class="#ctrHidden#">");
+                  WriteLine("<table class='ControlBtnInfo' style='min-width: 240px;'>");
+                    WriteLine("<tr>");
+                      WriteLine("<td>");
+                        WriteLine("<span>${lblDevStatus}</span>");
+                      WriteLine("</td>");
+                    WriteLine("</tr>");
+                    WriteLine("<tr>");
+                      WriteLine("<td>");
+                        WriteLine("<span>"#curStatus#" "#unit#"</span>");
+                      WriteLine("</td>");
+                    WriteLine("</tr>");
+                  WriteLine("</table>");
+                WriteLine("</td>");
+              }
+            WriteLine("</tr>");
+          WriteLine("</table>");
+        WriteLine("</td>");
+      WriteLine("</tr>");
+    WriteLine("</table>");
+  WriteLine("</td>");
+}
+
+! HmIP-ESI-IND chn 2
+function ::CreatePowermeterESIIndControl_2() {
+
+}
