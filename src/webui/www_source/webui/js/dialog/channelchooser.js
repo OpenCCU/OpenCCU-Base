@@ -307,7 +307,7 @@ ChannelChooser = Singleton.create({
       // Channel 1 of the hmip-esi-ind has only 1 parameter (SELF_CALIBRATION) for the use in a program condition but it's not in use
       // Therefore we hide the channel
       if (channelTypeName == "hmip-esi-ind") {
-        return;
+        return arChannels;
       }
 
       if (channelTypeName == "hmip-wkp") {
