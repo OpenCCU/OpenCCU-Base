@@ -302,7 +302,8 @@ jQuery.extend(true,langJSON, {
     "HmIPW-STH": "Homematic IP Wired Temperature and Humidity Sensor - indoor",
     "HmIPW-STHD": "Homematic IP Wired Temperature and Humidity Sensor with display - indoor",
     "HmIPW-WGD" :"Homematic IP Wired Glass Display",
-    "HmIPW-WGD-PL" : "Homematic IP Wired Glass Display - plus",
+    "HmIPW-WGD-PL" : "Homematic IP Wired Glass Display - plus"
+    "HmIPW-WGS": "Homematic IP Wired Glass Switch",
     "HmIPW-WRC2" : "Homematic IP Wired Wall-mount Remote Control - 2 buttons",
     "HmIPW-WRC6" : "Homematic IP Wired Wall-mount Remote Control - 6 buttons",
     "HmIPW-WTH" : "Homematic IP Wired Wall Thermostat with Humidity Sensor",
