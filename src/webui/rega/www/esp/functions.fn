@@ -457,7 +457,7 @@ function ::showHideHmIPChannel() {
         bShowChannel = true;
       }
 
-      if ((oDevHssType.Find("HmIP-WGS") != -1 ) || (oDevHssType.Find("HmIP-WGT") != -1)) {
+      if ((oDevHssType.Find("-WGS") != -1 ) || (oDevHssType.Find("-WGT") != -1)) {
         bShowChannel = true;
       }
 
