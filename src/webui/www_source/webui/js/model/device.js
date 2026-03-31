@@ -50,7 +50,7 @@ Device = Class.create({
       this.isOperateGroupOnly = (data["operateGroupOnly"] == "true") ? true : false;
       this.deviceInputCheck = false;
 
-      if (this.typeName.indexOf("HmIP-WGS") != -1) {
+      if (this.typeName.indexOf("-WGS") != -1) {
         this.setPrevPic("HmIP-WGS");
       }
       this.thumbnailHTML = deviceType.getThumbnailHTML();
