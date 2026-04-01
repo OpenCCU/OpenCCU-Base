@@ -278,6 +278,7 @@ HmIPWeeklyProgram.prototype = {
     this.isWGS = (this.device.deviceType.id.includes("HmIP-WGS")) ? true : false;
     this.isWiredWGS = (this.device.deviceType.id.includes("HmIPW-WGS")) ? true : false;
     this.isWGT = (this.device.deviceType.id.includes("HmIP-WGT")) ? true : false;
+    this.isWiredWGT = (this.device.deviceType.id.includes("HmIPW-WGT")) ? true : false;
     this.isWSM = ((this.device.deviceType.id.includes("HmIP-WSM")) || (this.device.deviceType.id.includes("ELV-SH-WSM")))? true : false;
     this.isWRC6230 = (this.device.deviceType.id.includes("HmIP-WRC6-230"))? true : false;
     this.isWGTC = (this.device.deviceType.id.includes("HmIP-WGTC"))? true : false;
@@ -424,6 +425,9 @@ HmIPWeeklyProgram.prototype = {
 
     if (this.isWGT) {
       this.virtualChannels = [2, 4, 5, 6];
+    }
+    if (this.isWiredWGT) {
+      this.virtualChannels = [2];
     }
 
     if (this._isDeviceType(this.UNIVERSAL_LIGHT_RECEIVER_RGBW)) {
@@ -689,10 +693,10 @@ HmIPWeeklyProgram.prototype = {
     }
 
     // LEVEL
-    if ((this.chnType == this.DIMMER) || (this.chnType == this.SERVO) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS)) {
+    if ((this.chnType == this.DIMMER) || (this.chnType == this.SERVO) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) || (this.isWiredWGT)) {
       // programEntry += (this.chnType == this.DIMMER) ? "<td id='lblWPBrightness_" + number + "'>" + translateKey('lblWPBrightness') + "</td>" : "<td id='lblWPBrightness_" + number + "'>" + translateKey('lblWPServoPos') + "</td>";
 
-      if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER)|| (this.isWiredWGS)) {
+      if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) || (this.isWiredWGT)) {
         if (! this.WINDOW_DRIVE_RECEIVER) {
           if (this.DIMMER_WEEK_PROFILE_HmIP_WUA == "") {
             programEntry += "<td id='lblWPBrightness_" + number + "'>" + translateKey('lblWPBrightness') + "</td>";
@@ -2190,10 +2194,10 @@ HmIPWeeklyProgram.prototype = {
       }
     }
 
-    if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.chnType == this.SERVO) || (this.chnType == this.BLIND) || (this.isWiredWGS)) {
+    if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.chnType == this.SERVO) || (this.chnType == this.BLIND) || (this.isWiredWGS) || (this.isWiredWGT)) {
       var loop;
-      if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) || (this.chnType == this.SERVO)) {
-        if (((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) ) && (! this.WINDOW_DRIVE_RECEIVER)) {
+      if ((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) || (this.isWiredWGT) || (this.chnType == this.SERVO)) {
+        if (((this.chnType == this.DIMMER) || (this.chnType == this.UNIVERSAL_LIGHT_RECEIVER) || (this.isWiredWGS) || (this.isWiredWGT)) && (! this.WINDOW_DRIVE_RECEIVER)) {
           result += (val == 0) ? "<option value='0' selected='selected'>" + translateKey('optionOFF') + "</option>" : "<option value='0'>" + translateKey('optionOFF') + "</option>";
           for (loop = 5; loop <= 100; loop += 5) {
             optionVal = (loop / 100).toFixed(3);
