@@ -306,6 +306,7 @@ jQuery.extend(true,langJSON, {
     "HmIPW-WGD" :"Homematic IP Wired Glasdisplay",
     "HmIPW-WGD-PL" :"Homematic IP Wired Glasdisplay - plus",
     "HmIPW-WGS": "Homematic IP Wired Glastaster",
+    "HmIPW-WGT": "Homematic IP Wired Glasthermostat - 230 V",
     "HmIPW-WRC2" : "Homematic IP Wired Wandtaster - 2-fach",
     "HmIPW-WRC6" : "Homematic IP Wired Wandtaster - 6-fach",
     "HmIPW-WTH" : "Homematic IP Wired Wandthermostat mit Luftfeuchtigkeitssensor",
