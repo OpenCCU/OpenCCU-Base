@@ -12,7 +12,7 @@ shutterSelfCalibration.prototype = {
     this.topElems;
     this.bottomElems;
 
-    self.ManualSelfCalibration = {
+    this.ManualSelfCalibration = {
       CLEAR_SAVED_POSITIONS : 0,
       SAVE_TOP_POSITION     : 1,
       SAVE_BOTTOM_POSITION  : 2,
@@ -65,7 +65,7 @@ shutterSelfCalibration.prototype = {
       btnShutterDown100Elm = jQuery("#btnShutterDown100"),
       btnShutterUp400Elm = jQuery("#btnShutterUp400"),
       btnShutterDown400Elm = jQuery("#btnShutterDown400"),
-      inputDuration = jQuery("#inputDuration");
+      inputDurationElm = jQuery("#inputDuration");
 
 
     saveTopPosElm.click(function() {self.buttonPressed(this); self.saveTopPos();});
@@ -82,7 +82,7 @@ shutterSelfCalibration.prototype = {
     btnStopMotionElm.click(function (){self.buttonPressed(this); self.stopMotion();});
     btnClearEndPosElm.click(function (){self.buttonPressed(this); self.clearEndPos();});
 
-    inputDuration.on("blur",function() {
+    inputDurationElm.on("blur",function() {
       self.checkVal(this);
     });
 
@@ -227,94 +227,95 @@ shutterSelfCalibration.prototype = {
   },
 
   upWithDuration: function() {
-    var time = jQuery("#btnDuration").val();
+    conInfo("upWithDuration");
+    var time = parseInt(jQuery("#inputDuration").val()),
+      unit = 0; // 0 = sec, 1 = min, 2 = hour, 3 = 10 ms
 
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_AND_DURATION,
-            name:'LEVEL', type: 'double', value: 1.0,
-            name:'MANUAL_SELF_CALIBRATION_DURATION_VALUE', type: 'int', value: time
-          }
-        ]
-    },function(result){});
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_AND_DURATION},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 1.0},
+        {name:'MANUAL_SELF_CALIBRATION_DURATION_VALUE', type: 'int', value: time},
+        {name:'MANUAL_SELF_CALIBRATION_DURATION_UNIT', type: 'int', value: unit}
+      ]
+    },function(result){
+      conInfo("result upWithDuration", result);
+    });
   },
 
   downWithDuration: function() {
-    var time = jQuery("#btnDuration").val();
+    conInfo("downWithDuration");
+    var time = parseInt(jQuery("#inputDuration").val()),
+      unit = 0; // 0 = sec, 1 = min, 2 = hour, 3 = 10 ms
 
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_AND_DURATION,
-            name:'LEVEL', type: 'double', value: 0.0,
-            name:'MANUAL_SELF_CALIBRATION_DURATION_VALUE', type: 'int', value: time
-          }
-        ]
-    },function(result){});
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_AND_DURATION},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 0.0},
+        {name:'MANUAL_SELF_CALIBRATION_DURATION_VALUE', type: 'int', value: time},
+        {name:'MANUAL_SELF_CALIBRATION_DURATION_UNIT', type: 'int', value: unit}
+      ]
+    },function(result){
+      conInfo("result downWithDuration", result);
+    });
   },
 
   up100ms: function() {
+    conInfo("up100ms");
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_SHORT,
-            name:'LEVEL', type: 'double', value: 1.0
-          }
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_SHORT},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 1.0}
+      ]
     },function(result){});
   },
 
   down100ms: function() {
+    conInfo("down100ms");
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_SHORT,
-            name:'LEVEL', type: 'double', value: 0.0
-          }
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_SHORT},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 0.0}
+      ]
     },function(result){});
   },
 
   up400ms: function() {
+    conInfo("up400ms");
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_LONG,
-            name:'LEVEL', type: 'double', value: 1.0
-          }
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_LONG},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 1.0}
+      ]
     },function(result){});
   },
 
   down400ms: function() {
+    conInfo("down400ms");
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {
-            name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_LONG,
-            name:'LEVEL', type: 'double', value: 0.0
-          }
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.START_MOTION_WITH_LEVEL_LONG},
+        {name:'MANUAL_SELF_CALIBRATION_LEVEL', type: 'double', value: 0.0}
+      ]
     },function(result){});
   },
 
   stopMotion: function() {
-    console.log("stopMotion");
+    conInfo("stopMotion");
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.STOP_MOTION}
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.STOP_MOTION}
+      ]
     },function(result){});
   },
 
   clearEndPos: function() {
     homematic("Interface.putParamset",{'interface': this.iface, 'address' : this.chAddress, 'paramsetKey' : 'VALUES', 'set':
-        [
-          {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.CLEAR_SAVED_POSITIONS}
-        ]
+      [
+        {name:'MANUAL_SELF_CALIBRATION', type: 'int', value: self.ManualSelfCalibration.CLEAR_SAVED_POSITIONS}
+      ]
     },function(result){
-      console.log("clearEndPos: ", result);
-      console.log(self.dlg);
+      conInfo("clearEndPos: ", result);
       self.dlg.close();
       window.setTimeout(function() {
         self.getDialog();
