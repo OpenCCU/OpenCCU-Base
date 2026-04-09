@@ -3055,7 +3055,7 @@ proc getHeatingClimateControlTransceiver {chn p descr address {extraparam ""}} {
       if {[info exists ps($param)] == 1} {
         incr prn
         array_clear options
-        if {[string first "HmIP-WGTC" $devType ] != -1} {
+        if {[string first "-WGTC" $devType ] != -1} {
           set options(0) "\${optionActual}"
           set options(1) "\${optionSetpoint}"
           set options(2) "\${optionActualHumidity}"
