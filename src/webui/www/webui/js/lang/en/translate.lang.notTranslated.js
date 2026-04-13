@@ -319,6 +319,10 @@ jQuery.extend(true, langJSON, {
 
     "btnClearPosition" : "en* Endlagen l%F6schen",
 
+    "lblPositionSaved" : "en* Die Endlagen sind kalibriert",
+
+    "lblMovementTime" : "en* Fahrzeit",
+
     "actionStatusControlUp100" : "en* Auf 100 ms",
     "actionStatusControlDown100" : "en* Ab 100 ms",
 

@@ -3,11 +3,15 @@ shutterSelfCalibration.prototype = {
   initialize: function (chnId, iface, chAddress) {
     self = this;
 
+    this.chnId = chnId;
     this.iface = iface;
     this.chAddress = chAddress;
     this.chMaintenance = chAddress.split(":").first() + ":0";
 
     this.dlg;
+
+    this.btnCalibration = jQuery("#shutterSelfCal" + chnId);
+    this.btnCalibrationElms = jQuery("[name='shutterSelfCal"+chnId+"']");
 
     this.topElems;
     this.bottomElems;
@@ -32,18 +36,22 @@ shutterSelfCalibration.prototype = {
     this.bottomSet = homematic("Interface.getValue", {'interface': this.iface, 'address' : this.chMaintenance, 'valueKey': 'MANUAL_SELF_CALIBRATION_BOTTOM_POS_SET'});
 
 
-    var title = translateKey("btnSelfCalibration");
+    var title = ((this.topSet == 0) && (this.bottomSet == 0)) ? translateKey("btnSelfCalibration") : "";
+    var dlgWith = ((this.topSet == 0) || (this.bottomSet == 0)) ? 310 : 132;
 
     this.dlg = new YesNoDialog(title, this.getHtml(), function(result) {
       if (result == YesNoDialog.RESULT_NO) {
         self.stopMotion();
+      } else {
+        //showHintSelfCalibration(self.chnId, self.chAddress, self.iface);
+        reloadPage();
       }
     }, "html");
 
     this.dlg.btnTextNo(translateKey("btnCancel"));
     this.dlg.btnTextYes(translateKey("btnReady"));
     this.dlg.btnYesHide();
-    this.dlg.setWidth(310);
+    this.dlg.setWidth(dlgWith);
 
     this.topElems = jQuery(".j_TopElm");
     this.bottomElems = jQuery(".j_BottomElm");
@@ -89,93 +97,104 @@ shutterSelfCalibration.prototype = {
   },
 
   getHtml: function() {
+    var topSetHidden = false;
     var html = "<table>";
-      if (this.topSet != 1) {
-        // Change Motor Direction
-        html += "<tr>";
-        html += "<td colspan='4'>";
-        html += "<div id='btnChangeMotorDir' class='CLASS02550c ControlBtnOff'>"+translateKey('btnChangeMotorDir')+"</div>";
-        html += "</td>";
-        html += "</tr>";
-      }
-
-      // Clear all positions
-      html += "<tr class='j_finish'>";
-        html += "<td colspan='4'>";
-          html += "<div id='btnClearPos' class='CLASS02550c ControlBtnOff'>"+translateKey('btnClearPosition')+"</div>";
-        html += "</td>";
+    if (this.topSet != 1) {
+      // Change Motor Direction
+      html += "<tr>";
+      html += "<td colspan='4'>";
+      html += "<div id='btnChangeMotorDir' class='CLASS02550c ControlBtnOff'>" + translateKey('btnChangeMotorDir') + "</div>";
+      html += "</td>";
       html += "</tr>";
+    } else {
+      topSetHidden = true;
+    }
+
+    // Clear all positions
+    html += "<tr class='j_finish'>";
+    html += "<td colspan='4'>";
+    html += "<div id='btnClearPos' class='CLASS02550c ControlBtnOff'>" + translateKey('btnClearPosition') + "</div>";
+    html += "</td>";
+    html += "</tr>";
+
+    if ((this.topSet == 0) || (this.bottomSet == 0)) {
 
       html += "<tr class='j_finish'><td colspan='4'><hr></td></tr>";
-
-
-    //  html += "<tr><td colspan='4'><div class='CLASS02550c ControlBtnOff' style='cursor:default;'>Kalibrierung der Endlagen</div></td></tr>";
-
       // Up/Down with duration
+      html += "<tr class='j_finish'><td style='text-align:center;'><span>" + translateKey('lblMovementTime') + "</span></td></tr>";
       html += "<tr  class='j_finish'>";
-        html += "<td>";
-          html += "<input id='inputDuration' type='text' class='CLASS02542' style='text-align:center;' size='3' value='0'>";
-          html += "<span style='margin-right:5px;'> "+translateKey('optionUnitS')+"</span>";
-        html += "</td>";
-        html += "<td>";
-          html += "<div id='btnShutterUp' class='CLASS02550 ControlBtnOff j_TopElm'>"+translateKey('actionStatusControlUp')+"</div>";
-        html += "</td>";
+      html += "<td>";
+      html += "<input id='inputDuration' type='text' class='CLASS02542' style='text-align:center;' size='3' value='0'>";
+      html += "<span style='margin-right:5px;'> " + translateKey('optionUnitS') + "</span>";
+      html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterUp' class='CLASS02550 ControlBtnOff j_TopElm'>" + translateKey('actionStatusControlUp') + "</div>";
+      html += "</td>";
 
-        html += "<td>";
-          html += "<div id='btnShutterDown' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>"+translateKey('actionStatusControlDown')+"</div>";
-        html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterDown' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>" + translateKey('actionStatusControlDown') + "</div>";
+      html += "</td>";
       html += "</tr>";
 
       // Up/Down 100ms
       html += "<tr class='j_finish'>";
-        html += "<td>";
-        html += "</td>";
-        html += "<td>";
-          html += "<div id='btnShutterUp100' class='CLASS02550 ControlBtnOff j_TopElm'>"+translateKey('actionStatusControlUp100')+"</div>";
-        html += "</td>";
+      html += "<td style='text-align:center;'>";
+      html += "<span>" + translateKey('optionUnit100MS') + "</span>";
+      html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterUp100' class='CLASS02550 ControlBtnOff j_TopElm'>" + translateKey('actionStatusControlUp') + "</div>";
+      html += "</td>";
 
-        html += "<td>";
-          html += "<div id='btnShutterDown100' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>"+translateKey('actionStatusControlDown100')+"</div>";
-        html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterDown100' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>" + translateKey('actionStatusControlDown') + "</div>";
+      html += "</td>";
       html += "</tr>";
 
       // Up/Down 400ms
-      html += "<tr>";
-        html += "<td>";
-          html += "</td>";
-        html += "<td>";
-          html += "<div id='btnShutterUp400' class='CLASS02550 ControlBtnOff j_TopElm'>"+translateKey('actionStatusControlUp400')+"</div>";
-        html += "</td>";
+      html += "<tr class='j_finish'>";
+      html += "<td style='text-align:center;'>";
+      html += "<span>" + translateKey('optionUnit400MS') + "</span>";
+      html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterUp400' class='CLASS02550 ControlBtnOff j_TopElm'>" + translateKey('actionStatusControlUp') + "</div>";
+      html += "</td>";
 
-        html += "<td>";
-          html += "<div id='btnShutterDown400' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>"+translateKey('actionStatusControlDown400')+"</div>";
-        html += "</td>";
+      html += "<td>";
+      html += "<div id='btnShutterDown400' class='CLASS02550 ControlBtnOff j_BottomElm _hidden'>" + translateKey('actionStatusControlDown') + "</div>";
+      html += "</td>";
       html += "</tr>";
 
-      html += "<tr>";
+      if (this.topSet == 0) {
+        html += "<tr>";
         html += "<td></td>";
         // Save Up Position
         html += "<td colspan='2'>";
-          html += "<div id='btnSaveUp' class='CLASS02550 ControlBtnOff j_TopElm' style='width:auto;'>"+translateKey('btnSavePosTop')+"</div>";
+        html += "<div id='btnSaveUp' class='CLASS02550 ControlBtnOff j_TopElm' style='width:auto;'>" + translateKey('btnSavePosTop') + "</div>";
         html += "</td>";
-      html += "</tr>";
-
+        html += "</tr>";
+      }
       html += "<tr>";
       // Save Down Position
-        html += "<td></td>";
-        html += "<td colspan='2'>";
-          html += "<div id='btnSaveDown' class='CLASS02550 ControlBtnOff j_BottomElm hidden' style='width:auto;'>"+translateKey('btnSavePosBottom')+"</div>";
-        html += "</td>";
+      html += "<td></td>";
+      html += "<td colspan='2'>";
+
+      if (this.topSet == 0) {
+        html += "<div id='btnSaveDown' class='CLASS02550 ControlBtnOff j_BottomElm hidden' style='width:auto;'>" + translateKey('btnSavePosBottom') + "</div>";
+      } else {
+        html += "<div id='btnSaveDown' class='CLASS02550 ControlBtnOff j_BottomElm' style='width:auto;'>" + translateKey('btnSavePosBottom') + "</div>";
+      }
+
+      html += "</td>";
       html += "</tr>";
 
       html += "<tr class='j_finish'><td colspan='4'><hr></td></tr>";
 
-      html += "<tr class='j_finish'><td colspan='4'><div id='btnStopMotion' class='CLASS02550c ControlBtnOff' style='cursor:default;'>"+translateKey('btnSTOP')+"</div></td></tr>";
+      html += "<tr class='j_finish'><td colspan='4'><div id='btnStopMotion' class='CLASS02550c ControlBtnOff' style='cursor:default;'>" + translateKey('btnSTOP') + "</div></td></tr>";
 
       html += "<tr class='j_ready hidden'><td>";
-        html += translateKey('hintEndPositionSaved');
+      html += translateKey('hintEndPositionSaved');
       html += "</td></tr>";
-
+    }
 
     html += "</table>";
 
@@ -317,9 +336,14 @@ shutterSelfCalibration.prototype = {
     },function(result){
       conInfo("clearEndPos: ", result);
       self.dlg.close();
+      //self.btnCalibration.hide();
+      self.btnCalibrationElms.hide();
       window.setTimeout(function() {
+        self.btnCalibrationElms.show();
+        //self.btnCalibration.show();
+        //reloadPage()
         self.getDialog();
-      },750);
+      },500);
     });
   },
 
@@ -340,3 +364,26 @@ shutterSelfCalibration.prototype = {
 
 };
 
+showHintSelfCalibration = function (chnId, chAddress, iface) {
+
+  window.setTimeout(function() {
+    var chMaintenance = chAddress.split(":").first() + ":0",
+      topSet = homematic("Interface.getValue", {
+        'interface': iface,
+        'address': chMaintenance,
+        'valueKey': 'MANUAL_SELF_CALIBRATION_TOP_POS_SET'
+      }),
+      bottomSet = homematic("Interface.getValue", {
+        'interface': iface,
+        'address': chMaintenance,
+        'valueKey': 'MANUAL_SELF_CALIBRATION_BOTTOM_POS_SET'
+      }),
+      calHint = jQuery("#hintSelfCal" + chnId);
+
+    if ((parseInt(topSet) == 1) && (parseInt(bottomSet) == 1)) {
+      calHint.show();
+    } else {
+      calHint.hide();
+    }
+  },100);
+};
