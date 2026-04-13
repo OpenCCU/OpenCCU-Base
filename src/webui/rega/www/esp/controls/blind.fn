@@ -711,13 +711,15 @@ function ::CreateShutterTransmitter()
     WriteLine("</tr>");
 
     if (oManuelSelfCal) {
-      WriteLine("<tr><td colspan='3'><hr></td></tr>");
+      WriteLine("<tr name='shutterSelfCal"#chnId#"'><td colspan='3'><hr></td></tr>");
+      WriteLine("<tr id='hintSelfCal"#chnId#"' class='hidden'><td colspan='2'></td><td><div class='CLASS02550 ControlBtnInfo' style='color: white; width: 220px;'>${lblPositionSaved}</div></td></tr>");
       WriteLine("<tr>");
         WriteLine("<td colspan='2'></td>");
         WriteLine("<td>");
-          WriteLine("<div id='shutterSelfCal"#chnId#"' class='CLASS02550 ControlBtnInfo' style='color: white; width: 220px;' onclick='new shutterSelfCalibration("#chnId#", \""#sInterface#"\" , \""#chAddress#"\" );' >${btnSelfCalibration}</div>");
+          WriteLine("<div id='shutterSelfCal"#chnId#"' name='shutterSelfCal"#chnId#"' class='CLASS02550 ControlBtnInfo' style='color: white; width: 220px;' onclick='new shutterSelfCalibration("#chnId#", \""#sInterface#"\" , \""#chAddress#"\" );' >${btnSelfCalibration}</div>");
         WriteLine("</td>");
       WriteLine("</tr>");
+      WriteLine("<script type='text/javascript>showHintSelfCalibration('"#chnId#"','"#chAddress#"','"#sInterface#"');</script>'");
     }
 
   WriteLine("</table></td>");
