@@ -8126,6 +8126,176 @@ proc getAlarmActuatorReceiver {chn p descr} {
   return $html
 }
 
+proc getWaterFlowTransmitter {chn p descr} {
+  global dev_descr
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar prn prn
+  upvar special_input_id special_input_id
+
+  set specialID "[getSpecialID $special_input_id]"
+  set CHANNEL $special_input_id
+
+  set devType $dev_descr(TYPE)
+
+  set hlpBoxWidth 450
+  set hlpBoxHeight 160
+
+  set prn 0
+  set html ""
+
+  # puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js');</script>"
+
+  set param EVENT_DELAY_UNIT
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${stringTableEventDelay}</td>"
+    append html [getComboBox $chn $prn "$specialID" "eventDelay"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxShortwoHour $param $ps($param) $chn $prn $special_input_id]
+
+    incr prn
+    set param EVENT_DELAY_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableEventDelayValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelB($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param CHANNEL_OPERATION_MODE
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblTypeOfSensor}</td>"
+      array_clear options
+      set options(0) "\${optionNoSensor}"
+      set options(1) "\${optionFlowSensorGBCan}"
+      set options(2) "\${optionFlowSensorGBHW1}"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]</td>"
+    append html "</tr>"
+  }
+
+  if { [info exists ps(EVENT_BLINDTIME_BASE)] == 1  } {
+
+    append html "<tr>"
+      append html "<td>\${lblEventBlindTime}</td>"
+
+      append html "<td>"
+        set param EVENT_BLINDTIME_VALUE
+        incr prn
+        append html "<input type='text' id='separate_$special_input_id\_$prn' name='$param' value='$ps($param)' size=4 onblur=\"ProofAndSetValue(this.id, this.id, '0', '63', 1);\">"
+        append html "<span> x </span>"
+
+        set param EVENT_BLINDTIME_BASE
+        incr prn
+        append html "<select id='separate_$special_input_id\_$prn' name='$param'>"
+          append html "<option value='1'>\${optionUnit1S}</option>"
+          append html "<option value='2'>\${optionUnit1M}</option>"
+          append html "<option value='3'>\${optionUnit1H}</option>"
+        append html "</select>"
+      append html "</td>"
+      append html "<script type='text/javascript'> jQuery('\#separate_$special_input_id\_$prn').val('$ps($param)');; </script>"
+    append html "</tr>"
+
+  }
+
+  set param INTERVAL_UNIT
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${stringTableMeasurementInterval}</td>"
+    append html [getComboBox $chn $prn "$specialID" "autoIntervalA" "helpSoilMoisture"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxC $param $ps($param) $chn $prn $special_input_id 'measurementInterval']
+
+    incr prn
+    set param INTERVAL_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableMeasurementIntervalValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentAutoIntervalAOption($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+    set param COND_TX_THRESHOLD_HI
+    if { [info exists ps($param)] == 1 } {
+      incr prn
+      append html "<tr>"
+        append html "<td>\${stringTableCondThresholdHi}</td>"
+       append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getCondTXThresholdUnit $devType $chn]&nbsp;[getMinMaxValueDescr $param]</td>"
+      append html "</tr>"
+    }
+
+}
+
+proc getWaterPressureTransmitter {chn p descr} {
+  global dev_descr
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar prn prn
+  upvar special_input_id special_input_id
+
+  set specialID "[getSpecialID $special_input_id]"
+  set CHANNEL $special_input_id
+
+  set devType $dev_descr(TYPE)
+
+  set hlpBoxWidth 450
+  set hlpBoxHeight 160
+
+  set prn 0
+  set html ""
+
+  # puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js');</script>"
+
+  set param EVENT_DELAY_UNIT
+  if { [info exists ps($param)] == 1  } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${stringTableEventDelay}</td>"
+    append html [getComboBox $chn $prn "$specialID" "eventDelay"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxShortwoHour $param $ps($param) $chn $prn $special_input_id]
+
+    incr prn
+    set param EVENT_DELAY_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableEventDelayValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelB($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param CHANNEL_OPERATION_MODE
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+      append html "<td>\${lblTypeOfSensor}</td>"
+      array_clear options
+      set options(0) "\${optionNoSensor}"
+      set options(1) "\${optionPressureSensorGBCan}"
+      set options(2) "\${optionPressureSensorGBHW1}"
+      append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]</td>"
+    append html "</tr>"
+  }
+}
+
 proc getNoParametersToSet {} {
   set html "<tr><td name=\"noParamElm\" class=\"CLASS22003\"><div class=\"CLASS22004\">\${deviceAndChannelParamsLblNoParamsToSet}</div></td></tr>"
   # center content

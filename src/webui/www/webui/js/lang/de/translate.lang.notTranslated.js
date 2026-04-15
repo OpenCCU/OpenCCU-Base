@@ -379,6 +379,17 @@ jQuery.extend(true, langJSON, {
     "optionWater" : "Wasser",
     "optionGas" : "Gas",
 
+    "lblTypeOfSensor" : "Sensor",
+    "optionNoSensor" : "Kein Sensor",
+    "optionFlowSensorGBCan" : "Gr%FCnbeck CAN FLOW",
+    "optionFlowSensorGBHW1" : "Gr%FCnbeck HW1",
+
+    "optionPressureSensorGBCan" : "Gr%FCnbeck CAN PRESSURE",
+    "optionPressureSensorGBHW1" : "Gr%FCnbeck HW1",
+
+    "lblEventBlindTime" : "<span class='attention'>EVENT_BLINDTIME</span>",
+    "unitLiters" : "Liter",
+
     "noMoreKeys" : ""
   }
 });
