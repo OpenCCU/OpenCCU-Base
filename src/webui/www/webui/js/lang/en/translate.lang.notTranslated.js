@@ -356,6 +356,9 @@ jQuery.extend(true, langJSON, {
 
     "lblFlowControl" : "en* Durchfluss-Kontrolle",
 
+    "optionWaterOn" : "en* Wasser ein",
+    "optionWaterOff" : "en* Wasser aus",
+
     "optionUnit1Ltr"    : "en*   1 Liter",
     "optionUnit10Ltr"   : "en*  10 Liter",
     "optionUnit100Ltr"  : "en*  100 Liter",
@@ -368,6 +371,7 @@ jQuery.extend(true, langJSON, {
     "lblTypeOfMeasurement" : "en* Art der Messung",
     "optionWater" : "en* Wasser",
     "optionGas" : "en* Gas",
+
 
     "noMoreKeys" : ""
   }

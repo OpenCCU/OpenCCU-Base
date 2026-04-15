@@ -363,6 +363,9 @@ jQuery.extend(true, langJSON, {
 
     "lblFlowControl" : "Durchfluss-Kontrolle",
 
+    "optionWaterOn" : "Wasser ein",
+    "optionWaterOff" : "Wasser aus",
+
     "optionUnit1Ltr"    : "  1 Liter",
     "optionUnit10Ltr"   : " 10 Liter",
     "optionUnit100Ltr"  : " 100 Liter",

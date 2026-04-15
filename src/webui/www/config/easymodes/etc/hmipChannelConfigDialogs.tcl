@@ -8016,8 +8016,8 @@ proc getValveActuatorReceiver {chn p descr {url ""} {address ""}} {
     append html "<tr>"
       append html "<td>\${stringTablePowerUpAction}</td>"
       array_clear options
-      set options(0) "\${optionOFF}"
-      set options(1) "\${optionON}"
+      set options(0) "\${optionWaterOff}"
+      set options(1) "\${optionWaterOn}"
       set options(2) "\${optionDisable}"
       append html  "<td>[getOptionBox '$param' options $ps($param) $chn $prn]</td>"
     append html "</tr>"
@@ -8066,7 +8066,64 @@ proc getValveActuatorReceiver {chn p descr {url ""} {address ""}} {
     append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
     append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentTimeOption($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
   }
+}
 
+proc getAlarmActuatorReceiver {chn p descr} {
+
+  upvar $p ps
+  upvar $descr psDescr
+  upvar prn prn
+  upvar special_input_id special_input_id
+
+  puts "<script type=\"text/javascript\">getLangInfo_Special('VIRTUAL_HELP.txt');</script>"
+
+  set specialID "[getSpecialID $special_input_id]"
+
+  set html ""
+
+  set param EVENT_DELAY_UNIT
+  if { [info exists ps($param)] == 1 } {
+    append html "<tr>"
+    append html "<td>\${stringTableEventDelay}</td>"
+    append html [getComboBox $chn $prn "$specialID" "eventDelay"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxShortwoHour $param $ps($param) $chn $prn $special_input_id]
+    incr prn
+    set param EVENT_DELAY_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableEventDelayValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelB($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  set param EVENT_RANDOMTIME_UNIT
+  if { [info exists ps($param)] == 1 } {
+    incr prn
+    append html "<tr>"
+    append html "<td>\${stringTableRandomTime}</td>"
+    append html [getComboBox $chn $prn "$specialID" "eventRandomTime"]
+    append html "</tr>"
+
+    append html [getTimeUnitComboBoxShort $param $ps($param) $chn $prn $special_input_id]
+
+    incr prn
+    set param EVENT_RANDOMTIME_VALUE
+    append html "<tr id=\"timeFactor_$chn\_$prn\" class=\"hidden\">"
+    append html "<td>\${stringTableRamdomTimeValue}</td>"
+
+    append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp;[getMinMaxValueDescr $param]</td>"
+
+    append html "</tr>"
+    append html "<tr id=\"space_$chn\_$prn\" class=\"hidden\"><td><br/></td></tr>"
+    append html "<script type=\"text/javascript\">setTimeout(function() {setCurrentDelayShortOptionPanelA($chn, [expr $prn - 1], '$specialID');}, 100)</script>"
+  }
+
+  return $html
 }
 
 proc getNoParametersToSet {} {
