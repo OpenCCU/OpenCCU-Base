@@ -3330,6 +3330,7 @@ proc getSwitchVirtualReceiver {chn p descr {url ""} {address ""}} {
   set prn 0
   set hr 0
 
+set comment {
   if { ([string first "HmIP-WSM" $devType] != -1) || ([string first "ELV-SH-WSM" $devType] != -1) } {
     # create water switch duration (is a Value parameter)
     set hasOutputBehaviour 0
@@ -3418,7 +3419,7 @@ proc getSwitchVirtualReceiver {chn p descr {url ""} {address ""}} {
       append html "[getHorizontalLine]"
     }
   }
-
+}
 
   if {[session_is_expert]} {
     set param "LOGIC_COMBINATION"
