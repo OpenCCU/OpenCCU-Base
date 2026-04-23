@@ -135,61 +135,73 @@ function ::CreateWaterSwitch()
     WriteLine("</td>");
     WriteLine("<td class='CLASS02523'></td><td class='CLASS02523'></td><td class='CLASS02523'></td>");
 
-  !  string showFlowControl = "hidden";
-  !  if (objState.Value() == 1) {
-  !    showFlowControl = "";
-  !  }
+    WriteLine("<td class='CLASS02521'>");
+      WriteLine("<div id='"#chnId#"OnCond' class='ControlBtnOff CLASS02522 j_translate'>${btnWaterOnCond}</div>");
+    WriteLine("</td>");
+    WriteLine("<td class='CLASS02523'></td><td class='CLASS02523'></td><td class='CLASS02523'></td>");
 
-  !  WriteLine("<td id='"#chnId#"tdFlowRate' class="#showFlowControl#">");
-  !    WriteLine("<table class='ControlBtnInfo' style='min-width: 205px;'>");
+  string showFlowControl = "hidden";
+  if (objState.Value() == 1) {
+    !showFlowControl = "";
+  }
 
-  !      WriteLine("<tr>");
-  !        WriteLine("<td>");
-  !          WriteLine("<div><table>");
-  !            WriteLine("<tr>");
+  WriteLine("<td id='"#chnId#"tdFlowRate' class="#showFlowControl#">");
+    WriteLine("<table class='ControlBtnInfo' style='min-width: 205px;'>");
 
-  !             WriteLine("<td style='text-align:left;'>${stringTableDuration}</td>");
+      WriteLine("<tr>");
+        WriteLine("<td>");
+          WriteLine("<div><table>");
+            WriteLine("<tr>");
 
-  !              WriteLine("<td>");
-  !                WriteLine("<select id='"#chnId#"durationSelect'>");
-  !                  WriteLine("<option value='2'>${optionUnit10M}</option>");
-  !                  WriteLine("<option value='3'>${optionUnit15M}</option>");
-  !                  WriteLine("<option value='4'>${optionUnit20M}</option>");
-  !                  WriteLine("<option value='5'>${optionUnit25M}</option>");
-  !                  WriteLine("<option value='6'>${optionUnit30M}</option>");
-  !                  WriteLine("<option value='12'>${optionUnit60M}</option>");
-  !                  WriteLine("<option value='userVal'>${stringTableEnterValue}</option>");
-  !                WriteLine("</select>");
-  !                WriteLine("<input id='"#chnId#"durationValue' type='text' size=4 class='_hidden'>");
-  !                WriteLine("<input id='"#chnId#"durationUnit' type='text' size=4 class='_hidden'>");
-  !                WriteLine("<input id='"#chnId#"duration' type='text' size=4 class='_hidden'>");
-  !              WriteLine("</td>");
-  !            WriteLine("</tr>");
-  !            WriteLine("<tr>");
+             WriteLine("<td style='text-align:left;'>${stringTableDuration}</td>");
 
-  !              WriteLine("<td style='text-align:left;'>${powerMeasurementA}</td>");
+              WriteLine("<td>");
+                WriteLine("<select id='"#chnId#"durationSelect'>");
+                  WriteLine("<option value='2'>${optionUnit10M}</option>");
+                  WriteLine("<option value='3'>${optionUnit15M}</option>");
+                  WriteLine("<option value='4'>${optionUnit20M}</option>");
+                  WriteLine("<option value='5'>${optionUnit25M}</option>");
+                  WriteLine("<option value='6'>${optionUnit30M}</option>");
+                  WriteLine("<option value='12'>${optionUnit60M}</option>");
+                  WriteLine("<option value='userVal'>${stringTableEnterValue}</option>");
+                WriteLine("</select>");
+                WriteLine("<input id='"#chnId#"durationValue' type='text' size=4 class='_hidden'>");
+                WriteLine("<input id='"#chnId#"durationUnit' type='text' size=4 class='_hidden'>");
+                WriteLine("<input id='"#chnId#"duration' type='text' size=4 class='_hidden'>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+            WriteLine("<tr>");
 
-  !              WriteLine("<td><select id='"#chnId#"Liters'>");
-  !                WriteLine("<option value='0'>${optionUnit1Ltr}</option>");
-  !                WriteLine("<option value='64'>${optionUnit10Ltr}</option>");
-  !                WriteLine("<option value='128'>${optionUnit100Ltr}</option>");
-  !                WriteLine("<option value='192'>${optionUnit1000Ltr}</option>");
-  !              WriteLine("</select></td>");
+              WriteLine("<td style='text-align:left;'>${powerMeasurementA}</td>");
 
-  !            WriteLine("</tr>");
+              WriteLine("<td><select id='"#chnId#"Liters'>");
+                WriteLine("<option value='0'>${optionUnit1Ltr}</option>");
+                WriteLine("<option value='64'>${optionUnit10Ltr}</option>");
+                WriteLine("<option value='128'>${optionUnit100Ltr}</option>");
+                WriteLine("<option value='192'>${optionUnit1000Ltr}</option>");
+              WriteLine("</select></td>");
 
-  !          WriteLine("</table></div>");
-  !        WriteLine("</td>");
-  !      WriteLine("</tr>");
+            WriteLine("</tr>");
 
-  !    WriteLine("</table>");
-  !  WriteLine("</td>");
+            WriteLine("<tr>");
+              WriteLine("<td></td>");
+              WriteLine("<td>");
+                WriteLine("<div class='ControlBtnOff CLASS02550' style='background-color:#aaaaaa;'>SET</div>");
+              WriteLine("</td>");
+            WriteLine("</tr>");
+
+          WriteLine("</table></div>");
+        WriteLine("</td>");
+      WriteLine("</tr>");
+
+    WriteLine("</table>");
+  WriteLine("</td>");
 
 
     WriteLine("<script type='text/javascript'>");
       WriteLine("ibs"#cObj.ID()#" = new iseButtonsSwitch("#cObj.ID()#", "#objState.Value()#", "#objState.ID()#", "#system.GetVar("iStatusOnly")#", '"#chnAddress#"', '"#chnLabel#"', '"#sInterface#"');");
-      Write("jQuery('#"#chnId#"Off').html(translateKey('btnWaterOff')).show();");
-      Write("jQuery('#"#chnId#"On').html(translateKey('btnWaterOn')).show();");
+    !  Write("jQuery('#"#chnId#"Off').html(translateKey('btnWaterOff')).show();");
+    !  Write("jQuery('#"#chnId#"On').html(translateKey('btnWaterOn')).show();");
 
     WriteLine("</script>");
   }
