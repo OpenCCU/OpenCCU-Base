@@ -32,7 +32,7 @@ AddProfileValues = function(prefix)
 AddSeparateSettings = function(prefix, pnr)
 {
   var i = 1,
-  var elem;
+  elem;
   while (elem = document.getElementById(prefix + pnr + '_' + i))
   {
     // add ALL parameters (do NOT use IsDirty()) because
