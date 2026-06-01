@@ -1811,8 +1811,7 @@ proc getShutterTransmitter {chn p descr address} {
   set isMTD15 0
   if {
     ([string equal $dev_descr(TYPE) "HmIP-M-TD15"] == 1) ||
-    ([string equal $dev_descr(TYPE) "RM-110-45"] == 1)  ||
-    ([string equal $dev_descr(TYPE) "RM-110-15"] == 1)
+    ([string equal $dev_descr(TYPE) "RM-110-45/15"] == 1)
   } {
     set isMTD15 1
   }
@@ -2036,7 +2035,7 @@ proc getShutterTransmitter {chn p descr address} {
       # Show the checkbox 'Auto discover' only when the parameter ENDPOSITION_AUTO_DETECT is available
       if {
         ([info exists ps(ENDPOSITION_AUTO_DETECT)] != 1) &&
-        (([string equal $dev_descr(TYPE) "HmIP-M-TD15"] != 1) && ([string equal $dev_descr(TYPE) "RM-110-45"] != 1)  && ([string equal $dev_descr(TYPE) "RM-110-15"] != 1))
+        (([string equal $dev_descr(TYPE) "HmIP-M-TD15"] != 1) || ([string equal $dev_descr(TYPE) "RM-110-45/15"] != 1))
       } {
         append html "jQuery(\"\[name='trAutoCompensate'\]\").hide();"
       }

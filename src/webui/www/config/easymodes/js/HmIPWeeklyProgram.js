@@ -285,7 +285,7 @@ HmIPWeeklyProgram.prototype = {
     this.isDLP = (this.device.deviceType.id.includes("HmIP-DLP"))? true : false;
 
     // The device says the type of this channel is BLIND_WEEK_PROFILE but it's a SHUTTER device
-    this.isShutter = (this.device.deviceType.id.includes("HmIP-M-TD15"))? true : false;
+    this.isShutter = ((this.device.deviceType.id.includes("HmIP-M-TD15")) || (this.device.deviceType.id.includes("RM-110-45/15"))) ? true : false;
 
     this.isHmIPLSS = false;
 
