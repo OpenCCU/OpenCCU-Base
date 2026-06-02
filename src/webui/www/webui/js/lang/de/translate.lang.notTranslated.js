@@ -399,6 +399,14 @@ jQuery.extend(true, langJSON, {
     "stringTableErrorMaxWaterFlowDuration" :
       "Wasserdurchflusszeit %FCberschritten. Bitte auf Leckage pr%FCfen.",
 
+    "stringTableManualSelfCalibrationBottomPosSetFalse" : "Untere Endlage gesetzt: Nein",
+    "stringTableManualSelfCalibrationBottomPosSetTrue" : "Untere Endlage gesetzt: Ja",
+    "stringTableManualSelfCalibrationTopPosSetFalse" : "Obere Endlage gesetzt: Nein",
+    "stringTableManualSelfCalibrationTopPosSetTrue" : "Obere Endlage gesetzt: Ja",
+
+    "stringTableBootedFalse" : "Ger%E4t aktuell neu gestartet: Nein",
+    "stringTableBootedTrue" : "Ger%E4t aktuell neu gestartet: Ja",
+
     "noMoreKeys" : ""
   }
 });

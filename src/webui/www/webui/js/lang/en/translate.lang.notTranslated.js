@@ -392,6 +392,14 @@ jQuery.extend(true, langJSON, {
     "stringTableErrorMaxWaterFlowDuration" :
       "Water flow time exceeded. Check it for leaks.",
 
+    "stringTableManualSelfCalibrationBottomPosSetFalse" : "en* Untere Endlage gesetzt: Nein",
+    "stringTableManualSelfCalibrationBottomPosSetTrue" : "en* Untere Endlage gesetzt: Ja",
+    "stringTableManualSelfCalibrationTopPosSetFalse" : "en* Obere Endlage gesetzt: Nein",
+    "stringTableManualSelfCalibrationTopPosSetTrue" : "en* Obere Endlage gesetzt: Ja",
+
+    "stringTableBootedFalse" : "en* Ger%E4t aktuell neu gestartet: Nein",
+    "stringTableBootedTrue" : "en* Ger%E4t aktuell neu gestartet: Ja",
+
     "noMoreKeys" : ""
   }
 });
