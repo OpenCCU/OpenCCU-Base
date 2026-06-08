@@ -371,11 +371,11 @@ jQuery.extend(true, langJSON, {
 
     "lblTypeOfSensor" : "Sensor",
     "optionNoSensor" : "No Sensor",
-    "optionFlowSensorGBCan" : "Grünbeck CAN FLOW",
-    "optionFlowSensorGBHW1" : "Grünbeck HW1",
+    "optionFlowSensorGBCan" : "Gr%FCnbeck CAN FLOW",
+    "optionFlowSensorGBHW1" : "Gr%FCnbeck HW1",
 
-    "optionPressureSensorGBCan" : "Grünbeck CAN PRESSURE",
-    "optionPressureSensorGBHW1" : "Grünbeck HW1",
+    "optionPressureSensorGBCan" : "Gr%FCnbeck CAN PRESSURE",
+    "optionPressureSensorGBHW1" : "Gr%FCnbeck HW1",
 
     "lblEventBlindTime" : "Flow time monitoring",
     "lblCondThresholdHi_WSS" : "Flow rate monitoring",
