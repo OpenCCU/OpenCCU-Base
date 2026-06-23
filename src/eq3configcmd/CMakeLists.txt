@@ -1,0 +1,6 @@
+add_executable(eq3configcmd eq3configcmd.cpp)
+target_compile_features(eq3configcmd PRIVATE cxx_std_11)
+target_compile_definitions(eq3configcmd PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64)
+target_include_directories(eq3configcmd PRIVATE "${CMAKE_SOURCE_DIR}/src/libeq3config")
+target_link_libraries(eq3configcmd PRIVATE eq3config pthread crypto rt)
+openccu_stage_target(eq3configcmd bin)

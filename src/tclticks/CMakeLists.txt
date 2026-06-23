@@ -1,0 +1,11 @@
+find_package(TCL QUIET)
+if(NOT TCL_FOUND)
+  message(FATAL_ERROR "BUILD_TCL_MODULES=ON requires Tcl development files.")
+endif()
+
+add_library(tclticks MODULE tclticks.cpp)
+set_target_properties(tclticks PROPERTIES PREFIX "" OUTPUT_NAME "tclticks")
+target_compile_options(tclticks PRIVATE -fPIC -O2 -Wall -Wstrict-prototypes)
+target_include_directories(tclticks PRIVATE "${TCL_INCLUDE_PATH}")
+target_link_libraries(tclticks PRIVATE "${TCL_LIBRARY}" stdc++)
+openccu_stage_target(tclticks lib)

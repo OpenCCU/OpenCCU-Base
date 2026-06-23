@@ -11,6 +11,7 @@
 #define UPDATEAVAILABLE_H_
 #if !defined(PLATFORM_CCU3)
 #include "Info.h"
+#include <cstdint>
 #include <string>
 class UpdateAvailable:public Info {
 public:

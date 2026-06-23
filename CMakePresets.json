@@ -1,0 +1,77 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "DEPLOY_TO_REPO": "ON"
+      }
+    },
+    {
+      "name": "x86_64-linux-gnu",
+      "inherits": "base",
+      "cacheVariables": {
+        "TARGET_PLATFORM": "x86_64-linux-gnu",
+        "CROSS_PREFIX": ""
+      }
+    },
+    {
+      "name": "aarch64-linux-gnu",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/aarch64-linux-gnu.cmake",
+      "cacheVariables": {
+        "TARGET_PLATFORM": "aarch64-linux-gnu",
+        "CROSS_PREFIX": "aarch64-linux-gnu-"
+      }
+    },
+    {
+      "name": "arm-linux-gnueabihf",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/arm-linux-gnueabihf.cmake",
+      "cacheVariables": {
+        "TARGET_PLATFORM": "arm-linux-gnueabihf",
+        "CROSS_PREFIX": "arm-linux-gnueabihf-"
+      }
+    },
+    {
+      "name": "i686-linux-gnu",
+      "inherits": "base",
+      "toolchainFile": "${sourceDir}/cmake/toolchains/i686-linux-gnu.cmake",
+      "cacheVariables": {
+        "TARGET_PLATFORM": "i686-linux-gnu",
+        "CROSS_PREFIX": "i686-linux-gnu-"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "x86_64-linux-gnu",
+      "configurePreset": "x86_64-linux-gnu",
+      "targets": ["package"]
+    },
+    {
+      "name": "aarch64-linux-gnu",
+      "configurePreset": "aarch64-linux-gnu",
+      "targets": ["package"]
+    },
+    {
+      "name": "arm-linux-gnueabihf",
+      "configurePreset": "arm-linux-gnueabihf",
+      "targets": ["package"]
+    },
+    {
+      "name": "i686-linux-gnu",
+      "configurePreset": "i686-linux-gnu",
+      "targets": ["package"]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+add_library(xmlparser SHARED xmlParser.cpp)
+target_compile_features(xmlparser PRIVATE cxx_std_11)
+target_compile_definitions(xmlparser PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64)
+target_compile_options(xmlparser PRIVATE -Wall -fPIC)
+set_target_properties(xmlparser PROPERTIES OUTPUT_NAME xmlparser)
+openccu_stage_target(xmlparser lib)
