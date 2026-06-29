@@ -24,7 +24,7 @@ iseButtonsShutter.prototype = {
     this.divUp = $(this.id + "Up");
     this.divDown = $(this.id + "Down");
 
-     this.shutter = new shutterControl(id, initState);
+    this.shutter = new shutterControl(id, initState);
 
     this.Perc.value = initState;
     this.shutter.setValue(initState);

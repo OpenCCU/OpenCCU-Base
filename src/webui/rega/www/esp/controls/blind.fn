@@ -1,5 +1,9 @@
 function ::CreateShutterActuator()
 {
+  object ch = dom.GetObject(chnId);
+  string chnAddress = ch.Address();
+  string devAddress = chnAddress.StrValueByIndex(":",0);
+
   object oLvl = cObj.DPByControl("BLIND.LEVEL");
   object oStop = cObj.DPByControl("BLIND.STOP");
   integer oLvlId = 0;
@@ -79,7 +83,13 @@ function ::CreateShutterActuator()
 
   string sCtrlId = "shutter"#chnId;
   WriteLine("<script type='text/javascript'>");
-  WriteLine("ibs"#cObj.ID()#" = new iseButtonsShutter(" # chnId # ", " # iLvl # ", " # oLvlId # ", " # oStopId # ", " #system.GetVar("iStatusOnly")# " );" );
+
+  WriteLine("var opts = {");
+    WriteLine("chnLabel:'"#ch.Label()#"',");
+    WriteLine("devAddress:'"#devAddress#"'");
+  WriteLine("};");
+
+  WriteLine("ibs"#cObj.ID()#" = new iseButtonsShutter(" # chnId # ", " # iLvl # ", " # iLvlId # ", " # iStopId # ", " #system.GetVar("iStatusOnly")# ", opts );" );
   WriteLine("translatePage('#ctrl"#chnId#"tbl');");
   WriteLine("</script>");
   return;
