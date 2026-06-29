@@ -21,6 +21,7 @@
 #ifndef WIN32
 #include <sys/ioctl.h>
 #include <sys/syscall.h>
+#include <poll.h>
 #else
 #define O_NONBLOCK 0
 #include <io.h>
@@ -139,37 +140,31 @@ void UpstreamCharConnection::ThreadFunction()
 	uint8_t buffer[1024];
 	size_t bufLength = 0;
 
-	fd_set inFd, outFd, excFd;
-	FD_ZERO(&inFd);
-	FD_ZERO(&excFd);
-	FD_ZERO(&outFd);
-
 	while( !_exit )
 	{
-		FD_SET(_fd, &inFd);
-		FD_SET(_fd, &excFd);
-
-		struct timeval tv;
-		tv.tv_sec = 5;
-		tv.tv_usec = 0;
-
-		int nSelectEvents = select(_fd+1, &inFd, &outFd, &excFd, &tv); //warum +1 ??
-		if( nSelectEvents )
+		if( _fd < 0 )
 		{
-			//LOG( Logger::LOG_WARNING, "UpstreamCharConnection slave %s select() returned: %d", _slaveDevice.c_str(), nSelectEvents ); 
+			LOG( Logger::LOG_WARNING, "UpstreamCharConnection slave %s invalid file descriptor", _slaveDevice.c_str() );
+			break;
 		}
 
-		if( nSelectEvents < 0 )
+		pollfd pfd;
+		pfd.fd = _fd;
+		pfd.events = POLLIN | POLLPRI | POLLERR | POLLHUP;
+		pfd.revents = 0;
+
+		int nEvents = poll(&pfd, 1, 5000);
+		if( nEvents < 0 )
 		{
 			if( errno == EINTR )
 			{
 				continue;
 			}
-			LOG( Logger::LOG_WARNING, "UpstreamCharConnection slave %s error in select: %s", _slaveDevice.c_str(), strerror( errno ) ); 
+			LOG( Logger::LOG_WARNING, "UpstreamCharConnection slave %s error in poll: %s", _slaveDevice.c_str(), strerror( errno ) );
 			break;
 		}
 
-		if( FD_ISSET( _fd, &excFd ) )
+		if( pfd.revents & (POLLPRI | POLLERR | POLLHUP) )
 		{
 			uint32_t slaveEvents = 0;
 #ifndef WIN32
@@ -203,7 +198,7 @@ void UpstreamCharConnection::ThreadFunction()
 
 		if( slaveOpen )
 		{
-			if( FD_ISSET( _fd, &inFd ) )
+			if( pfd.revents & POLLIN )
 			{
 				int count = read( _fd, buffer + bufLength, sizeof(buffer) - bufLength );
 				if( count == 0 )
@@ -237,4 +232,3 @@ void UpstreamCharConnection::ThreadFunction()
 	}
 	LOG( Logger::LOG_DEBUG, "UpstreamCharConnection slave device %s ThreadFunction() ended", _slaveDevice.c_str() ); 
 }
-

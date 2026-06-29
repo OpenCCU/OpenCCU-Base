@@ -22,6 +22,7 @@ using namespace ulc;
 #	include <sys/socket.h>
 #	include <netinet/in.h>
 #	include <arpa/inet.h>
+#	include <poll.h>
 #   include <unistd.h>
 #	define closesocket(x) close(x)
 #   define SOCKET_SEND_FLAGS MSG_NOSIGNAL
@@ -32,6 +33,7 @@ using namespace ulc;
 #include <Logger.h>
 #include <sstream>
 #include <iostream>
+#include <errno.h>
 #include <string.h>
 
 //#define DUMP 1
@@ -235,6 +237,7 @@ bool LanConnection::receiveNonBlocking(std::string& bytesRead)
 
 int LanConnection::waitForData(unsigned int msTimeout)
 {
+	int currentSock = -1;
 	pthread_mutex_lock(&sockMutex);
 	inSelect = true;
 	if(connectionClosing) {
@@ -242,21 +245,40 @@ int LanConnection::waitForData(unsigned int msTimeout)
 		pthread_mutex_unlock(&sockMutex);
 		return -1;
 	}
+	currentSock = sock;
+	if(currentSock < 0) {
+		inSelect = false;
+		pthread_mutex_unlock(&sockMutex);
+		return -1;
+	}
 	pthread_mutex_unlock(&sockMutex);
-	//LOG(Logger::LOG_ALL, "LanConnection::waitForData(%d): sock %d", msTimeout, sock);
+
+	int nEvents;
+#ifdef WIN32
+	//LOG(Logger::LOG_ALL, "LanConnection::waitForData(%d): sock %d", msTimeout, currentSock);
 	fd_set inFd, outFd, excFd;
 	FD_ZERO(&inFd);
 	FD_ZERO(&outFd);
 	FD_ZERO(&excFd);
 
-	FD_SET(sock, &inFd);
+	FD_SET(currentSock, &inFd);
 
-	// Check for events
-	int nEvents;
 	struct timeval tv;
 	tv.tv_sec = msTimeout/1000;
 	tv.tv_usec = (msTimeout%1000)*1000;
-	nEvents = select(sock+1, &inFd, &outFd, &excFd, &tv);
+	nEvents = select(currentSock+1, &inFd, &outFd, &excFd, &tv);
+#else
+	pollfd pfd;
+	pfd.fd = currentSock;
+	pfd.events = POLLIN | POLLPRI | POLLERR | POLLHUP;
+	pfd.revents = 0;
+	do {
+		nEvents = poll(&pfd, 1, (int)msTimeout);
+	} while(nEvents < 0 && errno == EINTR);
+	if(nEvents > 0) {
+		nEvents = (pfd.revents & (POLLIN | POLLPRI | POLLERR | POLLHUP)) ? 1 : 0;
+	}
+#endif
 	pthread_mutex_lock(&sockMutex);
 	if(connectionClosing) {
 		inSelect = false;
