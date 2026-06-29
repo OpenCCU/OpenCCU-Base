@@ -34,6 +34,7 @@ using namespace ulc;
 #include <sstream>
 #include <iostream>
 #include <errno.h>
+#include <limits.h>
 #include <string.h>
 
 //#define DUMP 1
@@ -271,12 +272,10 @@ int LanConnection::waitForData(unsigned int msTimeout)
 	pfd.fd = currentSock;
 	pfd.events = POLLIN | POLLPRI | POLLERR | POLLHUP;
 	pfd.revents = 0;
+	int pollTimeout = (msTimeout > (unsigned int)INT_MAX) ? INT_MAX : (int)msTimeout;
 	do {
-		nEvents = poll(&pfd, 1, (int)msTimeout);
+		nEvents = poll(&pfd, 1, pollTimeout);
 	} while(nEvents < 0 && errno == EINTR);
-	if(nEvents > 0) {
-		nEvents = (pfd.revents & (POLLIN | POLLPRI | POLLERR | POLLHUP)) ? 1 : 0;
-	}
 #endif
 	pthread_mutex_lock(&sockMutex);
 	if(connectionClosing) {
