@@ -252,10 +252,9 @@ int LanConnection::waitForData(unsigned int msTimeout)
 		return -1;
 	}
 	pthread_mutex_unlock(&sockMutex);
-
+	//LOG(Logger::LOG_ALL, "LanConnection::waitForData(%d): sock %d", msTimeout, currentSock);
 	int nEvents;
 #ifdef WIN32
-	//LOG(Logger::LOG_ALL, "LanConnection::waitForData(%d): sock %d", msTimeout, currentSock);
 	fd_set inFd, outFd, excFd;
 	FD_ZERO(&inFd);
 	FD_ZERO(&outFd);

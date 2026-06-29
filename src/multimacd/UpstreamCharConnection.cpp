@@ -232,3 +232,4 @@ void UpstreamCharConnection::ThreadFunction()
 	}
 	LOG( Logger::LOG_DEBUG, "UpstreamCharConnection slave device %s ThreadFunction() ended", _slaveDevice.c_str() ); 
 }
+
