@@ -1,0 +1,32 @@
+#!/bin/sh
+# AskSinAnalyzer CCU - Addon-Installation
+# Wird vom WebUI-Addon-Installer nach dem Entpacken des tar.gz aufgerufen.
+# $1 = Plattform (CCU2, CCU3, HM-RASPBERRYMATIC, ...) - keine binaeren
+# Bestandteile, daher plattformunabhaengig.
+
+ADDON_NAME=asksinanalyzer
+ADDONS_DIR=/usr/local/addons
+WWW_DIR=/usr/local/etc/config/addons/www
+RCD_DIR=/usr/local/etc/config/rc.d
+
+# /usr/local beschreibbar mounten (aeltere CCU-Firmware)
+mount | grep -q "/usr/local" || mount /usr/local
+
+# Addon-Dateien installieren
+mkdir -p ${ADDONS_DIR}/${ADDON_NAME}
+cp -af ${ADDON_NAME}/* ${ADDONS_DIR}/${ADDON_NAME}/
+chmod 755 ${ADDONS_DIR}/${ADDON_NAME} ${ADDONS_DIR}/${ADDON_NAME}/www
+chmod 755 ${ADDONS_DIR}/${ADDON_NAME}/www/api.cgi
+chmod 644 ${ADDONS_DIR}/${ADDON_NAME}/www/index.html
+
+# Web-Verzeichnis verlinken -> http://<ccu>/addons/asksinanalyzer/
+mkdir -p ${WWW_DIR}
+ln -sfn ${ADDONS_DIR}/${ADDON_NAME}/www ${WWW_DIR}/${ADDON_NAME}
+
+# rc.d-Script (WebUI-Integration: info/uninstall)
+mkdir -p ${RCD_DIR}
+cp -af rc.d/${ADDON_NAME} ${RCD_DIR}/
+chmod 755 ${RCD_DIR}/${ADDON_NAME}
+
+sync
+exit 0

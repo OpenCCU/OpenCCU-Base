@@ -33,6 +33,20 @@ Funkmodul ⇄ multimacd (TrafficLogger)
 Voraussetzung: multimacd mit TrafficLogger (dieses Repo) und aktiviertem
 `Traffic Log = 1` im Konfig-Template.
 
+### Variante 1: Addon-Paket (WebUI)
+
+```sh
+./build-addon.sh        # erzeugt asksinanalyzer-<version>.tar.gz
+```
+
+Das Paket über die WebUI installieren: *Einstellungen → Systemsteuerung →
+Zusatzsoftware → Datei auswählen → Installieren*. Das Addon erscheint danach
+in der Zusatzsoftware-Liste (mit Uninstall und Link zur UI).
+Paketinhalt: `update_script` (Installer), `rc.d/asksinanalyzer`
+(WebUI-Integration: info/uninstall), `asksinanalyzer/` (Payload).
+
+### Variante 2: manuell per SSH
+
 ```sh
 CCU=root@ccu
 ssh $CCU 'mkdir -p /usr/local/addons/asksinanalyzer/www'

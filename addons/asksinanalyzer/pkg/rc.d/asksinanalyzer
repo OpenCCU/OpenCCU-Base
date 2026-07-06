@@ -1,0 +1,33 @@
+#!/bin/sh
+# AskSinAnalyzer CCU - rc.d-Script (WebUI Zusatzsoftware)
+
+ADDON_NAME=asksinanalyzer
+ADDON_DIR=/usr/local/addons/${ADDON_NAME}
+WWW_LINK=/usr/local/etc/config/addons/www/${ADDON_NAME}
+RCD_FILE=/usr/local/etc/config/rc.d/${ADDON_NAME}
+
+case "$1" in
+  ""|start|stop|restart)
+    # rein passives Web-Addon (CGI + statische Seite) - kein Dienst noetig
+    ;;
+  info)
+    echo "Info: <b>AskSinAnalyzer CCU</b><br>"
+    echo "Info: Logging und grafische Auswertung aller BidCos-/HmIP-Funktelegramme direkt auf der CCU.<br>"
+    echo "Info: Benoetigt multimacd mit TrafficLogger (OpenCCU) und 'Traffic Log = 1' in der multimacd.conf."
+    echo "Name: AskSinAnalyzer CCU"
+    echo "Version: $(cat ${ADDON_DIR}/VERSION 2>/dev/null || echo unbekannt)"
+    echo "Operations: uninstall"
+    echo "Config-Url: /addons/${ADDON_NAME}/"
+    ;;
+  uninstall)
+    rm -f ${WWW_LINK}
+    rm -rf ${ADDON_DIR}
+    rm -f /tmp/asksinanalyzer.devlist.json
+    rm -f ${RCD_FILE}
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|info|uninstall}" >&2
+    exit 1
+    ;;
+esac
+exit 0
