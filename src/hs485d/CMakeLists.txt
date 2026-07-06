@@ -1,7 +1,7 @@
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated-hs485d-version.h"
   COMMAND "${CMAKE_COMMAND}" -E env sh "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" > /tmp/openccu-hs485d-version.txt
-  COMMAND "${CMAKE_COMMAND}" -DINPUT=/tmp/openccu-hs485d-version.txt -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/generated-hs485d-version.h" -DMACRO_NAME=HS485D_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+  COMMAND "${CMAKE_COMMAND}" -DINPUT=/tmp/openccu-hs485d-version.txt "-DOUTPUT=${CMAKE_CURRENT_BINARY_DIR}/generated-hs485d-version.h" -DMACRO_NAME=HS485D_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
   VERBATIM
 )
 add_custom_target(hs485d-version-header DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/generated-hs485d-version.h")

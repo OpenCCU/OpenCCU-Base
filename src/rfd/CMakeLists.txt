@@ -1,7 +1,7 @@
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h"
   COMMAND "${CMAKE_COMMAND}" -E env sh "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" > /tmp/openccu-rfd-version.txt
-  COMMAND "${CMAKE_COMMAND}" -DINPUT=/tmp/openccu-rfd-version.txt -DOUTPUT="${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h" -DMACRO_NAME=RFD_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+  COMMAND "${CMAKE_COMMAND}" -DINPUT=/tmp/openccu-rfd-version.txt "-DOUTPUT=${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h" -DMACRO_NAME=RFD_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
   VERBATIM
 )
 add_custom_target(rfd-version-header DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h")
