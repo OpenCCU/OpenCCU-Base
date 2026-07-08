@@ -9,6 +9,7 @@
 #pragma once
 #include "BinaryData.h"
 #include "tinythread.h"
+#include <atomic>
 #include <stdio.h>
 #include <time.h>
 #include <string>
@@ -34,13 +35,14 @@ public:
 private:
 	TrafficLogger();
 	~TrafficLogger();
-	void LogBidcosTelegram( const char* direction, const BinaryData& telegramData );
+	void LogBidcosTelegram( const char* direction, const BinaryData& telegramData, int rssi );
 	void LogHmIpFrame( const char* direction, const BinaryData& frameData );
 	void WriteLine( const char* direction, const char* protocol, const std::string& fields );
 	FILE* GetLogFile( const struct tm& localTime );
 	static std::string ToHex( const BinaryData& data );
 
-	bool _enabled;
+	//atomic: read lock-free on the per-frame fast path, written by Configure()
+	std::atomic<bool> _enabled;
 	std::string _directory;
 	FILE* _file;
 	int _fileYear;
