@@ -79,7 +79,7 @@ void TrafficLogger::OnUpstreamFrame( const SerialFrame& frame )
 			//telegram data starts after frame end time (2 bytes), options (1 byte) and rssi (1 byte)
 			if( frame.Data().size() > 4 )
 			{
-				LogBidcosTelegram( "RX", frame.Data().GetRange( 4, frame.Data().size() - 4 ), -(int)frame.Data().GetUInt8Value( 3 ) );
+				LogBidcosTelegram( "RX", frame.Data().GetRange( 4, frame.Data().size() - 4 ) );
 			}
 		}
 		break;
@@ -110,7 +110,7 @@ void TrafficLogger::OnDownstreamFrame( const SerialFrame& frame )
 			//telegram data starts after frame start time (2 bytes) and options (1 byte)
 			if( frame.Data().size() > 3 )
 			{
-				LogBidcosTelegram( "TX", frame.Data().GetRange( 3, frame.Data().size() - 3 ), 0 );
+				LogBidcosTelegram( "TX", frame.Data().GetRange( 3, frame.Data().size() - 3 ) );
 			}
 			break;
 		default:
@@ -133,20 +133,18 @@ void TrafficLogger::OnDownstreamFrame( const SerialFrame& frame )
 	}
 }
 
-void TrafficLogger::LogBidcosTelegram( const char* direction, const BinaryData& telegramData, int rssi )
+void TrafficLogger::LogBidcosTelegram( const char* direction, const BinaryData& telegramData )
 {
 	//telegram layout: [0]=counter, [1]=flags, [2]=type, [3..5]=sender, [6..8]=receiver, [9..]=payload
 	//the length equals the on-air length byte, which counts all bytes following it
-	//rssi is only available on the rx path (0 = not available)
-	char buffer[96];
-	snprintf( buffer, sizeof(buffer), "LEN=%02X CNT=%02X FLAGS=%02X TYPE=%02X FROM=%06X TO=%06X RSSI=%d PAYLOAD=",
+	char buffer[80];
+	snprintf( buffer, sizeof(buffer), "LEN=%02X CNT=%02X FLAGS=%02X TYPE=%02X FROM=%06X TO=%06X PAYLOAD=",
 		(unsigned)telegramData.size(),
 		telegramData.GetUInt8Value( 0 ),
 		telegramData.GetUInt8Value( 1 ),
 		telegramData.GetUInt8Value( 2 ),
 		telegramData.GetUInt24Value( 3 ),
-		telegramData.GetUInt24Value( 6 ),
-		rssi );
+		telegramData.GetUInt24Value( 6 ) );
 	std::string fields = buffer;
 	if( telegramData.size() > 9 )
 	{
