@@ -816,9 +816,9 @@ function ::conditionIsParameterVisible() {
     }
   }
 
-  if (oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
+  if ((oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
     if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
-      showChannelParam = false;
+    !  showChannelParam = false;
     }
   }
 
@@ -1018,7 +1018,7 @@ function ::destinationIsParameterVisible() {
     }
   }
 
-  if (oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) {
+  if ((oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
     if (
     (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
     || (oDP.HSSID().Find("DURATION_VALUE") != -1)
