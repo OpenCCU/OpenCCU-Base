@@ -63,6 +63,12 @@ bool BidcosAesChallengeInfo::CheckSolution( const BidcosContext& bidcosContext, 
 	uint8_t* key = bidcosContext.GetAesKeyByIndex( _keyIndex ).GetSessionKey( BinaryData(_challenge, 6) );
 	EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 	EVP_DecryptInit_ex( ctx, EVP_aes_128_ecb(), NULL, key, NULL);
+	// The BidCoS AES signature is a raw single-block ECB operation (no PKCS7
+	// padding). With OpenSSL's default padding enabled, EVP_DecryptUpdate holds
+	// the final block back for padding removal and emits 0 bytes for a lone
+	// 16-byte block, leaving firstBlock uninitialised -> "AES solution not
+	// accepted". Disable padding so the block is decrypted in place.
+	EVP_CIPHER_CTX_set_padding( ctx, 0 );
 
 	uint8_t firstBlock[16];
 	//dec->ProcessData( secondBlock, firstBlock );
@@ -136,6 +142,8 @@ BidcosTelegram BidcosAesChallengeInfo::CalculateSolution(const BidcosContext& bi
 	uint8_t* key = bidcosContext.GetAesKeyByIndex( _keyIndex ).GetSessionKey( BinaryData( _challenge, 6) );
 	EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 	EVP_EncryptInit_ex( ctx, EVP_aes_128_ecb(), NULL, key, NULL);
+	// raw single-block ECB, no PKCS7 padding (see CheckSolution)
+	EVP_CIPHER_CTX_set_padding( ctx, 0 );
 
 	uint8_t buffer[16];
 

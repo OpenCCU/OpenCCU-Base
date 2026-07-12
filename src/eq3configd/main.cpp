@@ -309,7 +309,14 @@ int main(int argc, char* argv[])
 				}
 				
 				EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
-				EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, aesKeyValuep ,aesIv);
+				// This path DECRYPTS the received '*'-encrypted message; the
+				// context must be initialised for decryption (was EncryptInit,
+				// which left EVP_DecryptUpdate returning 0 bytes -> the payload
+				// was never decrypted and the signature check always failed).
+				// The sender (LanDevice::encryptMessage) pads the plaintext to a
+				// block boundary itself and uses no PKCS7 padding, so disable it.
+				EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, aesKeyValuep ,aesIv);
+				EVP_CIPHER_CTX_set_padding(ctx, 0);
 				int blockSize = EVP_CIPHER_CTX_block_size(ctx);
 				const int newDataLength = payload.length() + blockSize;//ensure there is enough space even if final adds padding
 
