@@ -90,6 +90,8 @@ bool BidcosMacController::TransformBeforeSend( BidcosTelegram& telegram )
 			uint8_t* key = _bidcosContext.GetAesKeyByIndex( encryptionKeyIndex ).GetSessionKey( BinaryData() );
 			EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 			EVP_EncryptInit_ex( ctx, EVP_aes_128_ecb(), NULL, key, NULL);
+			// raw single-block ECB, no PKCS7 padding
+			EVP_CIPHER_CTX_set_padding( ctx, 0 );
 			
 			uint8_t buffer[16];
 			payload.GetBinaryData( buffer, 0, 16 );

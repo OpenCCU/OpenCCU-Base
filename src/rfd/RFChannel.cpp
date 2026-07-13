@@ -349,6 +349,8 @@ bool RFChannel::performCBCAuthentification(BidcosFrame& bidcosFrame)
 			//LOG(Logger::LOG_ALL, "b0 (length: %d): %s", b0.size(), HM2::toDebugHexStr(b0).c_str());
 			EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 			EVP_EncryptInit_ex( ctx, EVP_aes_128_ecb(), NULL, (unsigned char*)devKey.c_str(), NULL);
+			// raw single-block ECB, no PKCS7 padding (CBC-MAC)
+			EVP_CIPHER_CTX_set_padding( ctx, 0 );
 			unsigned char* encryptBuffer = new unsigned char[16];
 			int encSize = 0;
 			EVP_EncryptUpdate(ctx, encryptBuffer, &encSize, (unsigned char*)b0.c_str(), 16);

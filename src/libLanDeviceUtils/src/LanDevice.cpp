@@ -166,6 +166,8 @@ std::string LanDevice::encryptMessage(unsigned char opcode, unsigned char data[]
 	unsigned char* aesIv = this->getIv();
 	unsigned char* aesKey = this->getAesKey();
 	EVP_EncryptInit_ex(pCtx, EVP_aes_128_cbc(), NULL, aesKey, aesIv);
+	// raw block CBC, no PKCS7 padding (payload is manually padded to block size)
+	EVP_CIPHER_CTX_set_padding(pCtx, 0);
 
 	unsigned char notEncryptedPartOfMessage[1200];
 	unsigned char encryptedPartOfMessage[1200];
