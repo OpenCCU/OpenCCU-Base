@@ -465,7 +465,7 @@ bool HS485Device::SaveToXml(XMLNode* node)
 	std::string s;
 	*buffer=0;
 	for(unsigned int i=0;(i < sysinfo.size()) && ((i+3) < sizeof(buffer));i++){
-		sprintf(buffer+2*i, "%02X", (int)sysinfo[i]);
+		sprintf(buffer+2*i, "%02X", (unsigned char)sysinfo[i]);
 	}
 	if(*buffer)node->addAttributeConst("sysinfo", buffer);
 	snprintf(buffer, sizeof(buffer), "0x%08" PRIX32, GetAddress());
@@ -681,7 +681,7 @@ void HS485Device::SetSysinfo(const std::string& si)
 	sysinfo=si;
 	if(si.size()<3)return;
 	char buffer[16];
-	snprintf(buffer, sizeof(buffer), "%d.%02d", si[2], si[3]);
+	snprintf(buffer, sizeof(buffer), "%d.%02d", (unsigned char)si[2], (unsigned char)si[3]);
 	firmware_version=buffer;
 }
 
