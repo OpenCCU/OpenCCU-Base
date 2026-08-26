@@ -92,7 +92,7 @@ openccu_stage_target(SetInterfaceClock bin)
 if(BUILD_TCL_MODULES)
   add_subdirectory(src/tclrega)
   add_subdirectory(src/tclrpc)
-  add_subdirectory(src/tclticks)
+  #add_subdirectory(src/tclticks)
 endif()
 
 if(BUILD_WEBUI_AND_DEVICETYPES)
@@ -126,7 +126,7 @@ if(BUILD_TCL_MODULES)
   add_dependencies(core
     tclrega
     tclrpc
-    tclticks
+    #tclticks
   )
 endif()
 
