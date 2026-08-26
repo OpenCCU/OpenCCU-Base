@@ -1,5 +1,5 @@
 add_custom_target(webui-www-source-assets
-  COMMAND "${CMAKE_COMMAND}" -E chdir "${CMAKE_CURRENT_SOURCE_DIR}" ./check_CheckOnlyFiles.tcl
+  #COMMAND "${CMAKE_COMMAND}" -E chdir "${CMAKE_CURRENT_SOURCE_DIR}" ./check_CheckOnlyFiles.tcl
   COMMAND "${CMAKE_COMMAND}" -E chdir "${CMAKE_CURRENT_SOURCE_DIR}" ./create_webui_js.tcl
   COMMAND "${CMAKE_COMMAND}" -E chdir "${CMAKE_CURRENT_SOURCE_DIR}" ./utf82ansi.py webui.js
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/www/webui"

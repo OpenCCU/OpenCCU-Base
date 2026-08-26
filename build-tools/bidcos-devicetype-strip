@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if (test -z "$BIDCOS_BUILD_HOME")
+then
+	echo BIDCOS_BUILD_HOME no defined
+	exit 1
+fi
+
+java -jar $BIDCOS_BUILD_HOME/bidcos-devicetype-strip.jar $* 
+
