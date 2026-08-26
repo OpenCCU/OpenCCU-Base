@@ -81,6 +81,8 @@ public:
 
 private:
 
+	friend class CCU2LGWCommController;
+
 	/** \brief UnifiedLanCommController handles connection initialization.*/
 	ulc::UnifiedLanCommController* pCommController;
 

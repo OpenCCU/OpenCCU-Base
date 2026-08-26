@@ -669,6 +669,9 @@ void* CCU2CommController::startCoprocessorAppThreadFunction(void* params)
 	}
 	if(!done) {
 		LOG(Logger::LOG_ERROR,"CCU2CommController::startCoprocessorAppThreadFunction(): Trying to send SYSTEMCMD_STARTBOOTLOADER failed 3 times.");
+		if(pThis->interfaceState == IFSTATE_REINIT) {
+			pThis->handleCoprocessorRecoveryFailure();
+		}
 	}
 	else {//on success starting the app, we wait until coprocessor finished starting the app and after that we republish devices
 		tryCount = 0;
@@ -677,7 +680,21 @@ void* CCU2CommController::startCoprocessorAppThreadFunction(void* params)
 			tryCount++;
 		}
 		if(pThis->interfaceState == IFSTATE_REINIT) {
-			pThis->restoreConfigToCoprocessor();
+			const unsigned int restoreRetryAmount = 3;
+			bool restored = false;
+			for(unsigned int restoreTry = 0; restoreTry < restoreRetryAmount && pThis->interfaceState == IFSTATE_REINIT; restoreTry++) {
+				restored = pThis->restoreConfigToCoprocessor();
+				if(restored || pThis->interfaceState != IFSTATE_REINIT) {
+					break;
+				}
+				if(restoreTry + 1 < restoreRetryAmount) {
+					LOG(Logger::LOG_WARNING, "(%s) CCU2CommController::startCoprocessorAppThreadFunction(): Restoring coprocessor configuration failed. Retrying.", pThis->interfaceSerial.c_str());
+					usleep(1000 * 1000);
+				}
+			}
+			if(!restored && pThis->interfaceState == IFSTATE_REINIT) {
+				pThis->handleCoprocessorRecoveryFailure();
+			}
 		}
 	}
 	return NULL;
@@ -703,6 +720,11 @@ bool CCU2CommController::restoreConfigToCoprocessor()
 		pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	}
 	return done;
+}
+
+void CCU2CommController::handleCoprocessorRecoveryFailure()
+{
+	LOG(Logger::LOG_ERROR, "(%s) CCU2CommController::handleCoprocessorRecoveryFailure(): Recovery failed and no transport-specific reconnect is available.", interfaceSerial.c_str());
 }
 
 void CCU2CommController::assembleBidcosFrame(const CCU2CoprocessorCommand& bidcosCmd, BidcosFrame& frame)

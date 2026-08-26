@@ -309,6 +309,9 @@ protected:
 
 	bool restoreConfigToCoprocessor();
 
+	/** Called after asynchronous coprocessor recovery fails while the interface is still in REINIT. */
+	virtual void handleCoprocessorRecoveryFailure();
+
 };
 
 }
