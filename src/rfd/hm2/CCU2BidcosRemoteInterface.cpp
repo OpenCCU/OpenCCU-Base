@@ -109,11 +109,12 @@ bool CCU2BidcosRemoteInterface::SetAesKeyUser(int index, const std::string& data
 bool CCU2BidcosRemoteInterface::StartInterface(int bidcos_address) 
 {
 	LOG(Logger::LOG_DEBUG, "CCU2BidcosRemoteInterface::StartInterface(): addr=%s", toDebugHexStr( convertBidcosAddressToBigEndianString( bidcos_address ) ).c_str() );
-	//Start reveive thread
-	pCommController->startReceiver();
-	//Remote: Set bidcos address at coprocessor
+	//Remote: Set bidcos address at coprocessor before switching the interface to ACTIVE
 	std::string addrStr = convertBidcosAddressToBigEndianString(bidcos_address);
 	bool done = pCommController->sendBidcosRequest( BIDCOSCMD_SET_RF_ADDRESS, addrStr );
+	if(done) {
+		pCommController->startReceiver();
+	}
 	return done;
 }
   
@@ -490,12 +491,11 @@ bool CCU2BidcosRemoteInterface::SetInterfaceClock(const unsigned int utcSeconds,
 bool CCU2BidcosRemoteInterface::republishAllDevices()
 {
 	//Set user keys (workaround for Copro 1.0.11 key problem after (re-)starting app)
-	SetAesKeyUser(aesKeys.currentKeyIndex, aesKeys.currentKey, aesKeys.previousKeyIndex, aesKeys.previousKey);
+	bool retVal = SetAesKeyUser(aesKeys.currentKeyIndex, aesKeys.currentKey, aesKeys.previousKeyIndex, aesKeys.previousKey);
 
 	//Republish devices
 	std::vector<int> devices;
 	ListDevices(&devices);
-	bool retVal = true;
 	for(unsigned int i = 0; i < devices.size(); i++) {
 		bool done = AddDeviceRemote(devices.at(i));
 		if(done) {

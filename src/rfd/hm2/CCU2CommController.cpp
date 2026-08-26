@@ -683,8 +683,10 @@ bool CCU2CommController::restoreConfigToCoprocessor()
 	done = done && setCSMACAEnabled(false);//FIXME We disable that in any case. If we enable it one day, this should disabled here...
 	done = done && setDutyCycleCheck(false); // Disable DutyCycle check !!!! TODO: Remove this line for production.
 	done = done && pBidcosRemoteInterfcace->republishAllDevices();//In case of init() the list is empty, otherwise we need to republish all devices
-	interfaceState = IFSTATE_ACTIVE;//switch back to active (on initialization this is done elsewhere)
-	pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+	if(done) {
+		pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+		interfaceState = IFSTATE_ACTIVE;//switch back to active only after successful restore
+	}
 	return done;
 }
 
@@ -766,6 +768,9 @@ bool CCU2CommController::isBidcosEventABidcosTelegramResponse(const CCU2Coproces
 bool CCU2CommController::sendBidcosTelegram(BidcosFrame* pMessageFrame, const int burstMode) {
 	//LOG(Logger::LOG_DEBUG, "CCU2CommController::sendBidcosMessage(): Begin");
 	if(pMessageFrame == NULL) {
+		return false;
+	}
+	if(interfaceState != IFSTATE_ACTIVE) {
 		return false;
 	}
 	pthread_mutex_lock( &mutexBidcosTelegramRequest  );
