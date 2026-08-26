@@ -125,13 +125,12 @@ bool HM2::CCU2LGWCommController::setRFLGWInfoLED(const unsigned int state)
 
 bool HM2::CCU2LGWCommController::reinitCoprocessor()
 {
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_REINIT;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	bool done = improvedInit();
 	if(done) {
 		done = restoreConfigToCoprocessor();
-		if(done) {
-			interfaceState = IFSTATE_ACTIVE;
-		}
 	}
 	return done;
 	/*initCoprocessor();

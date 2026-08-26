@@ -340,16 +340,17 @@ bool CCU2BidcosRemoteInterface::Init(std::map<std::string, std::string>& params)
 	}
 	if(retVal) {
 		//Set interface clock
-		SetInterfaceClockBySystemTime();
+		retVal = SetInterfaceClockBySystemTime();
 	}
 	return retVal;
 }
 
-void CCU2BidcosRemoteInterface::SetInterfaceClockBySystemTime() 
+bool CCU2BidcosRemoteInterface::SetInterfaceClockBySystemTime()
 {
-	TimeZoneInfo tzi(time(NULL));
+	const time_t now = time(NULL);
+	TimeZoneInfo tzi(now);
 	const int utcOffsetMinutes = ((int)tzi.GetUTCOffset()/(int)60);
-	SetInterfaceClock((unsigned int)time(NULL), utcOffsetMinutes);
+	return SetInterfaceClock((unsigned int)now, utcOffsetMinutes);
 }
 
 bool CCU2BidcosRemoteInterface::InitCCU2SerialPortCommController(std::map<std::string, std::string>& params, bool improvedCoproInit)

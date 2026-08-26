@@ -9,6 +9,7 @@
 #ifndef _CCU2COMMCONTROLLER_H_
 #define _CCU2COMMCONTROLLER_H_
 
+#include <atomic>
 #include <string>
 #include <CCU2CoprocessorCommand.h>
 #include <pthread.h>
@@ -146,7 +147,7 @@ protected:
 	CCU2BidcosRemoteInterface* pBidcosRemoteInterfcace;
 
 	/**\brief Current state of interface. Impact on receive thread.*/
-	volatile InterfaceState interfaceState;
+	std::atomic<InterfaceState> interfaceState;
 
 	/** \brief Receive thread. Responsible for reading and handling incoming messages.*/
 	pthread_t receiveThread;

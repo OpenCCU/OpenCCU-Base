@@ -305,7 +305,9 @@ bool CCU2CommController::sendSystemCommand(const SystemCommand systemCommand, co
 bool CCU2CommController::startReceiver()
 {
 	//start receive thread
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_ACTIVE;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	//pthread_create( &receiveThread, &receiveThreadAttributes, CCU2CommController::receiveThreadFunction, (void*)this);
 	return true;
 }
@@ -313,7 +315,9 @@ bool CCU2CommController::startReceiver()
 bool CCU2CommController::stopReceiver()
 {
 	//interfaceState = IFSTATE_INACTIVE;
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_INIT;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	//void* whatever;
 	//int foo = pthread_join(receiveThread, &whatever);
 	//return (foo == 0);
@@ -620,9 +624,11 @@ void CCU2CommController::initCoprocessor()
 
 bool CCU2CommController::startCoprocessorApp()
 {
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	if(interfaceState == IFSTATE_ACTIVE) {
 		interfaceState = IFSTATE_REINIT;
 	}
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	if(Logger::WouldLog(Logger::LOG_DEBUG)) {
 		LOG(Logger::LOG_DEBUG, "(%s) CCU2CommController::startCoprocessorApp(): Trying to start coprocessor application", interfaceSerial.c_str());
 	}
@@ -684,8 +690,12 @@ bool CCU2CommController::restoreConfigToCoprocessor()
 	done = done && setDutyCycleCheck(false); // Disable DutyCycle check !!!! TODO: Remove this line for production.
 	done = done && pBidcosRemoteInterfcace->republishAllDevices();//In case of init() the list is empty, otherwise we need to republish all devices
 	if(done) {
-		pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+		done = pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+	}
+	if(done) {
+		pthread_mutex_lock(&mutexBidcosTelegramRequest);
 		interfaceState = IFSTATE_ACTIVE;//switch back to active only after successful restore
+		pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	}
 	return done;
 }
@@ -770,10 +780,11 @@ bool CCU2CommController::sendBidcosTelegram(BidcosFrame* pMessageFrame, const in
 	if(pMessageFrame == NULL) {
 		return false;
 	}
+	pthread_mutex_lock( &mutexBidcosTelegramRequest  );
 	if(interfaceState != IFSTATE_ACTIVE) {
+		pthread_mutex_unlock( &mutexBidcosTelegramRequest  );
 		return false;
 	}
-	pthread_mutex_lock( &mutexBidcosTelegramRequest  );
 	//LOG(Logger::LOG_DEBUG, "CCU2CommController::sendBidcosMessage(): BidcosTelegramMutex locked");
 	//Extract data from bidcos frame
 	std::string frameData;
