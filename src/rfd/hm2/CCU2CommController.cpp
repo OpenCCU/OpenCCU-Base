@@ -694,7 +694,12 @@ bool CCU2CommController::restoreConfigToCoprocessor()
 	}
 	if(done) {
 		pthread_mutex_lock(&mutexBidcosTelegramRequest);
-		interfaceState = IFSTATE_ACTIVE;//switch back to active only after successful restore
+		if(interfaceState == IFSTATE_REINIT) {
+			interfaceState = IFSTATE_ACTIVE;//switch back to active only after successful restore
+		}
+		else {
+			done = false;//A concurrent lifecycle change superseded this restoration
+		}
 		pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	}
 	return done;
