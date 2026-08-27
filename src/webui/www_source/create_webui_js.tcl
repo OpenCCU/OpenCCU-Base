@@ -32,7 +32,7 @@ set output ""
 foreach filename $jsFiles {
   set fullFilename [file join $DIRECTORY $filename]
 	
-  puts "\n\nfullFilename: $fullFilename\n\n"	
+  puts "fullFilename: $fullFilename"
 	
 # Prüfen
 	#exec -- jsl -conf jsl.conf -process $fullFilename -nologo -nosummary
