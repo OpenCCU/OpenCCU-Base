@@ -231,6 +231,13 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 
 void LGWPortWrapper::Disconnect()
 {
+	pthread_mutex_lock(&mutexBlockRXTX);
+	blockRXTX = true;
+	while(activeRXTXOperations > 0) {
+		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+	}
+	pthread_mutex_unlock(&mutexBlockRXTX);
+
 	if(pCommController != NULL) {
 		pCommController->disconnect();
 		writeLGWStatusToFile(getSerial(), pCommController->getConnectErrorAsString());
