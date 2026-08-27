@@ -55,7 +55,7 @@ std::string MD5Module::calculateMD5(const std::string& s)
 	memcpy(buffer, s.c_str(), s.length());
 	md5_calculator.Update(buffer, s.length());
 	md5_calculator.Finalize();
-	delete buffer;
+	delete[] buffer;
 
 	std::string digest;
 
