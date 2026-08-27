@@ -305,7 +305,9 @@ bool CCU2CommController::sendSystemCommand(const SystemCommand systemCommand, co
 bool CCU2CommController::startReceiver()
 {
 	//start receive thread
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_ACTIVE;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	//pthread_create( &receiveThread, &receiveThreadAttributes, CCU2CommController::receiveThreadFunction, (void*)this);
 	return true;
 }
@@ -313,7 +315,9 @@ bool CCU2CommController::startReceiver()
 bool CCU2CommController::stopReceiver()
 {
 	//interfaceState = IFSTATE_INACTIVE;
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_INIT;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	//void* whatever;
 	//int foo = pthread_join(receiveThread, &whatever);
 	//return (foo == 0);
@@ -620,9 +624,11 @@ void CCU2CommController::initCoprocessor()
 
 bool CCU2CommController::startCoprocessorApp()
 {
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	if(interfaceState == IFSTATE_ACTIVE) {
 		interfaceState = IFSTATE_REINIT;
 	}
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	if(Logger::WouldLog(Logger::LOG_DEBUG)) {
 		LOG(Logger::LOG_DEBUG, "(%s) CCU2CommController::startCoprocessorApp(): Trying to start coprocessor application", interfaceSerial.c_str());
 	}
@@ -663,6 +669,9 @@ void* CCU2CommController::startCoprocessorAppThreadFunction(void* params)
 	}
 	if(!done) {
 		LOG(Logger::LOG_ERROR,"CCU2CommController::startCoprocessorAppThreadFunction(): Trying to send SYSTEMCMD_STARTBOOTLOADER failed 3 times.");
+		if(pThis->interfaceState == IFSTATE_REINIT) {
+			pThis->handleCoprocessorRecoveryFailure();
+		}
 	}
 	else {//on success starting the app, we wait until coprocessor finished starting the app and after that we republish devices
 		tryCount = 0;
@@ -671,7 +680,21 @@ void* CCU2CommController::startCoprocessorAppThreadFunction(void* params)
 			tryCount++;
 		}
 		if(pThis->interfaceState == IFSTATE_REINIT) {
-			pThis->restoreConfigToCoprocessor();
+			const unsigned int restoreRetryAmount = 3;
+			bool restored = false;
+			for(unsigned int restoreTry = 0; restoreTry < restoreRetryAmount && pThis->interfaceState == IFSTATE_REINIT; restoreTry++) {
+				restored = pThis->restoreConfigToCoprocessor();
+				if(restored || pThis->interfaceState != IFSTATE_REINIT) {
+					break;
+				}
+				if(restoreTry + 1 < restoreRetryAmount) {
+					LOG(Logger::LOG_WARNING, "(%s) CCU2CommController::startCoprocessorAppThreadFunction(): Restoring coprocessor configuration failed. Retrying.", pThis->interfaceSerial.c_str());
+					usleep(1000 * 1000);
+				}
+			}
+			if(!restored && pThis->interfaceState == IFSTATE_REINIT) {
+				pThis->handleCoprocessorRecoveryFailure();
+			}
 		}
 	}
 	return NULL;
@@ -683,9 +706,25 @@ bool CCU2CommController::restoreConfigToCoprocessor()
 	done = done && setCSMACAEnabled(false);//FIXME We disable that in any case. If we enable it one day, this should disabled here...
 	done = done && setDutyCycleCheck(false); // Disable DutyCycle check !!!! TODO: Remove this line for production.
 	done = done && pBidcosRemoteInterfcace->republishAllDevices();//In case of init() the list is empty, otherwise we need to republish all devices
-	interfaceState = IFSTATE_ACTIVE;//switch back to active (on initialization this is done elsewhere)
-	pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+	if(done) {
+		done = pBidcosRemoteInterfcace->SetInterfaceClockBySystemTime();
+	}
+	if(done) {
+		pthread_mutex_lock(&mutexBidcosTelegramRequest);
+		if(interfaceState == IFSTATE_REINIT) {
+			interfaceState = IFSTATE_ACTIVE;//switch back to active only after successful restore
+		}
+		else {
+			done = false;//A concurrent lifecycle change superseded this restoration
+		}
+		pthread_mutex_unlock(&mutexBidcosTelegramRequest);
+	}
 	return done;
+}
+
+void CCU2CommController::handleCoprocessorRecoveryFailure()
+{
+	LOG(Logger::LOG_ERROR, "(%s) CCU2CommController::handleCoprocessorRecoveryFailure(): Recovery failed and no transport-specific reconnect is available.", interfaceSerial.c_str());
 }
 
 void CCU2CommController::assembleBidcosFrame(const CCU2CoprocessorCommand& bidcosCmd, BidcosFrame& frame)
@@ -769,6 +808,10 @@ bool CCU2CommController::sendBidcosTelegram(BidcosFrame* pMessageFrame, const in
 		return false;
 	}
 	pthread_mutex_lock( &mutexBidcosTelegramRequest  );
+	if(interfaceState != IFSTATE_ACTIVE) {
+		pthread_mutex_unlock( &mutexBidcosTelegramRequest  );
+		return false;
+	}
 	//LOG(Logger::LOG_DEBUG, "CCU2CommController::sendBidcosMessage(): BidcosTelegramMutex locked");
 	//Extract data from bidcos frame
 	std::string frameData;

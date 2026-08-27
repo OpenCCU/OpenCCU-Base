@@ -123,15 +123,25 @@ bool HM2::CCU2LGWCommController::setRFLGWInfoLED(const unsigned int state)
 
 //-----------------------------------------------------------------------------------------------------
 
+void CCU2LGWCommController::handleCoprocessorRecoveryFailure()
+{
+	LGWPortWrapper* pLGWPortWrapper = dynamic_cast<LGWPortWrapper*>(pPortWrapper);
+	if(pLGWPortWrapper == NULL) {
+		CCU2CommController::handleCoprocessorRecoveryFailure();
+		return;
+	}
+	LOG(Logger::LOG_ERROR, "(%s) CCU2LGWCommController::handleCoprocessorRecoveryFailure(): Scheduling LAN gateway reconnect.", interfaceSerial.c_str());
+	pLGWPortWrapper->asyncReconnect();
+}
+
 bool HM2::CCU2LGWCommController::reinitCoprocessor()
 {
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_REINIT;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	bool done = improvedInit();
 	if(done) {
 		done = restoreConfigToCoprocessor();
-		if(done) {
-			interfaceState = IFSTATE_ACTIVE;
-		}
 	}
 	return done;
 	/*initCoprocessor();

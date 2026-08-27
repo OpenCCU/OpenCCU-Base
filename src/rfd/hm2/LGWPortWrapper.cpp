@@ -255,6 +255,10 @@ void LGWPortWrapper::reconnect()
 	blockRXTX = true;
 	pthread_mutex_unlock(&mutexBlockRXTX);
 
+	if(pCCU2CommController != NULL) {
+		pCCU2CommController->stopReceiver();
+	}
+
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Perform disconnect.");
 	pCommController->disconnect();
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Disconnect performed.");
@@ -327,7 +331,12 @@ void LGWPortWrapper::reconnect()
 					else {
 						LOG(Logger::LOG_DEBUG, "LGWPortWrapper::connect(): Coprocessor reinitialization failed.");
 						reconnected = false;
+						pthread_mutex_lock(&mutexBlockRXTX);
+						blockRXTX = true;
+						pthread_mutex_unlock(&mutexBlockRXTX);
 						pCommController->disconnect();
+						LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Coprocessor not ready. Retrying in %u seconds.", basetimeout);
+						sleep(basetimeout);
 						continue;
 					}
 				}
@@ -413,7 +422,7 @@ void LGWPortWrapper::stopKeepAliveThread() {
 }
 
 void LGWPortWrapper::stopBidcosChannelKeepAliveThread() {
-	bidcosChannelKeepAliveThread = false;
+	bidcosChannelKeepAliveThreadActive = false;
 	if(bidcosChannelKeepAliveThread != 0) {
 		pthread_join(bidcosChannelKeepAliveThread, NULL);
 		bidcosChannelKeepAliveThread = 0;

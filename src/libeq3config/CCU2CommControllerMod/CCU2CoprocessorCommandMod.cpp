@@ -25,10 +25,14 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod()
 : commandType(COMMANDTYPE_NOTSUPPORTED)
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
+, hmipCommonCommand(HMIP_COMMON_UNKNOWN)
+, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
+, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
-, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
+, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , responseValid(false)
@@ -37,10 +41,6 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod()
 , devWokenUp(false)
 , authKeyIndex((char)0xFF) //Key index not initialized
 , dutyCycleValue((unsigned char)0x00)
-, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
-, hmipCommonCommand(HMIP_COMMON_UNKNOWN)
-, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , hmipCoproFrame(false)
 {
 }
@@ -49,11 +49,10 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const std::string& coproces
 : commandType(COMMANDTYPE_NOTSUPPORTED)
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
-, hmipCoproFrame(dualCopro)
+, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
-, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , responseValid(false)
@@ -62,6 +61,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const std::string& coproces
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
+, hmipCoproFrame(dualCopro)
 {
 	if(coprocessorCmdString.size() > 2) {
 		commandType = (CommandType)coprocessorCmdString.at(0);
@@ -102,13 +102,13 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const SystemCommand sysComm
 , systemCommand(sysCommand)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
 , hmipCommonCommand(HMIP_COMMON_UNKNOWN)
-, hmipCoproFrame(false)
 , hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
+, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
 , hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
-, lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , commandData(data)
@@ -118,7 +118,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const SystemCommand sysComm
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
+, hmipCoproFrame(false)
 {
 }
 
@@ -126,13 +126,14 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const BidcosCommand bidcosC
 : commandType(COMMANDTYPE_BIDCOS)
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(bidcosCommand)
-, hmipCoproFrame(false)
 , hmipCommonCommand(HMIP_COMMON_UNKNOWN)
+, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
 , lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
-, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
+, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , commandData(data)
@@ -142,8 +143,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const BidcosCommand bidcosC
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
-, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
+, hmipCoproFrame(false)
 {
 }
 
@@ -152,12 +152,13 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const HmipCommonCommand hmi
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
 , hmipCommonCommand(hmipCommonCommand)
+, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
 , lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
-, hmipCoproFrame(true)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
-, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
+, hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , commandData(data)
@@ -167,8 +168,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const HmipCommonCommand hmi
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
-, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
+, hmipCoproFrame(true)
 {
 
 }
@@ -177,13 +177,13 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const HmipTrxAdapterCommand
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
 , hmipCommonCommand(HMIP_COMMON_UNKNOWN)
-, hmipCoproFrame(true)
 , hmipTrxAdapterCommand(hmipTrxAdapterCommand)
 , lowlevelmacCommand(LOWLEVELMAC_COMMMAND_UNKNOWN)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
 , hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , commandData(data)
@@ -193,7 +193,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const HmipTrxAdapterCommand
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
+, hmipCoproFrame(true)
 {
 }
 
@@ -202,13 +202,13 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const LowLevelMacCommand lo
 , systemCommand(SYSTEMCMD_UNKNOWN)
 , bidcosCommand(BIDCOSCMD_UNKNOWN)
 , hmipCommonCommand(HMIP_COMMON_UNKNOWN)
+, hmipTrxAdapterCommand(HMIP_TRXADAPTER_UNKNOWN)
 , lowlevelmacCommand(lowlevelmacCommand)
-, hmipCoproFrame(true)
-, hmipTrxAdapterCommand(hmipTrxAdapterCommand)
 , systemCommandResponseStatus(SYSTEMCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandResponseStatus(BIDCOSCMD_RESPONSE_STATUS_UNKNOWN)
 , bidcosCommandEventAuthStatus(BIDCOSCMD_EVENT_AUTH_STATUS_UNKNOWN)
 , hmipCommonCommandResponseStatus(HMIP_COMMONCMD_RESPONSE_UNKNOWN)
+, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
 , lowLevelMacResponseStatus(LOWLEVELMAC_RESPONSE_UNKNOWN)
 //, responseSequenceCounter((char)0xff)
 , commandData("")
@@ -218,7 +218,7 @@ CCU2CoprocessorCommandMod::CCU2CoprocessorCommandMod(const LowLevelMacCommand lo
 , devWokenUp(false)
 , authKeyIndex((char)0xFF)
 , dutyCycleValue((unsigned char)0x00)
-, hmipTrxAdapterResponseStatus(HMIP_TRXADAPTERCMD_RESPONSE_UNKNOWN)
+, hmipCoproFrame(true)
 {
 }
 
@@ -442,7 +442,7 @@ bool CCU2CoprocessorCommandMod::parseBidcosCommandResponse(const std::string& re
 				//status with data
 				case BIDCOSCMD_RESPONSE_STATUS_DATA: //FIXME Datenrahmennummer + Anzahl zu �bertragene Daten
 					if(responseStr.size() >= 7 && responseStr.size() <= 66) { //6 + 1 till 60 byte data --> 7 - 66 bytes
-						int msgFragNr = (int)responseStr.at(4); //(upper threshold to avoid possible buffer overflows
+						//int msgFragNr = (int)responseStr.at(4); //(upper threshold to avoid possible buffer overflows
 						int msgFrags = (int)responseStr.at(5);
 						if(msgFrags > 1) {
 							//LOG(Logger::LOG_FATAL_ERROR, "CCU2CoprocessorCommandMod::parseBidcosCommandResponse(): Fragmented messages not supported yet!");

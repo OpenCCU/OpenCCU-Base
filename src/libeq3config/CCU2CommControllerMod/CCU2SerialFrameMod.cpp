@@ -157,7 +157,7 @@ void CCU2SerialFrameMod::deEscapeChar(char* c)
 bool CCU2SerialFrameMod::addFrameData(const std::string& frameData, std::string& leftOver)
 {
 	//LOG(Logger::LOG_ALL, "CCU2SerialFrame::addFrameData(): Processing %s", toDebugHexStr(frameData).c_str());
-		for(unsigned int i = 0; i < frameData.size() ; i++) {
+		for(size_t i = 0; i < frameData.size() ; i++) {
 			char c = frameData.at(i);
 			switch(c)
 			{
@@ -186,7 +186,7 @@ bool CCU2SerialFrameMod::addFrameData(const std::string& frameData, std::string&
 				}
 				if( ((int)payload.size() >= expectedMsgSize) && (expectedMsgSize != -1)) {
 					leftOver.clear();
-					if((int)frameData.size() > (i+1))  {
+					if(frameData.size() > (i+1))  {
 						leftOver.append( frameData.substr(i+1) );
 					}
 					payload = extractPayload(payload);
