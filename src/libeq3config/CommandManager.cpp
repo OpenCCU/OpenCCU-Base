@@ -52,7 +52,7 @@ const std::vector<Command*>& CommandManager::getCommands() const
 
 Command* CommandManager::getCommand(const std::string& name) const
 {
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		Command* command = commands.at(i);
 		if (name.compare(command->GetName()) == 0)
@@ -67,7 +67,7 @@ Command* CommandManager::getCommand(const std::string& name) const
 std::vector<std::string> CommandManager::getCommandNames() const
 {
 	std::vector<std::string> commandNames;
-	for (int i = 0; i < commands.size(); i++)
+	for (size_t i = 0; i < commands.size(); i++)
 	{
 		Command* command = commands.at(i);
 		commandNames.push_back(command->GetName());
