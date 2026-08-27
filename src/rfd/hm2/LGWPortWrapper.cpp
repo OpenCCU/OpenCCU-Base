@@ -46,6 +46,7 @@ LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 , keepAliveThreadActive(true)
 , bidcosChannelKeepAliveThreadActive(true)
 , infoLEDState(LED_OFF)
+, activeRXTXOperations(0)
 , timestampLastBidcosCommunication(0)
 , bidcosChannelKeepAliveThread(0)
 , reconnectPending(false)
@@ -56,6 +57,7 @@ LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 	pthread_mutex_init(&mutexULCCommController, NULL);
 	pthread_mutex_init(&mutexReconnect, NULL);
 	pthread_mutex_init(&mutexBlockRXTX, NULL);
+	pthread_cond_init(&conditionRXTXIdle, NULL);
 	timestampLastBidcosCommunication = time_millis();
 }
 
@@ -64,6 +66,12 @@ LGWPortWrapper::~LGWPortWrapper()
 
 	stopKeepAliveThread();
 	stopBidcosChannelKeepAliveThread();
+	pthread_mutex_lock(&mutexBlockRXTX);
+	blockRXTX = true;
+	while(activeRXTXOperations > 0) {
+		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+	}
+	pthread_mutex_unlock(&mutexBlockRXTX);
 	encryptionEnabled = false;//important to do that, because pointer on encryption in pCommController will become bad when we delete pCommController
 	pthread_mutex_lock(&mutexULCCommController);
 	if(pCommController != NULL) {
@@ -73,6 +81,7 @@ LGWPortWrapper::~LGWPortWrapper()
 	pthread_mutex_unlock(&mutexULCCommController);
 	pthread_mutex_destroy(&mutexULCCommController);
 	pthread_mutex_destroy(&mutexReconnect);
+	pthread_cond_destroy(&conditionRXTXIdle);
 	pthread_mutex_destroy(&mutexBlockRXTX);
 	//LOG(Logger::LOG_DEBUG, "~LGWPortWrapper()");
 }
@@ -88,6 +97,7 @@ int LGWPortWrapper::ReadData(std::string* data)
 			usleep(25000);
 			return -1;
 		}
+		activeRXTXOperations++;
 		pthread_mutex_unlock(&mutexBlockRXTX);
 		bool done = pCommController->receive( *data );
 		if(done) {
@@ -103,6 +113,12 @@ int LGWPortWrapper::ReadData(std::string* data)
 			LOG(Logger::LOG_ERROR, "LGWPortWrapper::ReadData(): Receive error");
 			asyncReconnect();
 		}
+		pthread_mutex_lock(&mutexBlockRXTX);
+		activeRXTXOperations--;
+		if(activeRXTXOperations == 0) {
+			pthread_cond_broadcast(&conditionRXTXIdle);
+		}
+		pthread_mutex_unlock(&mutexBlockRXTX);
 		return (done ? data->size() : -1);
 	}
 	else {
@@ -121,6 +137,7 @@ int LGWPortWrapper::SendData(const std::string& data)
 		pthread_mutex_unlock(&mutexBlockRXTX);
 		return 0;
 	}
+	activeRXTXOperations++;
 	pthread_mutex_unlock(&mutexBlockRXTX);
 	bool done = false;
 	if(encryptionEnabled && pEncryption != NULL) {
@@ -131,6 +148,12 @@ int LGWPortWrapper::SendData(const std::string& data)
 	else {
 		done = pCommController->send( data );
 	}
+	pthread_mutex_lock(&mutexBlockRXTX);
+	activeRXTXOperations--;
+	if(activeRXTXOperations == 0) {
+		pthread_cond_broadcast(&conditionRXTXIdle);
+	}
+	pthread_mutex_unlock(&mutexBlockRXTX);
 	if(!done) {
 		LOG(Logger::LOG_ERROR, "LGWPortWrapper::SendData(): Send error");
 		asyncReconnect();
@@ -253,6 +276,9 @@ void LGWPortWrapper::reconnect()
 
 	pthread_mutex_lock(&mutexBlockRXTX);
 	blockRXTX = true;
+	while(activeRXTXOperations > 0) {
+		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+	}
 	pthread_mutex_unlock(&mutexBlockRXTX);
 
 	if(pCCU2CommController != NULL) {
@@ -333,6 +359,9 @@ void LGWPortWrapper::reconnect()
 						reconnected = false;
 						pthread_mutex_lock(&mutexBlockRXTX);
 						blockRXTX = true;
+						while(activeRXTXOperations > 0) {
+							pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+						}
 						pthread_mutex_unlock(&mutexBlockRXTX);
 						pCommController->disconnect();
 						LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Coprocessor not ready. Retrying in %u seconds.", basetimeout);

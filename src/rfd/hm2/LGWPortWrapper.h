@@ -118,6 +118,8 @@ private:
 	pthread_mutex_t mutexULCCommController;
 	pthread_mutex_t mutexReconnect;
 	pthread_mutex_t mutexBlockRXTX;
+	pthread_cond_t conditionRXTXIdle;
+	unsigned int activeRXTXOperations;
 
 	volatile uint64_t timestampLastBidcosCommunication;
 	
