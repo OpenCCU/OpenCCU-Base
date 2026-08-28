@@ -50,6 +50,7 @@ LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 , timestampLastBidcosCommunication(0)
 , bidcosChannelKeepAliveThread(0)
 , reconnectPending(false)
+, shutdownRequested(false)
 , blockRXTX(true)
 , hostIPWasAssignedByUser(false)
 , pCCU2CommController(pCCU2CommController)
@@ -58,21 +59,15 @@ LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 	pthread_mutex_init(&mutexReconnect, NULL);
 	pthread_mutex_init(&mutexBlockRXTX, NULL);
 	pthread_cond_init(&conditionRXTXIdle, NULL);
+	pthread_cond_init(&conditionReconnectIdle, NULL);
 	timestampLastBidcosCommunication = time_millis();
 }
 
 LGWPortWrapper::~LGWPortWrapper()
 {
-
-	stopKeepAliveThread();
-	stopBidcosChannelKeepAliveThread();
-	pthread_mutex_lock(&mutexBlockRXTX);
-	blockRXTX = true;
-	while(activeRXTXOperations > 0) {
-		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
-	}
-	pthread_mutex_unlock(&mutexBlockRXTX);
+	shutdown();
 	encryptionEnabled = false;//important to do that, because pointer on encryption in pCommController will become bad when we delete pCommController
+	pEncryption = NULL;
 	pthread_mutex_lock(&mutexULCCommController);
 	if(pCommController != NULL) {
 		delete pCommController;
@@ -80,6 +75,7 @@ LGWPortWrapper::~LGWPortWrapper()
 	}
 	pthread_mutex_unlock(&mutexULCCommController);
 	pthread_mutex_destroy(&mutexULCCommController);
+	pthread_cond_destroy(&conditionReconnectIdle);
 	pthread_mutex_destroy(&mutexReconnect);
 	pthread_cond_destroy(&conditionRXTXIdle);
 	pthread_mutex_destroy(&mutexBlockRXTX);
@@ -189,9 +185,22 @@ int LGWPortWrapper::WaitForData(int msTime)
 	return retVal;
 }
 
+void LGWPortWrapper::blockRXTXAndWait()
+{
+	pthread_mutex_lock(&mutexBlockRXTX);
+	blockRXTX = true;
+	while(activeRXTXOperations > 0) {
+		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+	}
+	pthread_mutex_unlock(&mutexBlockRXTX);
+}
+
 bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port, const std::string& encKey, const std::string& desiredSerial)
 {
 //	LOG(Logger::LOG_ALL, "LGWPortWrapper::connect()");
+	blockRXTXAndWait();
+	std::string statusSerial;
+	std::string statusText;
 	pthread_mutex_lock(&mutexULCCommController);
 	if(pCommController == NULL) {
 		pCommController = new UnifiedLanCommController(hostIP, port);
@@ -199,16 +208,16 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	}
 	else if((hostIP.compare(this->hostIP) != 0) || (port != this->port))
 	{
+		encryptionEnabled = false;
+		pEncryption = NULL;
 		delete pCommController;
 		pCommController = NULL;
 		pCommController = new UnifiedLanCommController(hostIP, port);
 		pCommController->setEncryptionKey(encKey);
 	}
-	pthread_mutex_unlock(&mutexULCCommController);
 	this->hostIP = hostIP;
 	this->port = port;
 	this->encKey = encKey;
-
 	bool connected = pCommController->connect();
 	if(connected) {
 		this->serial = pCommController->getSerial();
@@ -219,10 +228,15 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 		else {
 			encryptionEnabled = pCommController->isEncryptionEnabled();
 		}
+	}
+	statusSerial = serial.empty() ? pCommController->getSerial() : serial;
+	statusText = pCommController->getConnectErrorAsString();
+	pthread_mutex_unlock(&mutexULCCommController);
+	if(connected) {
 		startKeepAliveThread();
 		startBidcosChannelKeepAliveThread();
 	}
-	writeLGWStatusToFile(getSerial(), pCommController->getConnectErrorAsString());
+	writeLGWStatusToFile(statusSerial, statusText);
 	pthread_mutex_lock(&mutexBlockRXTX);
 	blockRXTX = false;
 	pthread_mutex_unlock(&mutexBlockRXTX);
@@ -231,16 +245,20 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 
 void LGWPortWrapper::Disconnect()
 {
-	pthread_mutex_lock(&mutexBlockRXTX);
-	blockRXTX = true;
-	while(activeRXTXOperations > 0) {
-		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
-	}
-	pthread_mutex_unlock(&mutexBlockRXTX);
-
+	blockRXTXAndWait();
+	bool disconnected = false;
+	std::string statusSerial;
+	std::string statusText;
+	pthread_mutex_lock(&mutexULCCommController);
 	if(pCommController != NULL) {
 		pCommController->disconnect();
-		writeLGWStatusToFile(getSerial(), pCommController->getConnectErrorAsString());
+		statusSerial = serial.empty() ? pCommController->getSerial() : serial;
+		statusText = pCommController->getConnectErrorAsString();
+		disconnected = true;
+	}
+	pthread_mutex_unlock(&mutexULCCommController);
+	if(disconnected) {
+		writeLGWStatusToFile(statusSerial, statusText);
 	}
 }
 
@@ -248,6 +266,10 @@ void LGWPortWrapper::Disconnect()
 void LGWPortWrapper::asyncReconnect() {
 	LOG(Logger::LOG_DEBUG, "asyncReconnect");
 	pthread_mutex_lock(&mutexReconnect);
+	if(shutdownRequested) {
+		pthread_mutex_unlock(&mutexReconnect);
+		return;
+	}
 	if(reconnectPending) {
 		pthread_mutex_unlock(&mutexReconnect);
 		LOG(Logger::LOG_DEBUG, "LGWPortWrapper::asyncReconnect(): Reconnect already in progress.");
@@ -263,9 +285,60 @@ void LGWPortWrapper::asyncReconnect() {
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_attr_setstacksize(&attr, 128*1024);
-	pthread_create(&arecThread, &attr, reconnectThreadFunction, this);	
+	const int result = pthread_create(&arecThread, &attr, reconnectThreadFunction, this);
 	pthread_attr_destroy(&attr);
+	if(result != 0) {
+		LOG(Logger::LOG_ERROR, "LGWPortWrapper::asyncReconnect(): Cannot start reconnect thread: %d", result);
+		finishReconnect();
+	}
 
+}
+
+bool LGWPortWrapper::isShutdownRequested()
+{
+	pthread_mutex_lock(&mutexReconnect);
+	const bool requested = shutdownRequested;
+	pthread_mutex_unlock(&mutexReconnect);
+	return requested;
+}
+
+bool LGWPortWrapper::waitForReconnectRetry(unsigned int seconds)
+{
+	while(seconds > 0) {
+		if(isShutdownRequested()) {
+			return false;
+		}
+		sleep(1);
+		seconds--;
+	}
+	return !isShutdownRequested();
+}
+
+void LGWPortWrapper::finishReconnect()
+{
+	pthread_mutex_lock(&mutexReconnect);
+	reconnectPending = false;
+	pthread_cond_broadcast(&conditionReconnectIdle);
+	pthread_mutex_unlock(&mutexReconnect);
+}
+
+void LGWPortWrapper::shutdown()
+{
+	pthread_mutex_lock(&mutexReconnect);
+	shutdownRequested = true;
+	pthread_mutex_unlock(&mutexReconnect);
+
+	blockRXTXAndWait();
+
+	pthread_mutex_lock(&mutexReconnect);
+	while(reconnectPending) {
+		pthread_cond_wait(&conditionReconnectIdle, &mutexReconnect);
+	}
+	pthread_mutex_unlock(&mutexReconnect);
+
+	stopKeepAliveThread();
+	stopBidcosChannelKeepAliveThread();
+	blockRXTXAndWait();
 }
 
 void* LGWPortWrapper::reconnectThreadFunction(void* param) {
@@ -278,24 +351,35 @@ void LGWPortWrapper::reconnect()
 {
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect()");
 	pthread_mutex_lock(&mutexReconnect);
+	if(shutdownRequested) {
+		reconnectPending = false;
+		pthread_cond_broadcast(&conditionReconnectIdle);
+		pthread_mutex_unlock(&mutexReconnect);
+		return;
+	}
 	reconnectPending = true;
 	pthread_mutex_unlock(&mutexReconnect);
 
-	pthread_mutex_lock(&mutexBlockRXTX);
-	blockRXTX = true;
-	while(activeRXTXOperations > 0) {
-		pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+	blockRXTXAndWait();
+	if(isShutdownRequested()) {
+		finishReconnect();
+		return;
 	}
-	pthread_mutex_unlock(&mutexBlockRXTX);
 
 	if(pCCU2CommController != NULL) {
 		pCCU2CommController->stopReceiver();
 	}
 
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Perform disconnect.");
+	encryptionEnabled = false;
+	pEncryption = NULL;
+	pthread_mutex_lock(&mutexULCCommController);
 	pCommController->disconnect();
+	const std::string disconnectStatusSerial = serial.empty() ? pCommController->getSerial() : serial;
+	const std::string disconnectStatusText = pCommController->getConnectErrorAsString();
+	pthread_mutex_unlock(&mutexULCCommController);
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Disconnect performed.");
-	writeLGWStatusToFile(getSerial(), pCommController->getConnectErrorAsString());
+	writeLGWStatusToFile(disconnectStatusSerial, disconnectStatusText);
 	//Stop old keepalive
 	stopBidcosChannelKeepAliveThread();
 	stopKeepAliveThread();
@@ -305,6 +389,9 @@ void LGWPortWrapper::reconnect()
 	unsigned int timeout = basetimeout;
 
 	do {
+		if(isShutdownRequested()) {
+			break;
+		}
 		LDU::LanDeviceUtils ldUtils;
 		LDU::LanDevice lanDev;
 		bool foundDev = false;
@@ -316,6 +403,9 @@ void LGWPortWrapper::reconnect()
 			LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Searching device.");
 			foundDev = ldUtils.searchDeviceByTypeAndSerial("eQ3-HM-LGW*",getSerial(), lanDev);
 		}
+		if(isShutdownRequested()) {
+			break;
+		}
 
 		if(foundDev) {
 			if(!hostIPWasAssignedByUser) {
@@ -325,14 +415,13 @@ void LGWPortWrapper::reconnect()
 			if(foundDev) {
 				timeout = basetimeout;
 				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Trying to reconnect.");
-				UnifiedLanCommController* oldController = pCommController;
 				if(!hostIPWasAssignedByUser) {
 					hostIP = lanDev.getRuntimeIPConfiguration().getIPAddress();
 				}
 				pthread_mutex_lock(&mutexULCCommController);
+				UnifiedLanCommController* oldController = pCommController;
 				pCommController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
 				pCommController->setEncryptionKey(this->encKey);
-				pthread_mutex_unlock(&mutexULCCommController);
 				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
 				reconnected = pCommController->connect();
 				if(reconnected) {
@@ -344,8 +433,13 @@ void LGWPortWrapper::reconnect()
 						encryptionEnabled = pCommController->isEncryptionEnabled();
 					}
 				}
+				const std::string reconnectStatusText = pCommController->getConnectErrorAsString();
+				pthread_mutex_unlock(&mutexULCCommController);
 				delete oldController;
-				writeLGWStatusToFile(getSerial(), pCommController->getConnectErrorAsString());
+				writeLGWStatusToFile(getSerial(), reconnectStatusText);
+			}
+			if(isShutdownRequested()) {
+				break;
 			}
 			if(reconnected) {
 				if(pCCU2CommController != NULL) {
@@ -364,15 +458,17 @@ void LGWPortWrapper::reconnect()
 					else {
 						LOG(Logger::LOG_DEBUG, "LGWPortWrapper::connect(): Coprocessor reinitialization failed.");
 						reconnected = false;
-						pthread_mutex_lock(&mutexBlockRXTX);
-						blockRXTX = true;
-						while(activeRXTXOperations > 0) {
-							pthread_cond_wait(&conditionRXTXIdle, &mutexBlockRXTX);
+						blockRXTXAndWait();
+						if(isShutdownRequested()) {
+							break;
 						}
-						pthread_mutex_unlock(&mutexBlockRXTX);
+						pthread_mutex_lock(&mutexULCCommController);
 						pCommController->disconnect();
+						pthread_mutex_unlock(&mutexULCCommController);
 						LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Coprocessor not ready. Retrying in %u seconds.", basetimeout);
-						sleep(basetimeout);
+						if(!waitForReconnectRetry(basetimeout)) {
+							break;
+						}
 						continue;
 					}
 				}
@@ -383,39 +479,36 @@ void LGWPortWrapper::reconnect()
 			writeLGWStatusToFile(getSerial(), std::string("Gateway not found."));
 		}
 		LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Device not found retrying in %u seconds.", timeout);
-		sleep(timeout);
+		if(!waitForReconnectRetry(timeout)) {
+			break;
+		}
 		if(timeout <= 61) {//60 seconds, this is tcp_fin_timeout on linux
 			timeout = timeout + basetimeout;
 		}
-	} while(!reconnected);
-	pthread_mutex_lock(&mutexReconnect);
-	reconnectPending = false;
-	pthread_mutex_unlock(&mutexReconnect);
+	} while(!reconnected && !isShutdownRequested());
 	LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Reconnect finished.");
+	finishReconnect();
 }
 
 bool LGWPortWrapper::IsConnected()
 {
-	if(pCommController != NULL)
-	{
-		return pCommController->isConnected();
-	}
-	return false;
+	pthread_mutex_lock(&mutexULCCommController);
+	const bool connected = (pCommController != NULL && pCommController->isConnected());
+	pthread_mutex_unlock(&mutexULCCommController);
+	return connected;
 }
 
 std::string LGWPortWrapper::getSerial()
 {
-	if(this->serial.empty()) {
+	std::string result = serial;
+	if(result.empty()) {
+		pthread_mutex_lock(&mutexULCCommController);
 		if(pCommController != NULL) {
-			return pCommController->getSerial();
+			result = pCommController->getSerial();
 		}
-		else {
-			return std::string("");
-		}
+		pthread_mutex_unlock(&mutexULCCommController);
 	}
-	else {
-		return serial;
-	}
+	return result;
 }
 
 

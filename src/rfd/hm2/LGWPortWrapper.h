@@ -119,6 +119,7 @@ private:
 	pthread_mutex_t mutexReconnect;
 	pthread_mutex_t mutexBlockRXTX;
 	pthread_cond_t conditionRXTXIdle;
+	pthread_cond_t conditionReconnectIdle;
 	size_t activeRXTXOperations;
 
 	volatile uint64_t timestampLastBidcosCommunication;
@@ -130,6 +131,7 @@ private:
 
 	/** \brief Tells if asynchronous reconnect is in progress */
 	volatile bool reconnectPending;
+	bool shutdownRequested;
 
 	/** \brief Blocks communication over send/receive methods if true while reconnecting*/
 	volatile bool blockRXTX;
@@ -154,6 +156,16 @@ private:
 
 	/** Performs asynchronous reconnect. */
 	void asyncReconnect();
+
+	/** Blocks new RX/TX operations and waits for active operations to finish. */
+	void blockRXTXAndWait();
+
+	/** Stops asynchronous work before the owning controller is destroyed. */
+	void shutdown();
+
+	bool isShutdownRequested();
+	bool waitForReconnectRetry(unsigned int seconds);
+	void finishReconnect();
 	
 	void writeLGWStatusToFile(const std::string& serial, const std::string& statusText);
 
