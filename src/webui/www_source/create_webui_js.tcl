@@ -32,10 +32,10 @@ set output ""
 foreach filename $jsFiles {
   set fullFilename [file join $DIRECTORY $filename]
 	
-  puts "\n\nfullFilename: $fullFilename\n\n"	
+  puts "fullFilename: $fullFilename"
 	
 # Prüfen
-	exec -- jsl -conf jsl.conf -process $fullFilename -nologo -nosummary
+	#exec -- jsl -conf jsl.conf -process $fullFilename -nologo -nosummary
 	
   set fd [open $fullFilename r]
 	append output [encoding convertfrom iso8859-1 [read $fd]]

@@ -1,6 +1,6 @@
 find_package(TCL QUIET)
 if(NOT TCL_FOUND)
-  message(FATAL_ERROR "BUILD_TCL_MODULES=ON requires Tcl development files.")
+  message(FATAL_ERROR "BUILD_TCL_MODULES=ON requires Tcl development files (e.g. apt install tcl-dev).")
 endif()
 
 add_library(tclrega MODULE tclrega.cpp)
