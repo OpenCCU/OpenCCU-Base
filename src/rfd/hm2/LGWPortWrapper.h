@@ -119,7 +119,7 @@ private:
 	pthread_mutex_t mutexReconnect;
 	pthread_mutex_t mutexBlockRXTX;
 	pthread_cond_t conditionRXTXIdle;
-	unsigned int activeRXTXOperations;
+	size_t activeRXTXOperations;
 
 	volatile uint64_t timestampLastBidcosCommunication;
 	
