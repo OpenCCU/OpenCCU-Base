@@ -131,6 +131,10 @@ private:
 
 	/** \brief Tells if asynchronous reconnect is in progress */
 	volatile bool reconnectPending;
+	/** \brief Tells if a reconnect was requested while connect was in progress */
+	bool reconnectDeferred;
+	/** \brief Tells if a connect operation is in progress */
+	bool connectPending;
 	bool shutdownRequested;
 
 	/** \brief Blocks communication over send/receive methods if true while reconnecting*/
@@ -165,6 +169,7 @@ private:
 
 	bool isShutdownRequested();
 	bool waitForReconnectRetry(unsigned int seconds);
+	void finishConnect();
 	void finishReconnect();
 	
 	void writeLGWStatusToFile(const std::string& serial, const std::string& statusText);

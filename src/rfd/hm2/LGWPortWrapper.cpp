@@ -50,6 +50,8 @@ LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 , timestampLastBidcosCommunication(0)
 , bidcosChannelKeepAliveThread(0)
 , reconnectPending(false)
+, reconnectDeferred(false)
+, connectPending(false)
 , shutdownRequested(false)
 , blockRXTX(true)
 , hostIPWasAssignedByUser(false)
@@ -198,6 +200,17 @@ void LGWPortWrapper::blockRXTXAndWait()
 bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port, const std::string& encKey, const std::string& desiredSerial)
 {
 //	LOG(Logger::LOG_ALL, "LGWPortWrapper::connect()");
+	pthread_mutex_lock(&mutexReconnect);
+	while((connectPending || reconnectPending) && !shutdownRequested) {
+		pthread_cond_wait(&conditionReconnectIdle, &mutexReconnect);
+	}
+	if(shutdownRequested) {
+		pthread_mutex_unlock(&mutexReconnect);
+		return false;
+	}
+	connectPending = true;
+	pthread_mutex_unlock(&mutexReconnect);
+
 	blockRXTXAndWait();
 	std::string statusSerial;
 	std::string statusText;
@@ -232,15 +245,19 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	statusSerial = serial.empty() ? pCommController->getSerial() : serial;
 	statusText = pCommController->getConnectErrorAsString();
 	pthread_mutex_unlock(&mutexULCCommController);
-	if(connected) {
+	const bool shutdownInProgress = isShutdownRequested();
+	if(connected && !shutdownInProgress) {
 		startKeepAliveThread();
 		startBidcosChannelKeepAliveThread();
 	}
 	writeLGWStatusToFile(statusSerial, statusText);
-	pthread_mutex_lock(&mutexBlockRXTX);
-	blockRXTX = false;
-	pthread_mutex_unlock(&mutexBlockRXTX);
-	return connected;
+	if(!shutdownInProgress) {
+		pthread_mutex_lock(&mutexBlockRXTX);
+		blockRXTX = false;
+		pthread_mutex_unlock(&mutexBlockRXTX);
+	}
+	finishConnect();
+	return connected && !shutdownInProgress;
 }
 
 void LGWPortWrapper::Disconnect()
@@ -268,6 +285,12 @@ void LGWPortWrapper::asyncReconnect() {
 	pthread_mutex_lock(&mutexReconnect);
 	if(shutdownRequested) {
 		pthread_mutex_unlock(&mutexReconnect);
+		return;
+	}
+	if(connectPending) {
+		reconnectDeferred = true;
+		pthread_mutex_unlock(&mutexReconnect);
+		LOG(Logger::LOG_DEBUG, "LGWPortWrapper::asyncReconnect(): Deferring reconnect until connect has finished.");
 		return;
 	}
 	if(reconnectPending) {
@@ -322,6 +345,19 @@ void LGWPortWrapper::finishReconnect()
 	pthread_mutex_unlock(&mutexReconnect);
 }
 
+void LGWPortWrapper::finishConnect()
+{
+	pthread_mutex_lock(&mutexReconnect);
+	connectPending = false;
+	const bool startDeferredReconnect = reconnectDeferred && !shutdownRequested;
+	reconnectDeferred = false;
+	pthread_cond_broadcast(&conditionReconnectIdle);
+	pthread_mutex_unlock(&mutexReconnect);
+	if(startDeferredReconnect) {
+		asyncReconnect();
+	}
+}
+
 void LGWPortWrapper::shutdown()
 {
 	pthread_mutex_lock(&mutexReconnect);
@@ -331,7 +367,7 @@ void LGWPortWrapper::shutdown()
 	blockRXTXAndWait();
 
 	pthread_mutex_lock(&mutexReconnect);
-	while(reconnectPending) {
+	while(connectPending || reconnectPending) {
 		pthread_cond_wait(&conditionReconnectIdle, &mutexReconnect);
 	}
 	pthread_mutex_unlock(&mutexReconnect);
@@ -351,6 +387,9 @@ void LGWPortWrapper::reconnect()
 {
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect()");
 	pthread_mutex_lock(&mutexReconnect);
+	while(connectPending && !shutdownRequested) {
+		pthread_cond_wait(&conditionReconnectIdle, &mutexReconnect);
+	}
 	if(shutdownRequested) {
 		reconnectPending = false;
 		pthread_cond_broadcast(&conditionReconnectIdle);
