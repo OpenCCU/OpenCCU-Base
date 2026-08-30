@@ -32,6 +32,9 @@ CCU2LGWCommController::CCU2LGWCommController(CCU2BidcosRemoteInterface* bidcosRe
 
 CCU2LGWCommController::~CCU2LGWCommController()
 {
+	if(pPortWrapper != NULL) {
+		((LGWPortWrapper*)pPortWrapper)->shutdown();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------
