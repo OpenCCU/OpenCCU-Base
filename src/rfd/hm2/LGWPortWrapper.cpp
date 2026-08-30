@@ -215,14 +215,14 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	std::string statusSerial;
 	std::string statusText;
 	pthread_mutex_lock(&mutexULCCommController);
+	encryptionEnabled = false;
+	pEncryption = NULL;
 	if(pCommController == NULL) {
 		pCommController = new UnifiedLanCommController(hostIP, port);
 		pCommController->setEncryptionKey(encKey);
 	}
 	else if((hostIP.compare(this->hostIP) != 0) || (port != this->port))
 	{
-		encryptionEnabled = false;
-		pEncryption = NULL;
 		delete pCommController;
 		pCommController = NULL;
 		pCommController = new UnifiedLanCommController(hostIP, port);
@@ -251,7 +251,7 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 		startBidcosChannelKeepAliveThread();
 	}
 	writeLGWStatusToFile(statusSerial, statusText);
-	if(!shutdownInProgress) {
+	if(connected && !shutdownInProgress) {
 		pthread_mutex_lock(&mutexBlockRXTX);
 		blockRXTX = false;
 		pthread_mutex_unlock(&mutexBlockRXTX);
@@ -268,6 +268,8 @@ void LGWPortWrapper::Disconnect()
 	std::string statusText;
 	pthread_mutex_lock(&mutexULCCommController);
 	if(pCommController != NULL) {
+		encryptionEnabled = false;
+		pEncryption = NULL;
 		pCommController->disconnect();
 		statusSerial = serial.empty() ? pCommController->getSerial() : serial;
 		statusText = pCommController->getConnectErrorAsString();
@@ -379,20 +381,32 @@ void LGWPortWrapper::shutdown()
 
 void* LGWPortWrapper::reconnectThreadFunction(void* param) {
 	LGWPortWrapper* pThis = (LGWPortWrapper*)param;
-	pThis->reconnect();
+	pThis->reconnectImpl(true);
 	return NULL;
 }
 
 void LGWPortWrapper::reconnect()
+{
+	reconnectImpl(false);
+}
+
+void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 {
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect()");
 	pthread_mutex_lock(&mutexReconnect);
 	while(connectPending && !shutdownRequested) {
 		pthread_cond_wait(&conditionReconnectIdle, &mutexReconnect);
 	}
+	if(reconnectPending && !reconnectAlreadyPending) {
+		pthread_mutex_unlock(&mutexReconnect);
+		LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Reconnect already in progress.");
+		return;
+	}
 	if(shutdownRequested) {
-		reconnectPending = false;
-		pthread_cond_broadcast(&conditionReconnectIdle);
+		if(reconnectAlreadyPending) {
+			reconnectPending = false;
+			pthread_cond_broadcast(&conditionReconnectIdle);
+		}
 		pthread_mutex_unlock(&mutexReconnect);
 		return;
 	}

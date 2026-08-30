@@ -160,6 +160,8 @@ private:
 
 	/** Performs asynchronous reconnect. */
 	void asyncReconnect();
+	/** Performs reconnect after the caller has optionally reserved reconnectPending. */
+	void reconnectImpl(bool reconnectAlreadyPending);
 
 	/** Blocks new RX/TX operations and waits for active operations to finish. */
 	void blockRXTXAndWait();
