@@ -28,7 +28,7 @@ namespace {
 char normalizeSerialCharacter(const char value)
 {
 	if(value >= 'a' && value <= 'z') {
-		return value - ('a' - 'A');
+		return static_cast<char>(value - ('a' - 'A'));
 	}
 	return value;
 }
@@ -276,7 +276,15 @@ void UnifiedLanCommController::handleIncomingMessage(const UnifiedLanProtocolMes
 
 void UnifiedLanCommController::handleHelloMessage(const ulc::UnifiedLanProtocolMessage &msg)
 {
-	if(msg.getMessageParameterCount() >= 4) {
+	const bool hasSerialParameter = msg.getMessageParameterCount() >= 4;
+	if(!hasSerialParameter && !desiredSerial.empty()) {
+		LOG(Logger::LOG_ERROR,
+			"HELLO message does not contain a serial number for configured gateway %s. Rejecting LAN gateway.",
+			desiredSerial.c_str());
+		return;
+	}
+
+	if(hasSerialParameter) {
 		std::string text("Protocol-Version: ");
 		text.append(toString(hexStringToUChar(msg.getParameterAt(0))));
 		text.append("\n");
