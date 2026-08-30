@@ -37,7 +37,9 @@ public:
 	UnifiedLanCommController(const std::string& hostIP, const int port);
 	virtual ~UnifiedLanCommController();
 	void setEncryptionKey(const std::string key);
-	void setDesiredSerial(const std::string desiredSerial);
+	void setDesiredSerial(const std::string desiredSerial) {
+		this->desiredSerial = desiredSerial;
+	}
 
 	/** \brief Returns value of encryptionEnabled.
 	 * \return True, if encryption is enabled, otherwise False.*/
