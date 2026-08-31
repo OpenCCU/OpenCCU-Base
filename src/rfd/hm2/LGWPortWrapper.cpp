@@ -234,8 +234,12 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	this->configuredSerial = desiredSerial;
 	pCommController->setDesiredSerial(configuredSerial);
 	bool connected = pCommController->connect();
+	const std::string reportedSerial = pCommController->getSerial();
+	if(configuredSerial.empty()) {
+		configuredSerial = reportedSerial;
+	}
 	if(connected) {
-		this->serial = pCommController->getSerial();
+		this->serial = reportedSerial;
 		pEncryption = pCommController->getTCPEncryption();
 		if(pEncryption == NULL) {
 			LOG(Logger::LOG_FATAL_ERROR, "LGWPortWrapper::connect(): Encryption pointer is NULL.");
@@ -782,6 +786,11 @@ void HM2::LGWPortWrapper::setInfoLEDState(const InfoLEDState& state)
 void LGWPortWrapper::writeLGWStatusToFile(const std::string& serial, const std::string& statusText)
 {
 #ifndef WIN32
+	if(serial.empty()) {
+		LOG(Logger::LOG_WARNING, "LGWPortWrapper::writeLGWStatusToFile(): Cannot write status without a gateway serial.");
+		return;
+	}
+
 	std::string filepath("/var/status/");
 	filepath.append(serial);
 	filepath.append(".connstat");
