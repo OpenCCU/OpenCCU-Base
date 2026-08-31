@@ -89,6 +89,7 @@ UnifiedLanCommController::~UnifiedLanCommController()
 bool UnifiedLanCommController::connect()
 {
 	connectError = (ConnectError)NOT_CONNECTED;
+	lgwSerial.clear();
 	//pthread_mutex_lock(&connectionMutex);
 	encryptionEnabled = false;
 	bool done = connection.connect();
