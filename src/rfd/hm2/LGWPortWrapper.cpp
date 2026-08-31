@@ -231,9 +231,15 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	this->hostIP = hostIP;
 	this->port = port;
 	this->encKey = encKey;
+	this->configuredSerial = desiredSerial;
+	pCommController->setDesiredSerial(configuredSerial);
 	bool connected = pCommController->connect();
+	const std::string reportedSerial = pCommController->getSerial();
+	if(configuredSerial.empty()) {
+		configuredSerial = reportedSerial;
+	}
 	if(connected) {
-		this->serial = pCommController->getSerial();
+		this->serial = reportedSerial;
 		pEncryption = pCommController->getTCPEncryption();
 		if(pEncryption == NULL) {
 			LOG(Logger::LOG_FATAL_ERROR, "LGWPortWrapper::connect(): Encryption pointer is NULL.");
@@ -242,7 +248,7 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 			encryptionEnabled = pCommController->isEncryptionEnabled();
 		}
 	}
-	statusSerial = serial.empty() ? pCommController->getSerial() : serial;
+	statusSerial = configuredSerial;
 	statusText = pCommController->getConnectErrorAsString();
 	pthread_mutex_unlock(&mutexULCCommController);
 	const bool shutdownInProgress = isShutdownRequested();
@@ -271,7 +277,7 @@ void LGWPortWrapper::Disconnect()
 		encryptionEnabled = false;
 		pEncryption = NULL;
 		pCommController->disconnect();
-		statusSerial = serial.empty() ? pCommController->getSerial() : serial;
+		statusSerial = configuredSerial;
 		statusText = pCommController->getConnectErrorAsString();
 		disconnected = true;
 	}
@@ -428,7 +434,7 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 	pEncryption = NULL;
 	pthread_mutex_lock(&mutexULCCommController);
 	pCommController->disconnect();
-	const std::string disconnectStatusSerial = serial.empty() ? pCommController->getSerial() : serial;
+	const std::string disconnectStatusSerial = configuredSerial;
 	const std::string disconnectStatusText = pCommController->getConnectErrorAsString();
 	pthread_mutex_unlock(&mutexULCCommController);
 	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Disconnect performed.");
@@ -454,7 +460,7 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 		}
 		else {
 			LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect(): Searching device.");
-			foundDev = ldUtils.searchDeviceByTypeAndSerial("eQ3-HM-LGW*",getSerial(), lanDev);
+			foundDev = ldUtils.searchDeviceByTypeAndSerial("eQ3-HM-LGW*", configuredSerial, lanDev);
 		}
 		if(isShutdownRequested()) {
 			break;
@@ -462,7 +468,7 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 
 		if(foundDev) {
 			if(!hostIPWasAssignedByUser) {
-				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Found device with serial %s.", getSerial().c_str());
+				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Found device with serial %s.", configuredSerial.c_str());
 				foundDev = ldUtils.readRuntimeNetworkConfiguration(lanDev);
 			}
 			if(foundDev) {
@@ -475,6 +481,7 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 				UnifiedLanCommController* oldController = pCommController;
 				pCommController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
 				pCommController->setEncryptionKey(this->encKey);
+				pCommController->setDesiredSerial(configuredSerial);
 				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
 				reconnected = pCommController->connect();
 				if(reconnected) {
@@ -489,7 +496,7 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 				const std::string reconnectStatusText = pCommController->getConnectErrorAsString();
 				pthread_mutex_unlock(&mutexULCCommController);
 				delete oldController;
-				writeLGWStatusToFile(getSerial(), reconnectStatusText);
+				writeLGWStatusToFile(configuredSerial, reconnectStatusText);
 			}
 			if(isShutdownRequested()) {
 				break;
@@ -528,8 +535,8 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 			}
 		}
 		else {
-			LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Unable to find device with serial %s.", getSerial().c_str());
-			writeLGWStatusToFile(getSerial(), std::string("Gateway not found."));
+			LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Unable to find device with serial %s.", configuredSerial.c_str());
+			writeLGWStatusToFile(configuredSerial, std::string("Gateway not found."));
 		}
 		LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Device not found retrying in %u seconds.", timeout);
 		if(!waitForReconnectRetry(timeout)) {
@@ -618,6 +625,7 @@ void* LGWPortWrapper::keepAliveThreadFunction(void* param)
 	//TCPIPConnection keepAliveConnection(pThis->hostIP, 2001);
 	UnifiedLanCommController keepAliveConnection(pThis->hostIP, 2001);
 	keepAliveConnection.setEncryptionKey(pThis->encKey);
+	keepAliveConnection.setDesiredSerial(pThis->configuredSerial);
 	bool done = keepAliveConnection.connect();
 	if(done) {
 		ldu::TCPEncryption* pKeepAliveEncryption = keepAliveConnection.getTCPEncryption();
@@ -778,6 +786,11 @@ void HM2::LGWPortWrapper::setInfoLEDState(const InfoLEDState& state)
 void LGWPortWrapper::writeLGWStatusToFile(const std::string& serial, const std::string& statusText)
 {
 #ifndef WIN32
+	if(serial.empty()) {
+		LOG(Logger::LOG_WARNING, "LGWPortWrapper::writeLGWStatusToFile(): Cannot write status without a gateway serial.");
+		return;
+	}
+
 	std::string filepath("/var/status/");
 	filepath.append(serial);
 	filepath.append(".connstat");

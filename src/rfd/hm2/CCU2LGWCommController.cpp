@@ -44,12 +44,14 @@ bool CCU2LGWCommController::init(const std::string host, const int port, const s
 	interfaceSerial = desiredSerial;
 	//create serial.connstat file for central.
 #ifndef WIN32
-	std::string statfilepath("/var/status/");
-	statfilepath.append(desiredSerial);
-	statfilepath.append(".connstat");  
-	FILE* f = fopen(statfilepath.c_str(), "w");
-	if(f) {
-		fclose(f);
+	if(!desiredSerial.empty()) {
+		std::string statfilepath("/var/status/");
+		statfilepath.append(desiredSerial);
+		statfilepath.append(".connstat");
+		FILE* f = fopen(statfilepath.c_str(), "w");
+		if(f) {
+			fclose(f);
+		}
 	}
 #endif	
 	

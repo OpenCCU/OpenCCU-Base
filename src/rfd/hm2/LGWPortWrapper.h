@@ -98,6 +98,7 @@ private:
 	unsigned int port;
 	/*Encryption key*/
 	std::string encKey;
+	std::string configuredSerial;
 	
 	/** \brief Serial number of Gateway.
 	* \details Set on first successful connect.
