@@ -25,6 +25,13 @@ option(BUILD_TCL_MODULES "Build Tcl extension modules from src/tcl*" OFF)
 option(BUILD_WEBUI_AND_DEVICETYPES "Generate/install webui + devicetype assets from src/" OFF)
 option(HAS_USB_SUPPORT "Enable USB support in rfd" OFF)
 
+set(OPENCCU_TCLSH_EXECUTABLE "tclsh" CACHE FILEPATH
+    "Tcl interpreter used to generate WebUI assets")
+set(OPENCCU_PYTHON_EXECUTABLE "python3" CACHE FILEPATH
+    "Python interpreter used to convert generated WebUI assets")
+set(OPENCCU_JAVA_EXECUTABLE "java" CACHE FILEPATH
+    "Java runtime used to generate device type assets")
+
 add_custom_target(prepare-stage
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/bin"
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/lib"
