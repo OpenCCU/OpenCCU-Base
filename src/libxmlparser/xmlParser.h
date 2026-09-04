@@ -103,7 +103,8 @@ typedef enum XMLError
     eXMLErrorInvalidTag,
     eXMLErrorNoElements,
     eXMLErrorFileNotFound,
-    eXMLErrorTagNotFound
+    eXMLErrorTagNotFound,
+    eXMLErrorNoMemory
 } XMLError;
 
 // Enumeration used to manage type of data. Use in conjonction with structure XMLNodeContents
