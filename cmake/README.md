@@ -46,6 +46,8 @@ cmake --build --preset i686-linux-gnu --target package
 ## Main targets
 
 - `core`: build and stage/deploy core daemons and libraries.
+- `compat-libraries`: build and stage only `libxmlparser` and `libXmlRpc`, for
+  example when producing 32-bit compatibility libraries for a 64-bit image.
 - `package`: `core` + copy `opt/` runtime tree into staged rootfs.
 - Per-module targets use their module names directly (e.g. `rfd`, `libelvutils`, `hs485d`).
 
