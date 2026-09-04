@@ -129,6 +129,16 @@ add_custom_target(core
     SetInterfaceClock
 )
 
+# Build only the libraries required by legacy 32-bit Homematic binaries.
+# Both library targets stage their output below ROOTFS_DIR/lib through
+# openccu_stage_target(), so consumers do not need to know CMake's binary
+# directory layout.
+add_custom_target(compat-libraries
+  DEPENDS
+    xmlparser
+    XmlRpc
+)
+
 if(BUILD_TCL_MODULES)
   add_dependencies(core
     tclrega
