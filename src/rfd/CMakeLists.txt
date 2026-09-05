@@ -44,6 +44,7 @@ set(RFD_SOURCES
   RFPhysicalDataInterfaceMultiframeCommand.cpp
   RFSystemDescription.cpp
   RFTeam.cpp
+  TrafficLogger.cpp
   XmlRpcMethods.cpp
   hm2/CCU2PortWrapper.cpp
   hm2/LGWPortWrapper.cpp

@@ -10,6 +10,7 @@
 #include "BidcosInterface.h"
 #include "BidcosFrameDecoder.h"
 #include "BidcosFrame.h"
+#include "TrafficLogger.h"
 #include <Logger.h>
 #include "RFManager.h"
 #include <utils.h>
@@ -240,6 +241,17 @@ bool BidcosInterfaceConcentrator::RemoveInterface(const std::string& serial)
 
 bool BidcosInterfaceConcentrator::ProcessReceivedFrame(const BidcosFrame& frame)
 {
+	//Empfangene Telegramme von Funk-LAN-Gateways mitschreiben (das lokale
+	//Funkmodul loggt der multimacd-TrafficLogger); vor jeder Filterung/Dedup,
+	//damit die Gateway-Sicht vollstaendig ist
+	if( TrafficLogger::Instance().IsEnabled() )
+	{
+		BidcosInterface* rx_iface = GetInterface( frame.GetInterfaceId() );
+		if( rx_iface && rx_iface->IsLanInterface() )
+		{
+			TrafficLogger::Instance().LogTelegram( "RX", frame, frame.GetInterfaceId() );
+		}
+	}
     if( frame.MatchType(BidcosFrame::FT_ACK_W_AES_CHALLENGE) || frame.MatchType(BidcosFrame::FT_AES_SOLUTION) ) {
         if(!promiscuous_mode)return true;
     }
@@ -415,6 +427,12 @@ bool BidcosInterfaceConcentrator::SendFrame(BidcosFrame* frame, BidcosInterface*
 				}
 			}
 		}
+	}
+	//Telegramme, die ueber ein Funk-LAN-Gateway gesendet werden, mitschreiben
+	//(TX ueber das lokale Funkmodul loggt der multimacd-TrafficLogger)
+	if( iface->IsLanInterface() && TrafficLogger::Instance().IsEnabled() )
+	{
+		TrafficLogger::Instance().LogTelegram( "TX", *frame, iface->GetSerialNumber() );
 	}
 	//send the frame
 	if(tripleBurst) {
