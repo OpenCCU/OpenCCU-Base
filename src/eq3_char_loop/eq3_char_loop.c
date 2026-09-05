@@ -265,6 +265,8 @@ static ssize_t eq3loop_write_slave(struct eq3loop_channel_data* channel, struct 
 	int head;
 	ssize_t ret=0;
         ssize_t count_to_end;
+	if (count >= BUFSIZE)
+		return -EMSGSIZE;
 	if (down_interruptible(&channel->sem))
 		return -ERESTARTSYS;
 
@@ -343,6 +345,8 @@ static ssize_t eq3loop_write_master(struct eq3loop_channel_data* channel, struct
 	ssize_t ret=0;
 	int head;
 	ssize_t count_to_end;
+	if (count >= BUFSIZE)
+		return -EMSGSIZE;
 	if (down_interruptible(&channel->sem))
 		return -ERESTARTSYS;
 
@@ -1071,4 +1075,4 @@ module_init(eq3loop_init);
 module_exit(eq3loop_exit);
 MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
 MODULE_LICENSE("GPL");
-MODULE_VERSION("1.4");
+MODULE_VERSION("1.5");
