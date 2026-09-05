@@ -83,6 +83,7 @@ add_subdirectory(src/hs485dLoader)
 add_subdirectory(src/hss_led)
 add_subdirectory(src/rfd)
 add_subdirectory(src/bcm2835_raw_uart)
+add_subdirectory(src/eq3_char_loop)
 
 add_executable(SetInterfaceClock src/SetInterfaceClock/SetInterfaceClock.cpp)
 target_compile_features(SetInterfaceClock PRIVATE cxx_std_11)
