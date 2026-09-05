@@ -40,6 +40,7 @@
 #include <asm/termbits.h>
 #include <asm/termios.h>
 #include <asm/ioctls.h>
+#include <linux/serial.h>
 #include <linux/version.h>
 
 #define EQ3LOOP_NUMBER_OF_CHANNELS 4
@@ -61,6 +62,12 @@
 #define BUFSIZE 1024  //just use buffer size power of 2. otherwise the size and index calculation dosn't work
 
 #define DUMP_READWRITE 0
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,0,0))
+  #define _access_ok(__type, __addr, __size) access_ok(__addr, __size)
+#else
+  #define _access_ok(__type, __addr, __size) access_ok(__type, __addr, __size)
+#endif
 
 struct eq3loop_channel_data
 {
@@ -280,7 +287,8 @@ static ssize_t eq3loop_write_slave(struct eq3loop_channel_data* channel, struct 
 	head = channel->slave2master_buf.head;
 	if(CIRC_SPACE( head, channel->slave2master_buf.tail, BUFSIZE) < count)
 	{
-		ret=-EFAULT;
+		/* no room for a whole frame yet -- let the writer retry */
+		ret=-EAGAIN;
 		goto out;
 	}
 	
@@ -351,9 +359,10 @@ static ssize_t eq3loop_write_master(struct eq3loop_channel_data* channel, struct
 	head = channel->master2slave_buf.head;
 	if(CIRC_SPACE( head, channel->master2slave_buf.tail, BUFSIZE) < count)
 	{
-		ret=-EFAULT;
+		/* no room for a whole frame yet -- let the writer retry */
+		ret=-EAGAIN;
 		count_to_end = CIRC_SPACE( head, channel->master2slave_buf.tail, BUFSIZE);
-		printk( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enought space in the buffers. free space = %zu, required space = %zu", channel->name,count_to_end,count );
+		printk_ratelimited( KERN_ERR EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() %s: not enough space in buffers. free space = %zu, required space = %zu", channel->name,count_to_end,count );
 		goto out;
 	}
 	/* ok, space is free, write something */
@@ -389,7 +398,7 @@ out:
 	up (&channel->sem);
 	if(ret < 0)
 	{
-		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() retrun error:");
+		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_write_master() return error: %zd", ret);
 	}
 	if( ret > 0 || CIRC_CNT(channel->master2slave_buf.head,channel->master2slave_buf.tail,BUFSIZE) )
 	{
@@ -456,9 +465,9 @@ static long eq3loop_ioctl_master(struct eq3loop_channel_data* channel, struct fi
 	* "write" is reversed
 	*/
 	if (_IOC_DIR(cmd) & _IOC_READ)
-	ret = !access_ok(VERIFY_WRITE, (void *)arg, _IOC_SIZE(cmd));
+	  ret = !_access_ok(VERIFY_WRITE, (void *)arg, _IOC_SIZE(cmd));
 	else if (_IOC_DIR(cmd) & _IOC_WRITE)
-	ret =  !access_ok(VERIFY_READ, (void *)arg, _IOC_SIZE(cmd));
+	  ret =  !_access_ok(VERIFY_READ, (void *)arg, _IOC_SIZE(cmd));
 	if (ret) return -EFAULT;
 
 	switch(cmd) {
@@ -500,7 +509,7 @@ static long eq3loop_ioctl_slave(struct eq3loop_channel_data* channel, struct fil
 	switch(cmd) {
 
 	case TCGETS:
-		if( access_ok(VERIFY_READ, (void *)arg, sizeof(struct termios) ) )
+		if( _access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct termios) ) )
 		{
 			ret = copy_to_user( (void*)arg, &channel->termios, sizeof(struct termios) );
 		} else {
@@ -508,13 +517,68 @@ static long eq3loop_ioctl_slave(struct eq3loop_channel_data* channel, struct fil
 		}
 		break;
 	case TCSETS:
-		if( access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct termios) ) )
+	case TCSETSW:
+	case TCSETSF:
+		if( _access_ok(VERIFY_READ, (void *)arg, sizeof(struct termios) ) )
 		{
 			ret = copy_from_user( &channel->termios, (void*)arg, sizeof(struct termios) );
 		} else {
 			ret = -EFAULT;
 		}
 		break;
+#ifdef TCGETS2
+	case TCGETS2:
+	{
+		struct termios2 t2;
+	
+		memset(&t2, 0, sizeof(t2));
+		t2.c_iflag = channel->termios.c_iflag;
+		t2.c_oflag = channel->termios.c_oflag;
+		t2.c_cflag = channel->termios.c_cflag;
+		t2.c_lflag = channel->termios.c_lflag;
+		t2.c_line  = channel->termios.c_line;
+		memcpy(t2.c_cc, channel->termios.c_cc, NCCS);
+		t2.c_ispeed = 0;
+		t2.c_ospeed = 0;
+	
+		if( _access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct termios2) ) )
+		{
+			ret = copy_to_user( (void*)arg, &t2, sizeof(struct termios2) );
+		} else {
+			ret = -EFAULT;
+		}
+		break;
+	}
+#endif
+#ifdef TCSETS2
+	case TCSETS2:
+#ifdef TCSETSW2
+	case TCSETSW2:
+#endif
+#ifdef TCSETSF2
+	case TCSETSF2:
+#endif
+	{
+		struct termios2 t2;
+	
+		if( _access_ok(VERIFY_READ, (void *)arg, sizeof(struct termios2) ) )
+		{
+			ret = copy_from_user( &t2, (void*)arg, sizeof(struct termios2) );
+			if( !ret )
+			{
+				channel->termios.c_iflag = t2.c_iflag;
+				channel->termios.c_oflag = t2.c_oflag;
+				channel->termios.c_cflag = t2.c_cflag;
+				channel->termios.c_lflag = t2.c_lflag;
+				channel->termios.c_line  = t2.c_line;
+				memcpy(channel->termios.c_cc, t2.c_cc, NCCS);
+			}
+		} else {
+			ret = -EFAULT;
+		}
+		break;
+	}
+#endif
 	case TIOCINQ:
 		temp = CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE);
 		ret = __put_user( temp, (int*)arg );
@@ -534,10 +598,20 @@ static long eq3loop_ioctl_slave(struct eq3loop_channel_data* channel, struct fil
 	case TIOCMSET:
 		break;
 	case TIOCSERGETLSR:
-		ret = -ENOIOCTLCMD;
+		temp = TIOCSER_TEMT;
+		ret = __put_user( temp, (int*)arg );
 		break;
 	case TIOCGICOUNT:
-		ret = -ENOIOCTLCMD;
+		{
+			struct serial_icounter_struct icount;
+			memset(&icount, 0, sizeof(icount));
+			if( _access_ok(VERIFY_WRITE, (void *)arg, sizeof(struct serial_icounter_struct) ) )
+			{
+				ret = copy_to_user( (void*)arg, &icount, sizeof(struct serial_icounter_struct) );
+			} else {
+				ret = -EFAULT;
+			}
+		}
 		break;
 	default:
 		ret = -ENOTTY;
@@ -547,7 +621,6 @@ static long eq3loop_ioctl_slave(struct eq3loop_channel_data* channel, struct fil
 	if( ret == -ENOTTY )
 	{
 		printk( KERN_NOTICE EQ3LOOP_DRIVER_NAME ": eq3loop_ioctl_slave() %s: unhandled ioctl 0x%04X\n", channel->name, cmd );
-		ret = -ENOIOCTLCMD;
 	}
 	return ret;
 }
@@ -905,7 +978,11 @@ static int eq3loop_open(struct inode *inode, struct file *filp)
 
 static struct file_operations eq3loop_fops = {
 	.owner		= THIS_MODULE,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0))
+	.llseek		= noop_llseek,
+#else
 	.llseek		= no_llseek,
+#endif
 	.read		= eq3loop_read,
 	.write		= eq3loop_write,
 	.open		= eq3loop_open,
@@ -944,7 +1021,14 @@ static int __init eq3loop_init(void)
 		printk(KERN_ERR EQ3LOOP_DRIVER_NAME ": Unable to add driver\n");
 		goto out_unregister_chrdev_region;
 	}
+/* Linux changed signature of class_create in 6.4+
+ * see: https://lore.kernel.org/all/20230324100132.1633647-1-gregkh@linuxfoundation.org/
+*/
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 4, 0)
 	control_data->class=class_create(THIS_MODULE, EQ3LOOP_DRIVER_NAME);
+#else
+	control_data->class=class_create(EQ3LOOP_DRIVER_NAME);
+#endif
 	if(IS_ERR(control_data->class)){
 		ret = -EIO;
 		printk(KERN_ERR EQ3LOOP_DRIVER_NAME ": Unable to register driver class\n");
@@ -987,3 +1071,4 @@ module_init(eq3loop_init);
 module_exit(eq3loop_exit);
 MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
 MODULE_LICENSE("GPL");
+MODULE_VERSION("1.4");
