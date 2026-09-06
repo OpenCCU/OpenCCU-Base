@@ -1,8 +1,8 @@
 #/bin/sh
 
 MAJOR="2"
-MINOR="5"
-PATCH="1"
+MINOR="6"
+PATCH="0"
 
 VERSION="$MAJOR.$MINOR.$PATCH"
 
