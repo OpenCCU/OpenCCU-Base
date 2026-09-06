@@ -31,7 +31,7 @@
 
 using namespace XmlRpc;
 
-#define TCLRPC_VERSION "1.1"
+#define TCLRPC_VERSION "1.4"
 
 static const char* USAGE = "usage: xmlrpc url methodName ?arg1 ?arg2 ...??";
 
@@ -68,16 +68,9 @@ int DLLEXPORT Tclrpc_Init (Tcl_Interp* interp) {
 	Tcl_CreateExitHandler( Tclrpc_Exit, 0 );
     XmlRpc::XmlRpcErrorHandler::setErrorHandler( &g_tclrpcErrorHandler );
 
-	// get used tcl version
-	int major;
-	int minor;
-	Tcl_GetVersion(&major, &minor, NULL, NULL);
-
-	// get iso8859-1 encoding to signal that we need to convert
-	// from utf8 to iso8859-1 in case we use a tcl version > 8.2
-	if(major > 8 || (major == 8 && minor > 2)) {
-	  iso8859_encoding = Tcl_GetEncoding(interp, "iso8859-1");
-	}
+	// get iso8859-1 encoding to convert all stuff to latin1
+	// because rega can only handle iso-8859-1
+	iso8859_encoding = Tcl_GetEncoding(interp, "iso8859-1");
 
 	return TCL_OK;
 }
@@ -162,7 +155,7 @@ static int StringToXmlRpcValue(Tcl_Interp * interp, XmlRpcValue& v, CONST char* 
                         retval=TCL_ERROR;
                         Tcl_AddErrorInfo(interp, "Every struct member needs two fields (key and value)\n");
                         char buffer[32];
-                        sprintf(buffer, "Field count is %d\n", entryc);
+                        snprintf(buffer, sizeof(buffer)-1, "Field count is %d\n", entryc);
                         Tcl_AddErrorInfo(interp, buffer);
                         if(entryv)Tcl_Free((char*)entryv);
                         break;
@@ -324,6 +317,36 @@ static int StringFromXmlRpcValue(Tcl_Interp * interp, XmlRpcValue& v, std::strin
     
 }
 
+/*
+static int ParseURL(const std::string& url, std::string& protocol, std::string& host, int& port, std::string& uri)
+{
+	port=80;
+	uri="/RPC2";
+	std::string::size_type left, right;
+	left=0;
+	right=url.find("://", left);
+	if(right != std::string::npos){
+		protocol=url.substr(left, right-left);
+		left=right+3;
+	}
+	right=url.find_first_of(":", left);
+	host=url.substr(left, right-left);
+	if(right != std::string::npos){
+                right++;
+		left=right;
+		if(url[left]!='/'){
+			right=url.find('/', left);
+			port=atoi(url.substr(left, right-left).c_str());
+		}
+	}
+	if(right != std::string::npos){
+		left=right;
+		uri=url.substr(left);
+	}
+	return TCL_OK;
+}
+*/
+
 static int Tclrpc_Cmd (ClientData, Tcl_Interp * interp, int argc, CONST84 char* argv[])
 {
 	if(argc < 3) {
@@ -365,7 +388,7 @@ static int Tclrpc_Cmd (ClientData, Tcl_Interp * interp, int argc, CONST84 char* 
 				retval = TCL_ERROR;
             }else if(xmlRpcClient->isFault()){
                 char buffer[32];
-                sprintf(buffer, "faultCode=%d\n", (int)response["faultCode"]);
+                snprintf(buffer, sizeof(buffer)-1, "faultCode=%d\n", (int)response["faultCode"]);
         		Tcl_AppendResult(interp, "Fault received on xmlrpc call ", argv[2], "(", params.toText().c_str(), ")\n", buffer, "faultString=", const_cast<char*>(((std::string)response["faultString"]).c_str()), NULL);
 		//retval=TCL_ERROR;
 		/*
