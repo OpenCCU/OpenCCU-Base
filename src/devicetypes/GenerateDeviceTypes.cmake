@@ -1,0 +1,35 @@
+# Fail the complete target if any device cannot be generated. Never let a
+# pre-staged firmware file stand in for a missing or failed generator output.
+foreach(family IN ITEMS rftypes hs485types)
+  file(GLOB device_files "${DEVICE_SOURCE_DIR}/${family}/*.xml")
+  if(NOT device_files)
+    message(FATAL_ERROR "No device XML files found for ${family}")
+  endif()
+  list(SORT device_files)
+  file(MAKE_DIRECTORY "${DEVICE_OUTPUT_DIR}/${family}")
+  foreach(device_file IN LISTS device_files)
+    get_filename_component(device_name "${device_file}" NAME)
+    set(output_file "${DEVICE_OUTPUT_DIR}/${family}/${device_name}")
+    set(temp_file "${output_file}.tmp")
+    file(REMOVE "${temp_file}")
+    message(STATUS "bidcos-devicetype-strip ${device_file}")
+    execute_process(
+      COMMAND "${JAVA_EXECUTABLE}" -jar "${STRIP_JAR}"
+        "${device_file}" -o "${temp_file}"
+      RESULT_VARIABLE strip_status
+    )
+    if(NOT "${strip_status}" STREQUAL "0")
+      file(REMOVE "${temp_file}")
+      message(FATAL_ERROR "Device generation failed: ${device_file} (${strip_status})")
+    endif()
+    if(NOT EXISTS "${temp_file}")
+      message(FATAL_ERROR "Device generator produced no output: ${device_file}")
+    endif()
+    file(SIZE "${temp_file}" output_size)
+    if(output_size EQUAL 0)
+      file(REMOVE "${temp_file}")
+      message(FATAL_ERROR "Device generator produced empty output: ${device_file}")
+    endif()
+    file(RENAME "${temp_file}" "${output_file}")
+  endforeach()
+endforeach()
