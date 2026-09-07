@@ -1,0 +1,180 @@
+# OpenCCU-Base continuous integration build workflow
+# yamllint disable rule:truthy
+---
+name: CI Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+# Source builds require no write access to the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build [${{ matrix.platform }}]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: x86_64-linux-gnu
+            container_platform: linux/amd64
+            qemu_platform: ''
+            binary_format: x86-64
+            build_assets: 'ON'
+          - platform: aarch64-linux-gnu
+            container_platform: linux/arm64
+            qemu_platform: arm64
+            binary_format: ARM aarch64
+            build_assets: 'OFF'
+          - platform: arm-linux-gnueabihf
+            container_platform: linux/arm/v7
+            qemu_platform: arm
+            binary_format: ARM
+            build_assets: 'OFF'
+          - platform: i686-linux-gnu
+            container_platform: linux/386
+            qemu_platform: '386'
+            binary_format: Intel 80386
+            build_assets: 'OFF'
+
+    steps:
+      - name: Checkout Code
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      # Run each build in a native userspace for its target architecture. This
+      # also ensures that OpenSSL, libusb and Tcl are linked for that target.
+      - name: Set up QEMU
+        if: matrix.qemu_platform != ''
+        # v4
+        uses: >-
+          docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a
+        with:
+          platforms: ${{ matrix.qemu_platform }}
+
+      - name: Configure and build
+        env:
+          BUILD_ASSETS: ${{ matrix.build_assets }}
+          CONTAINER_PLATFORM: ${{ matrix.container_platform }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+        run: |
+          docker run --rm \
+            --platform "${CONTAINER_PLATFORM}" \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --workdir /workspace \
+            --env BUILD_ASSETS \
+            --env TARGET_PLATFORM \
+            debian:bookworm-slim \
+            bash -euxo pipefail -c '
+              export DEBIAN_FRONTEND=noninteractive
+              export LANG=C.UTF-8
+              packages=(
+                build-essential
+                ca-certificates
+                cmake
+                file
+                libssl-dev
+                libusb-1.0-0-dev
+                pkg-config
+                tcl-dev
+              )
+              if [ "${BUILD_ASSETS}" = "ON" ]; then
+                packages+=(default-jre-headless python3)
+              fi
+              apt-get update
+              apt-get install --yes --no-install-recommends "${packages[@]}"
+
+              case "${TARGET_PLATFORM}" in
+                x86_64-linux-gnu)
+                  ;;
+                aarch64-linux-gnu|arm-linux-gnueabihf|i686-linux-gnu)
+                  c_compiler="/usr/local/bin/${TARGET_PLATFORM}-gcc"
+                  cxx_compiler="/usr/local/bin/${TARGET_PLATFORM}-g++"
+                  ln -s "$(command -v gcc)" "${c_compiler}"
+                  ln -s "$(command -v g++)" "${cxx_compiler}"
+                  ;;
+                *)
+                  echo "Unsupported target platform: ${TARGET_PLATFORM}" >&2
+                  exit 1
+                  ;;
+              esac
+
+              cmake --preset "${TARGET_PLATFORM}" \
+                -DDEPLOY_TO_REPO=OFF \
+                -DBUILD_TCL_MODULES=ON \
+                -DHAS_USB_SUPPORT=ON \
+                -DBUILD_WEBUI_AND_DEVICETYPES="${BUILD_ASSETS}"
+              cmake --build --preset "${TARGET_PLATFORM}" \
+                --target package \
+                --parallel "$(nproc)"
+            '
+
+      - name: Verify staged package
+        env:
+          BINARY_FORMAT: ${{ matrix.binary_format }}
+          BUILD_ASSETS: ${{ matrix.build_assets }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+        run: |
+          stage="build/${TARGET_PLATFORM}/rootfs"
+
+          for artifact in \
+            bin/SetInterfaceClock \
+            bin/crypttool \
+            bin/eq3configcmd \
+            bin/eq3configd \
+            bin/hs485d \
+            bin/hs485dLoader \
+            bin/hss_led \
+            bin/multimacd \
+            bin/rfd \
+            bin/ssdpd \
+            lib/libLanDeviceUtils.so \
+            lib/libUnifiedLanComm.so \
+            lib/libXmlRpc.so \
+            lib/libelvutils.so \
+            lib/libeq3config.so \
+            lib/libhsscomm.so \
+            lib/libxmlparser.so \
+            lib/tclrega.so \
+            lib/tclrpc.so \
+            opt/HMServer/HMServer.jar; do
+            test -s "${stage}/${artifact}"
+          done
+
+          for artifact in bin/rfd lib/tclrega.so; do
+            description=$(file "${stage}/${artifact}")
+            echo "${description}"
+            grep --fixed-strings "${BINARY_FORMAT}" \
+              <<<"${description}" >/dev/null
+          done
+
+          if [ "${BUILD_ASSETS}" = "ON" ]; then
+            test -s "${stage}/www/webui/webui.js"
+            test -s "${stage}/www/webui/style.css"
+            test -s "${stage}/www/config/devdescr/DEVDB.tcl"
+
+            source_rf_count=$(find src/devicetypes/rftypes \
+              -maxdepth 1 -name '*.xml' | wc -l)
+            staged_rf_count=$(find "${stage}/firmware/rftypes" \
+              -maxdepth 1 -name '*.xml' | wc -l)
+            source_hs485_count=$(find src/devicetypes/hs485types \
+              -maxdepth 1 -name '*.xml' | wc -l)
+            staged_hs485_count=$(find "${stage}/firmware/hs485types" \
+              -maxdepth 1 -name '*.xml' | wc -l)
+            test "${source_rf_count}" -eq "${staged_rf_count}"
+            test "${source_hs485_count}" -eq "${staged_hs485_count}"
+          fi
