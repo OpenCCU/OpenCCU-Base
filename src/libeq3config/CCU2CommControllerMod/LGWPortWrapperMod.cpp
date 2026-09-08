@@ -361,6 +361,8 @@ void* LGWPortWrapperMod::keepAliveThreadFunction(void* param)
 					msgData.append(counterHexStr);
 					msgData.append(",02,");//Info LED
 					switch(pThis->infoLEDState) {
+						case LED_UNDEFINED:
+							// Handle LED_UNDEFINED like LED_OFF.
 						case LED_OFF:
 							//LOG(Logger::LOG_DEBUG, "Switching RF-LGW LED OFF");
 							msgData.append("00FF,00");

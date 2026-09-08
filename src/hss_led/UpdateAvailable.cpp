@@ -23,12 +23,16 @@ UpdateAvailable::UpdateAvailable() :
 	// TODO Automatisch generierter Konstruktorstub
 	char data[1024];
 	int versionFile = open("/VERSION", O_RDONLY);
-	if (versionFile <= 0) {
+	if (versionFile < 0) {
 	  versionFile = open("/boot/VERSION", O_RDONLY);
 	}
-	if (versionFile > 0) {
-		read(versionFile, data, 1024);
-		std::string versionContetn = data;
+	if (versionFile >= 0) {
+		const ssize_t bytesRead = read(versionFile, data, sizeof(data));
+		close(versionFile);
+		std::string versionContetn;
+		if (bytesRead > 0) {
+			versionContetn.assign(data, static_cast<size_t>(bytesRead));
+		}
 		std::vector<std::string> versionVec = SplitString(
 				versionContetn.c_str(), "=");
 		if (versionVec.size() < 2) {
@@ -36,17 +40,21 @@ UpdateAvailable::UpdateAvailable() :
 		} else {
 			this->currentVersion = versionVec[1];
 		}
-		close(versionFile);
 	} else {
 		this->currentVersion = "unknown";
 	}
 	this->lastUpdateServerRequest = time_millis();
 	this->waitRequesTime = 20000 + (rand() % 20000);
 	int idsFile = open("/var/ids",O_RDONLY);
-	if(idsFile > 0)
+	if(idsFile >= 0)
 	{
-		read(idsFile, data, 1024);
-		std::vector<std::string> idsLines = SplitString(data,"\n");
+		const ssize_t bytesRead = read(idsFile, data, sizeof(data));
+		close(idsFile);
+		std::string idsContent;
+		if (bytesRead > 0) {
+			idsContent.assign(data, static_cast<size_t>(bytesRead));
+		}
+		std::vector<std::string> idsLines = SplitString(idsContent,"\n");
 		std::vector<std::string>::iterator itLines;
 		for(itLines = idsLines.begin(); itLines != idsLines.end(); ++itLines)
 		{
@@ -59,7 +67,6 @@ UpdateAvailable::UpdateAvailable() :
 				}
 			}
 		}
-		close(idsFile);
 	}
 }
 
@@ -85,7 +92,10 @@ bool UpdateAvailable::requestUpdateServer() {
   #else
 	systemCommand += "&product=HM-CCU2\"";
   #endif
-	system(systemCommand.c_str());
+	if (system(systemCommand.c_str()) != 0) {
+		LOG(Logger::LOG_ERROR, "UpdateAvailable::requestUpdateServer(): wget failed");
+		return false;
+	}
 	XMLResults xmlResult;
 	XMLNode rootNode = XMLNode::parseFile( "/tmp/avilableversion.html", "html", &xmlResult );
 	if(!xmlResult.error)
