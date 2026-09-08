@@ -4,7 +4,7 @@
  * for portability. It works by using recursion and a node tree for breaking
  * down the elements of an XML document.  </P>
  *
- * @version     V1.13
+ * @version     V1.14
  *
  * @author      Frank Vanden Berghen
  * based on original implementation by Martyn C Brown
@@ -68,6 +68,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limits.h>
+#include <new>
 #include "xmlParser.h"
 
 //#ifdef WIN32
@@ -640,6 +641,11 @@ XMLNode::XMLNode(XMLNodeData *pParent, LPCTSTR lpszName, int isDeclaration)
     d->nText = 0;
     d->nClear = 0;
     d->nAttribute = 0;
+    d->nChildCapacity=0;
+    d->nTextCapacity=0;
+    d->nClearCapacity=0;
+    d->nAttributeCapacity=0;
+    d->nOrderCapacity=0;
 
     d->isDeclaration = isDeclaration;
 
@@ -655,22 +661,17 @@ XMLNode::XMLNode(XMLNodeData *pParent, LPCTSTR lpszName, int isDeclaration)
 
 const int memoryIncrease=50;
 
-static void *myRealloc(void *p, size_t newsize, size_t memInc, size_t sizeofElem)
+static void *myRealloc(void *p, size_t newsize, size_t memInc,
+                       size_t sizeofElem, size_t *capacity)
 {
-    if (!memInc || !sizeofElem) return NULL;
-    if (p==NULL) {
-        if (newsize>memInc) return NULL;
-        if (memInc>SIZE_MAX/sizeofElem) return NULL;
-        return malloc(memInc*sizeofElem);
-    }
-    if ((newsize%memInc)==0) {
-        if (newsize>SIZE_MAX-memInc) return NULL;
-        size_t count=newsize+memInc;
-        if (count>SIZE_MAX/sizeofElem) return NULL;
-        void *q=realloc(p,count*sizeofElem);
-        return q;
-    }
-    return p;
+    if (!memInc || !sizeofElem || !capacity) return NULL;
+    if (newsize<=*capacity) return p;
+    if (newsize>SIZE_MAX-(memInc-1)) return NULL;
+    size_t count=((newsize+memInc-1)/memInc)*memInc;
+    if (count>SIZE_MAX/sizeofElem) return NULL;
+    void *q=realloc(p,count*sizeofElem);
+    if (q) *capacity=count;
+    return q;
 }
 
 static bool elementCountSize(int nChild, int nText, int nClear,
@@ -693,7 +694,8 @@ bool XMLNode::addToOrder(int index, int type)
     size_t n;
     if (!elementCountSize(d->nChild,d->nText,d->nClear,d->nAttribute,&n) ||
         n==SIZE_MAX) return false;
-    int *q=(int*)myRealloc(d->pOrder,n+1,memoryIncrease*3,sizeof(int));
+    int *q=(int*)myRealloc(d->pOrder,n+1,memoryIncrease*3,sizeof(int),
+                           &d->nOrderCapacity);
     if (!q) return false;
     d->pOrder=q;
     d->pOrder[n]=index*4+type;
@@ -706,10 +708,12 @@ XMLNode XMLNode::addChild(LPCTSTR lpszName, int isDeclaration)
     if (!lpszName) return emptyXMLNode;
     if (!d) { free((void*)lpszName); return emptyXMLNode; }
     int nc=d->nChild;
-    XMLNode *qc=(XMLNode*)myRealloc(d->pChild,(size_t)nc+1,memoryIncrease,sizeof(XMLNode));
-    if (!qc) { free((void*)lpszName); return emptyXMLNode; }
-    d->pChild=qc;
-    d->pChild[nc].d=NULL;
+    if ((size_t)nc==d->nChildCapacity) {
+        if (nc>INT_MAX-memoryIncrease || !resizeChildren(d,nc+memoryIncrease)) {
+            free((void*)lpszName);
+            return emptyXMLNode;
+        }
+    }
     d->pChild[nc]=XMLNode(d,lpszName,isDeclaration);
     if (!d->pChild[nc].d) { free((void*)lpszName); return emptyXMLNode; }
     if (!addToOrder(nc,eNodeChild)) {
@@ -730,6 +734,25 @@ XMLNode XMLNode::addChildConst(LPCTSTR lpszName, int isDeclaration)
 	return addChild(lpszTemp,isDeclaration);
 }
 
+bool XMLNode::resizeChildren(XMLNodeData *d, int capacity)
+{
+    if (!d || capacity<d->nChild || capacity<0 ||
+        (size_t)capacity>SIZE_MAX/sizeof(XMLNode)) return false;
+    if ((size_t)capacity==d->nChildCapacity) return true;
+
+    XMLNode *pChild=NULL;
+    if (capacity) {
+        pChild=new(std::nothrow) XMLNode[(size_t)capacity];
+        if (!pChild) return false;
+        for (int i=0; i<d->nChild; i++) pChild[i]=d->pChild[i];
+    }
+
+    delete[] d->pChild;
+    d->pChild=pChild;
+    d->nChildCapacity=capacity;
+    return true;
+}
+
 XMLNode XMLNode::createXMLTopNode() { return XMLNode(NULL,NULL,0); }
 
 // Add an attribute to an element.
@@ -741,7 +764,9 @@ XMLAttribute *XMLNode::addAttribute(LPCTSTR lpszName, LPCTSTR lpszValuev)
         return &emptyXMLAttribute;
     }
     int na=d->nAttribute;
-    XMLAttribute *qa=(XMLAttribute*)myRealloc(d->pAttribute,(size_t)na+1,memoryIncrease,sizeof(XMLAttribute));
+    XMLAttribute *qa=(XMLAttribute*)myRealloc(d->pAttribute,(size_t)na+1,
+                                              memoryIncrease,sizeof(XMLAttribute),
+                                              &d->nAttributeCapacity);
     if (!qa) {
         free((void*)lpszName);
         if (lpszValuev) free((void*)lpszValuev);
@@ -782,7 +807,8 @@ LPCTSTR XMLNode::addText(LPCTSTR lpszValue)
     if (!lpszValue) return NULL;
     if (!d) { free((void*)lpszValue); return NULL; }
     int nt=d->nText;
-    LPCTSTR *qt=(LPCTSTR*)myRealloc(d->pText,(size_t)nt+1,memoryIncrease,sizeof(LPTSTR));
+    LPCTSTR *qt=(LPCTSTR*)myRealloc(d->pText,(size_t)nt+1,memoryIncrease,
+                                    sizeof(LPTSTR),&d->nTextCapacity);
     if (!qt) { free((void*)lpszValue); return NULL; }
     d->pText=qt;
     d->pText[nt]=lpszValue;
@@ -814,7 +840,8 @@ XMLClear *XMLNode::addClear(LPCTSTR lpszValue, LPCTSTR lpszOpen, LPCTSTR lpszClo
         return &emptyXMLClear;
     }
     int nc=d->nClear;
-    XMLClear *qcl=(XMLClear*)myRealloc(d->pClear,(size_t)nc+1,memoryIncrease,sizeof(XMLClear));
+    XMLClear *qcl=(XMLClear*)myRealloc(d->pClear,(size_t)nc+1,memoryIncrease,
+                                      sizeof(XMLClear),&d->nClearCapacity);
     if (!qcl) {
         free((void*)lpszValue);
         if (lpszOpen) free((void*)lpszOpen);
@@ -949,35 +976,34 @@ int XMLNode::ParseClearTag(void *px, void *pa)
     return FALSE;
 }
 
+template <typename T>
+static void shrinkMemory(T **p, size_t count, size_t *capacity)
+{
+    if (!p || !capacity || count==*capacity ||
+        count>SIZE_MAX/sizeof(T)) return;
+    if (!count) {
+        free(*p);
+        *p=NULL;
+        *capacity=0;
+        return;
+    }
+    T *q=(T*)realloc(*p,count*sizeof(T));
+    if (q) {
+        *p=q;
+        *capacity=count;
+    }
+}
+
 void XMLNode::exactMemory(XMLNodeData *d)
 {
     if (memoryIncrease==1) return;
     size_t nOrder;
-    if (elementCountSize(d->nChild,d->nText,d->nClear,d->nAttribute,&nOrder) &&
-        nOrder<=SIZE_MAX/sizeof(int)) {
-        int *pOrder=(int*)realloc(d->pOrder,nOrder*sizeof(int));
-        if (pOrder || !nOrder) d->pOrder=pOrder;
-    }
-    size_t nChild=(size_t)d->nChild;
-    if (nChild<=SIZE_MAX/sizeof(XMLNode)) {
-        XMLNode *pChild=(XMLNode*)realloc(d->pChild,nChild*sizeof(XMLNode));
-        if (pChild || !nChild) d->pChild=pChild;
-    }
-    size_t nAttribute=(size_t)d->nAttribute;
-    if (nAttribute<=SIZE_MAX/sizeof(XMLAttribute)) {
-        XMLAttribute *pAttribute=(XMLAttribute*)realloc(d->pAttribute,nAttribute*sizeof(XMLAttribute));
-        if (pAttribute || !nAttribute) d->pAttribute=pAttribute;
-    }
-    size_t nText=(size_t)d->nText;
-    if (nText<=SIZE_MAX/sizeof(LPTSTR)) {
-        LPCTSTR *pText=(LPCTSTR*)realloc(d->pText,nText*sizeof(LPTSTR));
-        if (pText || !nText) d->pText=pText;
-    }
-    size_t nClear=(size_t)d->nClear;
-    if (nClear<=SIZE_MAX/sizeof(XMLClear)) {
-        XMLClear *pClear=(XMLClear*)realloc(d->pClear,nClear*sizeof(XMLClear));
-        if (pClear || !nClear) d->pClear=pClear;
-    }
+    if (elementCountSize(d->nChild,d->nText,d->nClear,d->nAttribute,&nOrder))
+        shrinkMemory(&d->pOrder,nOrder,&d->nOrderCapacity);
+    resizeChildren(d,d->nChild);
+    shrinkMemory(&d->pAttribute,(size_t)d->nAttribute,&d->nAttributeCapacity);
+    shrinkMemory(&d->pText,(size_t)d->nText,&d->nTextCapacity);
+    shrinkMemory(&d->pClear,(size_t)d->nClear,&d->nClearCapacity);
 }
 
 // private:
@@ -1536,12 +1562,47 @@ XMLNode XMLNode::parseFile(const char *filename, LPCTSTR tag, XMLResults *pResul
         }
         return emptyXMLNode;
     }
-    fseek(f,0,SEEK_END);
-    int l=ftell(f);
-    fseek(f,0,SEEK_SET);
-    char *buf=(char*)malloc(l+1);
-    fread(buf,l,1,f);
+    if (fseek(f,0,SEEK_END)!=0) {
+        fclose(f);
+        if (pResults) {
+            pResults->error=eXMLErrorFileNotFound;
+            pResults->nLine=0;
+            pResults->nColumn=0;
+        }
+        return emptyXMLNode;
+    }
+    long fileSize=ftell(f);
+    if (fileSize<0 || fileSize>INT_MAX || fseek(f,0,SEEK_SET)!=0) {
+        fclose(f);
+        if (pResults) {
+            pResults->error=eXMLErrorFileNotFound;
+            pResults->nLine=0;
+            pResults->nColumn=0;
+        }
+        return emptyXMLNode;
+    }
+    int l=(int)fileSize;
+    char *buf=(char*)malloc((size_t)l+1);
+    if (!buf) {
+        fclose(f);
+        if (pResults) {
+            pResults->error=eXMLErrorNoMemory;
+            pResults->nLine=0;
+            pResults->nColumn=0;
+        }
+        return emptyXMLNode;
+    }
+    size_t bytesRead=fread(buf,1,(size_t)l,f);
     fclose(f);
+    if (bytesRead!=(size_t)l) {
+        free(buf);
+        if (pResults) {
+            pResults->error=eXMLErrorFileNotFound;
+            pResults->nLine=0;
+            pResults->nColumn=0;
+        }
+        return emptyXMLNode;
+    }
     buf[l]=0;
 #ifdef WIN32
 #ifdef _UNICODE
@@ -2001,12 +2062,16 @@ void XMLNode::destroyCurrentBuffer(XMLNodeData *d)
             XMLNode *pa=d->pParent->pChild;
             while (((void*)(pa[i].d))!=((void*)d)) i++;
             d->pParent->nChild--;
-            memmove(pa+i,pa+i+1,(d->pParent->nChild-i)*sizeof(XMLNode));
+            // Transfer ownership between the wrappers without changing the
+            // reference counts of the remaining children.
+            pa[i].d=NULL;
+            for (int j=i; j<d->pParent->nChild; j++) pa[j].d=pa[j+1].d;
+            pa[d->pParent->nChild].d=NULL;
             removeOrderElement(d->pParent,eNodeChild,i);
         }
 
-        for(i=0; i<d->nChild; i++) { d->pChild[i].d->pParent=NULL; destroyCurrentBuffer(d->pChild[i].d); }
-        free(d->pChild);
+        for(i=0; i<d->nChild; i++) d->pChild[i].d->pParent=NULL;
+        delete[] d->pChild;
         for(i=0; i<d->nText; i++) free((void*)d->pText[i]);
         free(d->pText);
         for(i=0; i<d->nClear; i++) {
