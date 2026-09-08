@@ -192,11 +192,8 @@ bool CCU2CommControllerMod::isDeviceOpen() const {
 bool CCU2CommControllerMod::sendSystemCommand(const SystemCommand systemCommand, const std::string& cmdData, std::string* pResponseValue) {
 	bool returnCode = false;
 	//Create coprocessor command
-	switch(systemCommand)
-	{
-	case SYSTEMCMD_STARTBOOTLOADER:
+	if(systemCommand == SYSTEMCMD_STARTBOOTLOADER) {
 		LOG(Logger::LOG_DEBUG,"CCU2CommControllerMod::sendSystemCommand(): Start Application / Bootloader");
-		break;
 	}
 	CCU2CoprocessorCommandMod copCmd(systemCommand, cmdData);
 	checkedLock(&mutexSystemCommandRequest);
