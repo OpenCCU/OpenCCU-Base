@@ -4,7 +4,7 @@
  * for portability. It works by using recursion and a node tree for breaking
  * down the elements of an XML document.  </P>
  *
- * @version     V1.13
+ * @version     V1.14
  *
  * @author      Frank Vanden Berghen
  * based on original implementation by Martyn C Brown
@@ -148,6 +148,11 @@ typedef struct XMLPARSER_DLLEXPORT XMLNode
                                nClear,          // Num of Clear fields (comments)
                                nAttribute,      // Num of attributes
                                isDeclaration;   // Whether node is an XML declaration - '<?xml ?>'
+        size_t                 nChildCapacity,  // Allocated entries in pChild
+                               nTextCapacity,   // Allocated entries in pText
+                               nClearCapacity,  // Allocated entries in pClear
+                               nAttributeCapacity, // Allocated entries in pAttribute
+                               nOrderCapacity;  // Allocated entries in pOrder
         struct XMLNodeDataTag  *pParent;        // Pointer to parent element (=NULL if root)
         XMLNode                *pChild;         // Array of child nodes
         LPCTSTR                *pText;          // Array of text fields
@@ -250,6 +255,7 @@ private:
     static void *enumContent(XMLNodeData *pEntry,int i, XMLElementType *nodeType);
     static int nElement(XMLNodeData *pEntry);
     static void removeOrderElement(XMLNodeData *d, XMLElementType t, int index);
+    static bool resizeChildren(XMLNodeData *d, int capacity);
     static void exactMemory(XMLNodeData *d);
 } XMLNode;
 
