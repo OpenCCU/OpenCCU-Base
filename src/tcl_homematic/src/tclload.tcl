@@ -1,11 +1,11 @@
 namespace eval ::HomeMatic {
 	namespace export Addon Script Session Util GetSerialNumber
 	
-	if { ![info exists rega_script] } then {
+	if { ![llength [info commands ::rega_script]] } then {
 		load tclrega.so
 	}
 	
-	if { ![info exists xmlrpc] } then  {
+	if { ![llength [info commands ::xmlrpc]] } then  {
 		load tclrpc.so
 	}
 }
