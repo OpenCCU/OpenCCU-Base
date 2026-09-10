@@ -14,7 +14,7 @@ add_executable(hss_led
   hss_led_util.cpp
 )
 target_compile_features(hss_led PRIVATE cxx_std_11)
-target_compile_definitions(hss_led PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64)
+target_compile_definitions(hss_led PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64 PLATFORM_CCU3)
 target_compile_options(hss_led PRIVATE -Wall)
 target_include_directories(hss_led PRIVATE
   "${CMAKE_SOURCE_DIR}/src/libelvutils"
