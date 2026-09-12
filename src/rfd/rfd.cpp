@@ -35,6 +35,7 @@ char buffer[128];
 #include "BidcosLanInterface.h"
 #include "RFManager.h"
 #include "RFLoggingManager.h"
+#include "TrafficLogger.h"
 #include <TimerTarget.h>
 #include <SyslogLogger.h>
 #include <ConsoleLogger.h>
@@ -108,6 +109,8 @@ static const char* CONFIG_DEFAULTS[] = {
     "Log Level",            "3",
     "Log Identifier",       "bidcos",
     "Persist Keys",         "0",
+    "Traffic Log",          "0",
+    "Traffic Log Directory","/var/log",
 #ifdef WIN32
     "Log Destination",      "None",
 #else
@@ -322,6 +325,12 @@ int main(int argc, char* argv[])
 #endif
 
     LOG(Logger::LOG_INFO, "BidCoS-Service started");
+
+    //Traffic-Logging fuer Funk-LAN-Gateways (Format wie beim multimacd-TrafficLogger,
+    //aber eigene Tagesdatei rfd-traffic-YYYY-MM-DD.log und nur nicht-lokale Interfaces)
+    TrafficLogger::Instance().Configure(
+        config_data.GetIntValue("Traffic Log", 0) != 0,
+        config_data.GetStringValue("Traffic Log Directory", "/var/log"));
 
 #ifdef XMLRPC_DEBUG
 	if( logger->GetLevel() <= logger->LOG_DEBUG )
