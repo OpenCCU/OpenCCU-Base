@@ -59,10 +59,29 @@ proc hmscript_runFromFile { filename {p_args -}} {
 
 proc hmscript_escapeString { str } {
   return [string map {
+    "\\" "\\\\"
     "\'" "\\\'"
     "\"" "\\\""
     "\n" "\\n"
     "\r" "\\r"
     "\t" "\\t"
   } $str]
+}
+
+proc hmscript_assertFloat { value } {
+  if { ![string is double -strict $value] } then {
+    error "Value '$value' is not a valid float"
+  }
+}
+
+proc hmscript_assertInteger { value } {
+  if { ![string is integer -strict $value] } then {
+    error "Value '$value' is not a valid integer"
+  }
+}
+
+proc hmscript_assertBoolean { value } {
+  if { ![string is boolean -strict $value] } then {
+    error "Value '$value' is not a valid boolean"
+  }
 }
