@@ -13,6 +13,7 @@ trap 'rm -rf "$temporary"' EXIT
 "$stripper" "$fixtures/input.xml" -o "$temporary/output.xml"
 head -c -1 "$fixtures/expected.xml" > "$temporary/expected.xml"
 cmp "$temporary/expected.xml" "$temporary/output.xml"
+[[ $(stat -c %a "$temporary/output.xml") == 644 ]]
 
 "$stripper" "$fixtures/input.xml" -ccu2 -o "$temporary/ccu2.xml"
 head -c -1 "$fixtures/expected-ccu2.xml" > "$temporary/expected-ccu2.xml"

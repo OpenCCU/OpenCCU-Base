@@ -406,5 +406,6 @@ END {
   echo "${0##*/}: generated empty output" >&2
   exit 1
 }
+chmod 0644 "$temporary"
 mv -f -- "$temporary" "$output"
 trap - EXIT
