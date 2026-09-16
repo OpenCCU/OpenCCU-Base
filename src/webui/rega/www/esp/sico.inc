@@ -32,20 +32,13 @@
     boolean bOK = false;
 
     string sVLValue = "";
-    
-    string oCCName = "";
-    string oLVName = "";
 
     if( iLVT == ivtObjectId )
     {
       bOK = ( oCC && oLV );
       if( bOK )
       {
-        oCCName = oCC.Name();
-        oCCName = oCCName.Replace("&", "&amp;");
-        oCCName = oCCName.Replace("<", "&lt;");
-        oCCName = oCCName.Replace(">", "&gt;");
-        Write( ' <b class="CLASS02201" onclick="ShowChannelChooser2('#oSC.ID()#');">'#oCCName#'</b>' );
+        Write( ' <b class="CLASS02201" onclick="ShowChannelChooser2('#oSC.ID()#');">'#oCC.Name()#'</b>' );
       }
       else
       {
@@ -58,11 +51,7 @@
       if( oLV ) { bOK = true; }
       if( bOK )
       {
-        oLVName = oLV.Name();
-        oLVName = oLVName.Replace("&", "&amp;");
-        oLVName = oLVName.Replace("<", "&lt;");
-        oLVName = oLVName.Replace(">", "&gt;");
-        Write( ' <b class="CLASS02201" onclick="ShowSysVarChooser('#oSC.ID()#');">'#oLVName#'</b>' );
+        Write( ' <b class="CLASS02201" onclick="ShowSysVarChooser('#oSC.ID()#');">'#oLV.Name()#'</b>' );
       }
       else
       {
@@ -147,9 +136,6 @@
                         }
                       }
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                      sValue = sValue.Replace("&", "&amp;");
-                      sValue = sValue.Replace("<", "&lt;");
-                      sValue = sValue.Replace(">", "&gt;");
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -182,9 +168,6 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                    sValue = sValue.Replace("&", "&amp;");
-                    sValue = sValue.Replace("<", "&lt;");
-                    sValue = sValue.Replace(">", "&gt;");
                     Write( sValue );
 
                     Write( '</option>' );
@@ -212,9 +195,6 @@
                       }
 
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                      sValue = sValue.Replace("&", "&amp;");
-                      sValue = sValue.Replace("<", "&lt;");
-                      sValue = sValue.Replace(">", "&gt;");
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -244,9 +224,6 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                    sValue = sValue.Replace("&", "&amp;");
-                    sValue = sValue.Replace("<", "&lt;");
-                    sValue = sValue.Replace(">", "&gt;");
                     Write( sValue );
                     Write( '</option>' );
                   }
@@ -272,9 +249,6 @@
                   }
                 }
                 Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                sValue = sValue.Replace("&", "&amp;");
-                sValue = sValue.Replace("<", "&lt;");
-                sValue = sValue.Replace(">", "&gt;");
                 Write( sValue );
                 Write( '</option>' );
               }
@@ -299,9 +273,6 @@
             sVLValue = web.webGetValueFromList( oLV.ValueList(), sVLKey );
             if( iRV1 == sVLKey ) { sSelected = " selected"; } else { sSelected = ""; }
             Write( '<option value="'#oLV.ID()#':'#sVLKey#'"'#sSelected#'>' );
-            sVLValue = sVLValue.Replace("&", "&amp;");
-            sVLValue = sVLValue.Replace("<", "&lt;");
-            sVLValue = sVLValue.Replace(">", "&gt;");
             Write( sVLValue );
             Write( '</option>' );
           }
@@ -310,19 +281,11 @@
         {
           if( iRV1 == 0 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':0"'#sSelected#'>' );
-          string sValueName0 = oLV.ValueName0();
-          sValueName0 = sValueName0.Replace("&", "&amp;");
-          sValueName0 = sValueName0.Replace("<", "&lt;");
-          sValueName0 = sValueName0.Replace(">", "&gt;");
-          Write( sValueName0 );
+          Write( oLV.ValueName0() );
           Write( '</option>' );
           if( iRV1 == 1 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':1"'#sSelected#'>' );
-          string sValueName1 = oLV.ValueName1();
-          sValueName1 = sValueName1.Replace("&", "&amp;");
-          sValueName1 = sValueName1.Replace("<", "&lt;");
-          sValueName1 = sValueName1.Replace(">", "&gt;");
-          Write( sValueName1 );
+          Write( oLV.ValueName1() );
           Write( '</option>' );
         }
       }

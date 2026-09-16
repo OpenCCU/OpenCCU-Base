@@ -46,11 +46,7 @@ function ::WriteConditionText()
                   bOK = ( oCC && oLV );
                   if( bOK )
                   {
-                    string sCCName = oCC.Name();
-                    sCCName = sCCName.Replace("&", "&amp;");
-                    sCCName = sCCName.Replace("<", "&lt;");
-                    sCCName = sCCName.Replace(">", "&gt;");
-                    sRet = sRet#" "#sCCName;
+                    sRet = sRet#" "#oCC.Name();
                   }
                   else
                   {
@@ -62,11 +58,7 @@ function ::WriteConditionText()
                   if( oLV ) { bOK = true; }
                   if( bOK )
                   {
-                    string sLVName = oLV.Name();
-                    sLVName = sLVName.Replace("&", "&amp;");
-                    sLVName = sLVName.Replace("<", "&lt;");
-                    sLVName = sLVName.Replace(">", "&gt;");
-                    sRet = sRet#" "#sLVName;
+                    sRet = sRet#" "#oLV.Name();
                   }
                   else
                   {
@@ -91,19 +83,11 @@ function ::WriteConditionText()
                     {
                       if( iRV1 == 0 )
                       {
-                        string sVN0 = oLV.ValueName0();
-                        sVN0 = sVN0.Replace("&", "&amp;");
-                        sVN0 = sVN0.Replace("<", "&lt;");
-                        sVN0 = sVN0.Replace(">", "&gt;");
-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN0#', ';
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName0()#', ';
                       }
                       if( iRV1 == 1 )
                       {
-                        string sVN1 = oLV.ValueName1();
-                        sVN1 = sVN1.Replace("&", "&amp;");
-                        sVN1 = sVN1.Replace("<", "&lt;");
-                        sVN1 = sVN1.Replace(">", "&gt;");
-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN1#', ';
+                        sRet = sRet#', ${ruleConditionLblWhen} '#oLV.ValueName1()#', ';
                       }
                     }
                   }
@@ -162,9 +146,6 @@ function ::WriteConditionText()
                                       }
                                     }
                                     !Write( "<script>conInfo('- ist Integer und Enum -- sDP:"#sDP#" "#sVLKey#" "#iRV1#"');</script>" );
-                                    sValue = sValue.Replace("&", "&amp;");
-                                    sValue = sValue.Replace("<", "&lt;");
-                                    sValue = sValue.Replace(">", "&gt;");
                                     sRet = sRet#' '#sValue;
                                   }
                                 }
@@ -192,9 +173,6 @@ function ::WriteConditionText()
                                     }
                                   }
                                   Call("/esp/functions.fn::getSpecialBinaryTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
                                   sRet = sRet#' '#sValue;
                                 }
                                 if( (oDP.ID() == iLV) && (iRV1 == false) ) 
@@ -215,9 +193,6 @@ function ::WriteConditionText()
                                     }
                                   }
                                   Call("/esp/functions.fn::getSpecialBinaryTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
                                   sRet = sRet#' '#sValue;
                                 }
                                 !Write( "<script>conInfo('- ist binär und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
@@ -246,9 +221,6 @@ function ::WriteConditionText()
                                   }
                                   !Write( "<script>conInfo('- ist was anderes -- sDP:"#sDP#" Typ:"#iRV1T#" ');</script>" );
                                   Call("/esp/functions.fn::getSpecialIntegerTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
                                   sRet = sRet#' '#sValue;
                                 }
                               }
@@ -298,9 +270,6 @@ function ::WriteConditionText()
 
                     string sCT = "";
                     string sValueUnit = oLV.ValueUnit();
-                    sValueUnit = sValueUnit.Replace("&", "&amp;");
-                    sValueUnit = sValueUnit.Replace("<", "&lt;");
-                    sValueUnit = sValueUnit.Replace(">", "&gt;");
                     if( sValueUnit == "100%")
                     {
                       sValueUnit = "%";
@@ -378,9 +347,6 @@ function ::WriteConditionText()
                   foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
                   {
                     string sVLValue = web.webGetValueFromList( oLV.ValueList(), sVLKey );
-                    sVLValue = sVLValue.Replace("&", "&amp;");
-                    sVLValue = sVLValue.Replace("<", "&lt;");
-                    sVLValue = sVLValue.Replace(">", "&gt;");
                     sRet = sRet#' '#sVLValue;
                   }
                 }
@@ -472,11 +438,7 @@ function ::WriteDestinationText()
                 object oCH = dom.GetObject( iCH );
                 if( oCH )
                 {
-                  string sDestCHName = oCH.Name();
-                  sDestCHName = sDestCHName.Replace("&", "&amp;");
-                  sDestCHName = sDestCHName.Replace("<", "&lt;");
-                  sDestCHName = sDestCHName.Replace(">", "&gt;");
-                  sRet = sRet#sDestCHName;
+                  sRet = sRet#oCH.Name();
                 }
               }
               if( iP == ivtSystemId )
@@ -484,11 +446,7 @@ function ::WriteDestinationText()
                 object oDP = dom.GetObject( iDP );
                 if( oDP )
                 {
-                  string sDestDPName = oDP.Name();
-                  sDestDPName = sDestDPName.Replace("&", "&amp;");
-                  sDestDPName = sDestDPName.Replace("<", "&lt;");
-                  sDestDPName = sDestDPName.Replace(">", "&gt;");
-                  sRet = sRet#sDestDPName;
+                  sRet = sRet#oDP.Name();
                 }
               }
             }
@@ -582,15 +540,12 @@ function ::WriteDestinationText()
                           if( sValue.Length() == 0 )
                           {
                             sKey = hssid#"=TRUE";
-                            sValue = web.webKeyFromStringTable(sKey);
+                            string sValue = web.webKeyFromStringTable(sKey);
                             if( !sValue.Length() )
                             {
                               sValue = sKey;
                             }
                           }
-                          sValue = sValue.Replace("&", "&amp;");
-                          sValue = sValue.Replace("<", "&lt;"); 
-                          sValue = sValue.Replace(">", "&gt;"); 
                           sRet = sRet#sValue;
                         }
                       }
@@ -623,28 +578,16 @@ function ::WriteDestinationText()
                           object otmpCH = dom.GetObject( otmpDP.Channel() );
                           if( otmpCH )
                           {
-                            string sOtmpName = otmpCH.Name();
-                            sOtmpName = sOtmpName.Replace("&", "&amp;");
-                            sOtmpName = sOtmpName.Replace("<", "&lt;");
-                            sOtmpName = sOtmpName.Replace(">", "&gt;");
-                            sRet=sRet#" "#sOtmpName;
+                            sRet=sRet#" "#otmpCH.Name();
                           }
                           else
                           {
-                            string sOtmpName = otmpDP.Name();
-                            sOtmpName = sOtmpName.Replace("&", "&amp;");
-                            sOtmpName = sOtmpName.Replace("<", "&lt;");
-                            sOtmpName = sOtmpName.Replace(">", "&gt;");
-                            sRet=sRet#" "#sOtmpName;
+                            sRet=sRet#" "#otmpDP.Name();
                           }
                         }
                         if( iVT == ivtSystemId )
                         {
-                          string sOtmpName = otmpDP.Name();
-                          sOtmpName = sOtmpName.Replace("&", "&amp;");
-                          sOtmpName = sOtmpName.Replace("<", "&lt;");
-                          sOtmpName = sOtmpName.Replace(">", "&gt;");
-                          sRet=sRet#" "#sOtmpName;
+                          sRet=sRet#" "#otmpDP.Name();
                         }
                       }
                     }
@@ -726,46 +669,26 @@ function ::WriteDestinationText()
                     {
                       if( iV == 0 )
                       {
-                        string sDestValName = oDP.ValueName0();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
-                        sRet=sRet#" "#sDestValName;
+                        sRet=sRet#" "#oDP.ValueName0();
                       }
                       else
                       {
-                        string sDestValName = oDP.ValueName1();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
-                        sRet=sRet#" "#sDestValName;
+                        sRet=sRet#" "#oDP.ValueName1();
                       }
                     }
                     if( oDP.ValueSubType() == istEnum )
                     {
-                      string sEnumValName = web.webGetValueFromList(oDP.ValueList(), iV);
-                      sEnumValName = sEnumValName.Replace("&", "&amp;");
-                      sEnumValName = sEnumValName.Replace("<", "&lt;");
-                      sEnumValName = sEnumValName.Replace(">", "&gt;");
-                      sRet = sRet # " " # sEnumValName;
+                      sRet=sRet#" "#web.webGetValueFromList(oDP.ValueList(),iV);
                     }
                     if( oDP.ValueSubType() == istAlarm )
                     {
                       if( iV == 0 )
                       {
-                        string sDestValName = oDP.ValueName0();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
-                        sRet=sRet#" "#sDestValName;
+                        sRet=sRet#" "#oDP.ValueName0();
                       }
                       else
                       {
-                        string sDestValName = oDP.ValueName1();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
-                        sRet=sRet#" "#sDestValName;
+                        sRet=sRet#" "#oDP.ValueName1();
                       }
                     }
                     if( oDP.ValueSubType() == istGeneric )

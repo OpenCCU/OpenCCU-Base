@@ -1,6 +1,6 @@
 ##
 # hmscript.tcl
-# Ausführen von HomeMatic Script.
+# AusfÃ¼hren von HomeMatic Script.
 #
 # Autor: Falk Werner
 ##
@@ -24,7 +24,7 @@ proc hmscript {script {p_args -}} {
 }
 
 ##
-# Führt ein HomeMatic Script aus und liefert das Ergebnis
+# FÃ¼hrt ein HomeMatic Script aus und liefert das Ergebnis
 ##
 proc hmscript_run { p_script } {
   upvar $p_script script
@@ -84,4 +84,12 @@ proc hmscript_assertBoolean { value } {
   if { ![string is boolean -strict $value] } then {
     error "Value '$value' is not a valid boolean"
   }
+
+# Strips characters not matched by sanitizeIdentifiers regex and fixes an invalid leading character.
+proc hmscript_sanitizeIdentifier { name } {
+  set replacements [regsub -all {[^A-Za-z0-9_]} $name {} newname ]
+  if { ![regexp {^[A-Za-z_]} $newname] } then {
+    set newname "_$newname"
+  }
+  return [string range $newname 0 63]
 }
