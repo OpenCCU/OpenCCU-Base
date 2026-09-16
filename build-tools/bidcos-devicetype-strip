@@ -68,10 +68,24 @@ function append_text(text)
   if (stack_depth == 0 && text ~ /[^[:space:]]/)
     error("text outside the document element")
   if (docu_depth == 0 && text ~ /[^[:space:]]/)
-    result = result decoded_entities(text)
+    result = result decoded_entities(text, 0)
 }
 
-function validate_entities(text,    entity, remainder, semicolon)
+function entity_number(entity)
+{
+  if (entity ~ /^&#[xX]/)
+    return hexadecimal(substr(entity, 4, length(entity) - 4))
+  return substr(entity, 3, length(entity) - 3) + 0
+}
+
+function validate_codepoint(number)
+{
+  if (number != 9 && number != 10 && number != 13 &&
+      (number < 32 || number > 255))
+    error("numeric entity is outside the supported ISO-8859-1 XML range")
+}
+
+function validate_entities(text,    entity, number, remainder, semicolon)
 {
   remainder = text
   while (match(remainder, /&/)) {
@@ -82,6 +96,10 @@ function validate_entities(text,    entity, remainder, semicolon)
     entity = substr(remainder, 1, semicolon)
     if (entity !~ /^&(amp|lt|gt|quot|apos|#[[:digit:]]+|#[xX][[:xdigit:]]+);$/)
       error("invalid entity reference " entity)
+    if (entity ~ /^&#/) {
+      number = entity_number(entity)
+      validate_codepoint(number)
+    }
     remainder = substr(remainder, semicolon + 1)
   }
 }
@@ -99,21 +117,29 @@ function hexadecimal(value,    digit, i, number)
   return number
 }
 
-function decoded_entities(text,    entity, number, prefix, suffix)
+function encoded_codepoint(number, attribute)
 {
-  while (match(text, /&#[[:digit:]]+;/)) {
+  if (number == 34 && attribute)
+    return "&quot;"
+  if (number == 38)
+    return "&amp;"
+  if (number == 60)
+    return "&lt;"
+  if (number == 62)
+    return "&gt;"
+  return sprintf("%c", number)
+}
+
+function decoded_entities(text, attribute,
+                          entity, number, prefix, suffix)
+{
+  while (match(text, /&#([[:digit:]]+|[xX][[:xdigit:]]+);/)) {
     entity = substr(text, RSTART, RLENGTH)
-    number = substr(entity, 3, length(entity) - 3) + 0
+    number = entity_number(entity)
+    validate_codepoint(number)
     prefix = substr(text, 1, RSTART - 1)
     suffix = substr(text, RSTART + RLENGTH)
-    text = prefix sprintf("%c", number) suffix
-  }
-  while (match(text, /&#[xX][[:xdigit:]]+;/)) {
-    entity = substr(text, RSTART, RLENGTH)
-    number = hexadecimal(substr(entity, 4, length(entity) - 4))
-    prefix = substr(text, 1, RSTART - 1)
-    suffix = substr(text, RSTART + RLENGTH)
-    text = prefix sprintf("%c", number) suffix
+    text = prefix encoded_codepoint(number, attribute) suffix
   }
   return text
 }
@@ -156,7 +182,7 @@ function normalized_tag(tag,    c, i, quote, space, normalized)
     }
   }
 
-  normalized = decoded_entities(normalized)
+  normalized = decoded_entities(normalized, 1)
   if (ccu2 && normalized !~ /^<[[:space:]]*\//)
     gsub(/[[:space:]]+paired[[:space:]]*=[[:space:]]*"[^"]*"/, "", normalized)
   return normalized
