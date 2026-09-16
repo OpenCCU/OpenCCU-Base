@@ -1,6 +1,6 @@
 ##
 # hmscript.tcl
-# AusfÃ¼hren von HomeMatic Script.
+# Ausführen von HomeMatic Script.
 #
 # Autor: Falk Werner
 ##
@@ -14,7 +14,8 @@ proc hmscript {script {p_args -}} {
     upvar $p_args args
     
     foreach name [array names args] {
-      append _script_ "var $name = \"[hmscript_escapeString $args($name)]\";\n"
+      set varname [hmscript_sanitizeIdentifier $name]
+      append _script_ "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
     }
   }
   
@@ -49,7 +50,8 @@ proc hmscript_runFromFile { filename {p_args -}} {
 		upvar $p_args args
     
 		foreach name [array names args] {
-			append script "var $name = \"[hmscript_escapeString $args($name)]\";\n"
+			set varname [hmscript_sanitizeIdentifier $name]
+			append script "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
 		}
 	}
   append script [file_load $filename]
@@ -84,6 +86,7 @@ proc hmscript_assertBoolean { value } {
   if { ![string is boolean -strict $value] } then {
     error "Value '$value' is not a valid boolean"
   }
+}
 
 # Strips characters not matched by sanitizeIdentifiers regex and fixes an invalid leading character.
 proc hmscript_sanitizeIdentifier { name } {
