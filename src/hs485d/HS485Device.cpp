@@ -464,8 +464,8 @@ bool HS485Device::SaveToXml(XMLNode* node)
 	node->addAttributeConst("type", GetType().c_str());
 	std::string s;
 	*buffer=0;
-	for(unsigned int i=0;(i < sysinfo.size()) && ((i+3) < sizeof(buffer));i++){
-		sprintf(buffer+2*i, "%02X", (int)sysinfo[i]);
+	for(unsigned int i=0;(i < sysinfo.size()) && ((2*i+2) < sizeof(buffer));i++){
+		sprintf(buffer+2*i, "%02X", (unsigned char)sysinfo[i]);
 	}
 	if(*buffer)node->addAttributeConst("sysinfo", buffer);
 	snprintf(buffer, sizeof(buffer), "0x%08" PRIX32, GetAddress());
@@ -679,9 +679,9 @@ bool HS485Device::GetLinks(int flags, link_map_t* result)
 void HS485Device::SetSysinfo(const std::string& si)
 {
 	sysinfo=si;
-	if(si.size()<3)return;
+	if(si.size()<4)return;
 	char buffer[16];
-	snprintf(buffer, sizeof(buffer), "%d.%02d", si[2], si[3]);
+	snprintf(buffer, sizeof(buffer), "%d.%02d", (unsigned char)si[2], (unsigned char)si[3]);
 	firmware_version=buffer;
 }
 
@@ -690,7 +690,7 @@ const std::string& HS485Device::GetAvailableFirmware()
 	if(available_firmware.size())return available_firmware;
 	if(sysinfo.size()>=2){
 		char buffer[16];
-		snprintf(buffer, sizeof(buffer), "H%dV%d", sysinfo[0], sysinfo[1]);
+		snprintf(buffer, sizeof(buffer), "H%dV%d", (unsigned char)sysinfo[0], (unsigned char)sysinfo[1]);
 		available_firmware=HS485Manager::GetSingleton()->GetFirmwareManager()->GetFirmwareVersion(buffer);
 	}
 	return available_firmware;
@@ -824,7 +824,7 @@ bool HS485Device::UpdateFirmware()
 	if(sysinfo.size()<2)return false;
 
 	char buffer[16];
-	snprintf(buffer, sizeof(buffer), "H%dV%d", sysinfo[0], sysinfo[1]);
+	snprintf(buffer, sizeof(buffer), "H%dV%d", (unsigned char)sysinfo[0], (unsigned char)sysinfo[1]);
 	Hexfile* firmware=HS485Manager::GetSingleton()->GetFirmwareManager()->GetFirmware(buffer);
 
 	if( !firmware )

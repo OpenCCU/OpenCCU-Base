@@ -74,7 +74,7 @@ int ReadDefaultRFAddress::execute() {
 		cout << "Initalizing coprocessor..." << endl;
 	}
 	CCU2SerialPortCommControllerMod* commController = new CCU2SerialPortCommControllerMod();
-	bool connected = commController->init(devPath);
+	commController->init(devPath);
 	if(verbose) {
 		cout << "Requesting default rf address" << endl;
 	}

@@ -293,7 +293,7 @@ std::string SetLGWKey::calculateMD5(const std::string& s)
 	memcpy(buffer, s.c_str(), s.length());
 	md5_calculator.Update(buffer, s.length());
 	md5_calculator.Finalize();
-	delete buffer;
+	delete[] buffer;
 	std::string digest;
 	digest.append((const char*) md5_calculator.Digest(), std::string::size_type(16));
 	return digest;

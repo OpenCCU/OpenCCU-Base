@@ -81,6 +81,8 @@ public:
 
 private:
 
+	friend class CCU2LGWCommController;
+
 	/** \brief UnifiedLanCommController handles connection initialization.*/
 	ulc::UnifiedLanCommController* pCommController;
 
@@ -96,6 +98,7 @@ private:
 	unsigned int port;
 	/*Encryption key*/
 	std::string encKey;
+	std::string configuredSerial;
 	
 	/** \brief Serial number of Gateway.
 	* \details Set on first successful connect.
@@ -116,6 +119,9 @@ private:
 	pthread_mutex_t mutexULCCommController;
 	pthread_mutex_t mutexReconnect;
 	pthread_mutex_t mutexBlockRXTX;
+	pthread_cond_t conditionRXTXIdle;
+	pthread_cond_t conditionReconnectIdle;
+	size_t activeRXTXOperations;
 
 	volatile uint64_t timestampLastBidcosCommunication;
 	
@@ -126,6 +132,11 @@ private:
 
 	/** \brief Tells if asynchronous reconnect is in progress */
 	volatile bool reconnectPending;
+	/** \brief Tells if a reconnect was requested while connect was in progress */
+	bool reconnectDeferred;
+	/** \brief Tells if a connect operation is in progress */
+	bool connectPending;
+	bool shutdownRequested;
 
 	/** \brief Blocks communication over send/receive methods if true while reconnecting*/
 	volatile bool blockRXTX;
@@ -150,6 +161,19 @@ private:
 
 	/** Performs asynchronous reconnect. */
 	void asyncReconnect();
+	/** Performs reconnect after the caller has optionally reserved reconnectPending. */
+	void reconnectImpl(bool reconnectAlreadyPending);
+
+	/** Blocks new RX/TX operations and waits for active operations to finish. */
+	void blockRXTXAndWait();
+
+	/** Stops asynchronous work before the owning controller is destroyed. */
+	void shutdown();
+
+	bool isShutdownRequested();
+	bool waitForReconnectRetry(unsigned int seconds);
+	void finishConnect();
+	void finishReconnect();
 	
 	void writeLGWStatusToFile(const std::string& serial, const std::string& statusText);
 

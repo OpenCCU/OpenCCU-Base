@@ -10,7 +10,7 @@ all: build
 build: $(PLATFORMS:%=build-%)
 
 build-%:
-	$(CMAKE) --preset $* -DDEPLOY_TO_REPO=OFF
+	$(CMAKE) --preset $* -DDEPLOY_TO_REPO=OFF -DBUILD_TCL_MODULES=ON -DHAS_USB_SUPPORT=ON -DBUILD_WEBUI_AND_DEVICETYPES=ON
 	$(CMAKE) --build --preset $* --target $(BUILD_TARGET)
 
 install: $(PLATFORMS:%=install-%)

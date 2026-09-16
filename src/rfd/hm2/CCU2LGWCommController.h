@@ -29,6 +29,9 @@ public:
 	 */
 	bool reinitCoprocessor();
 
+protected:
+	virtual void handleCoprocessorRecoveryFailure();
+
 private:
 	std::string calculateMD5(const std::string& s);
 

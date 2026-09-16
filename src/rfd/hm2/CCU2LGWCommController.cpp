@@ -32,6 +32,9 @@ CCU2LGWCommController::CCU2LGWCommController(CCU2BidcosRemoteInterface* bidcosRe
 
 CCU2LGWCommController::~CCU2LGWCommController()
 {
+	if(pPortWrapper != NULL) {
+		((LGWPortWrapper*)pPortWrapper)->shutdown();
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -41,12 +44,14 @@ bool CCU2LGWCommController::init(const std::string host, const int port, const s
 	interfaceSerial = desiredSerial;
 	//create serial.connstat file for central.
 #ifndef WIN32
-	std::string statfilepath("/var/status/");
-	statfilepath.append(desiredSerial);
-	statfilepath.append(".connstat");  
-	FILE* f = fopen(statfilepath.c_str(), "w");
-	if(f) {
-		fclose(f);
+	if(!desiredSerial.empty()) {
+		std::string statfilepath("/var/status/");
+		statfilepath.append(desiredSerial);
+		statfilepath.append(".connstat");
+		FILE* f = fopen(statfilepath.c_str(), "w");
+		if(f) {
+			fclose(f);
+		}
 	}
 #endif	
 	
@@ -123,15 +128,25 @@ bool HM2::CCU2LGWCommController::setRFLGWInfoLED(const unsigned int state)
 
 //-----------------------------------------------------------------------------------------------------
 
+void CCU2LGWCommController::handleCoprocessorRecoveryFailure()
+{
+	LGWPortWrapper* pLGWPortWrapper = dynamic_cast<LGWPortWrapper*>(pPortWrapper);
+	if(pLGWPortWrapper == NULL) {
+		CCU2CommController::handleCoprocessorRecoveryFailure();
+		return;
+	}
+	LOG(Logger::LOG_ERROR, "(%s) CCU2LGWCommController::handleCoprocessorRecoveryFailure(): Scheduling LAN gateway reconnect.", interfaceSerial.c_str());
+	pLGWPortWrapper->asyncReconnect();
+}
+
 bool HM2::CCU2LGWCommController::reinitCoprocessor()
 {
+	pthread_mutex_lock(&mutexBidcosTelegramRequest);
 	interfaceState = IFSTATE_REINIT;
+	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	bool done = improvedInit();
 	if(done) {
 		done = restoreConfigToCoprocessor();
-		if(done) {
-			interfaceState = IFSTATE_ACTIVE;
-		}
 	}
 	return done;
 	/*initCoprocessor();

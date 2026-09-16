@@ -44,12 +44,12 @@ LGWPortWrapperMod::LGWPortWrapperMod(CCU2CommControllerMod* pCCU2CommController)
 , port(0)
 , keepAliveThread(0)
 , keepAliveThreadActive(true)
-, pCCU2CommController(pCCU2CommController)
 , infoLEDState(LED_OFF)
 , timestampLastSentMessage(0)
 , bidcosChannelKeepAliveThread(0)
 , forceReconnect(false)
 , reconnectPending(false)
+, pCCU2CommController(pCCU2CommController)
 {
 	pthread_mutex_init(&mutexULCCommController, NULL);
 	pthread_mutex_init(&mutexReconnect, NULL);
@@ -361,6 +361,8 @@ void* LGWPortWrapperMod::keepAliveThreadFunction(void* param)
 					msgData.append(counterHexStr);
 					msgData.append(",02,");//Info LED
 					switch(pThis->infoLEDState) {
+						case LED_UNDEFINED:
+							// Handle LED_UNDEFINED like LED_OFF.
 						case LED_OFF:
 							//LOG(Logger::LOG_DEBUG, "Switching RF-LGW LED OFF");
 							msgData.append("00FF,00");

@@ -179,8 +179,9 @@ public:
 
 	/** \brief Sets coprocessor time by system time.
 	* \details Used to set initial time on initialization and re-initialization.
+	* \return True on success, otherwise false.
 	*/
-	void SetInterfaceClockBySystemTime();
+	bool SetInterfaceClockBySystemTime();
 
 private:
 

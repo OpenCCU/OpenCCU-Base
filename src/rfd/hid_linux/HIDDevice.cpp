@@ -12,7 +12,12 @@
 CHIDDevice::CHIDDevice()
 {
 	libusb_init( &m_LibusbContext );
+#if defined(LIBUSB_API_VERSION) && (LIBUSB_API_VERSION >= 0x01000106)
+	libusb_set_option( m_LibusbContext, LIBUSB_OPTION_LOG_LEVEL,
+			LIBUSB_LOG_LEVEL_INFO );
+#else
 	libusb_set_debug( m_LibusbContext, 3 );
+#endif
 	// Call a reset on the device data to initialize
 	ResetDeviceData();
 }

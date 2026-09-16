@@ -12,8 +12,8 @@ Der Inhalt von OpenCCU-Base wird unter verschiedenen Lizenzbedingungen veröffen
 lib/libXmlRpc.so | LGPL-2.1
 lib/libxmlparser.so | LGPL-2.1
 src/bcm2835_raw_uart/bcm2835_raw_uart.c | GPL-2.0
-src/eq3_char_loop/eq3_char_loop.c | GPL-2.0
-src/eq3_char_loop/mxs_raw_auart.c | GPL-2.0
+src/eq3_char_loop/eq3_char_loop.c | GPL-2.0+
+src/eq3_char_loop/mxs_raw_auart.c | GPL-2.0+
 src/libxmlrpc | LGPL-2.1
 src/libxmlparser | LGPL-2.1
 src/webui | Apache 2.0 if not stated otherwise

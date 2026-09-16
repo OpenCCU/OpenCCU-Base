@@ -13,7 +13,6 @@ all: subdirs
 install: preinstall subdirs_install scripts_install
 	$(ROMFSINST) -s /var/EULA.de 		       		/www/rega/EULA.de
 	$(ROMFSINST) -s /var/EULA.en		       		/www/rega/EULA.en
-	$(ROMFSINST) -s /var/EULA.tr 		       		/www/rega/EULA.tr
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/extern/cgi.tcl        /www/cgi.tcl
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3_old/common.tcl    /www/common.tcl
 	$(ROMFSINST) -s ${HM_ROOT}/www/tcl/eq3_old/session.tcl   /www/session.tcl

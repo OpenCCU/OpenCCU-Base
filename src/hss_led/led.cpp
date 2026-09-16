@@ -227,8 +227,20 @@ led::LedState led::checkDelayTimes() {
 		fclose(delay_on);
 		return led::UNKNOWN;
 	}
-	fread(dataDelay_off,1,sizeof(dataDelay_off),delay_off);
-	fread(dataDelay_on,1,sizeof(dataDelay_on),delay_on);
+	const size_t delay_off_length = fread(dataDelay_off, 1,
+			sizeof(dataDelay_off) - 1, delay_off);
+	const size_t delay_on_length = fread(dataDelay_on, 1,
+			sizeof(dataDelay_on) - 1, delay_on);
+
+	if (delay_off_length == 0 || delay_on_length == 0
+			|| ferror(delay_off) || ferror(delay_on)) {
+		fclose(delay_off);
+		fclose(delay_on);
+		return led::UNKNOWN;
+	}
+
+	dataDelay_off[delay_off_length] = '\0';
+	dataDelay_on[delay_on_length] = '\0';
 
 	int delay_off_val = atoi(dataDelay_off);
 	int delay_on_val = atoi(dataDelay_on);

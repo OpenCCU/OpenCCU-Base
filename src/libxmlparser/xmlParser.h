@@ -4,7 +4,7 @@
  * for portability. It works by using recursion and a node tree for breaking
  * down the elements of an XML document.  </P>
  *
- * @version     V1.12
+ * @version     V1.14
  *
  * @author      Frank Vanden Berghen
  * based on original implementation by Martyn C Brown
@@ -103,7 +103,8 @@ typedef enum XMLError
     eXMLErrorInvalidTag,
     eXMLErrorNoElements,
     eXMLErrorFileNotFound,
-    eXMLErrorTagNotFound
+    eXMLErrorTagNotFound,
+    eXMLErrorNoMemory
 } XMLError;
 
 // Enumeration used to manage type of data. Use in conjonction with structure XMLNodeContents
@@ -147,6 +148,11 @@ typedef struct XMLPARSER_DLLEXPORT XMLNode
                                nClear,          // Num of Clear fields (comments)
                                nAttribute,      // Num of attributes
                                isDeclaration;   // Whether node is an XML declaration - '<?xml ?>'
+        size_t                 nChildCapacity,  // Allocated entries in pChild
+                               nTextCapacity,   // Allocated entries in pText
+                               nClearCapacity,  // Allocated entries in pClear
+                               nAttributeCapacity, // Allocated entries in pAttribute
+                               nOrderCapacity;  // Allocated entries in pOrder
         struct XMLNodeDataTag  *pParent;        // Pointer to parent element (=NULL if root)
         XMLNode                *pChild;         // Array of child nodes
         LPCTSTR                *pText;          // Array of text fields
@@ -244,11 +250,12 @@ private:
     // these are functions used internally (don't bother about them):
     int ParseClearTag(void *pXML, void *pClear);
     int ParseXMLElement(void *pXML);
-    void addToOrder(int index, int type);
-    static int CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFormat);
+    bool addToOrder(int index, int type);
+    static size_t CreateXMLStringR(XMLNodeData *pEntry, LPTSTR lpszMarker, int nFormat);
     static void *enumContent(XMLNodeData *pEntry,int i, XMLElementType *nodeType);
     static int nElement(XMLNodeData *pEntry);
     static void removeOrderElement(XMLNodeData *d, XMLElementType t, int index);
+    static bool resizeChildren(XMLNodeData *d, int capacity);
     static void exactMemory(XMLNodeData *d);
 } XMLNode;
 

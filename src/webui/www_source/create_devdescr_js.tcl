@@ -60,7 +60,7 @@ proc DEV_getImagePath {key size} {
   return $path
 }
 
-set filelist [glob -nocomplain [file join "$DEVDB_DIRECTORY/*.tcl"]]
+set filelist [lsort [glob -nocomplain [file join "$DEVDB_DIRECTORY/*.tcl"]]]
   
 foreach file $filelist {
 

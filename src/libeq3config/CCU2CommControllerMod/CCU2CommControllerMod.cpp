@@ -37,10 +37,10 @@ const uint32_t CCU2CommControllerMod::shortResponseTimeout = 1000;
 CCU2CommControllerMod::CCU2CommControllerMod()
 : pPortWrapper(NULL)//Will be instantiated in inheriting classes
 , interfaceState(IFSTATE_INACTIVE)
-, coprocessorState(COPROCESSOR_STATE_UNDEFINED)
-, startApp(false)
 , receiveThread(0)
 , startCoprocessorAppThread(0)
+, coprocessorState(COPROCESSOR_STATE_UNDEFINED)
+, startApp(false)
 , coprocessorType(COPROCESSOR_TYPE_UNDEFINED)
 {
 	pthread_mutexattr_init(&mutexAttr);
@@ -192,11 +192,8 @@ bool CCU2CommControllerMod::isDeviceOpen() const {
 bool CCU2CommControllerMod::sendSystemCommand(const SystemCommand systemCommand, const std::string& cmdData, std::string* pResponseValue) {
 	bool returnCode = false;
 	//Create coprocessor command
-	switch(systemCommand)
-	{
-	case SYSTEMCMD_STARTBOOTLOADER:
+	if(systemCommand == SYSTEMCMD_STARTBOOTLOADER) {
 		LOG(Logger::LOG_DEBUG,"CCU2CommControllerMod::sendSystemCommand(): Start Application / Bootloader");
-		break;
 	}
 	CCU2CoprocessorCommandMod copCmd(systemCommand, cmdData);
 	checkedLock(&mutexSystemCommandRequest);
@@ -515,7 +512,6 @@ void* CCU2CommControllerMod::receiveThreadFunction(void* params)
 
 void CCU2CommControllerMod::handleIncomingSerialFrame(const CCU2SerialFrameMod& serialFrame) {
 	CCU2SerialFrameMod sFrame = serialFrame;
-	bool dualCopro = false;
 #ifdef DUMP
 	LOG(Logger::LOG_DEBUG, "Frame payload: %s", toDebugHexStr(serialFrame.getPayload()).c_str());
 #endif

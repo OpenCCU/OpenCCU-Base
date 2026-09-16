@@ -1,7 +1,14 @@
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h"
-  COMMAND "${CMAKE_COMMAND}" -E env sh "${CMAKE_CURRENT_SOURCE_DIR}/version.sh" > /tmp/openccu-rfd-version.txt
-  COMMAND "${CMAKE_COMMAND}" -DINPUT=/tmp/openccu-rfd-version.txt "-DOUTPUT=${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h" -DMACRO_NAME=RFD_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+  BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/rfd-version.txt"
+  COMMAND "${CMAKE_COMMAND}" -E env sh "${CMAKE_CURRENT_SOURCE_DIR}/version.sh"
+    > "${CMAKE_CURRENT_BINARY_DIR}/rfd-version.txt"
+  COMMAND "${CMAKE_COMMAND}"
+    "-DINPUT=${CMAKE_CURRENT_BINARY_DIR}/rfd-version.txt"
+    "-DOUTPUT=${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h"
+    -DMACRO_NAME=RFD_VERSION -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh"
+    "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
   VERBATIM
 )
 add_custom_target(rfd-version-header DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/generated-rfd-version.h")
@@ -95,6 +102,38 @@ if(HAS_USB_SUPPORT)
 endif()
 target_link_libraries(rfd PRIVATE pthread elvutils hsscomm xmlparser XmlRpc LanDeviceUtils UnifiedLanComm crypto m)
 if(HAS_USB_SUPPORT)
-  target_link_libraries(rfd PRIVATE usb-1.0)
+  set(_libusb_found FALSE)
+
+  find_package(PkgConfig QUIET)
+  if(PkgConfig_FOUND)
+    pkg_check_modules(LIBUSB QUIET IMPORTED_TARGET libusb-1.0)
+    if(TARGET PkgConfig::LIBUSB)
+      target_link_libraries(rfd PRIVATE PkgConfig::LIBUSB)
+      set(_libusb_found TRUE)
+    endif()
+  endif()
+
+  if(NOT _libusb_found)
+    find_path(LIBUSB_INCLUDE_DIR
+      NAMES libusb.h
+      PATH_SUFFIXES libusb-1.0
+    )
+    find_library(LIBUSB_LIBRARY
+      NAMES usb-1.0
+    )
+
+    if(LIBUSB_INCLUDE_DIR AND LIBUSB_LIBRARY)
+      target_include_directories(rfd PRIVATE "${LIBUSB_INCLUDE_DIR}")
+      target_link_libraries(rfd PRIVATE "${LIBUSB_LIBRARY}")
+      set(_libusb_found TRUE)
+    endif()
+  endif()
+
+  if(NOT _libusb_found)
+    message(FATAL_ERROR
+      "HAS_USB_SUPPORT is ON, but libusb-1.0 development files were not found. "
+      "Please install libusb-1.0 headers and pkg-config metadata (or provide include/library search paths)."
+    )
+  endif()
 endif()
 openccu_stage_target(rfd bin)

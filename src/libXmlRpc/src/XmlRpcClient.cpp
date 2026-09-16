@@ -284,10 +284,11 @@ XmlRpcClient::setupConnection()
 bool 
 XmlRpcClient::doConnect()
 {
-  //close old socket if not already closed (bugfix)
-  if(this->getfd() >= 0) {
-	XmlRpcSocket::close(this->getfd());  
-  }	
+  // readHeader() may reconnect from inside XmlRpcDispatch::work().
+  // Only close the socket here: XmlRpcClient::close() would also remove
+  // the source and invalidate the dispatcher's current iterator.
+  // On failure, handleEvent() returns 0 so work() removes the source.
+  XmlRpcSource::close();
 
   int fd;
   if(!_host.empty()){
@@ -306,7 +307,7 @@ XmlRpcClient::doConnect()
   // Don't block on connect/reads/writes
   if ( ! XmlRpcSocket::setNonBlocking(fd))
   {
-    this->close();
+    XmlRpcSource::close();
     XmlRpcUtil::error("Error in XmlRpcClient::doConnect: Could not set socket to non-blocking IO mode (%s).", XmlRpcSocket::getErrorMsg().c_str());
     return false;
   }
@@ -320,7 +321,7 @@ XmlRpcClient::doConnect()
 
   if ( ! success)
   {
-    this->close();
+    XmlRpcSource::close();
     XmlRpcUtil::error("Error in XmlRpcClient::doConnect: Could not connect to server (%s).", XmlRpcSocket::getErrorMsg().c_str());
     return false;
   }

@@ -23,6 +23,32 @@
 
 using namespace ulc;
 
+namespace {
+
+char normalizeSerialCharacter(const char value)
+{
+	if(value >= 'a' && value <= 'z') {
+		return static_cast<char>(value - ('a' - 'A'));
+	}
+	return value;
+}
+
+bool serialsEqualIgnoringCase(const std::string& first, const std::string& second)
+{
+	if(first.size() != second.size()) {
+		return false;
+	}
+
+	for(std::string::size_type i = 0; i < first.size(); ++i) {
+		if(normalizeSerialCharacter(first[i]) != normalizeSerialCharacter(second[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
+}
+
 
 //----------------------------------------------------------------------------------------------
 
@@ -63,6 +89,7 @@ UnifiedLanCommController::~UnifiedLanCommController()
 bool UnifiedLanCommController::connect()
 {
 	connectError = (ConnectError)NOT_CONNECTED;
+	lgwSerial.clear();
 	//pthread_mutex_lock(&connectionMutex);
 	encryptionEnabled = false;
 	bool done = connection.connect();
@@ -250,7 +277,15 @@ void UnifiedLanCommController::handleIncomingMessage(const UnifiedLanProtocolMes
 
 void UnifiedLanCommController::handleHelloMessage(const ulc::UnifiedLanProtocolMessage &msg)
 {
-	if(msg.getMessageParameterCount() >= 4) {
+	const bool hasSerialParameter = msg.getMessageParameterCount() >= 4;
+	if(!hasSerialParameter && !desiredSerial.empty()) {
+		LOG(Logger::LOG_ERROR,
+			"HELLO message does not contain a serial number for configured gateway %s. Rejecting LAN gateway.",
+			desiredSerial.c_str());
+		return;
+	}
+
+	if(hasSerialParameter) {
 		std::string text("Protocol-Version: ");
 		text.append(toString(hexStringToUChar(msg.getParameterAt(0))));
 		text.append("\n");
@@ -266,8 +301,17 @@ void UnifiedLanCommController::handleHelloMessage(const ulc::UnifiedLanProtocolM
 		text.append("\n");
 		LOG(Logger::LOG_INFO, "Lan Device Information:\n%s",text.c_str());
 	}
-	if( (desiredSerial.compare(lgwSerial) == 0) || (desiredSerial.empty()) ) {
+	if(desiredSerial.empty() || serialsEqualIgnoringCase(desiredSerial, lgwSerial)) {
+		if(!desiredSerial.empty() && desiredSerial.compare(lgwSerial) != 0) {
+			LOG(Logger::LOG_WARNING,
+				"Configured serial %s differs in letter case from reported serial %s. Accepting LAN gateway.",
+				desiredSerial.c_str(), lgwSerial.c_str());
+		}
 		connectionState = CONN_STATE_RECEIVED_HELLO;
+	} else {
+		LOG(Logger::LOG_ERROR,
+			"Configured serial %s does not match reported serial %s. Rejecting LAN gateway.",
+			desiredSerial.c_str(), lgwSerial.c_str());
 	}
 }
 

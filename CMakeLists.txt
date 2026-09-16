@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(OpenCCUBase LANGUAGES C CXX)
 
+include(CTest)
+
 set(SUPPORTED_PLATFORMS
     aarch64-linux-gnu
     arm-linux-gnueabihf
@@ -24,6 +26,11 @@ option(DEPLOY_TO_REPO "Deploy staged artifacts into bin/lib/... under repository
 option(BUILD_TCL_MODULES "Build Tcl extension modules from src/tcl*" OFF)
 option(BUILD_WEBUI_AND_DEVICETYPES "Generate/install webui + devicetype assets from src/" OFF)
 option(HAS_USB_SUPPORT "Enable USB support in rfd" OFF)
+
+set(OPENCCU_TCLSH_EXECUTABLE "tclsh" CACHE FILEPATH
+    "Tcl interpreter used to generate WebUI assets")
+set(OPENCCU_PYTHON_EXECUTABLE "python3" CACHE FILEPATH
+    "Python interpreter used to convert generated WebUI assets")
 
 add_custom_target(prepare-stage
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/bin"
@@ -76,6 +83,7 @@ add_subdirectory(src/hs485dLoader)
 add_subdirectory(src/hss_led)
 add_subdirectory(src/rfd)
 add_subdirectory(src/bcm2835_raw_uart)
+add_subdirectory(src/eq3_char_loop)
 
 add_executable(SetInterfaceClock src/SetInterfaceClock/SetInterfaceClock.cpp)
 target_compile_features(SetInterfaceClock PRIVATE cxx_std_11)
@@ -92,13 +100,20 @@ openccu_stage_target(SetInterfaceClock bin)
 if(BUILD_TCL_MODULES)
   add_subdirectory(src/tclrega)
   add_subdirectory(src/tclrpc)
-  add_subdirectory(src/tclticks)
+  #add_subdirectory(src/tclticks)
 endif()
 
 if(BUILD_WEBUI_AND_DEVICETYPES)
   add_subdirectory(src/devicetypes)
   add_subdirectory(src/webui)
   add_subdirectory(src/tcl_homematic)
+endif()
+
+if(BUILD_TESTING)
+  add_test(
+    NAME bidcos-devicetype-strip
+    COMMAND "${CMAKE_SOURCE_DIR}/tests/build-tools/test-bidcos-devicetype-strip.sh"
+  )
 endif()
 
 add_custom_target(core
@@ -122,11 +137,21 @@ add_custom_target(core
     SetInterfaceClock
 )
 
+# Build only the libraries required by legacy 32-bit Homematic binaries.
+# Both library targets stage their output below ROOTFS_DIR/lib through
+# openccu_stage_target(), so consumers do not need to know CMake's binary
+# directory layout.
+add_custom_target(compat-libraries
+  DEPENDS
+    xmlparser
+    XmlRpc
+)
+
 if(BUILD_TCL_MODULES)
   add_dependencies(core
     tclrega
     tclrpc
-    tclticks
+    #tclticks
   )
 endif()
 
