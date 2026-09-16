@@ -14,7 +14,8 @@ proc hmscript {script {p_args -}} {
     upvar $p_args args
     
     foreach name [array names args] {
-      append _script_ "var $name = \"[hmscript_escapeString $args($name)]\";\n"
+      set varname [hmscript_sanitizeIdentifier $name]
+      append _script_ "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
     }
   }
   
@@ -49,7 +50,8 @@ proc hmscript_runFromFile { filename {p_args -}} {
 		upvar $p_args args
     
 		foreach name [array names args] {
-			append script "var $name = \"[hmscript_escapeString $args($name)]\";\n"
+			set varname [hmscript_sanitizeIdentifier $name]
+			append script "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
 		}
 	}
   append script [file_load $filename]
@@ -59,10 +61,21 @@ proc hmscript_runFromFile { filename {p_args -}} {
 
 proc hmscript_escapeString { str } {
   return [string map {
+    "\\" "\\\\"
     "\'" "\\\'"
     "\"" "\\\""
     "\n" "\\n"
     "\r" "\\r"
     "\t" "\\t"
   } $str]
+}
+
+
+# Strips characters not matched by sanitizeIdentifiers regex and fixes an invalid leading character.
+proc hmscript_sanitizeIdentifier { name } {
+  set replacements [regsub -all {[^A-Za-z0-9_]} $name {} newname ]
+  if { ![regexp {^[A-Za-z_]} $newname] } then {
+    set newname "_$newname"
+  }
+  return [string range $newname 0 63]
 }
