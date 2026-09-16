@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(OpenCCUBase LANGUAGES C CXX)
 
+include(CTest)
+
 set(SUPPORTED_PLATFORMS
     aarch64-linux-gnu
     arm-linux-gnueabihf
@@ -29,8 +31,6 @@ set(OPENCCU_TCLSH_EXECUTABLE "tclsh" CACHE FILEPATH
     "Tcl interpreter used to generate WebUI assets")
 set(OPENCCU_PYTHON_EXECUTABLE "python3" CACHE FILEPATH
     "Python interpreter used to convert generated WebUI assets")
-set(OPENCCU_JAVA_EXECUTABLE "java" CACHE FILEPATH
-    "Java runtime used to generate device type assets")
 
 add_custom_target(prepare-stage
   COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/bin"
@@ -107,6 +107,13 @@ if(BUILD_WEBUI_AND_DEVICETYPES)
   add_subdirectory(src/devicetypes)
   add_subdirectory(src/webui)
   add_subdirectory(src/tcl_homematic)
+endif()
+
+if(BUILD_TESTING)
+  add_test(
+    NAME bidcos-devicetype-strip
+    COMMAND "${CMAKE_SOURCE_DIR}/tests/build-tools/test-bidcos-devicetype-strip.sh"
+  )
 endif()
 
 add_custom_target(core

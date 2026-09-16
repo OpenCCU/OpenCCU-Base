@@ -14,7 +14,7 @@ foreach(family IN ITEMS rftypes hs485types)
     file(REMOVE "${temp_file}")
     message(STATUS "bidcos-devicetype-strip ${device_file}")
     execute_process(
-      COMMAND "${JAVA_EXECUTABLE}" -jar "${STRIP_JAR}"
+      COMMAND "${STRIP_EXECUTABLE}"
         "${device_file}" -o "${temp_file}"
       RESULT_VARIABLE strip_status
     )

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>
+<device version="1">
+  <!-- a multiline
+       comment -->
+  <docu brief="remove > this">
+    Documentation with <b>embedded markup</b>.
+  </docu>
+  <supported_types>
+    <type name="A &amp; B" id="TEST"><!-- inline --><parameter const_value="1"/></type>
+  </supported_types>
+  <paramset type="MASTER" id="master">
+    <parameter id="INLINE"><docu>remove inline</docu><logical type="string" /></parameter>
+    <parameter id="QUOTED" control="A > B">
+      <logical type="integer"/>
+    </parameter>
+  </paramset>
+</device>
