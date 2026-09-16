@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <?xml-stylesheet type="text/xsl" href="device.xsl"?>
-<device version="1">
+<device version="1" paired="true">
   <!-- a multiline
        comment -->
   <docu brief="remove > this">

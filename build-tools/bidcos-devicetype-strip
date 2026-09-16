@@ -6,18 +6,23 @@ set -o pipefail
 
 usage()
 {
-  echo "Usage: ${0##*/} <in.file> [-o out.file]" >&2
+  echo "Usage: ${0##*/} <in.file> [-ccu2] [-o out.file]" >&2
   exit 1
 }
 
 input=
 output=
+ccu2=0
 while (($#)); do
   case "$1" in
     -o)
       (($# >= 2)) || usage
       output=$2
       shift 2
+      ;;
+    -ccu2)
+      ccu2=1
+      shift
       ;;
     -*)
       usage
@@ -49,7 +54,7 @@ output_name=${output##*/}
 temporary=$(mktemp "${output_dir}/.${output_name}.XXXXXX")
 trap 'rm -f "$temporary"' EXIT
 
-LC_ALL=C awk '
+LC_ALL=C awk -v ccu2="$ccu2" '
 function error(message)
 {
   print FILENAME ": " message > "/dev/stderr"
@@ -59,8 +64,26 @@ function error(message)
 
 function append_text(text)
 {
+  validate_entities(text)
+  if (stack_depth == 0 && text ~ /[^[:space:]]/)
+    error("text outside the document element")
   if (docu_depth == 0 && text ~ /[^[:space:]]/)
     result = result decoded_entities(text)
+}
+
+function validate_entities(text,    entity, remainder, semicolon)
+{
+  remainder = text
+  while (match(remainder, /&/)) {
+    remainder = substr(remainder, RSTART)
+    semicolon = index(remainder, ";")
+    if (!semicolon)
+      error("unterminated entity reference")
+    entity = substr(remainder, 1, semicolon)
+    if (entity !~ /^&(amp|lt|gt|quot|apos|#[[:digit:]]+|#[xX][[:xdigit:]]+);$/)
+      error("invalid entity reference " entity)
+    remainder = substr(remainder, semicolon + 1)
+  }
 }
 
 function hexadecimal(value,    digit, i, number)
@@ -133,7 +156,10 @@ function normalized_tag(tag,    c, i, quote, space, normalized)
     }
   }
 
-  return decoded_entities(normalized)
+  normalized = decoded_entities(normalized)
+  if (ccu2 && normalized !~ /^<[[:space:]]*\//)
+    gsub(/[[:space:]]+paired[[:space:]]*=[[:space:]]*"[^"]*"/, "", normalized)
+  return normalized
 }
 
 function push(name)
@@ -150,7 +176,48 @@ function pop(name)
   delete element_stack[stack_depth]
 }
 
-function handle_tag(tag,    body, closing, name, self_closing, was_docu)
+function validate_attributes(body, name_length,
+                             attribute, end, quote, remainder, value)
+{
+  for (attribute in seen_attributes)
+    delete seen_attributes[attribute]
+
+  remainder = substr(body, name_length + 1)
+  while (remainder != "") {
+    if (remainder !~ /^[[:space:]]/)
+      error("missing whitespace before attribute")
+    sub(/^[[:space:]]+/, "", remainder)
+    if (remainder == "")
+      break
+    if (!match(remainder, /^[[:alpha:]_][[:alnum:]_.:-]*/))
+      error("invalid attribute")
+    attribute = substr(remainder, RSTART, RLENGTH)
+    if (attribute in seen_attributes)
+      error("duplicate attribute " attribute)
+    seen_attributes[attribute] = 1
+    remainder = substr(remainder, RLENGTH + 1)
+    sub(/^[[:space:]]*/, "", remainder)
+    if (substr(remainder, 1, 1) != "=")
+      error("missing equals sign after attribute " attribute)
+    remainder = substr(remainder, 2)
+    sub(/^[[:space:]]*/, "", remainder)
+    quote = substr(remainder, 1, 1)
+    if (quote != "\"" && quote != "\047")
+      error("unquoted attribute " attribute)
+    remainder = substr(remainder, 2)
+    end = index(remainder, quote)
+    if (!end)
+      error("unterminated attribute " attribute)
+    value = substr(remainder, 1, end - 1)
+    if (value ~ /</)
+      error("invalid less-than sign in attribute " attribute)
+    validate_entities(value)
+    remainder = substr(remainder, end + 1)
+  }
+}
+
+function handle_tag(tag,    body, closing, name, name_length,
+                    self_closing, was_docu)
 {
   body = substr(tag, 2, length(tag) - 2)
   sub(/^[[:space:]]+/, "", body)
@@ -169,8 +236,11 @@ function handle_tag(tag,    body, closing, name, self_closing, was_docu)
   if (!match(body, /^[[:alpha:]_][[:alnum:]_.:-]*/))
     error("invalid element")
   name = substr(body, RSTART, RLENGTH)
+  name_length = RLENGTH
 
   if (closing) {
+    if (substr(body, name_length + 1) !~ /^[[:space:]]*$/)
+      error("invalid closing element </" name ">")
     was_docu = docu_depth > 0
     pop(name)
     if (name == "docu")
@@ -186,6 +256,13 @@ function handle_tag(tag,    body, closing, name, self_closing, was_docu)
     delete element_content_start[stack_depth]
     --stack_depth
     return
+  }
+
+  validate_attributes(body, name_length)
+  if (stack_depth == 0) {
+    if (root_seen)
+      error("multiple document elements")
+    root_seen = 1
   }
 
   if (!self_closing)
@@ -227,6 +304,8 @@ END {
       end = index(remaining, "-->")
       if (!end)
         error("unterminated comment")
+      if (substr(remaining, 5, end - 5) ~ /--/)
+        error("invalid double hyphen in comment")
       position += end + 2
       continue
     }
@@ -246,7 +325,10 @@ END {
       text = substr(remaining, 10, end - 10)
       gsub(/&/, "\\&amp;", text)
       gsub(/</, "\\&lt;", text)
-      append_text(text)
+      if (stack_depth == 0 && text ~ /[^[:space:]]/)
+        error("CDATA outside the document element")
+      if (docu_depth == 0 && text ~ /[^[:space:]]/)
+        result = result text
       position += end + 2
       continue
     }
@@ -287,6 +369,8 @@ END {
     error("unclosed element <" element_stack[stack_depth] ">")
   if (docu_depth != 0)
     error("unclosed documentation element")
+  if (!root_seen)
+    error("missing document element")
 
   printf "%s", result
 }
@@ -296,5 +380,5 @@ END {
   echo "${0##*/}: generated empty output" >&2
   exit 1
 }
-mv -f "$temporary" "$output"
+mv -f -- "$temporary" "$output"
 trap - EXIT
