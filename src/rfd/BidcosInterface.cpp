@@ -306,6 +306,11 @@ const std::string& BidcosInterface::GetInterfaceType() const
 	return this->iface_type;
 }
 
+bool BidcosInterface::IsLanInterface() const
+{
+	return (iface_type == "HMLGW2") || (iface_type == "Lan Interface");
+}
+
 bool BidcosInterface::SetInterfaceClock(const unsigned int utcSeconds, const int offsetMinutes)
 {
 	return true;
