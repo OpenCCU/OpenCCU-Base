@@ -1,6 +1,6 @@
 ##
 # hmscript.tcl
-# Ausführen von HomeMatic Script.
+# AusfÃ¼hren von HomeMatic Script.
 #
 # Autor: Falk Werner
 ##
@@ -14,8 +14,7 @@ proc hmscript {script {p_args -}} {
     upvar $p_args args
     
     foreach name [array names args] {
-      set varname [hmscript_sanitizeIdentifier $name]
-      append _script_ "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
+      append _script_ "var $name = \"[hmscript_escapeString $args($name)]\";\n"
     }
   }
   
@@ -25,7 +24,7 @@ proc hmscript {script {p_args -}} {
 }
 
 ##
-# Führt ein HomeMatic Script aus und liefert das Ergebnis
+# FÃ¼hrt ein HomeMatic Script aus und liefert das Ergebnis
 ##
 proc hmscript_run { p_script } {
   upvar $p_script script
@@ -50,8 +49,7 @@ proc hmscript_runFromFile { filename {p_args -}} {
 		upvar $p_args args
     
 		foreach name [array names args] {
-			set varname [hmscript_sanitizeIdentifier $name]
-			append script "var $varname = \"[hmscript_escapeString $args($name)]\";\n"
+			append script "var $name = \"[hmscript_escapeString $args($name)]\";\n"
 		}
 	}
   append script [file_load $filename]
@@ -70,6 +68,22 @@ proc hmscript_escapeString { str } {
   } $str]
 }
 
+proc hmscript_assertFloat { value } {
+  if { ![string is double -strict $value] } then {
+    error "Value '$value' is not a valid float"
+  }
+}
+
+proc hmscript_assertInteger { value } {
+  if { ![string is integer -strict $value] } then {
+    error "Value '$value' is not a valid integer"
+  }
+}
+
+proc hmscript_assertBoolean { value } {
+  if { ![string is boolean -strict $value] } then {
+    error "Value '$value' is not a valid boolean"
+  }
 
 # Strips characters not matched by sanitizeIdentifiers regex and fixes an invalid leading character.
 proc hmscript_sanitizeIdentifier { name } {
