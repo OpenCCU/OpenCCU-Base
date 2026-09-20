@@ -29,7 +29,7 @@ foreach name [lsort [array name METHOD_LIST]] {
   append result "\{"
   append result "\"name\": [json_toString $name]," 
   append result "\"level\": [json_toString $method(LEVEL)]," 
-  append result "\"summary\": [json_toString $method(INFO)],"
+  append result "\"summary\": [json_toString $method(INFO)]"
   append result "\}"
 }
 
