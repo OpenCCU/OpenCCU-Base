@@ -29,23 +29,27 @@ jobs:
       matrix:
         include:
           - platform: x86_64-linux-gnu
-            container_platform: linux/amd64
-            qemu_platform: ''
+            foreign_arch: ''
+            multiarch_triplet: x86_64-linux-gnu
+            cross_prefix: ''
             binary_format: x86-64
             build_assets: 'ON'
           - platform: aarch64-linux-gnu
-            container_platform: linux/arm64
-            qemu_platform: arm64
+            foreign_arch: arm64
+            multiarch_triplet: aarch64-linux-gnu
+            cross_prefix: aarch64-linux-gnu-
             binary_format: ARM aarch64
             build_assets: 'OFF'
           - platform: arm-linux-gnueabihf
-            container_platform: linux/arm/v7
-            qemu_platform: arm
+            foreign_arch: armhf
+            multiarch_triplet: arm-linux-gnueabihf
+            cross_prefix: arm-linux-gnueabihf-
             binary_format: ARM
             build_assets: 'OFF'
           - platform: i686-linux-gnu
-            container_platform: linux/386
-            qemu_platform: '386'
+            foreign_arch: i386
+            multiarch_triplet: i386-linux-gnu
+            cross_prefix: i686-linux-gnu-
             binary_format: Intel 80386
             build_assets: 'OFF'
 
@@ -56,72 +60,104 @@ jobs:
         with:
           persist-credentials: false
 
-      # Run each build in a native userspace for its target architecture. This
-      # also ensures that OpenSSL, libusb and Tcl are linked for that target.
-      - name: Set up QEMU
-        if: matrix.qemu_platform != ''
-        # v4
-        uses: >-
-          docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a
-        with:
-          platforms: ${{ matrix.qemu_platform }}
+      - name: Install build dependencies
+        env:
+          BUILD_ASSETS: ${{ matrix.build_assets }}
+          FOREIGN_ARCH: ${{ matrix.foreign_arch }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+        run: |
+          set -euxo pipefail
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt-get update
+          if [ -n "${FOREIGN_ARCH}" ]; then
+            sudo dpkg --add-architecture "${FOREIGN_ARCH}"
+            sudo apt-get update
+          fi
+
+          packages=(
+            build-essential
+            ca-certificates
+            cmake
+            file
+            libssl-dev
+            libusb-1.0-0-dev
+            pkg-config
+            tcl-dev
+          )
+
+          if [ "${BUILD_ASSETS}" = "ON" ]; then
+            packages+=(python3)
+          fi
+
+          if [ -n "${FOREIGN_ARCH}" ]; then
+            packages+=(
+              "gcc-${TARGET_PLATFORM}"
+              "g++-${TARGET_PLATFORM}"
+              "libc6-dev:${FOREIGN_ARCH}"
+              "libssl-dev:${FOREIGN_ARCH}"
+              "libusb-1.0-0-dev:${FOREIGN_ARCH}"
+              "tcl-dev:${FOREIGN_ARCH}"
+            )
+          fi
+
+          sudo apt-get install --yes --no-install-recommends "${packages[@]}"
 
       - name: Configure and build
         env:
           BUILD_ASSETS: ${{ matrix.build_assets }}
-          CONTAINER_PLATFORM: ${{ matrix.container_platform }}
+          CROSS_PREFIX: ${{ matrix.cross_prefix }}
+          MULTIARCH_TRIPLET: ${{ matrix.multiarch_triplet }}
           TARGET_PLATFORM: ${{ matrix.platform }}
         run: |
-          docker run --rm \
-            --platform "${CONTAINER_PLATFORM}" \
-            --volume "${GITHUB_WORKSPACE}:/workspace" \
-            --workdir /workspace \
-            --env BUILD_ASSETS \
-            --env TARGET_PLATFORM \
-            debian:bookworm-slim \
-            bash -euxo pipefail -c '
-              export DEBIAN_FRONTEND=noninteractive
-              export LANG=C.UTF-8
-              packages=(
-                build-essential
-                ca-certificates
-                cmake
-                file
-                libssl-dev
-                libusb-1.0-0-dev
-                pkg-config
-                tcl-dev
-              )
-              if [ "${BUILD_ASSETS}" = "ON" ]; then
-                packages+=(default-jre-headless python3)
-              fi
-              apt-get update
-              apt-get install --yes --no-install-recommends "${packages[@]}"
+          set -euxo pipefail
+          export LANG=C.UTF-8
+          export PKG_CONFIG_DIR=
+          export PKG_CONFIG_PATH=
+          export PKG_CONFIG_LIBDIR="/usr/lib/${MULTIARCH_TRIPLET}/pkgconfig:/usr/share/pkgconfig"
+          export PKG_CONFIG_SYSROOT_DIR=/
+          if [ -n "${CROSS_PREFIX}" ]; then
+            export CC="${CROSS_PREFIX}gcc"
+            export CXX="${CROSS_PREFIX}g++"
+          fi
 
-              case "${TARGET_PLATFORM}" in
-                x86_64-linux-gnu)
-                  ;;
-                aarch64-linux-gnu|arm-linux-gnueabihf|i686-linux-gnu)
-                  c_compiler="/usr/local/bin/${TARGET_PLATFORM}-gcc"
-                  cxx_compiler="/usr/local/bin/${TARGET_PLATFORM}-g++"
-                  ln -s "$(command -v gcc)" "${c_compiler}"
-                  ln -s "$(command -v g++)" "${cxx_compiler}"
-                  ;;
-                *)
-                  echo "Unsupported target platform: ${TARGET_PLATFORM}" >&2
-                  exit 1
-                  ;;
-              esac
+          cmake --preset "${TARGET_PLATFORM}" \
+            -DDEPLOY_TO_REPO=OFF \
+            -DBUILD_TCL_MODULES=ON \
+            -DHAS_USB_SUPPORT=ON \
+            -DBUILD_WEBUI_AND_DEVICETYPES="${BUILD_ASSETS}"
+          cmake --build --preset "${TARGET_PLATFORM}" \
+            --target package \
+            --parallel "$(nproc)"
 
-              cmake --preset "${TARGET_PLATFORM}" \
-                -DDEPLOY_TO_REPO=OFF \
-                -DBUILD_TCL_MODULES=ON \
-                -DHAS_USB_SUPPORT=ON \
-                -DBUILD_WEBUI_AND_DEVICETYPES="${BUILD_ASSETS}"
-              cmake --build --preset "${TARGET_PLATFORM}" \
-                --target package \
-                --parallel "$(nproc)"
-            '
+      - name: Cross-build safeguard
+        env:
+          CROSS_PREFIX: ${{ matrix.cross_prefix }}
+          MULTIARCH_TRIPLET: ${{ matrix.multiarch_triplet }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+        run: |
+          set -euxo pipefail
+          compiler="${CROSS_PREFIX}gcc"
+          linker="${CROSS_PREFIX}ld"
+          command -v "${compiler}"
+          command -v "${linker}"
+          "${compiler}" -dumpmachine
+          "${compiler}" -print-sysroot || true
+          "${linker}" --version | head -n 1
+
+          export PKG_CONFIG_DIR=
+          export PKG_CONFIG_PATH=
+          export PKG_CONFIG_LIBDIR="/usr/lib/${MULTIARCH_TRIPLET}/pkgconfig:/usr/share/pkgconfig"
+          export PKG_CONFIG_SYSROOT_DIR=/
+          pkg-config --debug --libs openssl 2>&1 | tail -n 20
+          pkg-config --debug --libs libusb-1.0 2>&1 | tail -n 20
+          pkg-config --debug --libs tcl 2>&1 | tail -n 20 || true
+
+          cache="build/${TARGET_PLATFORM}/CMakeCache.txt"
+          grep -E '^(CMAKE_(C|CXX)_COMPILER:FILEPATH|OPENSSL_(SSL|CRYPTO)_LIBRARY:FILEPATH|TCL_LIBRARY:FILEPATH)' "${cache}" || true
+
+          stage="build/${TARGET_PLATFORM}/rootfs"
+          readelf -h "${stage}/bin/rfd" | grep --fixed-strings 'Machine:'
+          readelf -d "${stage}/bin/rfd" | grep --fixed-strings '(NEEDED)' | head -n 20
 
       - name: Verify staged package
         env:
