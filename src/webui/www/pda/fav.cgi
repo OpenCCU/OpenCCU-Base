@@ -21,7 +21,7 @@ set TEMPLATE_FILE               templates/fav.tmpl
 set TEMPLATE_FILE_ERROR_SESSION templates/error_session.tmpl
 
 array set COMMANDS {}
-set COMMANDS(exec) [list executePorgram]
+set COMMANDS(exec) [list executeProgram]
 
 proc getProgramStatus { progId } { 
 	array set status [Program_getStatus $progId]
@@ -44,7 +44,7 @@ proc getProgramStatus { progId } {
 }
 
 
-proc executePorgram { } { 
+proc executeProgram { } {
 	global fav
 	
 	Program_execute $fav(ID)
@@ -152,7 +152,12 @@ cgi_eval {
 	catch { import cmd }
 	set uiStyle {}
 	catch { import uiStyle }
-	
+
+	# OpenCCU: object IDs must be numeric; reject anything else to avoid
+	# HomeMatic-Script (ReGa) injection via downstream string interpolation.
+	if {![regexp {^[0-9]+$} $favListId]} { set favListId "" }
+	if {![regexp {^[0-9]+$} $favId]}     { set favId "" }
+
 	if { {true} != [session_isValid $sid] } then {
 		http_head
 		puts [eval [template_parseFile $TEMPLATE_FILE_ERROR_SESSION]]
