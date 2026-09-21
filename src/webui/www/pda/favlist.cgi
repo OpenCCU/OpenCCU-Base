@@ -26,7 +26,11 @@ cgi_eval {
 	catch { import favListId }
 	set uiStyle {}
 	catch { import uiStyle }
-	
+
+	# OpenCCU: object IDs must be numeric; reject anything else to avoid
+	# HomeMatic-Script (ReGa) injection via downstream string interpolation.
+	if {![regexp {^[0-9]+$} $favListId]} { set favListId "" }
+
 	if { {true} != [session_isValid $sid] } then {
 		http_head
 		puts [eval [template_parseFile $TEMPLATE_FILE_ERROR_SESSION]]
