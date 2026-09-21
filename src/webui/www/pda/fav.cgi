@@ -46,8 +46,12 @@ proc getProgramStatus { progId } {
 
 proc executeProgram { } {
 	global fav
-	
-	Program_execute $fav(ID)
+
+	if {[info exists fav(CAN_USE)] && $fav(CAN_USE) &&
+	    [info exists fav(TYPE)] && [string equal $fav(TYPE) "PROGRAM"] &&
+	    [info exists fav(ID)]} {
+		Program_execute $fav(ID)
+	}
 }
 
 proc getProgramControls { progId } {
