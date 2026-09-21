@@ -12,7 +12,7 @@
 
 package require http
 
-set LOGIN_URL 127.0.0.1/login.htm
+set LOGIN_URL http://127.0.0.1/login.htm
 
 ##
 # getHttpHeader
