@@ -676,11 +676,13 @@ proc read_config {dhcp_var hostname_var ip_var mask_var gw_var dns1_var dns2_var
   if {! [get_property $netconfig "HOSTNAME" hostname] } {return 0}
   if {! [get_property $netconfig "MODE" mode] } {return 0}
   set dhcp [expr {"$mode"=="DHCP"}]
-  if {! [get_property $netconfig "IP" ip] } {return 0}
-  if {! [get_property $netconfig "NETMASK" mask] } {return 0}
-  if {! [get_property $netconfig "GATEWAY" gw] } {return 0}
-  get_property $netconfig "NAMESERVER1" dns1
-  get_property $netconfig "NAMESERVER2" dns2
+  set current_prefix ""
+  if {$dhcp} { set current_prefix "CURRENT_" }
+  if {! [get_property $netconfig "${current_prefix}IP" ip] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}NETMASK" mask] } {return 0}
+  if {! [get_property $netconfig "${current_prefix}GATEWAY" gw] } {return 0}
+  get_property $netconfig "${current_prefix}NAMESERVER1" dns1
+  get_property $netconfig "${current_prefix}NAMESERVER2" dns2
   return 1
 }
 
