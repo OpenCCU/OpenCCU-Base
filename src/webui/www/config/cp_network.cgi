@@ -700,12 +700,13 @@ proc write_config {dhcp hostname ip mask gw dns1 dns2} {
     set_property netconfig "MODE" "MANUAL"
   }
   set_property netconfig "HOSTNAME" $hostname
-  set_property netconfig "IP" $ip
-  set_property netconfig "NETMASK" $mask
-  set_property netconfig "GATEWAY" $gw
-
-  set_property netconfig "NAMESERVER1" $dns1
-  set_property netconfig "NAMESERVER2" $dns2
+  if {! $dhcp} {
+    set_property netconfig "IP" $ip
+    set_property netconfig "NETMASK" $mask
+    set_property netconfig "GATEWAY" $gw
+    set_property netconfig "NAMESERVER1" $dns1
+    set_property netconfig "NAMESERVER2" $dns2
+  }
 
   catch {set fd [open "/etc/config/netconfig" w]}
   if { $fd <0 } { return 0 }
