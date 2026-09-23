@@ -43,6 +43,24 @@ cmake --preset i686-linux-gnu
 cmake --build --preset i686-linux-gnu --target package
 ```
 
+## Recovery builds
+
+Build the recovery network services and maintenance tools from source without
+configuring the radio daemons, Tcl modules or WebUI generators:
+
+```bash
+cmake -S . -B build/recovery -DRECOVERY_ONLY=ON -DDEPLOY_TO_REPO=OFF
+cmake --build build/recovery --target recovery
+```
+
+This stages `ssdpd`, `eq3configd`, `eq3configcmd` and `crypttool`, together with
+`libelvutils`, `libLanDeviceUtils`, `libUnifiedLanComm` and `libeq3config`.
+OpenSSL development files and a C/C++ toolchain are required. Cross compilation
+uses the same toolchain files and platform settings as a full build.
+
+Use a separate build directory for each mode. The `core`, `package` and
+`compat-libraries` targets are available only with `RECOVERY_ONLY=OFF`.
+
 ## Main targets
 
 - `core`: build and stage/deploy core daemons and libraries.

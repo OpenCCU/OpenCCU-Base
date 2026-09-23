@@ -25,6 +25,7 @@ set(DEPLOY_ROOT "${CMAKE_SOURCE_DIR}" CACHE PATH "Repository root for deployed a
 option(DEPLOY_TO_REPO "Deploy staged artifacts into bin/lib/... under repository root" ON)
 option(BUILD_TCL_MODULES "Build Tcl extension modules from src/tcl*" OFF)
 option(BUILD_WEBUI_AND_DEVICETYPES "Generate/install webui + devicetype assets from src/" OFF)
+option(RECOVERY_ONLY "Build only the services and tools needed by recovery" OFF)
 option(HAS_USB_SUPPORT "Enable USB support in rfd" OFF)
 
 set(OPENCCU_TCLSH_EXECUTABLE "tclsh" CACHE FILEPATH
@@ -66,10 +67,9 @@ function(openccu_stage_target target_name dest_subdir)
   endif()
 endfunction()
 
+# Shared by the full system and the recovery image. Keep their dependency
+# closure independent of Tcl, WebUI generation and the radio daemons.
 add_subdirectory(src/libelvutils)
-add_subdirectory(src/libxmlparser)
-add_subdirectory(src/libXmlRpc)
-add_subdirectory(src/libhsscomm)
 add_subdirectory(src/libLanDeviceUtils)
 add_subdirectory(src/libUnifiedLanComm)
 add_subdirectory(src/libeq3config)
@@ -77,6 +77,17 @@ add_subdirectory(src/eq3configcmd)
 add_subdirectory(src/eq3configd)
 add_subdirectory(src/ssdpd)
 add_subdirectory(src/crypttool)
+
+if(RECOVERY_ONLY)
+  add_custom_target(recovery
+    DEPENDS eq3configcmd eq3configd ssdpd crypttool
+  )
+  return()
+endif()
+
+add_subdirectory(src/libxmlparser)
+add_subdirectory(src/libXmlRpc)
+add_subdirectory(src/libhsscomm)
 add_subdirectory(src/multimacd)
 add_subdirectory(src/hs485d)
 add_subdirectory(src/hs485dLoader)
