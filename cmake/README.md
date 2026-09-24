@@ -43,36 +43,64 @@ cmake --preset i686-linux-gnu
 cmake --build --preset i686-linux-gnu --target package
 ```
 
-## Recovery builds
+## Selecting components
 
-Build the recovery network services and maintenance tools from source without
-configuring the radio daemons, Tcl modules or WebUI generators:
+Each native tool has a `BUILD_<NAME>` option, enabled by default:
+
+- `BUILD_SETINTERFACECLOCK`, `BUILD_CRYPTTOOL`, `BUILD_EQ3CONFIGCMD`
+- `BUILD_EQ3CONFIGD`, `BUILD_SSDPD`, `BUILD_MULTIMACD`, `BUILD_RFD`
+- `BUILD_HS485D`, `BUILD_HS485DLOADER`, `BUILD_HSS_LED`
+- `BUILD_TCLREGA`, `BUILD_TCLRPC`
+
+Runtime data has separate options: `BUILD_WEBUI`, `BUILD_DEVICETYPES`,
+`BUILD_TCL_HOMEMATIC`, `BUILD_HMSERVER`, `BUILD_HMIP_TOOLS`, `BUILD_FIRMWARE`,
+`BUILD_HM_SCRIPTS` and `BUILD_REGAHSS`. These also default to enabled. ReGaHss and
+Java programs are prebuilt assets, not applications compiled by this project.
+WebUI selection also enables its device descriptions, Tcl helpers, Tcl extensions
+and ReGaHss. ReGaHss selection enables its Tcl extension.
+
+Use a fresh build directory and `BUILD_DEFAULT_COMPONENTS=OFF` to start with an
+empty selection. For example, build and install only the configuration tool:
 
 ```bash
-cmake -S . -B build/recovery -DRECOVERY_ONLY=ON -DDEPLOY_TO_REPO=OFF
-cmake --build build/recovery --target recovery
+cmake -S . -B build/config-tool -DBUILD_DEFAULT_COMPONENTS=OFF \
+  -DBUILD_EQ3CONFIGCMD=ON -DDEPLOY_TO_REPO=OFF
+cmake --build build/config-tool --target package
+DESTDIR="$PWD/image" cmake --install build/config-tool --prefix /
 ```
 
-This stages `ssdpd`, `eq3configd`, `eq3configcmd` and `crypttool`, together with
-`libelvutils`, `libLanDeviceUtils`, `libUnifiedLanComm` and `libeq3config`.
-OpenSSL development files and a C/C++ toolchain are required. Cross compilation
-uses the same toolchain files and platform settings as a full build.
+CMake builds and installs the transitive internal libraries linked by the selected
+targets. The configuration tool above includes `eq3config`, `LanDeviceUtils`,
+`UnifiedLanComm` and `elvutils`; an `ssdpd`-only build needs none of those libraries.
+System libraries such as OpenSSL and Tcl must be supplied by the toolchain or
+package manager. No separate recovery mode is needed.
 
-Use a separate build directory for each mode. The `core`, `package` and
-`compat-libraries` targets are available only with `RECOVERY_ONLY=OFF`.
+`BUILD_TCL_MODULES` and `BUILD_WEBUI_AND_DEVICETYPES` remain available as defaults
+for their individual options. Per-component cache values take precedence over
+these defaults. Kernel targets have `BUILD_BCM2835_RAW_UART` and
+`BUILD_EQ3_CHAR_LOOP` configuration options and remain explicit build targets.
 
-## Main targets
+## Targets and installation
 
-- `core`: build and stage/deploy core daemons and libraries.
-- `compat-libraries`: build and stage only `libxmlparser` and `libXmlRpc`, for
-  example when producing 32-bit compatibility libraries for a 64-bit image.
-- `package`: `core` + copy `opt/` runtime tree into staged rootfs.
-- Per-module targets use their module names directly (e.g. `rfd`, `libelvutils`, `hs485d`).
+- `core` and `package`: build and stage the selected components.
+- `compat-libraries`: explicitly build the legacy `xmlparser` and `XmlRpc` pair.
+  Set `BUILD_COMPAT_LIBRARIES=ON` to include them in `core` and installation.
+- Individual native targets remain directly buildable when enabled.
+- `cmake --install`: install the configured selection. Component `runtime`
+  contains native programs and internal libraries; `assets` contains runtime data.
+- `runtime-files.txt` in the build directory lists the native installation set.
 
-## Optional targets
+Use the install rules rather than copying the entire staging directory: a reused
+staging directory can still contain outputs from a previous selection. The GNU
+Make wrapper accepts `CMAKE_OPTIONS` and copies a fresh selected installation.
+When producing a new image, start with an empty destination; installation does
+not uninstall files from an older image.
 
-- `BUILD_TCL_MODULES=ON`: also build `tclrega`, `tclrpc`, `tclticks`.
-- `BUILD_WEBUI_AND_DEVICETYPES=ON`: run WebUI and devicetype asset generation into staging rootfs.
+Run the dependency and installation regression checks with:
+
+```bash
+python3 tests/test-components.py -v
+```
 
 ## Key cache variables
 
