@@ -24,7 +24,7 @@ foreach(library elvutils xmlparser XmlRpc hsscomm LanDeviceUtils UnifiedLanComm 
   add_subdirectory(src/lib${library} EXCLUDE_FROM_ALL)
 endforeach()
 
-add_custom_target(core)
+add_custom_target(core ALL)
 set(openccu_roots)
 foreach(program SetInterfaceClock crypttool eq3configcmd eq3configd hs485d
                 hs485dLoader hss_led multimacd rfd ssdpd)
@@ -93,6 +93,28 @@ foreach(target IN LISTS runtime_targets)
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
             "$<TARGET_FILE:${target}>" "${ROOTFS_DIR}/${destination}/$<TARGET_FILE_NAME:${target}>"
     VERBATIM)
+  # A program providing alternate invocations declares them on its target.
+  get_property(aliases TARGET ${target} PROPERTY OPENCCU_RUNTIME_ALIASES)
+  foreach(alias IN LISTS aliases)
+    string(APPEND runtime_manifest "${destination}/${alias}\n")
+    # Generate the actual link at build time, when target names are resolved.
+    add_custom_command(TARGET core POST_BUILD
+      COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_FILE_NAME:${target}>"
+              "${ROOTFS_DIR}/${destination}/${alias}"
+      VERBATIM)
+    if(DEPLOY_TO_REPO)
+      add_custom_command(TARGET core POST_BUILD
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DEPLOY_ROOT}/${destination}/${TARGET_PLATFORM}"
+        COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_FILE_NAME:${target}>"
+                "${DEPLOY_ROOT}/${destination}/${TARGET_PLATFORM}/${alias}"
+        VERBATIM)
+    endif()
+    install(CODE "
+      file(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${destination}\")
+      file(CREATE_LINK \"$<TARGET_FILE_NAME:${target}>\"
+        \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${destination}/${alias}\" SYMBOLIC)
+      " COMPONENT runtime)
+  endforeach()
   install(TARGETS ${target}
     RUNTIME DESTINATION bin COMPONENT runtime
     LIBRARY DESTINATION lib COMPONENT runtime)

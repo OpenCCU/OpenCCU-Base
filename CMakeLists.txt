@@ -66,6 +66,20 @@ function(openccu_stage_target target_name dest_subdir)
       VERBATIM
     )
   endif()
+  get_property(aliases TARGET "${target_name}" PROPERTY OPENCCU_RUNTIME_ALIASES)
+  foreach(alias IN LISTS aliases)
+    add_custom_command(TARGET "${target_name}" POST_BUILD
+      COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_FILE_NAME:${target_name}>"
+              "${ROOTFS_DIR}/${dest_subdir}/${alias}"
+      VERBATIM)
+    if(DEPLOY_TO_REPO)
+      add_custom_command(TARGET "${target_name}" POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_FILE_NAME:${target_name}>"
+                "${_deploy_dir}/${alias}"
+        VERBATIM)
+    endif()
+  endforeach()
+
 endfunction()
 
 include(cmake/Components.cmake)

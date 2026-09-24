@@ -26,8 +26,11 @@ Top-level GNU Make wrapper:
 # Build package for all supported platforms sequentially
 make
 
-# Copy staged outputs to top-level bin/<platform>, lib/<platform>, etc/
+# Create a fresh image in build/<platform>/selected-install
 make install
+
+# Explicitly update repository bin/<platform>, lib/<platform>, etc/
+make deploy
 ```
 
 Cross builds:
@@ -82,7 +85,7 @@ these defaults. Kernel targets have `BUILD_BCM2835_RAW_UART` and
 
 ## Targets and installation
 
-- `core` and `package`: build and stage the selected components.
+- The default build, `core` and `package`: build and stage the selected components.
 - `compat-libraries`: explicitly build the legacy `xmlparser` and `XmlRpc` pair.
   Set `BUILD_COMPAT_LIBRARIES=ON` to include them in `core` and installation.
 - Individual native targets remain directly buildable when enabled.
@@ -92,7 +95,10 @@ these defaults. Kernel targets have `BUILD_BCM2835_RAW_UART` and
 
 Use the install rules rather than copying the entire staging directory: a reused
 staging directory can still contain outputs from a previous selection. The GNU
-Make wrapper accepts `CMAKE_OPTIONS` and copies a fresh selected installation.
+Make wrapper accepts `CMAKE_OPTIONS`. `make install` recreates
+`build/<platform>/selected-install` without copying into the source tree.
+`make deploy` explicitly copies that selection back into the repository and
+preserves other repository files; it does not produce a minimal image.
 When producing a new image, start with an empty destination; installation does
 not uninstall files from an older image.
 
@@ -108,3 +114,14 @@ python3 tests/test-components.py -v
 - `CROSS_PREFIX`: compiler prefix (e.g. `aarch64-linux-gnu-`).
 - `ROOTFS_DIR`: staging rootfs output directory.
 - `DEPLOY_TO_REPO`: when `ON`, copy staged binaries/libs to `bin/<platform>` and `lib/<platform>`.
+
+Programs can declare alternate executable names through the target property
+`OPENCCU_RUNTIME_ALIASES` before calling `openccu_stage_target`. These relative
+symlinks are staged with the program and `core`, listed
+in `runtime-files.txt`, and installed by the `runtime` component with DESTDIR
+support. OpenCCU's LED controller patch declares `hss_ledctl` this way; the
+unpatched legacy daemon does not implement that CLI and declares no alias.
+
+Component-test subprocesses have a 600-second timeout, configurable through
+`OPENCCU_TEST_TIMEOUT`. Timeout handling terminates the process group, including
+compiler children, and reports the command and its captured output.

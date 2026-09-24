@@ -113,6 +113,10 @@ jobs:
                   ;;
               esac
 
+              if [ "${TARGET_PLATFORM}" = "x86_64-linux-gnu" ]; then
+                python3 tests/test-components.py -v
+              fi
+
               cmake --preset "${TARGET_PLATFORM}" \
                 -DDEPLOY_TO_REPO=OFF \
                 -DBUILD_TCL_MODULES=ON \
