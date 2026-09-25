@@ -39,8 +39,11 @@ set script {
   sv.ValueList( valList );
   sv.State(0);
 
-
-  sv.Internal(internal);
+  if((internal == "true") || (internal == 1)) {
+    sv.Internal(true);
+  } else {
+    sv.Internal(false);
+  }
 
   if (channel) {
     sv.Channel(chnID);
@@ -49,7 +52,7 @@ set script {
 
   oSysVars.Add(sv.ID());
 
-  Write("{'name':'"#sv.Name()#"','id':'"#sv.ID()#"','value':'"#sv.ValueList()#"' }");
+  Write('{"name":"'#sv.Name()#'","id":"'#sv.ID()#'","value":"'#sv.ValueList()#'" }');
 }
 
 jsonrpc_response [hmscript $script args]
