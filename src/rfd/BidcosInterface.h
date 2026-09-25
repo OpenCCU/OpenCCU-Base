@@ -133,6 +133,9 @@ public:
 	const std::string& GetDescription();
 	//! Liefert den Typ des Interfaces
 	const std::string& GetInterfaceType() const;
+	//! Ermittelt, ob das Interface per Netzwerk angebunden ist (Funk-LAN-Gateway)
+	/*! Der Typ stammt aus dem "Type"-Eintrag der Interface-Sektion der Konfigurationsdatei */
+	bool IsLanInterface() const;
 	//! Liefert die Firmware-Version des Interfaces
 	const std::string& GetFirmwareVersion() const;
     //! Initialisiert die Datenstrukturen des Interface-Objektes mit den Werten aus der Konfigurationsdatei
