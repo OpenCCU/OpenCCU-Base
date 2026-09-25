@@ -11,7 +11,7 @@
 
 
  set script {
-    var sv = dom.GetObject(name);
+    var sv = dom.GetObject(ID_SYSTEM_VARIABLES).Get(name);
     if (sv)
     {
       Write(sv.Value());
