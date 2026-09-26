@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 
-UdpCannel::UdpCannel():sockfd(0) {
+UdpCannel::UdpCannel():sockfd(-1) {
 	// TODO Automatisch generierter Konstruktorstub
 
 }
@@ -25,7 +25,7 @@ UdpCannel::~UdpCannel() {
 }
 
 bool UdpCannel::RefreshConnection() {
-	if (sockfd > 0)
+	if (sockfd >= 0)
 		CloseSocket();
 
 	OpenSocket();
@@ -35,7 +35,7 @@ bool UdpCannel::RefreshConnection() {
 }
 
 int UdpCannel::OpenSocket() {
-	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0)) == -1) {
 		LOG(Logger::LOG_ERROR, "UDP_CHANNEL: failed to create UDP-Socket.");
 	}
 
@@ -87,7 +87,7 @@ ssize_t UdpCannel::ReceiveMessage(std::string& recv_buf) {
 }
 
 void UdpCannel::CloseSocket() {
-	if (sockfd > 0)
+	if (sockfd >= 0)
 		close(sockfd);
-	sockfd = 0;
+	sockfd = -1;
 }
