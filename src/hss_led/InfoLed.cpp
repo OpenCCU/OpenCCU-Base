@@ -8,6 +8,7 @@
 
 
 #include "InfoLed.h"
+#include "LedCli.h"
 #include <utils.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -19,9 +20,6 @@
 
 InfoLed::InfoLed():
   #if defined(PLATFORM_CCU3)
-  redLed("rpi_rf_mod:red"),
-  greenLed("rpi_rf_mod:green"),
-  blueLed("rpi_rf_mod:blue"),
   rpiRfModFound(false),
   fullCCUFound(false),
   #else
@@ -38,15 +36,6 @@ InfoLed::InfoLed():
   rflgwInfoLed()
 {
   #if defined(PLATFORM_CCU3)
-  // identify if we have a RPI-RF-MOD
-  if(system("lsmod | grep -q rx8130") == 0)
-  {
-    redLed.LedOn();
-    greenLed.LedOn();
-    blueLed.LedOff();
-    rpiRfModFound = true;
-  }
-
   // identify if we running on a production image or on
   // a full CCU
   struct stat buffer;
@@ -121,19 +110,17 @@ void InfoLed::updateLedState() {
   //bool updateState = this->update.isInfoPending();
 
   // get old LED states
-	led::LedState oldStateRed = this->redLed.getLedState();
-	led::LedState oldStateGreen = this->greenLed.getLedState();
-	led::LedState oldStateBlue = this->blueLed.getLedState();
   led::LedState oldStateLGW = this->rflgwInfoLed.getLedState();
 
-  // check that a file /var/status/startupFinished exists and if not
-  // we skip setting the leds. However, make sure that at least we continue
-  // if the blue LED is only on signaling that we are done
+  // Boot/shutdown scripts own the LED outside normal operation.
   struct stat buffer;
-  if((stat("/var/status/startupFinished", &buffer) == -1) &&
-     !(oldStateRed == led::LED_OFF && oldStateGreen == led::LED_OFF && oldStateBlue == led::LED_ON)) {
+  if(stat("/var/status/startupFinished", &buffer) == -1) {
     return;
   }
+
+  // RTC modules can appear after early startup (including HB-RF-USB).
+  rpiRfModFound = access("/sys/module/dummy_rx8130", F_OK) == 0 ||
+                  access("/sys/module/rtc_rx8130", F_OK) == 0;
 
   // calculate new LED states
   led::LedState newStateRed = led::UNKNOWN;
@@ -253,17 +240,25 @@ void InfoLed::updateLedState() {
   }
 
   // set LEDs of a RPI-RF-MOD
-  if(rpiRfModFound == true &&
-     ((newStateRed != oldStateRed || newStateGreen != oldStateGreen || newStateBlue != oldStateBlue) &&
-      (newStateRed != led::UNKNOWN && newStateGreen != led::UNKNOWN && newStateBlue != led::UNKNOWN)))
+  if(rpiRfModFound)
   {
-     this->redLed.LedOff();
-     this->greenLed.LedOff();
-     this->blueLed.LedOff();
-
-     this->redLed.switchLed(newStateRed, newStateRedStart);
-     this->greenLed.switchLed(newStateGreen, newStateGreenStart);
-     this->blueLed.switchLed(newStateBlue, newStateBlueStart);
+    if(newStateRed != led::UNKNOWN && newStateGreen != led::UNKNOWN && newStateBlue != led::UNKNOWN)
+    {
+      unsigned first = 0, second = 0, period = 0;
+      const led::LedState states[] = {newStateRed, newStateGreen, newStateBlue};
+      const int starts[] = {newStateRedStart, newStateGreenStart, newStateBlueStart};
+      for(unsigned i = 0; i < 3; ++i)
+      {
+        if(states[i] == led::LED_ON) { first |= 1U << i; second |= 1U << i; }
+        else if(states[i] == led::LED_SLOW || states[i] == led::LED_FAST)
+        {
+          period = states[i] == led::LED_SLOW ? LedCli::slowMs : LedCli::fastMs;
+          if(starts[i]) second |= 1U << i;
+          else first |= 1U << i;
+        }
+      }
+      rgbLed.set(first, second, period);
+    }
   }
 
   // set LAN Gateway LED regularly
