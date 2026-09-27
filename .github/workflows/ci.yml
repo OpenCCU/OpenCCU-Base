@@ -117,9 +117,19 @@ jobs:
                 python3 tests/test-components.py -v
               fi
 
+              # Read Tcl paths from the target container. Preset search roots may
+              # exclude its native multiarch library directory.
+              tcl_include="$(pkg-config --variable=includedir tcl)"
+              tcl_libdir="$(pkg-config --variable=libdir tcl)"
+              test -f "${tcl_include}/tcl.h"
+              test -f "${tcl_libdir}/libtcl.so"
+              echo "Tcl headers: ${tcl_include}; library: ${tcl_libdir}/libtcl.so"
+
               cmake --preset "${TARGET_PLATFORM}" \
                 -DDEPLOY_TO_REPO=OFF \
                 -DBUILD_TCL_MODULES=ON \
+                -DTCL_INCLUDE_PATH="${tcl_include}" \
+                -DTCL_LIBRARY="${tcl_libdir}/libtcl.so" \
                 -DHAS_USB_SUPPORT=ON \
                 -DBUILD_WEBUI_AND_DEVICETYPES="${BUILD_ASSETS}"
               cmake --build --preset "${TARGET_PLATFORM}" \
