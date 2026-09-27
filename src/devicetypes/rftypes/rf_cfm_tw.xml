@@ -745,7 +745,7 @@
           <option id="WHITE_SHORT"/>    
           <option id="WHITE_LONG"/>             
         </logical>
-        <physical type="integer" interface="config"  list="3" index="0x24" size="1.0"/>
+        <physical type="integer" interface="config"  list="3" index="0xA4" size="1.0"/>
         <conversion type="option_integer">
           <value_map device_value="0x00" parameter_value="0"/>  
           <value_map device_value="0x11" parameter_value="1"/>  
