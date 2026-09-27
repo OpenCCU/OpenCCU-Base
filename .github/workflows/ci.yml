@@ -29,23 +29,23 @@ jobs:
       matrix:
         include:
           - platform: x86_64-linux-gnu
-            container_platform: linux/amd64
-            qemu_platform: ''
+            debian_arch: amd64
+            multiarch_triplet: x86_64-linux-gnu
             binary_format: x86-64
             build_assets: 'ON'
           - platform: aarch64-linux-gnu
-            container_platform: linux/arm64
-            qemu_platform: arm64
+            debian_arch: arm64
+            multiarch_triplet: aarch64-linux-gnu
             binary_format: ARM aarch64
             build_assets: 'OFF'
           - platform: arm-linux-gnueabihf
-            container_platform: linux/arm/v7
-            qemu_platform: arm
+            debian_arch: armhf
+            multiarch_triplet: arm-linux-gnueabihf
             binary_format: ARM
             build_assets: 'OFF'
           - platform: i686-linux-gnu
-            container_platform: linux/386
-            qemu_platform: '386'
+            debian_arch: i386
+            multiarch_triplet: i386-linux-gnu
             binary_format: Intel 80386
             build_assets: 'OFF'
 
@@ -56,56 +56,54 @@ jobs:
         with:
           persist-credentials: false
 
-      # Run each build in a native userspace for its target architecture. This
-      # also ensures that OpenSSL, libusb and Tcl are linked for that target.
-      - name: Set up QEMU
-        if: matrix.qemu_platform != ''
-        # v4
-        uses: >-
-          docker/setup-qemu-action@1f40c72289eff860ee54a304f1438e3cff362e0a
-        with:
-          platforms: ${{ matrix.qemu_platform }}
-
       - name: Configure and build
         env:
           BUILD_ASSETS: ${{ matrix.build_assets }}
-          CONTAINER_PLATFORM: ${{ matrix.container_platform }}
+          DEBIAN_ARCH: ${{ matrix.debian_arch }}
+          MULTIARCH_TRIPLET: ${{ matrix.multiarch_triplet }}
           TARGET_PLATFORM: ${{ matrix.platform }}
         run: |
           docker run --rm \
-            --platform "${CONTAINER_PLATFORM}" \
+            --platform linux/amd64 \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
             --env BUILD_ASSETS \
+            --env DEBIAN_ARCH \
+            --env MULTIARCH_TRIPLET \
             --env TARGET_PLATFORM \
             debian:bookworm-slim \
             bash -euxo pipefail -c '
               export DEBIAN_FRONTEND=noninteractive
               export LANG=C.UTF-8
-              packages=(
-                build-essential
-                ca-certificates
-                cmake
-                file
-                libssl-dev
-                libusb-1.0-0-dev
-                pkg-config
-                tcl-dev
-              )
-              if [ "${BUILD_ASSETS}" = "ON" ]; then
-                packages+=(default-jre-headless python3)
-              fi
-              apt-get update
-              apt-get install --yes --no-install-recommends "${packages[@]}"
 
+              package_arch=""
+              toolchain_packages=(build-essential)
               case "${TARGET_PLATFORM}" in
                 x86_64-linux-gnu)
                   ;;
-                aarch64-linux-gnu|arm-linux-gnueabihf|i686-linux-gnu)
-                  c_compiler="/usr/local/bin/${TARGET_PLATFORM}-gcc"
-                  cxx_compiler="/usr/local/bin/${TARGET_PLATFORM}-g++"
-                  ln -s "$(command -v gcc)" "${c_compiler}"
-                  ln -s "$(command -v g++)" "${cxx_compiler}"
+                aarch64-linux-gnu)
+                  package_arch=":${DEBIAN_ARCH}"
+                  toolchain_packages=(
+                    gcc-aarch64-linux-gnu
+                    g++-aarch64-linux-gnu
+                    libc6-dev-arm64-cross
+                  )
+                  ;;
+                arm-linux-gnueabihf)
+                  package_arch=":${DEBIAN_ARCH}"
+                  toolchain_packages=(
+                    gcc-arm-linux-gnueabihf
+                    g++-arm-linux-gnueabihf
+                    libc6-dev-armhf-cross
+                  )
+                  ;;
+                i686-linux-gnu)
+                  package_arch=":${DEBIAN_ARCH}"
+                  toolchain_packages=(
+                    gcc-i686-linux-gnu
+                    g++-i686-linux-gnu
+                    libc6-dev-i386-cross
+                  )
                   ;;
                 *)
                   echo "Unsupported target platform: ${TARGET_PLATFORM}" >&2
@@ -113,17 +111,46 @@ jobs:
                   ;;
               esac
 
+              if [ -n "${package_arch}" ]; then
+                dpkg --add-architecture "${DEBIAN_ARCH}"
+              fi
+
+              apt-get update
+              packages=(
+                ca-certificates
+                cmake
+                file
+                "libssl-dev${package_arch}"
+                "libusb-1.0-0-dev${package_arch}"
+                make
+                pkg-config
+                "tcl-dev${package_arch}"
+                "${toolchain_packages[@]}"
+              )
+              if [ "${BUILD_ASSETS}" = "ON" ]; then
+                packages+=(default-jre-headless python3)
+              fi
+              apt-get install --yes --no-install-recommends "${packages[@]}"
+
+              if [ -n "${package_arch}" ]; then
+                export PKG_CONFIG_PATH=
+                export PKG_CONFIG_LIBDIR="/usr/lib/${MULTIARCH_TRIPLET}"
+                PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}/pkgconfig"
+                PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}:/usr/share/pkgconfig"
+              fi
+
               if [ "${TARGET_PLATFORM}" = "x86_64-linux-gnu" ]; then
                 python3 tests/test-components.py -v
               fi
 
-              # Read Tcl paths from the target container. Preset search roots may
-              # exclude its native multiarch library directory.
+              # Read Tcl paths from the target container. Preset search roots
+              # may exclude its native multiarch library directory.
               tcl_include="$(pkg-config --variable=includedir tcl)"
               tcl_libdir="$(pkg-config --variable=libdir tcl)"
               test -f "${tcl_include}/tcl.h"
               test -f "${tcl_libdir}/libtcl.so"
-              echo "Tcl headers: ${tcl_include}; library: ${tcl_libdir}/libtcl.so"
+              echo "Tcl headers: ${tcl_include}"
+              echo "Tcl library: ${tcl_libdir}/libtcl.so"
 
               cmake --preset "${TARGET_PLATFORM}" \
                 -DDEPLOY_TO_REPO=OFF \
