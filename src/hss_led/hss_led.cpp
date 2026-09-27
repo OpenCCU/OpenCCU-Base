@@ -6,136 +6,86 @@
 * in the file HMSL.txt in the source distribution.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "InfoLed.h"
+#include "UdpCannel.h"
+#include "LedController.h"
+#include "LedCli.h"
+#include <ConsoleLogger.h>
+#include <SyslogLogger.h>
+#include <cstdlib>
 #include <iostream>
 #include <string>
-#include <string.h>
-#include <Logger.h>
-#include <SyslogLogger.h>
-#include <ConsoleLogger.h>
-#include "led.h"
-#include "InfoLed.h"
-#if !defined(PLATFORM_CCU3)
-#include "InternetLed.h"
-#endif
-#include "utils.h"
-#include "MessageParser.h"
+#include <thread>
+#include <chrono>
+#include <unistd.h>
 
-#include "UdpCannel.h"
-#include "defines.h"
-
-#define VERSION "2.3 (" __DATE__ ")"
-
-//sigterm_handler / Aufruf von Systemfunktion signal(...)
-
-//-------------------------------------------------------
-
-void PrintUsage();
-bool run = true;
-int main(int argc, char **argv)
-{
-	int ret = 0;
-	int receivedSize = 0;
-		UdpCannel udp;
-		std::string msg;
-
-		MessageParser parser;
-		InfoLed infoLed;
-	//Zeitmessung z("Start von hss_led");
-
-	logger = 0; //Variable in <Logger.h>
-	Logger::LogLevel loglevel = Logger::LOG_INFO;
-
-	for (int i=1; i<argc; i++)
-	{
-		if (strcmp(argv[i], "-c") == 0)
-		{
-			if (logger) delete logger;
-			logger = new ConsoleLogger();
-			continue;
-		}
-		else if (strcmp(argv[i], "-l") == 0 && argc > i+1)
-		{
-			int level = atoi(argv[i+1]);
-			if      (level < 0) level = 0;
-			else if (level > 6) level = 6;
-			loglevel = (Logger::LogLevel) level;
-			++i;
-			continue;
-		}
-		else if (strcmp(argv[i],"-h") == 0 && argc > i+1)
-		{
-
-			++i;
-			continue;
-		}
-		else
-		{
-			PrintUsage();
-			ret = -1;
-			return ret;
-		}
-	}
-
-	//LOG(Logger::LOG_DEBUG, "%s", z.Str().c_str());
-
-	if (! logger) logger = new SyslogLogger();
-
-	logger->SetLevel(loglevel);
-
-	LOG(Logger::LOG_INFO, "hss_led: Programm initialisiert.");
-	udp.OpenSocket();
-	udp.BindServer();
-  #if !defined(PLATFORM_CCU3)
-	led power("power");
-	power.LedOn();
-  #endif
-
-  #if !defined(PLATFORM_CCU3)
-	InternetLed internetLed;
-  #endif
-
-	while(run)
-	{
-		receivedSize = udp.ReceiveMessage(msg);
-		if(receivedSize > 0)
-		{
-			//LOG(Logger::LOG_INFO,"%s",msg.c_str());
-			if(!infoLed.checkMessage(msg))
-			{
-				LOG(Logger::LOG_ERROR,"UDP Nachricht konnte nicht gelesen werden");
-			}
-		}
-		infoLed.updateLedState();
-
-    #if !defined(PLATFORM_CCU3)
-		internetLed.updateLedState();
-    #endif
-	}
-
-
-	if (logger)
-	{
-		delete logger;
-		       logger = 0;
-	}
-
-	return ret;
+static void monitorStatus() {
+  // S06 has initialized the user configuration at the former hss_led start
+  // point. Do not cache rfd/LAN-gateway settings earlier than that.
+  while (access("/var/status/hssLedReady", F_OK) != 0)
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  if (access("/usr/local/HMLGW", F_OK) == 0) return;
+  InfoLed info;
+  UdpCannel udp;
+  std::string message;
+  while (true) {
+    if (udp.RefreshConnection()) break;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
+  while (true) {
+    if (udp.ReceiveMessage(message) > 0 && !info.checkMessage(message))
+      LOG(Logger::LOG_ERROR, "Cannot parse LED status message");
+    if (LedController::statusActive()) info.updateLedState();
+  }
 }
-//----------------------------------------------------------------------
-void PrintUsage()
-{
-	std::cout << "hss_led " VERSION << std::endl;
-	std::cout << "-c: Log-Meldungen auf Konsole ausgeben."   << std::endl;
-	std::cout << "-l: Setze Log-Level: 0..6\n" <<
-						"    (0=Alles,\n" <<
-						"     1=Debug, \n" <<
-						"     2=Info, \n" <<
-						"     3=Notizen, \n" <<
-						"     4=Warnungen, \n" <<
-						"     5=Fehler, \n" <<
-						"     6=Fatale Fehler)" << std::endl;
-
+static void startStatus() {
+  std::thread([] {
+    try { monitorStatus(); }
+    catch (const std::exception& e) {
+      std::cerr << "hss_led status: " << e.what() << '\n';
+      std::_Exit(1); // let the supervisor restart the complete owner
+    }
+  }).detach();
 }
-
+int main(int argc, char** argv) {
+  try {
+    LedController::configureTestPaths();
+    std::string program(argv[0]);
+    program = program.substr(program.find_last_of('/') + 1);
+    // Clients never construct InfoLed, bind UDP or start another controller.
+    if (program == "hss_ledctl") return LedController::client(argc, argv);
+    if (argc > 1 && std::string(argv[1]) == "--led-control")
+      return LedController::client(argc - 1, argv + 1);
+    bool ledOnly = access("/usr/local/HMLGW", F_OK) == 0;
+    bool console = false;
+    int level = static_cast<int>(Logger::LOG_INFO);
+    for (int i = 1; i < argc; ++i) {
+      std::string arg(argv[i]);
+      if (arg == "--help" || arg == "-h") { LedCli::daemonHelp(std::cout); return 0; }
+      if (arg == "--version" || arg == "-V") { LedCli::version(std::cout, "hss_led"); return 0; }
+      if (arg == "--led-only") ledOnly = true;
+      else if (arg == "-c") console = true;
+      else if (arg == "-l" && i + 1 < argc) {
+        std::string value(argv[++i]);
+        if (value.size() != 1 || value[0] < '0' || value[0] > '6') {
+          std::cerr << "Invalid log level; use -l 0..6.\n";
+          return 2;
+        }
+        level = value[0] - '0';
+      } else {
+        std::cerr << "Invalid arguments; use hss_led --help.\n";
+        return 2;
+      }
+    }
+    logger = console ? static_cast<Logger*>(new ConsoleLogger()) : new SyslogLogger();
+    logger->SetLevel(static_cast<Logger::LogLevel>(level));
+    int result = LedController::run(ledOnly ? nullptr : startStatus);
+    // The status thread may be blocked in a library query. State changes were
+    // persisted before acknowledgment and run() has closed its descriptors.
+    // Terminate the process without destructing shared globals under that thread.
+    std::_Exit(result);
+  } catch (const std::exception& e) {
+    std::cerr << "hss_led: " << e.what() << '\n';
+    std::_Exit(2);
+  }
+}

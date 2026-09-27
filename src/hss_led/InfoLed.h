@@ -12,6 +12,7 @@
 #include <string>
 #include <cstdint>
 #include "led.h"
+#include "RgbLed.h"
 #include "ServiceMessage.h"
 #include "AlarmMessage.h"
 #include "MessageParser.h"
@@ -32,9 +33,7 @@ public:
 
 private:
   #if defined(PLATFORM_CCU3)
-	led redLed;
-	led greenLed;
-	led blueLed;
+	RgbLed rgbLed;
 	Network net;
 	bool rpiRfModFound;
 	bool fullCCUFound;

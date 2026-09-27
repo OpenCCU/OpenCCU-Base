@@ -8,6 +8,7 @@
 
 
 #include "Network.h"
+#include "StatusCommand.h"
 #include <fcntl.h>
 #include <unistd.h>
 #include <Logger.h>
@@ -56,7 +57,7 @@ bool Network::isInfoPending() {
 	// run the /bin/checkInternet script every X'th interval
 	if (--checkInternetInterval <= 0) {
 		if (stat("/bin/checkInternet", &buffer) == 0
-				&& system("/bin/checkInternet") != 0) {
+				&& runStatusCommand("/bin/checkInternet") != 0) {
 			LOG(Logger::LOG_DEBUG,
 					"Network::CheckNetState(): checkInternet failed");
 		}
