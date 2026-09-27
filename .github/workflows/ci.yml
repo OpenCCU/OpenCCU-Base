@@ -32,22 +32,18 @@ jobs:
             debian_arch: amd64
             multiarch_triplet: x86_64-linux-gnu
             binary_format: x86-64
-            build_assets: 'ON'
           - platform: aarch64-linux-gnu
             debian_arch: arm64
             multiarch_triplet: aarch64-linux-gnu
             binary_format: ARM aarch64
-            build_assets: 'OFF'
           - platform: arm-linux-gnueabihf
             debian_arch: armhf
             multiarch_triplet: arm-linux-gnueabihf
             binary_format: ARM
-            build_assets: 'OFF'
           - platform: i686-linux-gnu
             debian_arch: i386
             multiarch_triplet: i386-linux-gnu
             binary_format: Intel 80386
-            build_assets: 'OFF'
 
     steps:
       - name: Checkout Code
@@ -58,7 +54,6 @@ jobs:
 
       - name: Configure and build
         env:
-          BUILD_ASSETS: ${{ matrix.build_assets }}
           DEBIAN_ARCH: ${{ matrix.debian_arch }}
           MULTIARCH_TRIPLET: ${{ matrix.multiarch_triplet }}
           TARGET_PLATFORM: ${{ matrix.platform }}
@@ -67,7 +62,6 @@ jobs:
             --platform linux/amd64 \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             --workdir /workspace \
-            --env BUILD_ASSETS \
             --env DEBIAN_ARCH \
             --env MULTIARCH_TRIPLET \
             --env TARGET_PLATFORM \
@@ -119,17 +113,17 @@ jobs:
               packages=(
                 ca-certificates
                 cmake
+                default-jre-headless
                 file
                 "libssl-dev${package_arch}"
                 "libusb-1.0-0-dev${package_arch}"
                 make
                 pkg-config
+                python3
+                tcl
                 "tcl-dev${package_arch}"
                 "${toolchain_packages[@]}"
               )
-              if [ "${BUILD_ASSETS}" = "ON" ]; then
-                packages+=(default-jre-headless python3)
-              fi
               apt-get install --yes --no-install-recommends "${packages[@]}"
 
               if [ -n "${package_arch}" ]; then
@@ -158,7 +152,7 @@ jobs:
                 -DTCL_INCLUDE_PATH="${tcl_include}" \
                 -DTCL_LIBRARY="${tcl_libdir}/libtcl.so" \
                 -DHAS_USB_SUPPORT=ON \
-                -DBUILD_WEBUI_AND_DEVICETYPES="${BUILD_ASSETS}"
+                -DBUILD_WEBUI_AND_DEVICETYPES=ON
               cmake --build --preset "${TARGET_PLATFORM}" \
                 --target package \
                 --parallel "$(nproc)"
@@ -167,7 +161,6 @@ jobs:
       - name: Verify staged package
         env:
           BINARY_FORMAT: ${{ matrix.binary_format }}
-          BUILD_ASSETS: ${{ matrix.build_assets }}
           TARGET_PLATFORM: ${{ matrix.platform }}
         run: |
           stage="build/${TARGET_PLATFORM}/rootfs"
@@ -203,19 +196,17 @@ jobs:
               <<<"${description}" >/dev/null
           done
 
-          if [ "${BUILD_ASSETS}" = "ON" ]; then
-            test -s "${stage}/www/webui/webui.js"
-            test -s "${stage}/www/webui/style.css"
-            test -s "${stage}/www/config/devdescr/DEVDB.tcl"
+          test -s "${stage}/www/webui/webui.js"
+          test -s "${stage}/www/webui/style.css"
+          test -s "${stage}/www/config/devdescr/DEVDB.tcl"
 
-            source_rf_count=$(find src/devicetypes/rftypes \
-              -maxdepth 1 -name '*.xml' | wc -l)
-            staged_rf_count=$(find "${stage}/firmware/rftypes" \
-              -maxdepth 1 -name '*.xml' | wc -l)
-            source_hs485_count=$(find src/devicetypes/hs485types \
-              -maxdepth 1 -name '*.xml' | wc -l)
-            staged_hs485_count=$(find "${stage}/firmware/hs485types" \
-              -maxdepth 1 -name '*.xml' | wc -l)
-            test "${source_rf_count}" -eq "${staged_rf_count}"
-            test "${source_hs485_count}" -eq "${staged_hs485_count}"
-          fi
+          source_rf_count=$(find src/devicetypes/rftypes \
+            -maxdepth 1 -name '*.xml' | wc -l)
+          staged_rf_count=$(find "${stage}/firmware/rftypes" \
+            -maxdepth 1 -name '*.xml' | wc -l)
+          source_hs485_count=$(find src/devicetypes/hs485types \
+            -maxdepth 1 -name '*.xml' | wc -l)
+          staged_hs485_count=$(find "${stage}/firmware/hs485types" \
+            -maxdepth 1 -name '*.xml' | wc -l)
+          test "${source_rf_count}" -eq "${staged_rf_count}"
+          test "${source_hs485_count}" -eq "${staged_hs485_count}"
