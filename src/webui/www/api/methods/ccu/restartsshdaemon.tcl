@@ -8,3 +8,5 @@
 ##
 
 catch {exec /usr/bin/monit restart sshd}
+
+jsonrpc_response ""
