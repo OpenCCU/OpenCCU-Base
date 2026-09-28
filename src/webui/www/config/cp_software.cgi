@@ -286,7 +286,7 @@ proc action_put_page {} {
                         table {
                           table_row {
                             table_data {
-                              division {class="CLASS21404"} "onClick=\"window.location.href='$sw_info(Update)?cmd=download&version=$sw_info(Version)';\"" {
+                              division {class="CLASS21404"} "onClick=\"openUrl('$sw_info(Update)?cmd=download&version=$sw_info(Version)');\"" {
                                 #puts "Herunterladen"
                                 puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"
                               }
