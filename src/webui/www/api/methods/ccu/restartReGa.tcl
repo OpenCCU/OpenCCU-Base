@@ -8,3 +8,5 @@
 ##
 
 catch {exec /usr/bin/monit restart ReGaHss}
+
+jsonrpc_response ""

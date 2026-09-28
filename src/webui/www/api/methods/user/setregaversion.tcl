@@ -9,3 +9,5 @@
 ##
 
 exec echo $args(ReGaVersion) > /etc/config/ReGaHssVersion
+
+jsonrpc_response ""
