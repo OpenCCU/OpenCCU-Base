@@ -1363,9 +1363,7 @@ proc action_apply_logging {} {
     puts "Failure"
     return
   }
-  catch {exec killall syslogd}
-  catch {exec killall klogd}
-  exec /etc/init.d/S07logging start
+  exec /usr/bin/monit restart syslogd
   puts "Success -confirm"
 }
 
