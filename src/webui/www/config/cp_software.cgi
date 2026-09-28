@@ -474,7 +474,7 @@ proc translatePage {loop} {
     for {set i 0} {$i <= $loop} {incr i} {
       if { [info exists swUpdate($i)] } {
         puts "getVersion(\"$swUpdate($i)?cmd=check_version&version=$swVersion($i)\", function(contents) {"
-        puts "  document.getElementById(\"availableSWVersion_$i\").innerHTML = contents;"
+        puts " if (document.getElementById(\"availableSWVersion_$i\") !== null) document.getElementById(\"availableSWVersion_$i\").innerHTML = contents;"
         puts "});"
         puts "document.getElementById(\"availableSWVersion_$i\").innerHTML = \"n/a\";"
       }
