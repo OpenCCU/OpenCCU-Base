@@ -1049,7 +1049,7 @@ proc put_channel_parameters {} {
           #end if internalKey 
         }
       } 
-      catch {check_RF_links $dev_descr(TYPE) $iface $ch_descr(ADDRESS) $ch_descr(INDEX) $ch_descr(TYPE) $ise_CHANNELNAMES($iface;$ch_descr(ADDRESS))}
+      catch {check_RF_links $dev_descr(TYPE) $iface $ch_descr(ADDRESS) $ch_descr(INDEX) $ch_descr(TYPE) $ch_name}
       array_clear ch_ps
       destructor
 
