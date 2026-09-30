@@ -838,7 +838,7 @@ ise.Devices.prototype = {
   
   setVisible: function(id, ctrlId, mode) {
     var url = "/esp/devices.htm?sid="+SessionId;
-    var pb = "integer devId = " + id + ";";
+    var pb = "integer devId = " + DeviceList.getChannel(id).deviceId + ";";
     pb += "string action= 'setVisible';";
 
     if (mode) {
