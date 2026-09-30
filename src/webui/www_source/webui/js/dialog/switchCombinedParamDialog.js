@@ -133,7 +133,7 @@ SwitchCombinedParamDialog = Class.create({
       durationValue = (this.chkBoxTimeLimitElm.prop("checked") == false) ? 31 : this.durationValueElm.val();
 
       if (this.isOntimeAvailable()) {
-        if ((this.chkBoxTimeLimitElm.prop("checked") == false) || (durationValue == 0) || (durationValue == 31)) {
+        if ((this.chkBoxTimeLimitElm.prop("checked") == false) || (durationValue == 0) || (durationValue == 31 && durationUnit == 2)) {
           if (! this._deviceIsWindowDrive()) {
             if (! this._deviceIsDali()) {
               result = "S=" + state;
