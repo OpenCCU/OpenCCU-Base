@@ -76,6 +76,8 @@ if (PLATFORM == "Central") {
     {id: "INTERFACE_BIDCOS_WIRED", name: translateKey("BidCosWired-Filter")}, // BidCos-Wired
     {id: "INTERFACE_HMIP_RF", name: translateKey("HmIPRF")}, // HmIP-RF
     {id: "INTERFACE_VIRTUAL_DEVICES", name: translateKey("VirtualDevices")},
+    {id: "INTERFACE_CUXD", name: "CUxD"}, //
+    {id: "INTERFACE_CCU_JACK", name: "CCU-Jack"}, //
     {id: "INTERFACE_SYSTEM", name: "System"} //
   ],
   
