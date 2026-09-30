@@ -628,7 +628,7 @@ BidcosRfPage =
     var i, len, device;
     this.m_devices = [];
     
-    var devices = DeviceList.listDevices();
+    var devices = DeviceList.listDevices().ex_sortBy("name");
     
     for (i = 0, len = devices.length; i < len; i++)
     {
