@@ -1238,6 +1238,7 @@ a img {
   background-color: $_(active); /* #565657 */
   text-align: center;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 
 .tBodyCell
