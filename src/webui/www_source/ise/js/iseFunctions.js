@@ -1821,7 +1821,7 @@ ise.SingleDestination.prototype =
     var pb = '';
     pb += 'string action = "SetScript";';
     pb += 'string id = "'+id+'";';
-    pb += 'string value = ^'+script+'^;';
+    pb += 'string value = ^'+script.replace(/\^/g, '^#\'^\'#^')+'^;';
     var opts =
     {
       postBody: ReGa.encode(pb),
