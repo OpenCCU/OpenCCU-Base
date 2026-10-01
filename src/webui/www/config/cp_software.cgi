@@ -452,14 +452,14 @@ proc action_put_page {} {
   if { $loop > -1 } {
     translatePage $loop
   } else {
-    puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
+    puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
   }
 }
 
 proc translatePage {loop} {
 
 
-  puts "<script type=\"text/javascript\">translatePage('#messagebox')</script>"
+  puts "<script type=\"text/javascript\">translatePage('#messagebox');dlgPopup.readaptSize();</script>"
   global swVersion swUpdate
   cgi_javascript {
     puts "function getVersion(url, callback) {"
