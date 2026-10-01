@@ -81,18 +81,11 @@ isePropEditorRow.prototype = {
       // Namen im DOM ändern beim Verlassen des Textfeldes
       var changeListener = this.saveNameToDom.bindAsEventListener(this);
       Event.observe($(inputId), 'blur', changeListener);
-      var keypressEvent = this.onKeyPress.bindAsEventListener(this);
-      Event.observe($(inputId), "keyup", keypressEvent);
       
       $(inputId).focus();
     }
   },
   
-  onKeyPress: function(ev) {
-    if (ev.keyCode == Event.KEY_RETURN)
-      this.saveNameToDom();
-  },
-
   saveNameToDom: function () {
     var newName = $("nEdit" + this.id).value;
     if (newName === "") {
