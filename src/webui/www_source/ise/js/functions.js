@@ -650,11 +650,27 @@ setPath = function (path) {
 
 
 logout = function() {
+  // disable logout button
+  jQuery("#btnLogOut > div").css('color', 'graytext');
+  jQuery("#btnLogOut > div").attr("onclick", "").unbind("click");
+
+  // create ProgressBar
+  ProgressBar = new ProgressBarMsgBox(translateKey('logoutInProgress'), 1);
+  ProgressBar.show();
+  ProgressBar.StartKnightRiderLight();
+
+  // stop all update monitors
   regaMonitor.stop();
   InterfaceMonitor.stop();
-  location.href = "/logout.htm?lang="+getLang();
-  homematic('Session.logout', {});
-  homematic('system.saveObjectModel', {});
+
+  // save the regadom first, since Session.logout ends the session
+  homematic('system.saveObjectModel', {}, function() {
+    homematic('Session.logout', {}, function() {
+      ProgressBar.hide();
+      ProgressBar.StopKnightRiderLight();
+      location.href = "/logout.htm?lang="+getLang();
+    });
+  });
 };
 
 
