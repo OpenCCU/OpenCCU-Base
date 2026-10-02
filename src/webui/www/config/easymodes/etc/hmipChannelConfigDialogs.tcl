@@ -192,7 +192,7 @@ proc getMaintenance {chn p descr address} {
   }
 
   # SPHM-590
-  if {[string is false $deviceIsDrapOrHap]} {
+  if { $deviceIsDrapOrHap == false } {
     set param ROUTER_MODULE_ENABLED
     if { [info exists ps($param)] == 1  } {
        incr prn
