@@ -71,7 +71,14 @@
               if (devId != ID_ERROR)
               {
                 object dev = dom.GetObject(devId);
-                Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");
+                if (dev)
+                {
+                  Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");
+                }
+                else
+                {
+                  Write("tmp['desc'] = '';");
+                }
               }
               
               Write("tmp['type'] = '"#o3.Label()#"';");
