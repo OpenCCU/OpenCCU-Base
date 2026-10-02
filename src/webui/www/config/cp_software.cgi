@@ -247,7 +247,15 @@ proc action_put_page {} {
       set scripts ""
       set loop -1
       catch { set scripts [glob /etc/config/rc.d/*] }
+      set scriptsList {}
       foreach s $scripts {
+        array set sw_info ""
+        if { [catch { get_info $s sw_info }] } continue
+        if { ![info exists sw_info(Name)] } continue
+        lappend scriptsList [list $sw_info(Name) $s]
+      }
+      foreach entry [lsort -index 0 -nocase $scriptsList] {
+        set s [lindex $entry 1]
         incr loop;
         catch {
           if { ! [file executable $s] } continue
