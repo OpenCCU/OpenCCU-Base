@@ -713,9 +713,11 @@ static int eq3loop_close_master(struct eq3loop_channel_data* channel, struct fil
 	
 	/*
 	 * release() must not fail, so do not use down_interruptible() here.
-	 * Lock order is control_data->sem -> channel->sem (same as in eq3loop_create_slave_dev()).
+	 * control_data->sem is not needed: eq3loop_create_slave_dev() may pick this
+	 * slot as soon as created is 0, but then waits for channel->sem before it
+	 * touches the channel. Not holding the global lock here keeps a slave
+	 * operation that blocks in copy_*_user() from stalling all other channels.
 	 */
-	down(&control_data->sem);
 	down(&channel->sem);
 	
 	if( channel->slave_open_count )
@@ -740,7 +742,6 @@ static int eq3loop_close_master(struct eq3loop_channel_data* channel, struct fil
 	}
 	
 	up( &channel->sem );
-	up( &control_data->sem );
 	
 	/* wake up all blocked slave readers/writers/pollers so they notice the hangup */
 	wake_up_interruptible( &channel->master2slaveq );

@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <termios.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
@@ -88,6 +89,10 @@ int main(void)
 	}
 	CHECK(i == 0 && r < 0 && err == ENODEV, "stale slave write -> %d frames accepted into a channel nobody reads, then %s",
 	      i, r < 0 ? strerror(err) : "still accepted");
+	r = read(s, buf, sizeof(buf)); err = errno;
+	CHECK(r < 0 && err == ENODEV, "stale slave read -> %zd (%s)", r, r < 0 ? strerror(err) : "data");
+	r = ioctl(s, TIOCINQ, &i); err = errno;
+	CHECK(r < 0 && err == ENODEV, "stale slave ioctl(TIOCINQ) -> %zd (%s)", r, r < 0 ? strerror(err) : "ok");
 	r = read(m, buf, sizeof(buf));
 	printf("INFO: new master read() -> %zd (%s), events=0x%lx\n", r, r < 0 ? strerror(errno) : "-", events(m));
 
