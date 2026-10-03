@@ -20,10 +20,10 @@ ConfigData = Singleton.create({
     this.callback = callback;
     if (this.isPresent === false)
     {
-      //this.isPresent = true;
-      //new ConfigDataLoader(callback);
-      this.configDataLoader.showMessage();
-      this.showMessage = true;
+      this.isPresent = true;
+      new ConfigDataLoader(callback);
+      //this.configDataLoader.showMessage();
+      //this.showMessage = true;
     }
     else
     {
