@@ -639,9 +639,7 @@ ChannelChooser = Singleton.create({
       //channels         : this.filter(this.channels)
     });
 
-    if (! userIsNoExpert) {
-      jQuery(".j_expertChannel").show();
-    }
+    jQuery(".j_expertChannel").show();
 
     translateJSTemplate("#ChannelChooserDialog");
     translatePage(".j_rooms, .j_functions");
