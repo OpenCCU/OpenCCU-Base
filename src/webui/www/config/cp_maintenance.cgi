@@ -1296,8 +1296,7 @@ proc action_update_start {} {
     exec /bin/kill -SIGQUIT 1
   } else {
     exec touch /usr/local/.recoveryMode
-    exec sleep 5
-    exec /sbin/reboot
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
   }
 
 }
@@ -1308,8 +1307,7 @@ proc action_reboot {} {
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
   catch { exec lcdtool {Reboot...       } }
-  exec sleep 5
-  exec /sbin/reboot
+  exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
 }
 proc action_shutdown {} {
   puts ""
@@ -1317,9 +1315,8 @@ proc action_shutdown {} {
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()
   catch { exec lcdtool {Shutdown...       } }
-  exec sleep 5
   catch { exec touch /tmp/shutdown }
-  exec /sbin/poweroff
+  exec /sbin/poweroff -d 2 2>/dev/null >/dev/null &
 }
 
 proc get_logserver {} {
