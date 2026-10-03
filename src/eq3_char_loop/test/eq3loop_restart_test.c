@@ -61,6 +61,7 @@ int main(void)
 	ssize_t r;
 	int m, s, s2, i, err;
 	struct pollfd pfd;
+	struct termios tio;
 
 	printf("=== 1. normal operation ===\n");
 	m = new_master();
@@ -93,6 +94,11 @@ int main(void)
 	CHECK(r < 0 && err == ENODEV, "stale slave read -> %zd (%s)", r, r < 0 ? strerror(err) : "data");
 	r = ioctl(s, TIOCINQ, &i); err = errno;
 	CHECK(r < 0 && err == ENODEV, "stale slave ioctl(TIOCINQ) -> %zd (%s)", r, r < 0 ? strerror(err) : "ok");
+	memset(&tio, 0, sizeof(tio));
+	r = ioctl(s, TCGETS, &tio); err = errno;
+	CHECK(r < 0 && err == ENODEV, "stale slave ioctl(TCGETS) -> %zd (%s)", r, r < 0 ? strerror(err) : "ok");
+	r = ioctl(s, TCSETS, &tio); err = errno;
+	CHECK(r < 0 && err == ENODEV, "stale slave ioctl(TCSETS) -> %zd (%s)", r, r < 0 ? strerror(err) : "ok");
 	r = read(m, buf, sizeof(buf));
 	printf("INFO: new master read() -> %zd (%s), events=0x%lx\n", r, r < 0 ? strerror(errno) : "-", events(m));
 
