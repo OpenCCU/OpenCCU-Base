@@ -14,6 +14,7 @@
 #include "CCU2SerialPortWrapper.h"
 
 #include <string>
+#include <atomic>
 
 namespace HM2 {
 
@@ -49,7 +50,8 @@ protected:
 	//! Dateideskriptor
 	int fd;
 	//! select()/read() failed, set until the next successful read
-	bool readError;
+	//! (written by the receive thread, read by IsConnected() from others)
+	std::atomic<bool> readError;
 	
 	//WaitForData()
 	int WaitForData(int msTime);
