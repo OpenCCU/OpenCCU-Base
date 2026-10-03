@@ -48,8 +48,8 @@ public:
 protected:
 	//! Dateideskriptor
 	int fd;
-	//! read error already logged (until the next successful read)
-	bool readErrorLogged;
+	//! select()/read() failed, set until the next successful read
+	bool readError;
 	
 	//WaitForData()
 	int WaitForData(int msTime);
