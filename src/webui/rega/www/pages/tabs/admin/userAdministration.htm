@@ -144,7 +144,7 @@
         Write("</td>")
         Write("<td style='text-align:center; vertical-align: middle;' class='TblUserAdministration CLASS05303' >")
           Write("<div class='StdButton CLASS05304' onclick='editUser("#user.ID()#")'>${btnEdit}</div>")
-          if ((system.GetSessionVar('sessionUserID') != user.ID()) && (user.Name()!='Admin') ) {
+          if (system.GetSessionVar('sessionUserID') != user.ID()) {
             Write("<div class='StdButton CLASS05304' onclick='deleteUser("#user.ID()#")'>${btnRemove}</div>")
           }
         Write("</td>")
