@@ -437,9 +437,7 @@ MultiChannelChooser = Singleton.create({
       channels         : this.filter(this.channels)
     });
 
-    if (! userIsNoExpert) {
-      jQuery(".j_expertChannel").show();
-    }
+    jQuery(".j_expertChannel").show();
 
     // Add extended channel description and hide the second user channel
     jQuery(".j_extChnDescr").each(function(index){
