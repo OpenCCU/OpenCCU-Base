@@ -350,7 +350,8 @@ proc action_put_page {} {
     set styleMaxWidth ""
     #set styleMaxWidth "style=max-width:70px;"
 
-    table {class="popupTable CLASS20901 j_translate"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable CLASS20901 j_translate"} {border="1"} {height="100%"} {
       table_row {class="CLASS20902"} {
         table_data {class="CLASS20903"} $styleMaxWidth {
           #puts "Zentralen-<br>"
@@ -739,6 +740,7 @@ proc action_put_page {} {
           puts "\${dialogSettingsCMHintErrorLog}"
         }
       }
+    }
     }
     checkIfFwOnly
   }
