@@ -34,7 +34,7 @@ CCU2SerialPortWrapperLinux::CCU2SerialPortWrapperLinux()
 : CCU2SerialPortWrapper()
 {
 	fd=-1;
-	readErrorLogged=false;
+	readError=false;
 }
 CCU2SerialPortWrapperLinux::~CCU2SerialPortWrapperLinux()
 {
@@ -88,9 +88,9 @@ int CCU2SerialPortWrapperLinux::handleReadError(const char* what)
 	if(errno == EINTR) {
 		return 0;
 	}
-	if(!readErrorLogged) {
+	if(!readError) {
 		LOG(Logger::LOG_ERROR, "CCU2SerialPortWrapperLinux::ReadData(): %s() failed: %s", what, strerror(errno));
-		readErrorLogged = true;
+		readError = true;
 	}
 	// The error usually persists (e.g. a hung up /dev/mmd_bidcos after a
 	// multimacd restart), and select() keeps reporting the device readable.
@@ -116,7 +116,7 @@ int CCU2SerialPortWrapperLinux::ReadData(std::string* data)
 	if(count < 0) {
 		return handleReadError("read");
 	}
-	readErrorLogged = false;
+	readError = false;
 	if(count>0){
 #ifdef DUMP
 		std::string chunk(buf,count);
@@ -140,6 +140,7 @@ bool CCU2SerialPortWrapperLinux::Open(std::string dev)
 		//printf("failure %s open\n", dev);
 		return -1;
 	}
+	readError = false;
 	
 	tcgetattr(fd, &newtio);
 	cfmakeraw(&newtio);
@@ -160,7 +161,9 @@ void CCU2SerialPortWrapperLinux::Close()
 
 bool CCU2SerialPortWrapperLinux::IsConnected() 
 {
-	return (fd != -1);
+	// a persistent read error (e.g. a hung up /dev/mmd_bidcos) is reported as
+	// not connected, e.g. in listBidcosInterfaces()
+	return (fd != -1) && !readError;
 }
 
 
