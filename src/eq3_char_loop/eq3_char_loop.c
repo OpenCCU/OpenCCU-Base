@@ -82,6 +82,8 @@ struct eq3loop_channel_data
 	volatile long unsigned int pending_events;
 	volatile long unsigned int slave_open_count;
 	volatile long unsigned int created;
+	volatile long unsigned int generation;             //incremented on every master close; invalidates all slave connections of the old master
+	int device_created;                                //device node currently registered
 	dev_t devnode;
 	char name[32];
 	struct termios termios;
@@ -99,6 +101,7 @@ struct eq3loop_connection_data
 {
 	int connection_type;
 	struct eq3loop_channel_data* channel;
+	long unsigned int generation;                      //channel generation at open time (slave connections only)
 	ssize_t (*read) (struct eq3loop_channel_data *, struct file *, char __user *, size_t, loff_t *);
 	ssize_t (*write) (struct eq3loop_channel_data *, struct file *, const char __user *, size_t, loff_t *);    
 	long (*ioctl) (struct eq3loop_channel_data *, struct file *, unsigned int cmd, unsigned long arg);
@@ -107,6 +110,19 @@ struct eq3loop_connection_data
 };
 
 static struct eq3loop_control_data* control_data;
+
+/*
+ * A slave connection is only alive as long as the master that created the
+ * channel is still open. Once that master closes, the slave connection is
+ * "hung up" for good -- even if a new master re-creates a channel in the
+ * same slot later on. The slave has to close and re-open the device node to
+ * attach to the new master (which then also receives the SLAVE_OPENED event).
+ */
+static inline int eq3loop_slave_alive(struct eq3loop_channel_data* channel, struct file *filp)
+{
+	struct eq3loop_connection_data *conn = filp->private_data;
+	return READ_ONCE(channel->created) && conn->generation == READ_ONCE(channel->generation);
+}
 
 static ssize_t eq3loop_read_slave(struct eq3loop_channel_data* channel, struct file *filp, char *buf, size_t count, loff_t *offset)
 {
@@ -117,17 +133,17 @@ static ssize_t eq3loop_read_slave(struct eq3loop_channel_data* channel, struct f
 	}
 
 	
-	if( !channel->created )
+	if( !eq3loop_slave_alive( channel, filp ) )
 	{
 		ret = -ENODEV;
 		goto out;
 	}
-	while( channel->created && !CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE)) { /* nothing to read */
+	while( eq3loop_slave_alive( channel, filp ) && !CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE)) { /* nothing to read */
 		up(&channel->sem); /* release the lock */
 		if (filp->f_flags & O_NONBLOCK)	{
 			return -EAGAIN;
 		}
-		if (wait_event_interruptible(channel->master2slaveq, (!channel->created) || CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE))){
+		if (wait_event_interruptible(channel->master2slaveq, (!eq3loop_slave_alive( channel, filp )) || CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE))){
 			return -ERESTARTSYS; /* signal: tell the fs layer to handle it */
 		}
 		/* otherwise loop, but first reacquire the lock */
@@ -136,7 +152,7 @@ static ssize_t eq3loop_read_slave(struct eq3loop_channel_data* channel, struct f
 		}
 	}
 	
-	if( !channel->created )
+	if( !eq3loop_slave_alive( channel, filp ) )
 	{
 		ret = -ENODEV;
 		goto out;
@@ -270,18 +286,18 @@ static ssize_t eq3loop_write_slave(struct eq3loop_channel_data* channel, struct 
 	if (down_interruptible(&channel->sem))
 		return -ERESTARTSYS;
 
-	while(!CIRC_SPACE( channel->slave2master_buf.head, channel->slave2master_buf.tail, BUFSIZE)) { /* no space to write */
+	while( eq3loop_slave_alive( channel, filp ) && !CIRC_SPACE( channel->slave2master_buf.head, channel->slave2master_buf.tail, BUFSIZE)) { /* no space to write */
 		up(&channel->sem); /* release the lock */
 		if (filp->f_flags & O_NONBLOCK)
 			return -EAGAIN;
-		if (wait_event_interruptible(channel->slave2masterq, (!channel->created) || CIRC_SPACE( channel->slave2master_buf.head, channel->slave2master_buf.tail, BUFSIZE)))
+		if (wait_event_interruptible(channel->slave2masterq, (!eq3loop_slave_alive( channel, filp )) || CIRC_SPACE( channel->slave2master_buf.head, channel->slave2master_buf.tail, BUFSIZE)))
 			return -ERESTARTSYS; /* signal: tell the fs layer to handle it */
 		/* otherwise loop, but first reacquire the lock */
 		if (down_interruptible(&channel->sem))
 			return -ERESTARTSYS;
 	}
 	
-	if( !channel->created )
+	if( !eq3loop_slave_alive( channel, filp ) )
 	{
 		ret = -ENODEV;
 		goto out;
@@ -510,6 +526,13 @@ static long eq3loop_ioctl_slave(struct eq3loop_channel_data* channel, struct fil
 	if (down_interruptible(&channel->sem))
 		return -ERESTARTSYS;
 	
+	if( !eq3loop_slave_alive( channel, filp ) )
+	{
+		/* do not touch the termios/buffers of a channel which was re-created by a new master */
+		up( &channel->sem );
+		return -ENODEV;
+	}
+	
 	switch(cmd) {
 
 	case TCGETS:
@@ -655,24 +678,26 @@ static int eq3loop_close_slave(struct eq3loop_channel_data* channel, struct file
 	
 	printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_slave() %s\n", channel->name );
 	
-	if (down_interruptible(&channel->sem))
-	return -ERESTARTSYS;
+	/* release() must not fail, so do not use down_interruptible() here */
+	down(&channel->sem);
 	
-	if( channel->slave_open_count )
+	if( eq3loop_slave_alive( channel, filp ) )
 	{
-		channel->slave_open_count--;
+		if( channel->slave_open_count )
+		{
+			channel->slave_open_count--;
+		}
+		set_bit( EVENT_BIT_SLAVE_CLOSED, &channel->pending_events );
+		clear_bit( STATE_BIT_SLAVE_OPENED, &channel->pending_events );
+	}
+	else
+	{
+		/* stale connection of an already closed master: the channel (if any) belongs to a new master, leave it alone */
+		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_slave() %s: closing stale slave connection\n", channel->name );
 	}
 	
 	kfree( filp->private_data );
-
-	set_bit( EVENT_BIT_SLAVE_CLOSED, &channel->pending_events );
-	clear_bit( STATE_BIT_SLAVE_OPENED, &channel->pending_events );
-
-	if( !channel->created )
-	{
-		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_slave() %s destroy device\n", channel->name );
-		device_destroy(control_data->class, channel->devnode);
-	}
+	filp->private_data = NULL;
 	
 	up( &channel->sem );
 	smp_mb();
@@ -686,30 +711,41 @@ static int eq3loop_close_master(struct eq3loop_channel_data* channel, struct fil
 	
 	printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_master() %s\n", channel->name );
 	
-	if (down_interruptible(&channel->sem))
-	return -ERESTARTSYS;
+	/*
+	 * release() must not fail, so do not use down_interruptible() here.
+	 * control_data->sem is not needed: eq3loop_create_slave_dev() may pick this
+	 * slot as soon as created is 0, but then waits for channel->sem before it
+	 * touches the channel. Not holding the global lock here keeps a slave
+	 * operation that blocks in copy_*_user() from stalling all other channels.
+	 */
+	down(&channel->sem);
 	
-	if (down_interruptible(&control_data->sem))
+	if( channel->slave_open_count )
 	{
-		ret = -ERESTARTSYS;
-		goto out;
+		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_master() %s: hanging up %lu open slave connection(s)\n", channel->name, channel->slave_open_count );
 	}
 	
+	/* hang up all slave connections of this master; they have to re-open the device */
 	channel->created = 0;
-
-	up( &control_data->sem );
+	channel->generation++;
+	channel->slave_open_count = 0;
+	smp_mb();
 	
 	kfree( filp->private_data );
+	filp->private_data = NULL;
 	
-	if( !channel->slave_open_count )
+	if( channel->device_created )
 	{
 		printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": eq3loop_close_master() %s destroy device\n", channel->name );
 		device_destroy(control_data->class, channel->devnode);
+		channel->device_created = 0;
 	}
 	
-out:
 	up( &channel->sem );
+	
+	/* wake up all blocked slave readers/writers/pollers so they notice the hangup */
 	wake_up_interruptible( &channel->master2slaveq );
+	wake_up_interruptible( &channel->slave2masterq );
 	return ret;
 }
 
@@ -789,6 +825,13 @@ static unsigned int eq3loop_poll_slave(struct eq3loop_channel_data* channel, str
 	if (down_interruptible(&channel->sem))
 	return -ERESTARTSYS;    
 	
+	if( !eq3loop_slave_alive( channel, filp ) )
+	{
+		/* master gone (or replaced by a new one): report a hangup, read()/write() will return -ENODEV */
+		mask |= POLLERR | POLLHUP;
+		goto out;
+	}
+	
 	if( CIRC_CNT( channel->master2slave_buf.head, channel->master2slave_buf.tail, BUFSIZE) )
 	{
 		mask |= POLLIN | POLLRDNORM;
@@ -799,11 +842,7 @@ static unsigned int eq3loop_poll_slave(struct eq3loop_channel_data* channel, str
 		mask |= POLLOUT | POLLWRNORM;
 	}
 	
-	if( !channel->created )
-	{
-		mask |= POLLERR;
-	}
-	
+out:
 	up( &channel->sem );
 	
 	return mask;
@@ -831,9 +870,19 @@ static long eq3loop_create_slave_dev( struct file *filp, const char* name )
 	long ret = 0;
 	struct eq3loop_channel_data* channel;
 	struct eq3loop_connection_data* conn;
+	struct device* dev;
+	
+	conn = kzalloc( sizeof(struct eq3loop_connection_data), GFP_KERNEL );
+	if( !conn )
+	{
+		return -ENOMEM;
+	}
 	
 	if (down_interruptible(&control_data->sem))
-	return -ERESTARTSYS;
+	{
+		kfree( conn );
+		return -ERESTARTSYS;
+	}
 	
 	while( (channel_index < EQ3LOOP_NUMBER_OF_CHANNELS) &&  (control_data->channels[channel_index].created) )
 	{
@@ -846,42 +895,58 @@ static long eq3loop_create_slave_dev( struct file *filp, const char* name )
 	}
 	
 	channel = control_data->channels + channel_index;
-	memset( channel, 0, sizeof( struct eq3loop_channel_data ) );
-	channel->devnode = MKDEV(MAJOR(control_data->devnode), MINOR(control_data->devnode) + channel_index + 1);
+	
+	/*
+	 * The slot may still be referenced by stale slave connections of a previous
+	 * master (they hold the old generation and get -ENODEV). So the semaphore and
+	 * wait queues (initialized once in eq3loop_init()) must not be re-initialized
+	 * here and the struct must not be cleared -- only reset the channel state.
+	 */
+	down(&channel->sem);
+	
+	if( channel->device_created )
+	{
+		/* should not happen, the device is destroyed when the master closes */
+		device_destroy(control_data->class, channel->devnode);
+		channel->device_created = 0;
+	}
+	
+	channel->master2slave_buf.head = 0;
+	channel->master2slave_buf.tail = 0;
+	channel->slave2master_buf.head = 0;
+	channel->slave2master_buf.tail = 0;
+	channel->pending_events = 0;
+	channel->slave_open_count = 0;
+	memset( &channel->termios, 0, sizeof( channel->termios ) );
+	memset( channel->name, 0, sizeof( channel->name ) );
 	strncpy( channel->name, name, sizeof(channel->name)-1 );
 	
-	if( !device_create(control_data->class, NULL, channel->devnode, "%s", name) )
+	dev = device_create(control_data->class, NULL, channel->devnode, NULL, "%s", name);
+	if( IS_ERR( dev ) )
 	{
-		ret = -EBUSY;
+		ret = PTR_ERR( dev );
+		printk( KERN_ERR EQ3LOOP_DRIVER_NAME ": unable to create slave device %s: %ld\n", name, ret );
+		up(&channel->sem);
 		goto out;
 	}
+	channel->device_created = 1;
 	
 	printk( KERN_INFO EQ3LOOP_DRIVER_NAME ": created slave %s\n", name );
-
-	conn = kzalloc( sizeof(struct eq3loop_connection_data), GFP_KERNEL );
-	if( !conn )
-	{
-		ret = -ENOMEM;
-		goto out;
-	}
-	
-	sema_init(&channel->sem, 1);
-	init_waitqueue_head(&channel->master2slaveq);
-	init_waitqueue_head(&channel->slave2masterq);
-	
-	
-	channel->master2slave_buf.buf = channel->_master2slave_buf;
-	channel->slave2master_buf.buf = channel->_slave2master_buf;
 	
 	smp_mb();
 	
 	channel->created = 1;
 	
+	up(&channel->sem);
 	
 out:
 	up(&control_data->sem);
 	
-	if( !ret )
+	if( ret )
+	{
+		kfree( conn );
+	}
+	else
 	{ 
 		conn->connection_type = CONNECTION_TYPE_MASTER;
 		conn->channel = channel;
@@ -930,6 +995,7 @@ static int eq3loop_open_slave(struct eq3loop_channel_data* channel, struct file 
 	}
 	
 	channel->slave_open_count++;
+	conn->generation = channel->generation;
 	
 	set_bit( EVENT_BIT_SLAVE_OPENED, &channel->pending_events );
 	set_bit( STATE_BIT_SLAVE_OPENED, &channel->pending_events );
@@ -1003,6 +1069,7 @@ static struct file_operations eq3loop_fops = {
 static int __init eq3loop_init(void)
 {
 	int ret = 0;
+	int i;
 
 	control_data = kzalloc(sizeof(struct eq3loop_control_data), GFP_KERNEL);
 	if (!control_data) {
@@ -1041,7 +1108,19 @@ static int __init eq3loop_init(void)
 	
 	sema_init(&control_data->sem, 1);
 	
-	device_create(control_data->class, NULL, MKDEV(MAJOR(control_data->devnode), MINOR(control_data->devnode)), "%s", EQ3LOOP_DRIVER_NAME);
+	/* channel locks, wait queues and buffers are set up once and never re-initialized */
+	for( i = 0; i < EQ3LOOP_NUMBER_OF_CHANNELS; i++ )
+	{
+		struct eq3loop_channel_data* channel = control_data->channels + i;
+		sema_init(&channel->sem, 1);
+		init_waitqueue_head(&channel->master2slaveq);
+		init_waitqueue_head(&channel->slave2masterq);
+		channel->master2slave_buf.buf = channel->_master2slave_buf;
+		channel->slave2master_buf.buf = channel->_slave2master_buf;
+		channel->devnode = MKDEV(MAJOR(control_data->devnode), MINOR(control_data->devnode) + i + 1);
+	}
+	
+	device_create(control_data->class, NULL, MKDEV(MAJOR(control_data->devnode), MINOR(control_data->devnode)), NULL, "%s", EQ3LOOP_DRIVER_NAME);
 	
 	goto out;
 	
@@ -1075,4 +1154,4 @@ module_init(eq3loop_init);
 module_exit(eq3loop_exit);
 MODULE_DESCRIPTION("eQ-3 IPC loopback char driver");
 MODULE_LICENSE("GPL");
-MODULE_VERSION("1.5");
+MODULE_VERSION("1.6");
