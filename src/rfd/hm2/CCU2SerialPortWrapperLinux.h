@@ -48,9 +48,13 @@ public:
 protected:
 	//! Dateideskriptor
 	int fd;
+	//! read error already logged (until the next successful read)
+	bool readErrorLogged;
 	
 	//WaitForData()
 	int WaitForData(int msTime);
+	//! Handles a failed select()/read() in ReadData()
+	int handleReadError(const char* what);
 };
 
 }
