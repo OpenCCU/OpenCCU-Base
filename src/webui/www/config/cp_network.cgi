@@ -217,7 +217,8 @@ proc action_put_page {} {
     puts "\${dialogSettingsNetworkTitle}"
   }
   division {class="CLASS21114 j_translate"} {
-    table {class="popupTable"} {border=1} {width="100%"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable"} {border=1} {width="100%"} {height="100%"} {
       table_row {class="CLASS21115"} {
         table_data {class="CLASS21116"} {
           #puts "IP-<br/>Einstellungen"
@@ -420,6 +421,7 @@ proc action_put_page {} {
           p {${dialogSettingsNetworkHintCertificateP3}}
         }
       }
+    }
     }
   }
   division {class="popupControls"} {

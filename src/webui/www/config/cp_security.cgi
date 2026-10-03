@@ -937,7 +937,8 @@ proc action_put_page {} {
   }
 
   division {class="CLASS20815"} {
-    table {class="popupTable j_translate"} {border="1"} {
+    division {style="height:80vh;width:100%;overflow:auto;"} {
+    table {class="popupTable j_translate"} {border="1"} {height="100%"} {
       table_row {class="CLASS20806"} {
         table_data {class="CLASS20807"} {
           puts "\${dialogSettingsSecurityTDKey}"
@@ -1312,6 +1313,7 @@ proc action_put_page {} {
           }
         }
       }
+    }
     }
   }
   division {class="popupControls"} {
