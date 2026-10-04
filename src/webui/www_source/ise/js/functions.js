@@ -3285,15 +3285,15 @@ getExtendedDescription = function(oChannelDescr)  {
     multiMode = oChannelDescr.multiMode;
   var tmpDev;
 
-  if (typeof channelAddress != "undefined") {
+  if (typeof channelType != "undefined") {
+    chType = channelType;
+  } else if (typeof channelAddress != "undefined") {
     var channel = DeviceList.getChannelByAddress(channelAddress);
     if (channel) {
       chType = channel.channelType;
       channelIsVisible = channel.isVisible;
     }
-  } else if (typeof channelType != "undefined") {
-    chType = channelType;
-  }
+  } 
 
   if (chType == "KEY_TRANSCEIVER") {
     if (deviceType.toLowerCase().indexOf("hmip-asir") != -1) {
@@ -3372,6 +3372,11 @@ getExtendedDescription = function(oChannelDescr)  {
         case "hmip-wgt-a":
         case "hmip-wgtc":
         case "hmip-wgtc-a":
+          if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
+          if (channel === undefined) {
+            result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
+            break;
+          }
           var channelMode = homematic("Interface.getMetadata", {
             "objectId": channel.id,
             "dataId": "channelMode"
@@ -3492,12 +3497,14 @@ getExtendedDescription = function(oChannelDescr)  {
         typeExt = "_" + multiMode;
       } else {
         if (channelAddress != "undefined") {
-          var chn = DeviceList.getChannelByAddress(channelAddress),
-          chnMode = parseInt(chn.multiMode);
+          var chn = DeviceList.getChannelByAddress(channelAddress);
+          if (typeof chn != "undefined") {
+          var chnMode = parseInt(chn.multiMode);
           if (! isNaN(chnMode)) {
             typeExt = "_" + chnMode;
           } else {
             typeExt = "";
+          }
           }
         } else {
           typeExt = "_1";
