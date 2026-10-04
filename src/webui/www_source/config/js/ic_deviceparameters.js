@@ -32,21 +32,26 @@ ToggleChannelView = function()
 
 
 isDutyCycleOK4DevUpdate = function() {
-  var ifaceBidCosRF = "BidCos-RF";
-  var BidCosIFaces = homematic("Interface.listBidcosInterfaces", {"interface": ifaceBidCosRF});
+  var iface = homematic("Interface.listBidcosInterfaces", {"interface": "BidCos-RF"});
   var dcVal = 0,
     dcWarningLevel = 80,
     dcOK = true;
 
-  jQuery.each(BidCosIFaces, function (index, iFace) {
-    if (iFace.type == "CCU2") {
-      dcVal = (typeof iFace.dutyCycle != "undefined") ? parseInt(iFace.dutyCycle) : 0;
-      if (dcVal >= dcWarningLevel) {
-        dcOK = false;
+  if(iface === null || iface.length === 0) {
+    iface = homematic("Interface.listBidcosInterfaces", {"interface": "HmIP-RF"});
+  }
+
+  if(iface !== null) {
+    jQuery.each(iface, function (index, iFace) {
+      if (iFace.type == "CCU2") {
+        dcVal = (typeof iFace.dutyCycle != "undefined") ? parseInt(iFace.dutyCycle) : 0;
+        if (dcVal >= dcWarningLevel) {
+          dcOK = false;
+        }
+        return false; //leave each loop
       }
-      return false; //leave each loop
-    }
-  });
+    });
+  }
   return dcOK;
 };
 
