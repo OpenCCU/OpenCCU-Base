@@ -370,7 +370,11 @@ iseMessageBox.prototype =
     this.removeMessagebox();
   },
   LoadFromFile: function(fn,pb) {
-    var url = fn+'?sid='+SessionId;
+    var url = fn;
+    if(url.indexOf('?sid=') === -1)
+    {                                                                                 
+      url = url+'?sid='+SessionId;                                                  
+    }                                                                 
     var t = this;
     var opt = 
     {

@@ -237,7 +237,11 @@ cpMessageBox.prototype =
   },
   
   LoadFromFile: function(src, pb) {
-    var url = src+'?sid='+SessionId;
+    var url = src;
+    if(url.indexOf('?sid=') === -1)
+    {                                                                                 
+      url = url+'?sid='+SessionId;                                                  
+    }                                                                 
     var t = this;
     var opt = 
     {
@@ -363,7 +367,11 @@ cpMessageBox2.prototype =
   
   LoadFromFile: function(src, pb)
   {
-    var url = src+'?sid='+SessionId;
+    var url = src;
+    if(url.indexOf('?sid=') === -1)
+    {                                                                                 
+      url = url+'?sid='+SessionId;                                                  
+    }                                                                 
     var t = this;
     var opt = 
     {
