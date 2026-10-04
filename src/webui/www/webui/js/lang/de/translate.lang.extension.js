@@ -328,7 +328,7 @@ jQuery.extend(true,langJSON, {
     "dialogSetSecKeyLoadBackuplblB" : "Die Zentrale befindet sich im Auslieferungszustand und es wurde noch kein Sicherheitsschl&uuml;ssel gesetzt.",
     "dialogSetSecKeyLoadBackupLblC" : "Sicherheitsschl&uuml;ssel:",
     "btnSysConfAdditionalSoftRemoveSuccess" : " wurde erfolgreich ausgef%FChrt.",
-    "btnSysConfAdditionalSoftRemoveFailure" : " fehlgeschlagen:\n",
+    "btnSysConfAdditionalSoftRemoveFailure" : " wurde mit Fehlern abgeschlossen:\n\n",
     "dialogChooseLEDTitle" : "LEDs ausw%E4hlen",
     "infoStatusControlLblDanger" : "Gefahr",
     "actionStatusControlUp" : "Auf",

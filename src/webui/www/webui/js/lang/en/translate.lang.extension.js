@@ -328,7 +328,7 @@ jQuery.extend(true, langJSON, {
     "dialogSetSecKeyLoadBackuplblB" : "The CCU is in delivery status and a security key has not yet been set.",
     "dialogSetSecKeyLoadBackupLblC" : "Security key:",
     "btnSysConfAdditionalSoftRemoveSuccess" : " was successfully executed.",
-    "btnSysConfAdditionalSoftRemoveFailure" : " failed:\n",
+    "btnSysConfAdditionalSoftRemoveFailure" : " was executed with failures:\n\n",
     "dialogChooseLEDTitle" : "Select LEDs",
     "infoStatusControlLblDanger" : "Hazard",
     "actionStatusControlUp" : "Up",
