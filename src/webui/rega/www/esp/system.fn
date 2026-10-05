@@ -313,6 +313,8 @@ function ::UpdateUI()
     Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName()#'";' );
   }
   
+  WriteLine("resetReGaSaveButton();");
+  
   integer iAlCount = 0;
   object svCollection = dom.GetObject( ID_SYSTEM_VARIABLES );
   string sSVID;

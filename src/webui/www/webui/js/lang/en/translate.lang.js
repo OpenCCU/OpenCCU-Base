@@ -50,6 +50,7 @@ jQuery.extend(true,langJSON, {
     "alarmMsg" : "Alarm messages",
     "serviceMsg" : "Service messages",
     "logout" : "Logout",
+    "regasave" : "Save changes",
     "noPasswd" : "No password set",
     "menuStartPage" : "Home page",
     "menuControlPage" : "Status and control",
