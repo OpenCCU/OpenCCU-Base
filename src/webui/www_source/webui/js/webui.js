@@ -323,9 +323,23 @@ WebUI = Singleton.create({
         }
         */
 
+        var usrName = userName.replace(/[ \/\xC4\xD6\xDC\xE4\xF6\xFC\xDF]/g, function(m) {
+                        return {
+                          ' ': ';',
+                          '/': '',
+                          '\xC4': 'AE',
+                          '\xD6': 'OE',
+                          '\xDC': 'UE',
+                          '\xE4': 'ae',
+                          '\xF6': 'oe',
+                          '\xFC': 'ue',
+                          '\xDF': 'ss'
+                        }[m];
+                      }).replace(/[^\x20-\x7e]+/g, '');
+
         var usrPwd = homematic('User.hasUserPWD', {'userID': userId});
         if (usrPwd == false) {
-          var result = homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + userName.replace(" ", ";")});
+          var result = homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName});
           if (!result) {
             var checkUpdateContentRunning = window.setInterval(function () {
               if (!bUpdateContentRunning) {
@@ -345,9 +359,9 @@ WebUI = Singleton.create({
 
           // User password set
           // The User will see a hint that new firewall settings are active
-          if ((getUPL() == UPL_USER) && (!homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + userName.replace(" ", ";")}))) {
+          if ((getUPL() == UPL_USER) && (!homematic('CCU.existsFile', {'file': "/etc/config/userprofiles/userAckInstallWizard_" + usrName}))) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
-            homematic("CCU.setUserAckInstallWizard", {'userName': userName});
+            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
           }
         }
       }
