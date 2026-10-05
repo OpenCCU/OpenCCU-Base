@@ -340,21 +340,28 @@ WebUI = Singleton.create({
         };
         var usrName = toAckName(userName);
 
-        // Until now, userName also contained the role and the UI mode shown in
-        // the header (now userNameInfo), and the acknowledgement file of the
-        // install wizard was named after it. Still accept such a file and store
-        // the acknowledgement under the plain user name, so that the wizard does
-        // not reappear after the update.
+        // The acknowledgement of the install wizard is stored per user ID
+        // (userAckInstallWizardId_<ID>). Until now, it was stored under the
+        // sanitized user name, and before that under the name decorated with the
+        // role and the UI mode shown in the header (now userNameInfo). Still
+        // accept such a file and store the acknowledgement under the user ID, so
+        // that the wizard does not reappear after the update. The former file is
+        // removed, as accounts whose names sanitize identically shared it: only
+        // the first of them that logs in takes it over.
         var hasUserAckInstallWizard = function() {
-          var ackFile = "/etc/config/userprofiles/userAckInstallWizard_";
-          if (homematic('CCU.existsFile', {'file': ackFile + usrName})) {
+          var ackFile = "/etc/config/userprofiles/userAckInstallWizard";
+          if (homematic('CCU.existsFile', {'file': ackFile + "Id_" + userId})) {
             return true;
           }
-          if (homematic('CCU.existsFile', {'file': ackFile + toAckName(userNameInfo)})) {
-            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
-            return true;
+          var found = false;
+          var legacyNames = [usrName, toAckName(userNameInfo)];
+          for (var i = 0; i < legacyNames.length; i++) {
+            if (homematic('CCU.existsFile', {'file': ackFile + "_" + legacyNames[i]})) {
+              homematic("CCU.setUserAckInstallWizard", {'legacyName': legacyNames[i]});
+              found = true;
+            }
           }
-          return false;
+          return found;
         };
 
         var usrPwd = homematic('User.hasUserPWD', {'userID': userId});
@@ -381,7 +388,7 @@ WebUI = Singleton.create({
           // The User will see a hint that new firewall settings are active
           if ((getUPL() == UPL_USER) && (!hasUserAckInstallWizard())) {
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
-            homematic("CCU.setUserAckInstallWizard", {'userName': usrName});
+            homematic("CCU.setUserAckInstallWizard");
           }
         }
       }

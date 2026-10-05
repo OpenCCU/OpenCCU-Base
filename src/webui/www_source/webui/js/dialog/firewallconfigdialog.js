@@ -253,7 +253,7 @@ FirewallConfigDialog = Class.create({
       delete firstStartInstallWizard;
       homematic("CCU.setSecurityHint");
       homematic("CCU.setFirewallConfigured");
-      homematic("CCU.setUserAckInstallWizard", {'userName' : userName});
+      homematic("CCU.setUserAckInstallWizard");
     }
 
     if (this.dlgWoPasswd ) {
