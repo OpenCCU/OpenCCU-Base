@@ -145,6 +145,14 @@ setDate = function(date)
   if ($("maindate")) { $("maindate").innerHTML = date; }
 };
 
+resetReGaSaveButton = function () {
+  var btnReGaSave = document.getElementById("btnReGaSave");
+  if (btnReGaSave) {
+    btnReGaSave.style.color=WebUI.getColor("textColorB");
+    btnReGaSave.onclick=function() { LogoClick(); };
+  }
+};
+
 setAlarmMessageCount = function (count) {
 
   if ($("msgAlarms")) {
@@ -2193,6 +2201,12 @@ recreateControl = function(chnId,sTimeStamp)
 
 LogoClick = function()
 {
+  var btnReGaSave = document.getElementById("btnReGaSave");
+  if (btnReGaSave) {
+    btnReGaSave.style.color=WebUI.getColor("grayText");
+    btnReGaSave.onclick="";
+  }
+
   //alert( iseUpdateIDArray.join("_") );
   //alert( iseUpdateTMArray.join("_") );
   //loadLinkList();
