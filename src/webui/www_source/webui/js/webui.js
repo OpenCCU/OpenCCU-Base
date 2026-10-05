@@ -345,18 +345,23 @@ WebUI = Singleton.create({
         // sanitized user name, and before that under the name decorated with the
         // role and the UI mode shown in the header (now userNameInfo). Still
         // accept such a file and store the acknowledgement under the user ID, so
-        // that the wizard does not reappear after the update.
+        // that the wizard does not reappear after the update. The former file is
+        // removed, as accounts whose names sanitize identically shared it: only
+        // the first of them that logs in takes it over.
         var hasUserAckInstallWizard = function() {
           var ackFile = "/etc/config/userprofiles/userAckInstallWizard";
           if (homematic('CCU.existsFile', {'file': ackFile + "Id_" + userId})) {
             return true;
           }
-          if (homematic('CCU.existsFile', {'file': ackFile + "_" + usrName}) ||
-              homematic('CCU.existsFile', {'file': ackFile + "_" + toAckName(userNameInfo)})) {
-            homematic("CCU.setUserAckInstallWizard");
-            return true;
+          var found = false;
+          var legacyNames = [usrName, toAckName(userNameInfo)];
+          for (var i = 0; i < legacyNames.length; i++) {
+            if (homematic('CCU.existsFile', {'file': ackFile + "_" + legacyNames[i]})) {
+              homematic("CCU.setUserAckInstallWizard", {'legacyName': legacyNames[i]});
+              found = true;
+            }
           }
-          return false;
+          return found;
         };
 
         var usrPwd = homematic('User.hasUserPWD', {'userID': userId});
