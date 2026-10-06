@@ -152,6 +152,7 @@
       sHtml = sHtml.Replace("&", "&amp;");
       sHtml = sHtml.Replace("<", "&lt;");
       sHtml = sHtml.Replace(">", "&gt;");
+      sHtml = sHtml.Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>");
       Write(sHtml);
     Write("</td>");
     
@@ -291,7 +292,7 @@
       Write("tmp['id'] = '"#sv.ID()#"';");
       Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
       Write("tmp['name'] = '"#sv.Name()#"';");
-      Write("tmp['desc'] = '"#sv.DPInfo()#"';");
+      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
       Write("tmp['chn'] = '';");
       object obj = dom.GetObject( sv.Channel() );
       if( obj )
