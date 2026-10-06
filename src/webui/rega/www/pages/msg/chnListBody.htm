@@ -105,13 +105,9 @@ if ( obj )
       Write("tmp['fltOpts']['rooms'] = '"#roomIDs#"';");
       Write("tmp['fltOpts']['iCat'] = '"#channel.ChnDirection()#"';");
       Write("tmp['fltOpts']['iTrans'] = "#channel.ChnAESActive()#";");
-      Write("tmp['devC'] = "#(channel.ChnLinkCount())#";");
-      integer iProgCount = 0;
-      if( channel.ChnDPUsageCount() != ID_ERROR )
-      {
-        iProgCount = channel.ChnDPUsageCount();
-      }
-      Write("tmp['progC'] = "#iProgCount#";");
+      integer iLinkCount = channel.ChnLinkCount();
+      if( iLinkCount == ID_ERROR ) { iLinkCount = 0; }
+      Write("tmp['devC'] = "#iLinkCount#";");
       
       Write("tmp['enumprgfilter'] = '"#channel.ChnEnumDPUsagePrograms()#"';");
       

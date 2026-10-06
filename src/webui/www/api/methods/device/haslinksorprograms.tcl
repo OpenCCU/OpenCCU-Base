@@ -62,7 +62,7 @@ set hasPrograms {
     foreach(channelId, device.Channels())
     {
       var channel = dom.GetObject(channelId);
-      if (channel.ChnDPUsageCount() > 0) { hasPrograms = "true"; }
+      if (channel.ChnDPUsageCount() > 0) { hasPrograms = "true"; break; }
     }
   }
   Write(hasPrograms);
@@ -78,7 +78,7 @@ set hasLinks {
     foreach(channelId, device.Channels())
     {
       var channel = dom.GetObject(channelId);
-      if (channel.ChnLinkCount()    > 0) { hasLinks = "true"; } 
+      if (channel.ChnLinkCount()    > 0) { hasLinks = "true"; break; } 
     }
   }
   Write(hasLinks);
