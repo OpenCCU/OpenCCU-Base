@@ -366,20 +366,12 @@ if ( oUser )
       Write("</td>");
       
       string sEnumPrgFilter = "";
-      integer iLinkCount = 0;
-      integer iProgCount = 0;
       string tmp = "";
       foreach( tmp, elem.EnumEnabledIDs() )
       {
         object chnTmp = dom.GetObject(tmp);
         if( chnTmp && chnTmp.IsTypeOf(OT_CHANNEL) )        
         {
-          iLinkCount = iLinkCount + chnTmp.ChnLinkCount();
-          if( chnTmp.ChnDPUsageCount() != ID_ERROR )
-          {
-            iProgCount = iProgCount + chnTmp.ChnDPUsageCount();
-            iProgCount = iProgCount + chnTmp.ChnDPUsageCount();
-          }
           if( !sEnumPrgFilter.Length() )
           {
             sEnumPrgFilter = chnTmp.ChnEnumDPUsagePrograms();
