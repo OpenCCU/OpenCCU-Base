@@ -1494,6 +1494,10 @@ div.caption  { display: table-caption; }
   color: $_(textColorB); /* black */
 }
 
+.LightGrayBkg {
+  background-color: #DDD;
+  color: $_(textColorB); /* black */
+}
 
 .OUCFMprop {
   text-align:left;

@@ -1550,3 +1550,60 @@ function ::writeWarnStateJS()
 function ::keepAlive()
 {
 }
+
+function ::ShowInternalSystemVars()
+{
+  if( system.IsSessionVar("sessionSISV") )
+  {
+    string sEnable = system.GetSessionVar("sessionSISV");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSISV","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSISV","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSISV","1");
+  }
+}
+
+function ::ShowInternalDeviceChannels()
+{
+  if( system.IsSessionVar("sessionSIDC") )
+  {
+    string sEnable = system.GetSessionVar("sessionSIDC");
+    if( sEnable == "1" )
+    {
+      system.SetSessionVar("sessionSIDC","0");
+    }
+    else
+    {
+      system.SetSessionVar("sessionSIDC","1");
+    }
+  }
+  else
+  {
+    system.SetSessionVar("sessionSIDC","1");
+  }
+}
+
+! [id], [iInternal]                                 
+function ::saveDpInternal() {
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser.UserLevel() == iulAdmin )           
+  {                                                   
+    object obj = dom.GetObject(system.GetVar("dpId"));
+    if (obj) {
+      boolean b = false;
+      if (system.GetVar("iInternal") == 1) {
+        b = true;         
+      }
+      obj.Internal(b);            
+    }
+  }                                                                        
+  return;
+}

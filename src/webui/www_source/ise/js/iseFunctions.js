@@ -939,7 +939,24 @@ ise.System.prototype = {
     pb += "integer iVisible   = '"+($(ctrlId).checked ? 1 : 0)+"';";
     new Ajax.Request(url, {postBody: ReGa.encode(pb)});  
   },
-  
+
+  saveDpInternal: function(id, ctrlId) {                              
+    var url = "/esp/system.htm?sid="+SessionId;                       
+    var webuiPage = WebUI.currentPage;
+    var page = sActPage;
+    var pageArgs = sActPageArgs;
+    var pb = "string action = 'saveDpInternal';";                     
+    pb += "integer dpId = " + id + ";";             
+    pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
+    new Ajax.Request(url, {
+      postBody: ReGa.encode(pb),
+      onComplete: function() {
+        // reload only if the user did not open another page meanwhile
+        if ((WebUI.currentPage == webuiPage) && (sActPage == page) && (sActPageArgs == pageArgs)) { reloadPage(); }
+      }
+    });
+  },
+
   ClearHistoryData: function()
   {
     var url = "/esp/system.htm?sid="+SessionId;
