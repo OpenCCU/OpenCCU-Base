@@ -939,7 +939,15 @@ ise.System.prototype = {
     pb += "integer iVisible   = '"+($(ctrlId).checked ? 1 : 0)+"';";
     new Ajax.Request(url, {postBody: ReGa.encode(pb)});  
   },
-  
+
+  saveDpInternal: function(id, ctrlId) {                              
+    var url = "/esp/system.htm?sid="+SessionId;                       
+    var pb = "string action = 'saveDpInternal';";                     
+    pb += "integer dpId = " + id + ";";             
+    pb += "integer iInternal   = '"+($(ctrlId).checked ? 1 : 0)+"';";
+    new Ajax.Request(url, {postBody: ReGa.encode(pb)});
+  },
+
   ClearHistoryData: function()
   {
     var url = "/esp/system.htm?sid="+SessionId;
