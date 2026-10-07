@@ -525,10 +525,11 @@ namespace XmlRpc {
   {
 	const char* data=valueStream.c_str()+*offset;
 
+	if(valueStream.length() < static_cast<uint32_t>(*offset)+4)return false;
+
 	uint32_t v;
 	memcpy(&v, data, 4);
 	v=ntohl(v);
-	if(valueStream.length() < static_cast<uint32_t>(*offset)+4)return false;
 
     _type = TypeInt;
     _value.asInt = int(v);
@@ -697,7 +698,7 @@ namespace XmlRpc {
 	memcpy(&length, data, 4);
 	length=ntohl(length);
 
-	if(valueStream.length()<(*offset)+4+length)return false;
+	if(length > valueStream.length() - (static_cast<uint32_t>(*offset)+4))return false;
 
 	data+=4;
     _type = TypeString;
@@ -945,7 +946,7 @@ namespace XmlRpc {
 	memcpy(&length, data, 4);
 	length=ntohl(length);
 
-	if(valueStream.length()<(*offset)+4+length)return false;
+	if(length > valueStream.length() - (static_cast<uint32_t>(*offset)+4))return false;
 
 	data+=4;
     _type = TypeBase64;
@@ -1212,12 +1213,14 @@ namespace XmlRpc {
     _value.asStruct = new ValueStruct;
 	while(length){
 		data=valueStream.c_str()+*offset;
+		if(valueStream.length() < static_cast<uint32_t>(*offset)+4)break;
 		std::string name;
 		uint32_t name_length;
 		memcpy(&name_length, data, 4);
 		name_length=ntohl(name_length);
 		*offset+=4;
 		data+=4;
+		if(name_length > valueStream.length() - static_cast<uint32_t>(*offset))break;
 		name.append(data, name_length);
 		*offset+=name_length;
 		(*_value.asStruct)[name]=XmlRpcValue();
