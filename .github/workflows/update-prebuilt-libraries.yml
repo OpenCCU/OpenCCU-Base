@@ -1,0 +1,119 @@
+# Regenerates the prebuilt libXmlRpc/libxmlparser libraries from the current
+# sources and opens a pull request with the result. The libraries are built
+# inside the same Debian bookworm environment the CI build uses, so the
+# shipped prebuilt binaries match the runtime glibc (building them on a newer
+# host would require e.g. GLIBC_2.38 and they would not load on the target).
+# yamllint disable rule:truthy
+---
+name: Update prebuilt libraries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/libXmlRpc/**'
+      - 'src/libxmlparser/**'
+      - '.github/workflows/update-prebuilt-libraries.yml'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-prebuilt-libraries
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    name: Regenerate libXmlRpc/libxmlparser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Build and deploy the compat libraries
+        run: |
+          docker run --rm \
+            --platform linux/amd64 \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --workdir /workspace \
+            debian:bookworm-slim \
+            bash -euxo pipefail -c '
+              export DEBIAN_FRONTEND=noninteractive
+              export LANG=C.UTF-8
+
+              apt-get update
+              apt-get install --yes --no-install-recommends \
+                ca-certificates cmake make g++ file \
+                g++-i686-linux-gnu libc6-dev-i386-cross \
+                g++-aarch64-linux-gnu libc6-dev-arm64-cross \
+                g++-arm-linux-gnueabihf libc6-dev-armhf-cross
+
+              for platform in \
+                x86_64-linux-gnu \
+                i686-linux-gnu \
+                aarch64-linux-gnu \
+                arm-linux-gnueabihf; do
+
+                case "${platform}" in
+                  x86_64-linux-gnu) strip_bin=strip ;;
+                  *) strip_bin="${platform}-strip" ;;
+                esac
+
+                # DEPLOY_TO_REPO copies the built libraries into lib/<platform>/
+                cmake --preset "${platform}" \
+                  -DDEPLOY_TO_REPO=ON \
+                  -DBUILD_DEFAULT_COMPONENTS=OFF \
+                  -DBUILD_TCL_MODULES=OFF \
+                  -DBUILD_WEBUI_AND_DEVICETYPES=OFF
+                cmake --build "build/${platform}" \
+                  --target compat-libraries \
+                  --parallel "$(nproc)"
+
+                "${strip_bin}" --strip-unneeded \
+                  "lib/${platform}/libXmlRpc.so" \
+                  "lib/${platform}/libxmlparser.so"
+                chmod 0644 \
+                  "lib/${platform}/libXmlRpc.so" \
+                  "lib/${platform}/libxmlparser.so"
+                file "lib/${platform}/libXmlRpc.so" \
+                  "lib/${platform}/libxmlparser.so"
+              done
+
+              rm -rf build
+            '
+
+      - name: Restore file ownership
+        run: sudo chown -R "$(id -u):$(id -g)" lib
+
+      - name: Open a pull request if the libraries changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "Jens Maus"
+          git config user.email "mail@jens-maus.de"
+
+          if git diff --quiet -- lib; then
+            echo "The prebuilt libraries are already up to date."
+            exit 0
+          fi
+
+          branch="ci/regenerate-prebuilt-libs-${GITHUB_RUN_ID}"
+          git switch -c "${branch}"
+          git add lib
+          git commit \
+            -m "libXmlRpc: regenerate the prebuilt libraries from the sources" \
+            -m "Rebuild libXmlRpc.so/libxmlparser.so for all four architectures from the current OpenCCU-Base sources inside the Debian bookworm build environment (the same glibc as the runtime), so the shipped prebuilt libraries match their sources and load on the target." \
+            -m "Produced by the \"Update prebuilt libraries\" workflow."
+          git push --set-upstream origin "${branch}"
+
+          gh pr create \
+            --base main \
+            --head "${branch}" \
+            --title "libXmlRpc: regenerate the prebuilt libraries from the sources" \
+            --body "Automated regeneration of the prebuilt \`libXmlRpc.so\` / \`libxmlparser.so\` for x86_64, i686, aarch64 and armhf, built in the Debian bookworm environment so the binaries match the runtime glibc. Triggered by workflow run \`${GITHUB_RUN_ID}\`."
