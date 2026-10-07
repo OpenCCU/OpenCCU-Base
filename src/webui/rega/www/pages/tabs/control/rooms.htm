@@ -50,7 +50,7 @@
                 object obj = dom.GetObject(ID_ROOMS);
                 if ( obj )
                 {
-                  obj.SortByName();
+                  obj.SortByName(soAsc,stNatural);
                   string tmp = "";
                   string sFirstId = "";
                   foreach( tmp, obj.EnumEnabledIDs() ) {

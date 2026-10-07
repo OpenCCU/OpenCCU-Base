@@ -18,7 +18,7 @@
     object oSysVarArray = dom.GetObject( ID_SYSTEM_VARIABLES );
     if( oSysVarArray )
     {
-      oSysVarArray.SortByName();
+      oSysVarArray.SortByName(soAsc,stNatural);
       
       string sEnumSVIDs = oSysVarArray.EnumEnabledIDs();
 

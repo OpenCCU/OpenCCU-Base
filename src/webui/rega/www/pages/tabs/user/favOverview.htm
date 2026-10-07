@@ -19,7 +19,7 @@ ResetGAC();
     object oTmpArray = dom.GetObject( ID_FAVORITES );
     if( oTmpArray )
     {
-      oTmpArray.SortByName();
+      oTmpArray.SortByName(soAsc,stNatural);
       system.SetSessionVar("sessionLS", "name");
       string sTmp;
       foreach( sTmp, oTmpArray.EnumIDs() )

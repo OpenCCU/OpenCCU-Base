@@ -20,7 +20,7 @@
     object oUserArray = dom.GetObject( ID_USERS );
     if( oUserArray )
     {
-      oUserArray.SortByName();
+      oUserArray.SortByName(soAsc,stNatural);
       string sTmp;
       foreach( sTmp, oUserArray.EnumEnabledVisibleIDs() )
       {
