@@ -468,7 +468,14 @@ function ::UpdateUI()
       boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
-      WriteLine("updateSysVar('" # svId # "', '" # sSysVarVal # "');");
+      ! Escape unwanted chars
+      sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
+      sSysVarVal = sSysVarVal.Replace("`", "\\`");
+      sSysVarVal = sSysVarVal.Replace("${", "\\${");
+      WriteLine("if ($('SYSVAR_" # svId # "')) {");
+      ! use javascript string literal char (`) to ensure proper char escaping
+      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = translateString(`" # sSysVarVal # "`);");
+      WriteLine("}");
     }    
   }
 
