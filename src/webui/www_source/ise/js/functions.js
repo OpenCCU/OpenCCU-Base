@@ -215,23 +215,6 @@ ReceiptAlarm = function(id,reload)
   new Ajax.Request(url,opt);
 };
 
-
-/**
- * Aktualisiert Systemvariablen
- **/
-updateSysVar = function(id, value)
-{
-  var PREFIX = "SYSVAR_";
-  var element = $(PREFIX + id);
-  
-  if (element) 
-  {
-    element.innerHTML = "";
-    element.appendChild(document.createTextNode(translateString(value)));
-  }
-};
-
-
 /*setOldEnergyCounterVal = function(chn, value) {
   arrOldEnergyCounterVal[chn] = value;
 };
