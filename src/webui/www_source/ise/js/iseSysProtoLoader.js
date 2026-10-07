@@ -91,10 +91,10 @@ iseSysProtoLoader.prototype =
       }
       else
       {
-        td = Builder.node('td', {className: "GrayBkg"}, sTime);
+        td = Builder.node('td', {className: "GrayBkg"}, sDate);
         tr.appendChild(td);
   
-        td = Builder.node('td', {className: "GrayBkg"}, sDate);
+        td = Builder.node('td', {className: "GrayBkg"}, sTime);
         tr.appendChild(td);
       }
   
