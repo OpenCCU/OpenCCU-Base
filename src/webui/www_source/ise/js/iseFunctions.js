@@ -1883,7 +1883,23 @@ ise.User.prototype =
     };
     new Ajax.Updater("userSysVarTbl", url, opts);
   },
-  
+
+  sortSysVarTable: function(uid) {                                                                 
+    var url = "/esp/system.htm?sid="+SessionId;      
+    var pb = "((dom.GetObject(ID_USERS)).Get(" + uid + ")).UserSharedObjects().SortByName();";
+    pb += "string action = 'BuildUserSvTable';";                
+    pb += "integer userId = "+ uid +";";         
+    var opts = {                                                                               
+      postBody: ReGa.encode(pb),                                                           
+      onComplete: function(response) {               
+        if (200 == response.status) { 
+          translatePage("#userSysVarTbl");                       
+        }                                        
+      }                                                                                        
+    };                                                                                     
+    new Ajax.Updater("userSysVarTbl", url, opts);
+  },
+    
   addSysVarBuildTable: function(uid, newVarId) {
     //var url = "/esp/system.htm?sid="+SessionId+"&curDateTime="+new Date().getTime();
     var url = "/esp/system.htm?sid="+SessionId;

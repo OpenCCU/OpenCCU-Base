@@ -368,6 +368,7 @@ jQuery.extend(true,langJSON, {
     "btnAddChannel" : "Add<br/>channel",
     "btnAddChannelWOLineBreak" : "Add channel",
     "btnAddSysVariable" : "Add system variable",
+    "btnSortSysVariable" : "Sort system variables alphabetically",
     "btnAddProgram" : "Add program",
     "btnAddSeparator" : "Add separator",
     "btnChooseChannel" : "Channel selection",
