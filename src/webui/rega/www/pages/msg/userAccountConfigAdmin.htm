@@ -45,16 +45,16 @@
         <tr>    
           <td class="CLASS00704">${lblUserName}</td>
           <td class="CLASS00704">
-            <input type="text" id="fullName" class="CLASS00704" <% Write(sSuperAdminDisabled); %> />
+            <input type="text" id="fullName" class="CLASS00704" <% Write(sSuperAdminDisabled); %> autocomplete="username" />
           </td>
         </tr>
         <tr>
           <td class="CLASS00704">${lblUserPassword}</td>
-          <td class="CLASS00704"><input type="Password" id="txtPw" class="CLASS00704" onchange="onPwChange()"/></td>
+          <td class="CLASS00704"><input type="Password" id="txtPw" class="CLASS00704" onchange="onPwChange()" autocomplete="new-password" /></td>
         </tr>
         <tr>
           <td class="CLASS00704">${lblUserPasswordRepeat}</td>
-          <td class="CLASS00704"><input type="Password" id="txtPw2" class="CLASS00704" onchange="onPwChange()"/></td>
+          <td class="CLASS00704"><input type="Password" id="txtPw2" class="CLASS00704" onchange="onPwChange()" autocomplete="new-password" /></td>
         </tr>
         <tr>
           <td colspan="2" class="CLASS00705">
