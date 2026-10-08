@@ -1253,6 +1253,16 @@ a img {
   text-align: left;
 }
 
+.tBodyCellInactive
+{
+  background-color: $_(pgmBackColorInactive); /* #f0f0f0 */
+  height: 40px;
+  border: solid 1px $_(black); /* black */
+  color: $_(pgmTextColorInactive); /* #bcc7cb */
+  padding: 4px;
+  text-align: left;
+}
+
 .tBodyCellCenter
 {
   background-color: $_(activeBackground); /* #f0f0f0 */
