@@ -699,6 +699,7 @@ jQuery.extend(true,langJSON, {
     "commentSettingsExtraSoftwareEnd" : "***********************************************",
     "commentDialogNewDevices" : "***********************************************",
     "dialogNewDevicesTitle" : "Ger%E4te anlernen",
+    "dialogNewDevicesUNAVAILWarn" : "Es wurde keinerlei nutzbares HomeMatic Funkmodul/LAN-Gateway f%FCr die<br/>homematic oder homematicIP Kommunikation im System gefunden.<br/><br/>Bitte stellen Sie sicher, dass ein kompatibles Funkmodul oder LAN-Gateway korrekt<br/>angeschlossen oder eingebunden ist, damit Ger%E4te angelernt werden k%F6nnen.",
     "dialogNewDevicesTDBidCosRF" : HMIdentifier.de.BidCosRF + "<br/>(Funk)",
     "dialogNewDevicesTDBidCosWired" : HMIdentifier.de.BidCosWired,
     "dialogNewDevicesBidCosRFFetchmodeNotActive" : "Anlernmodus nicht aktiv",

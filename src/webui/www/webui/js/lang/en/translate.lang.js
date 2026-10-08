@@ -711,6 +711,8 @@ jQuery.extend(true,langJSON, {
 
     "dialogNewDevicesTitle" : "Teach-in devices",
 
+    "dialogNewDevicesUNAVAILWarn" : "No HomeMatic radio module or LAN gateway was found to be usable for<br/>homematic or homematicIP communication in your system.<br/><br/>Please make sure that a compatible rf module or LAN gateway is correctly<br/>connected or configured so that you are able to teach-in devices.",
+
     "dialogNewDevicesTDBidCosRF" : HMIdentifier.en.BidCosRF + "<br/>(Radio)",
     "dialogNewDevicesTDBidCosWired" : HMIdentifier.en.BidCosWired,
 

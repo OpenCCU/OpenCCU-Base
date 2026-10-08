@@ -82,14 +82,16 @@ Channel = Class.create({
         if (typeof devToConfigure != "undefined" || typeof blindChAddress == "undefined" || blindChAddress != devAddress) {
           blindChAddress = devAddress;
           var devDescr = homematic("Interface.getDeviceDescription", {"interface": "HmIP-RF", "address":devAddress});
-          blindFw = devDescr.firmware;
-          arBlindFW = blindFw.split(".");
-          fwGTE16 = (arBlindFW[0] > 1 || ((arBlindFW[0] = 1) && (arBlindFW[1] >= 6)));
-          window.setTimeout(function() {delete blindChAddress; delete blindFw; delete fwGTE16;},10000);
+          if (devDescr) {
+            blindFw = devDescr.firmware;
+            arBlindFW = blindFw.split(".");
+            fwGTE16 = (arBlindFW[0] > 1 || ((arBlindFW[0] = 1) && (arBlindFW[1] >= 6)));
+            window.setTimeout(function() {delete blindChAddress; delete blindFw; delete fwGTE16;},10000);
+          }
         }
 
 
-        if (fwGTE16) {
+        if (typeof fwGTE16 != "undefined" && fwGTE16) {
           homematic("Interface.getMetadata_crRFD", {"interface": "HmIP-RF", "objectId": data["address"], "dataId": "channelMode"}, function(result) {
             if (result == "") {
               self.changedMultiMode = "shutter";
