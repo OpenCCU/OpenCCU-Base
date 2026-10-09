@@ -815,7 +815,6 @@ cgi_eval {
 
     html {
       head {
-        put_meta_nocache
         puts "<title>response of request with command: $cmd</title>"
       }
       body {

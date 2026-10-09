@@ -12,21 +12,10 @@ HttpLoader = new function()
   /*####################*/
   
   /**
-   * Hängt die Version der HomeMatic WebUI an eine URL an,
-   * um Probleme mit dem Browsercache zu umgehen.
-   **/
-  var addVersion = function(url)
-  {
-    if (0 <= url.indexOf("?")) { return url + "&_version_=" + WEBUI_VERSION; }
-    else                       { return url + "?_version_=" + WEBUI_VERSION; }
-  };
-  
-  /**
    * Lädt synchron Daten und gibt das XMLHttpRequest-Objekt zurück.
    **/
   var load = function(method, url, data)
   {
-    url = addVersion(url);
     var xhr = XMLHttpRequest_create();
     
     if (null !== xhr)
