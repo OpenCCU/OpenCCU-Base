@@ -1,0 +1,15 @@
+{
+  "name": "webui-bootstrap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bootstrap assets of the WebUI (see README.md and update.sh)",
+  "author": "ptweety",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@popperjs/core": "2.11.8",
+    "bootstrap": "5.3.8"
+  },
+  "devDependencies": {
+    "sass": "1.78.0"
+  }
+}
