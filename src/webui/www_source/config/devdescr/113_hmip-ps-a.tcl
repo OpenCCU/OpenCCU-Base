@@ -2,7 +2,7 @@
 
 #Typ dieser Beschreibung (Schlüssel)
 #-----------------------------------------------------------------------
-set TYPE "HMIP-PS-A"
+set TYPE "HmIP-PS-A"
 
 #Beschreibung des Gerätetyps
 #-----------------------------------------------------------------------
