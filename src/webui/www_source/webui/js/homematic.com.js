@@ -81,7 +81,7 @@ homematic.com =
       var script = document.createElement("script");
       script.id = "homematic_com_script_" + index;
       script.type = "text/javascript";
-      script.src =  this.m_URLServer + "/firmware/download?cmd=js_check_version&product=" + product + "&serial=0";
+      script.src =  this.m_URLServer + "/firmware/download?cmd=js_check_version&product=" + product + "&serial=0" + "&ts=" + Date.now();
       $("body").appendChild(script);
       homematic.com.callback = callback;
   },
@@ -96,9 +96,9 @@ homematic.com =
       // script.src =  this.m_URLServer + "/firmware/api/firmware/search/DEVICE";
 
       if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial;
+        script.src = this.m_fieldTestURLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU"+getProduct()+"&version="+WEBUI_VERSION+"&serial=" + this.serial + "&ts=" + Date.now();
       } else {
-        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION;
+        script.src = this.m_URLServer + "/firmware/api/firmware/search/DEVICE?product=HM-CCU" + getProduct() + "&version=" + WEBUI_VERSION + "&ts=" + Date.now();
       }
       $("body").appendChild(script);
       homematic.com.callback = callback;

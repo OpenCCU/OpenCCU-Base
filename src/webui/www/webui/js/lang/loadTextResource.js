@@ -126,9 +126,7 @@ function loadTextResource() {
       url: url + res,
       type:  "GET",
       async: false,
-      contentType: "application/x-www-form-urlencoded;charset=ISO-8859-1",
-      dataType: "script",
-      cache: false
+      contentType: "application/x-www-form-urlencoded;charset=ISO-8859-1"
     });
 
     request.done(function(result) {

@@ -13,7 +13,7 @@ proc create_profile {pBASEPROFILE pNEWPROFILE new_pnr} {
 
   global env base_pnr
 
-  set IGNORE_PARAMS {AvoidBrowserCache EasyModeName base_pnr cmd ps_id ps_ids sensor actor}
+  set IGNORE_PARAMS {EasyModeName base_pnr cmd ps_id ps_ids sensor actor}
 
   upvar $pBASEPROFILE BASEPROFILE
   upvar $pNEWPROFILE  PROFILE_TMP

@@ -54,7 +54,8 @@ proc action_acceptEula {} {
 
     puts "var req = jQuery.ajax({"
       puts " url : \"/EULA.\"+lang,"
-      puts " dataType: \"html\""
+      puts " dataType: \"html\","
+      puts " cache: false"
     puts "});"
 
     puts "req.done(function(data) {"
@@ -233,16 +234,6 @@ proc action_firmware_update_go {} {
   put_message "\${dialogSettingsCMDialogPerformSoftwareUpdateTitle}" {
     <p class="CLASS20914">
     ${dialogSettingsCMDialogPerformSoftwareUpdateP1}
-    </p>
-    <p class="CLASS20914">
-      ${dialogSettingsCMDialogPerformSoftwareUpdateP2}
-      <ol class="CLASS20915">
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi1}</li>
-        <li>
-        ${dialogSettingsCMDialogPerformSoftwareUpdateLi2}
-        </li>
-        <li>${dialogSettingsCMDialogPerformSoftwareUpdateLi3}</li>
-      </ol>
     </p>
   } "_empty_"  
   puts ""

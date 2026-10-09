@@ -18,7 +18,6 @@ HeaderBar = new function()
     url: "/ise/htm/header.htm",
     dataType: "html",
     async: false,
-    cache: false,
     context: document.body
     }).done(function(response) {
       jQuery("#header").html(response);
