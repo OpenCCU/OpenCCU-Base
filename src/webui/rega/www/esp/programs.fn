@@ -322,7 +322,7 @@ function ::WriteConditionText()
                       sValueUnit = "";
                     }
                     
-                    if((iCT1 != 5) &&  (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 10) & (iCT1 != 11) & (iCT1 != 9) )
+                    if( (iCT1 != 1) && (iCT1 != 5) && (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 9) && (iCT1 != 10) && (iCT1 != 11) && (iCT1 != 12) )
                     {
                       oSC.ConditionType(6);
                       iCT1 = 6;
@@ -344,6 +344,11 @@ function ::WriteConditionText()
                     if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 5 ) { sCT = "ist gleich "#iRV1.ToString(2)#sValueUnit; }
+                    if( iCT1 == 5 ) { sCT = "${ruleConditionLblEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 12 ) { sCT = "ist ungleich "#iRV1.ToString(2)#sValueUnit; }
+                    if( iCT1 == 12 ) { sCT = "${ruleConditionLblNotEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+
                     sRet = sRet#' '#sCT;
                   }
                   boolean bAction = ( oLV.ValueSubType() == istAction );

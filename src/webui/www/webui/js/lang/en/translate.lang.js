@@ -818,7 +818,7 @@ jQuery.extend(true,langJSON, {
     "ruleConditionLblWhen" : "when",
 
     "ruleConditionSelectSystemState" : "System state",
-    "ruleConditionLblWithinValueRange" : "within value range",
+    "ruleConditionLblWithinValueRange" : "within value range / with value",
     "ruleConditionLblRangeFrom" : "from",
     "ruleConditionLblRangeLessThan" : "to less than",
     "ruleConditionLblRangeGreaterThan" : "and more than",
@@ -826,6 +826,8 @@ jQuery.extend(true,langJSON, {
     "ruleConditionLblLessThan" : "less than",
     "ruleConditionLblGreaterOrEqualThan" : "more or equal",
     "ruleConditionLblLessOrEqualThan" : "less or equal",
+    "ruleConditionLblEqualThan" : "equal",
+    "ruleConditionLblNotEqualThan" : "not equal",
 
     "ruleConditionSelectTimeControl" : "Time control",
     "ruleConditionLblTimeOnce" : "Non-recurring",
