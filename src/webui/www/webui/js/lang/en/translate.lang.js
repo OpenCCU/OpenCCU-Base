@@ -694,7 +694,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsExtraSoftwareBtnStartInstallSoftware" : "Start installation",
     "dialogSettingsExtraSoftwareLblSelectExtraSoftware" : "Select additional software:",
 
-    "dialogSettingsExtraSoftwareHintSelectExtraSoftware" : "<b>Please note:</b><br/>Additional software installed by the user can lead to unexpected results, data loss or even system instability.<br/><br/><b><u>eQ-3 AG does not assume any liability for additional software installed by the user.</u></b><br/><br/>To finish installation, the CCU will be restarted automatically.",
+    "dialogSettingsExtraSoftwareHintSelectExtraSoftware" : "<b>Please note:</b><br/>Additional software installed by the user can lead to unexpected results, data loss or even system instability.<br/><br/><b><u>eQ-3 AG does not assume any liability for additional software installed by the user.</u></b><br/><br/>To finish installation, the CCU might have to be restarted.",
 
     "dialogSettingsExtraSoftwareInstallMessageBoxTitle" : "Firmware update - confirmation",
     "dialogSettingsExtraSoftwareInstallMessageBoxContent" : "The additional software has been uploaded. You can now start the installation by click on the button below.",
@@ -705,6 +705,8 @@ jQuery.extend(true,langJSON, {
 
     "dialogSettingsExtraSoftwareHintPerformInstallationTitle" : "Install software",
     "dialogSettingsExtraSoftwareHintPerformInstallationContent" : "The software is being installed. After installation, the CCU will be restarted automatically. You can log in again afterwards.",
+    "dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot" : "The installation of the addon was successful. Please make sure the addon works as expected or perform a reboot if you identify any problems.",
+    "dialogSettingsExtraSoftwareHintPerformInstallationFailure" : "An unexpected error occurred while trying to install the addon. The uploaded file might be no valid addon archive, corrupt or you are trying to install the wrong hardware version of the addon. Please try again or contact the addon vendor.",
 
     "commentSettingsExtraSoftwareEnd" : "***********************************************",
     "commentDialogNewDevices" : "***********************************************",

@@ -117,7 +117,31 @@ proc action_install_go {} {
   #  Nach der Installation wird die Zentrale automatisch neu gestartet. Sie k&ouml;nnen sich dann &uuml;ber die Schaltfl&auml;che unten neu anmelden.
   #} {"Neu anmelden" "window.location.href='/';"}
 
-  put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+  if {[getProduct] == 3} {
+    set result 0
+    if { [catch {exec /bin/install_addon 2>/dev/null} results] } {
+      if { [lindex $::errorCode 0] == "CHILDSTATUS" } {
+        set result [lindex $::errorCode 2]
+      } else {
+        # Some kind of unexpected failure
+        set result 100
+      }
+    } else {
+      set result 0
+    }
+
+    if { $result == 0 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot}" {"\${btnOk}" "window.location.href='/';"}
+    } elseif { $result == 10 } {
+      put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+      exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+    } else {
+      put_message "Error ($result)" "\${dialogSettingsExtraSoftwareHintPerformInstallationFailure}"
+    }
+  } else {
+    put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+  }
 
   puts ""
   cgi_javascript {
@@ -376,7 +400,7 @@ proc action_put_page {} {
                   table {
                     table_row {
                       table_data {
-                        division {class="CLASS21412"} {onClick="installAddon();"} {
+                        division {class="CLASS21412"} {onClick="document.upload_form.submit();"} {
                           #puts "Installieren"
                           puts "\${dialogSettingsExtraSoftwareBtnInstallSoftware}"
                         }
@@ -540,14 +564,7 @@ proc action_image_upload {} {
 }
 
 proc action_install_start {} {
-  if {[getProduct] == 3} {
-     exec touch /usr/local/.doAddonInstall
-     exec /sbin/reboot
-  } else {
-    # CCU 2
-    exec /bin/kill -SIGQUIT 1
-  }
-  
+  puts ""
 }
 
 cgi_eval {
