@@ -32,13 +32,23 @@ namespace XmlRpc {
   namespace {
     // current nesting depth of the value parsed by this thread
     thread_local int s_nestingDepth = 0;
+    // whether the value parsed by this thread exceeded MAX_NESTING_DEPTH
+    thread_local bool s_nestingExceeded = false;
 
-    // Counts the nesting depth while an array or struct is parsed.
+    // Counts the nesting depth while an array or struct is parsed. Once the
+    // depth was exceeded, ok() returns false until the outermost value of
+    // this thread was parsed, so that all enclosing values fail as well.
     class NestingGuard {
     public:
-      NestingGuard() { ++s_nestingDepth; }
+      NestingGuard()
+      {
+        if (s_nestingDepth++ == 0)
+          s_nestingExceeded = false;
+        if (s_nestingDepth > MAX_NESTING_DEPTH)
+          s_nestingExceeded = true;
+      }
       ~NestingGuard() { --s_nestingDepth; }
-      bool ok() const { return s_nestingDepth <= MAX_NESTING_DEPTH; }
+      bool ok() const { return ! s_nestingExceeded; }
     };
   }
 
@@ -1057,6 +1067,14 @@ namespace XmlRpc {
 		XmlRpcValue v;
 		while (v.fromXml(valueXml, offset))
 			_value.asArray->push_back(v);       // copy...
+
+		// an element nested too deep ends the loop like </data>, but must
+		// fail the array instead of truncating it
+		if ( ! nesting.ok())
+		{
+			invalidate();
+			return false;
+		}
 
 		// Skip the trailing </data>
 		(void) XmlRpcUtil::nextTagIs(DATA_ETAG, valueXml, offset);
