@@ -328,7 +328,10 @@ void* BidcosRemoteInterface::RxThreadFunction()
 	while(true)
 	{
         pthread_mutex_lock(&mutex_exit);
-        if(exit)break;
+        if(exit){
+            pthread_mutex_unlock(&mutex_exit);
+            break;
+        }
         pthread_mutex_unlock(&mutex_exit);
 
 		while( !IsConnected() )
@@ -338,12 +341,18 @@ void* BidcosRemoteInterface::RxThreadFunction()
 			next_debug_dump_time = time_millis()+30000;
 			if(!Connect())sleep(15);
             pthread_mutex_lock(&mutex_exit);
-            if(exit)break;
+            if(exit){
+                pthread_mutex_unlock(&mutex_exit);
+                break;
+            }
             pthread_mutex_unlock(&mutex_exit);
 		}
 
         pthread_mutex_lock(&mutex_exit);
-        if(exit)break;
+        if(exit){
+            pthread_mutex_unlock(&mutex_exit);
+            break;
+        }
         pthread_mutex_unlock(&mutex_exit);
 
 		while( (!GetConnection()->HasError()) && GetConnection()->IsConnected() )
@@ -356,7 +365,10 @@ void* BidcosRemoteInterface::RxThreadFunction()
             }
 
             pthread_mutex_lock(&mutex_exit);
-            if(exit)break;
+            if(exit){
+                pthread_mutex_unlock(&mutex_exit);
+                break;
+            }
             pthread_mutex_unlock(&mutex_exit);
 
             if( int64_t(next_keepalive_time - time_millis()) <= 0 )
