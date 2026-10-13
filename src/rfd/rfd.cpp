@@ -68,7 +68,12 @@ XmlRpcServer s;
 XmlRpcServerProxy serverProxy(&s);
 #endif
 
-static bool run=true;
+static volatile sig_atomic_t run=true;
+
+static void sigterm_handler(int sig)
+{
+	run=false;
+}
 
 
 //#ifdef DEBUG_SHUTDOWN
@@ -190,6 +195,8 @@ int main(int argc, char* argv[])
 #else
 #endif
 
+	signal(SIGTERM, sigterm_handler);
+	signal(SIGINT, sigterm_handler);
 #ifndef WIN32
 	signal(SIGCHLD, SIG_IGN);//we are not interested in exit messages from our childs.
 	const struct rlimit rl={RLIM_INFINITY, RLIM_INFINITY};

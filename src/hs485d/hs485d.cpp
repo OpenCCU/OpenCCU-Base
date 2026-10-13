@@ -75,16 +75,12 @@ XmlRpcServer s;
 XmlRpcServerProxy serverProxy(&s);
 #endif
 
-bool run=true;
+volatile sig_atomic_t run=true;
 
-/*
 static void sigterm_handler(int sig)
 {
-	printf("Received SIGTERM. Shutting down...\n");
-
 	run=false;
 }
-*/
 
 static void usage(const char* procname)
 {
@@ -145,8 +141,8 @@ int main(int argc, char* argv[])
 	logger=new SyslogLogger("hs485d");
     Logger::LogLevel loglevel=Logger::LOG_INFO;
 
-	//signal(SIGTERM, sigterm_handler);
-	//signal(SIGINT, sigterm_handler);
+	signal(SIGTERM, sigterm_handler);
+	signal(SIGINT, sigterm_handler);
 #ifndef WIN32
 	signal(SIGCHLD, SIG_IGN);//we are not interested in exit messages from our childs.
 	const struct rlimit rl={RLIM_INFINITY, RLIM_INFINITY};
@@ -427,9 +423,9 @@ int main(int argc, char* argv[])
 	}catch(XmlRpcException e){
 		LOG(Logger::LOG_FATAL_ERROR, "exception catched at top level: %s", e.getMessage().c_str());
 	}
-	delete pw;
+	s.getDispatcher()->removeSource(pController);
+	delete pController; //stops its threads and deletes the port wrapper
 	delete logger;
-	delete pController;
 	exit(0);
 }
 
