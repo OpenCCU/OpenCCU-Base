@@ -2,6 +2,34 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0262 (95443bb) Release ####################################
+
+2026-10-13 Jens Maus <mail@jens-maus.de>
+
+  * fix enumerations of the type etUserPages (e.g. ID_USERPAGES) not being
+    accessible: dom.GetObject() returned null and dom.DeleteObject()
+    returned false for them, because of a remaining license check for the
+    unreleased user pages feature. Enumerations whose type was set to
+    etUserPages via .EnumType() therefore remained as inaccessible objects
+    in the DOM. The license check was removed, so these objects can be
+    accessed and deleted like any other object.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/2640)
+  * fix sporadic crashes (SIGSEGV, use-after-free, "terminate called
+    without an active exception") and hangs of ReGaHss when it is stopped
+    with SIGTERM: the runtime threads were cancelled immediately instead of
+    being stopped, and resources (e.g. the scheduler list) were freed while
+    other threads still used them. The runtime threads are now stopped
+    cooperatively and are only cancelled if they do not exit within 5s
+    (20s for the final save of the DOM), the XML-RPC server is shut down
+    after its thread exited, and the scheduler list and the history ring
+    buffer are kept until they are no longer used.
+    (cf. https://github.com/OpenCCU/ReGaHss-Test/pull/196)
+  * fix an out-of-bounds read when a new object (e.g. dom.CreateObject())
+    was added to the internal object map while the map was full: the
+    entry behind the end of the map was read to determine the insert
+    position (reported by AddressSanitizer when creating more than 65535
+    objects). The behaviour does not change otherwise.
+
 #### R1.00.0388.0261 (b41f0cb) Release ####################################
 
 2026-10-12 Jens Maus <mail@jens-maus.de>
