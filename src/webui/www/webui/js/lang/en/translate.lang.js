@@ -900,8 +900,10 @@ jQuery.extend(true,langJSON, {
     "timeModuleLblStart" : "Beginning:",
     "timeModuleLblEnd" : "End:",
     "timeModuleLblAllDay" : "All-day",
-    "timeModuleLblAstroDay" : "Astro function day",
-    "timeModuleLblAstroNight" : "Astro function night",
+    "timeModuleLblAstroDay" : "From sunrise, shifted by",
+    "timeModuleLblAstroDayTill" : "until sunset or for",
+    "timeModuleLblAstroNight" : "From sunset, shifted by",
+    "timeModuleLblAstroNightTill" : "until sunrise or for",
     "timeModuleLblPointOfTime" : "Time",
 
     "timeModuleLblSerialPatternTitle" : "Serial pattern",

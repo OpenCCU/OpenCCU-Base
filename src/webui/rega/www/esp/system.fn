@@ -976,7 +976,9 @@ function ::saveTimeModule()
     sCI=sCI#"Try to set SunOffsetType to ["#system.GetVar("tmSot")#"] ";
     tmObj.SunOffsetType( system.GetVar("tmSot") );
     if( tmObj.SunOffsetType() == system.GetVar("tmSot") ) { sCI=sCI#"OK, "; } else { sCI=sCI#"FAILED, "; }
-    
+
+    if( tmObj.SunOffsetType() != sotNone ) { tmObj.TimeSeconds( system.GetVar("tmTime") ); }
+
     Write( 'dlgResult = '#tmObj.ID()#';' );
     Write( 'PopupClose();' );
   }
@@ -1032,17 +1034,21 @@ function ::TmToString() {
         sTm = sTm # s.Format("%H:%M") # " ${ruleConditionLblTimeClock} ";
       }
     }
-    if (tm.SunOffsetType() == sotAfterSunrise)
+    elseif ((tm.SunOffsetType() == sotSunrise) ||
+            (tm.SunOffsetType() == sotBeforeSunrise) ||
+            (tm.SunOffsetType() == sotAfterSunrise))
     {
       !sTm = sTm # "tagsüber ";
       sTm = sTm # "${ruleConditionLblTimeDuringDay} ";
     }
-    if (tm.SunOffsetType() == sotAfterSunset)
+    elseif ((tm.SunOffsetType() == sotSunset) ||
+            (tm.SunOffsetType() == sotBeforeSunset) ||
+            (tm.SunOffsetType() == sotAfterSunset))
     {
       !sTm = sTm # "nachts ";
       sTm = sTm # "${ruleConditionLblTimeDuringNight} ";
     }
-    if (tm.CalDuration() != 0) {
+    if ((tm.SunOffsetType() == sotNone) && (tm.CalDuration() != 0)) {
       sTm = sTm # "${lblTo} ";
       sTm = sTm # (tm.TimeSeconds() + tm.CalDuration()).ToTime().Format("%H:%M");
       sTm = sTm # " ${ruleConditionLblTimeClock} ";
