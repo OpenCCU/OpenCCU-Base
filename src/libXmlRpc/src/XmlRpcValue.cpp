@@ -23,6 +23,35 @@
 
 namespace XmlRpc {
 
+  // Maximum nesting depth of arrays and structs accepted when parsing a value
+  // (XML-RPC, BIN-RPC or text). Arrays and structs are parsed recursively, so
+  // a deeply nested value (e.g. 100000 nested arrays in a single request)
+  // otherwise exhausted the stack and crashed the process with SIGSEGV.
+  static const int MAX_NESTING_DEPTH = 64;
+
+  namespace {
+    // current nesting depth of the value parsed by this thread
+    thread_local int s_nestingDepth = 0;
+    // whether the value parsed by this thread exceeded MAX_NESTING_DEPTH
+    thread_local bool s_nestingExceeded = false;
+
+    // Counts the nesting depth while an array or struct is parsed. Once the
+    // depth was exceeded, ok() returns false until the outermost value of
+    // this thread was parsed, so that all enclosing values fail as well.
+    class NestingGuard {
+    public:
+      NestingGuard()
+      {
+        if (s_nestingDepth++ == 0)
+          s_nestingExceeded = false;
+        if (s_nestingDepth > MAX_NESTING_DEPTH)
+          s_nestingExceeded = true;
+      }
+      ~NestingGuard() { --s_nestingDepth; }
+      bool ok() const { return ! s_nestingExceeded; }
+    };
+  }
+
 
   static const char VALUE_TAG[]     = "<value>";
   static const char VALUE_ETAG[]    = "</value>";
@@ -1022,6 +1051,9 @@ namespace XmlRpc {
   // Array
   bool XmlRpcValue::arrayFromXml(std::string const& valueXml, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
     bool isEmptyTag;
     if ( ! XmlRpcUtil::nextTagIs(DATA_TAG, valueXml, offset, &isEmptyTag))
 	{
@@ -1035,6 +1067,14 @@ namespace XmlRpc {
 		XmlRpcValue v;
 		while (v.fromXml(valueXml, offset))
 			_value.asArray->push_back(v);       // copy...
+
+		// an element nested too deep ends the loop like </data>, but must
+		// fail the array instead of truncating it
+		if ( ! nesting.ok())
+		{
+			invalidate();
+			return false;
+		}
 
 		// Skip the trailing </data>
 		(void) XmlRpcUtil::nextTagIs(DATA_ETAG, valueXml, offset);
@@ -1063,6 +1103,9 @@ namespace XmlRpc {
 
   bool XmlRpcValue::arrayFromStream(std::string const& valueStream, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
 	int saveOffset=*offset;
 
 	const char* data=valueStream.c_str()+*offset;
@@ -1111,6 +1154,9 @@ namespace XmlRpc {
 
   bool XmlRpcValue::arrayFromText(std::string const& valueStream, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
 	int scanOffset=*offset;
 
 	if(valueStream[scanOffset]!='{')return false;
@@ -1151,6 +1197,9 @@ namespace XmlRpc {
   // Struct
   bool XmlRpcValue::structFromXml(std::string const& valueXml, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
     _type = TypeStruct;
     _value.asStruct = new ValueStruct;
 
@@ -1196,6 +1245,9 @@ namespace XmlRpc {
 
   bool XmlRpcValue::structFromStream(std::string const& valueStream, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
 	int saveOffset=*offset;
 
 	const char* data=valueStream.c_str()+*offset;
@@ -1269,6 +1321,9 @@ namespace XmlRpc {
   // Struct
   bool XmlRpcValue::structFromText(std::string const& valueStream, int* offset)
   {
+    NestingGuard nesting;
+    if ( ! nesting.ok())
+      return false;
 	int scanOffset=*offset;
 
 	if(valueStream[scanOffset]!='[')return false;
