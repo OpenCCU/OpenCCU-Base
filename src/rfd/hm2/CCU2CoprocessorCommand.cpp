@@ -279,7 +279,11 @@ bool CCU2CoprocessorCommand::parseBidcosCommandResponse(const std::string& respo
 					if(responseStr.size() >= 15 && responseStr.size() <= 32) {//6 byte until rssi (inclusive) + 9 up to 26 byte telegram data --> 15 - 32 bytes
 						authKeyIndex = responseStr.at(4); 
 						bidcosCommandEventAuthStatus = BIDCOSCMD_EVENT_AUTH_STATUS_AUTH_SUCCESSFUL;
-						rssi = responseStr.at(5);
+						rssi = (signed char)responseStr.at(5); //the status frames carry the RSSI as a signed byte, not as magnitude
+						if(rssi < 0)
+						{
+							rssi = -rssi;
+						}
 						if(!rssi)
 						{
 							rssi = BidcosFrame::INVALID_RSSI_VALUE;
@@ -298,7 +302,11 @@ bool CCU2CoprocessorCommand::parseBidcosCommandResponse(const std::string& respo
 					if(responseStr.size() >= 15 && responseStr.size() <= 32) {//6 byte until rssi (inclusive) + 9 up to 26 byte telegram data --> 15 - 32 bytes
 						//authKeyIndex = responseStr.at(4); //usage only allowed on BIDCOSCMD_RESPONSE_STATUS_AUTHENTICATION_SUCCESS
 						bidcosCommandEventAuthStatus = BIDCOSCMD_EVENT_AUTH_STATUS_NO_AUTH_REQUIRED;
-						rssi = responseStr.at(5);
+						rssi = (signed char)responseStr.at(5); //the status frames carry the RSSI as a signed byte, not as magnitude
+						if(rssi < 0)
+						{
+							rssi = -rssi;
+						}
 						if(!rssi)
 						{
 							rssi = BidcosFrame::INVALID_RSSI_VALUE;
