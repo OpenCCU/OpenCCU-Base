@@ -173,6 +173,10 @@ proc get_version { } {
     return [read_var /VERSION VERSION]
 }
 
+proc get_platform { } {
+    return [read_var /VERSION PLATFORM]
+}
+
 proc get_CoProVersion {} {
   set cfgFile "/var/hm_mode"
   set unknownVersion "0.0.0"

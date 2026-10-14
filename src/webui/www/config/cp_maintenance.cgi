@@ -539,6 +539,27 @@ proc action_put_page {} {
         }
       }
 
+      # Recovery Modus
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
+        table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
+            table_data {class="CLASS20903"} $styleMaxWidth {
+                #puts "Recovery<br>"
+                #puts "Modus"
+                puts "\${dialogSettingsCMTDCCURecoveryMode}"
+            }
+            table_data {class="CLASS20904"} {
+                division {class="popupControls CLASS20905"} {
+                    division {class="CLASS20910 colorGradient50px"} {onClick="OnEnterRecoveryMode();"} {
+                        puts "\${dialogSettingsCMBtnCCURestartRecovery}"
+                    }
+                }
+            }
+            table_data {align="left"} {class="CLASS20904"} {
+                puts "\${dialogSettingsCMHintRestartRecoveryMode}"
+            }
+        }
+      }
+
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
         table_data {class="CLASS20903"} $styleMaxWidth  {
           #puts "Fehler-<br>"
@@ -715,6 +736,18 @@ proc action_put_page {} {
           });
           homematic("SafeMode.enter");
         }
+        });
+      }
+
+      OnEnterRecoveryMode = function() {
+        new YesNoDialog(translateKey("dialogRecoveryCheck"), translateKey("dialogQuestionRestartRecoveryMode"), function(result) {
+          if (result == YesNoDialog.RESULT_YES)
+          {
+            MessageBox.show(translateKey("dialogRestartRecoveryModeTitle"), translateKey("dialogRestartRecoveryModeContent"), function() {
+              window.location.href = "/";
+            });
+            homematic("RecoveryMode.enter");
+          }
         });
       }
     }
