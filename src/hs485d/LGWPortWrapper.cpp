@@ -33,7 +33,10 @@ LGWPortWrapper::LGWPortWrapper()
 , encryptionEnabled(false)
 , pEncryption(NULL)
 , port(0)
+, blockRXTX(false)
+, activeRXTXOperations(0)
 {
+	pthread_mutex_init(&mutexBlockRXTX, NULL);
 }
 
 LGWPortWrapper::~LGWPortWrapper()
@@ -43,12 +46,16 @@ LGWPortWrapper::~LGWPortWrapper()
 		delete pCommController;
 		pCommController = NULL;
 	}
+	pthread_mutex_destroy(&mutexBlockRXTX);
 }
 
 int LGWPortWrapper::ReadData(std::string* data)
 {
 	//LOG(Logger::LOG_ALL, "LGWPortWrapper::ReadData()");
 	if(data != NULL) {
+		if(!beginRXTX()) {
+			return 0;
+		}
 		bool done = pCommController->receive( *data );
 		if(done) {
 #ifdef DUMP
@@ -61,6 +68,7 @@ int LGWPortWrapper::ReadData(std::string* data)
 		else {
 			//reconnect();
 		}
+		endRXTX();
 		return (done ? data->size() : 0);
 	}
 	else {
@@ -74,6 +82,9 @@ int LGWPortWrapper::SendData(const std::string& data)
 #ifdef DUMP
 		LOG(Logger::LOG_ALL, "LGWPortWrapper::SendData(): Sending %s", toDebugHexStr(data).c_str());
 #endif
+	if(!beginRXTX()) {
+		return 0;
+	}
 	bool done = false;
 	if(encryptionEnabled && pEncryption != NULL) {
 		std::string foo(data);
@@ -83,6 +94,7 @@ int LGWPortWrapper::SendData(const std::string& data)
 	else {
 		done = pCommController->send( data );
 	}
+	endRXTX();
 	if(!done) {
 		//reconnect(); //we don't send the message, it is timed out until we reconnect...
 	}
@@ -92,7 +104,7 @@ int LGWPortWrapper::SendData(const std::string& data)
 int LGWPortWrapper::WaitForData(int msTime)
 {
 	//LOG(Logger::LOG_DEBUG, "LGWPortWrapper::WaitForData()");
-	if(pCommController != NULL && pCommController->isConnected()) {
+	if(isConnected()) {
 		return 1;
 	}
 	else {
@@ -177,6 +189,9 @@ void LGWPortWrapper::reconnect()
 			foundDev = ldUtils.readRuntimeNetworkConfiguration(lanDev);
 			if(foundDev) {
 				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Trying to reconnect.");
+				blockRXTXAndWait();
+				encryptionEnabled = false;
+				pEncryption = NULL;
 				UnifiedLanCommController* oldController = pCommController;
 				//pCommController->disconnect();
 				hostIP = lanDev.getRuntimeIPConfiguration().getIPAddress();
@@ -194,6 +209,9 @@ void LGWPortWrapper::reconnect()
 					}
 				}
 				writeLGWStatusToFile(pCommController->getSerial(), pCommController->getConnectErrorAsString());
+				pthread_mutex_lock(&mutexBlockRXTX);
+				blockRXTX = false;
+				pthread_mutex_unlock(&mutexBlockRXTX);
 			}
 			if(reconnected) {
 				LOG(Logger::LOG_FATAL_ERROR, "LGWPortWrapper::connect(): Reconnected.");
@@ -213,11 +231,43 @@ void LGWPortWrapper::reconnect()
 
 bool LGWPortWrapper::isConnected()
 {
-	if(pCommController != NULL)
-	{
-		return pCommController->isConnected();
+	bool connected = false;
+	if(beginRXTX()) {
+		connected = (pCommController != NULL && pCommController->isConnected());
+		endRXTX();
 	}
-	return false;
+	return connected;
+}
+
+bool LGWPortWrapper::beginRXTX()
+{
+	pthread_mutex_lock(&mutexBlockRXTX);
+	if(blockRXTX) {
+		pthread_mutex_unlock(&mutexBlockRXTX);
+		return false;
+	}
+	activeRXTXOperations++;
+	pthread_mutex_unlock(&mutexBlockRXTX);
+	return true;
+}
+
+void LGWPortWrapper::endRXTX()
+{
+	pthread_mutex_lock(&mutexBlockRXTX);
+	activeRXTXOperations--;
+	pthread_mutex_unlock(&mutexBlockRXTX);
+}
+
+void LGWPortWrapper::blockRXTXAndWait()
+{
+	pthread_mutex_lock(&mutexBlockRXTX);
+	blockRXTX = true;
+	while(activeRXTXOperations > 0) {
+		pthread_mutex_unlock(&mutexBlockRXTX);
+		usleep(10000);
+		pthread_mutex_lock(&mutexBlockRXTX);
+	}
+	pthread_mutex_unlock(&mutexBlockRXTX);
 }
 
 std::string LGWPortWrapper::getSerial()
