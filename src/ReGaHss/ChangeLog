@@ -2,6 +2,26 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0263 (74880c6) Release ####################################
+
+2026-10-14 Jens Maus <mail@jens-maus.de>
+
+  * fix ReGaHss aborting with "pure virtual method called" / "terminate
+    called without an active exception" (SIGABRT) at the end of a stop (e.g.
+    SIGTERM) if programs with time modules existed: when the DOM was
+    destroyed, a time module condition deleted its calendar datapoint while
+    the DOM container was already partially destroyed (depending on the
+    order of the object IDs). The objects of the DOM are now deleted while
+    the container is still complete.
+  * fix the shutdown of the authentication service
+    (AuthenticatorServiceEnabled=true) when ReGaHss is stopped: its thread
+    was cancelled immediately while it was waiting for a request, its object
+    was destroyed without waiting for the thread to end, and the service was
+    only stopped after the DOM it uses had already been destroyed. The
+    service now waits for requests with a timeout, is stopped cooperatively
+    before the runtime threads and the DOM, and is only cancelled if it does
+    not exit within 5s.
+
 #### R1.00.0388.0262 (95443bb) Release ####################################
 
 2026-10-13 Jens Maus <mail@jens-maus.de>
