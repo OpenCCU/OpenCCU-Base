@@ -219,6 +219,8 @@ jQuery.extend(true,langJSON, {
     "stringTableConfButtonTimePermanent" : "permanent",
     "stringTableConfigPendingFalse" : "There is no configuration data to be transmitted",
     "stringTableConfigPendingTrue" : "Configuration data is ready for transmission",
+    "stringTableStickyUnreachFalse" : "Device communication was disturbed: No",
+    "stringTableStickyUnreachTrue" : "Device communication was disturbed: Yes",
     "stringTableControlMode" : "Auto/manu/party mode",
     "stringTableCoolingDisable" : "Cooling in cooling mode",
     "stringTableCurrentDetectionBehavior" :  "Response",
