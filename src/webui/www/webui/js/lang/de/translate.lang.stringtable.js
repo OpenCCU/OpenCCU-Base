@@ -219,6 +219,8 @@ jQuery.extend(true,langJSON, {
     "stringTableConfButtonTimePermanent" : "dauerhaft",
     "stringTableConfigPendingFalse" : "Konfigurationsdaten zur %DCbertragung: Nein",
     "stringTableConfigPendingTrue" : "Konfigurationsdaten zur %DCbertragung: Ja",
+    "stringTableStickyUnreachFalse" : "Kommunikation war gest%F6rt: Nein",
+    "stringTableStickyUnreachTrue" : "Kommunikation war gest%F6rt: Ja",
     "stringTableControlMode" : "Modus Auto/Manu/Urlaub",
     "stringTableCoolingDisable" : "K%FChlen im K%FChlmode",
     "stringTableCurrentDetectionBehavior" :  "Verhalten",

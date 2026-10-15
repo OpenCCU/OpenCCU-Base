@@ -198,6 +198,7 @@ jQuery.extend(true, langJSON, {
     "optionUnit8H" : "8 hours",
     "optionUnit8M": "8 minutes",
     "optionUnit90S" : "90 seconds",
+    "optionUnitY" : "Years",
     "optionUnitD" : "Days",
     "optionUnitH" : "Hours",
     "optionUnitM" : "Minutes",
