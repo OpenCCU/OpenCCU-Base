@@ -222,6 +222,38 @@
 </script>
 
 <script type="text/javascript">
+  ShowInternalDeviceChannels = function()
+  {
+    var url = '/esp/system.htm?sid='+SessionId;
+    var pb = "";
+    pb += 'string action = "ShowInternalDeviceChannels";';
+    var opt =
+    {
+      postBody: pb,
+      onComplete: function(t)
+      {
+        if(dbg){alert(t.responseText);}
+        reloadPage();
+      }
+    };
+    new Ajax.Request(url,opt);
+  };
+
+  <%
+    string sInternalBtnText = "";
+    if( system.GetSessionVar("sessionSIDC") == "1" )
+    {
+        !sInternalBtnText = "aus";
+        sInternalBtnText = "footerBtnHideInternalDeviceChannels";
+    }
+    else
+    {
+        !sInternalBtnText = "ein";
+        sInternalBtnText = "footerBtnShowInternalDeviceChannels";
+    }
+    Write("var internalBtnText = '"#sInternalBtnText#"';");
+  %>
+
   var s = "";
 
   var mouseOpts =
@@ -242,6 +274,7 @@
   s += "<tr>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalDeviceChannels()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
   s += "</table>";
   
