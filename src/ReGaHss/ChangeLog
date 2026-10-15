@@ -2,6 +2,40 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0264 (138ef45) Release ####################################
+
+2026-10-15 Jens Maus <mail@jens-maus.de>
+
+  * fix foreach() silently skipping the loop if the loop variable was not
+    declared as string (or as integer for a loop over an integer count),
+    e.g. 'var x; foreach(x, list)' or 'integer x; foreach(x, "A\tB")'.
+    The loop variable may now be declared with any type, as it is set to
+    the elements of the list (string) or the count (integer) anyway.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/2612)
+  * fix the WebUI showing wrong, incomplete or duplicated content (e.g.
+    duplicated control buttons) or not loading at all, and ReGaHss crashing,
+    after system.ClearCache() or system.CacheMode() had been used or when
+    several requests for the same page were processed at the same time:
+    - system.ClearCache() did not clear the cached function lookups of
+      Call() and code cache IDs were reused, so that Call() afterwards
+      executed no or completely different code. Code cache IDs are now never
+      reused and Call() reloads functions no longer cached.
+    - code executing system.ClearCache() itself (or a concurrent request)
+      freed the code still being executed (use-after-free).
+    - the page and file caches were not protected against concurrent
+      access, so that pages processed for the first time by concurrent
+      requests could permanently end up with duplicated or missing content
+      in the cache. Pages are now cached only once completely processed and
+      only valid cache entries are used.
+    - the cached content of files could be modified or released while being
+      used by a concurrent request.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/2638)
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1467)
+  * fix undefined behaviour when loading and saving the parameter sets of
+    devices, channels and UI data in the DOM file: they were accessed as
+    DOM objects (IseObject), which they are not. Behaviour is unchanged,
+    the CI now also tests ReGaHss with UndefinedBehaviorSanitizer.
+
 #### R1.00.0388.0263 (74880c6) Release ####################################
 
 2026-10-14 Jens Maus <mail@jens-maus.de>
