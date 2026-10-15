@@ -559,7 +559,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsSecurityMessageCreateSysBackupTitle" : "Create system backup",
     "dialogSettingsSecurityMessageCreateSysBackupContent" : "The system backup will be created. This process may take a few minutes.",
     "dialogSettingsSecurityMessageSysBackupInvalidFileTitle" : "Import system backup: Invalid file format",
-    "dialogSettingsSecurityMessageSysBackupInvalidFileContent" : "The selected file does not contain a Homematic system backup. Please select a valid backup file.",
+    "dialogSettingsSecurityMessageSysBackupInvalidFileContent" : "The selected file does not contain a consistent Homematic system backup. Please select a valid backup file.",
     "dialogSettingsSecurityMessageSysBackupPerformTitle" : "Import system backup - confirmation prompt",
     "dialogSettingsSecurityMessageSysBackupPerformContent" : "Please confirm here to import the system backup.",
     "dialogSettingsSecurityMessageSysBackupBtnPerformRestore" : "Import system backup",

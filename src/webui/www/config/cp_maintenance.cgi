@@ -245,13 +245,12 @@ proc action_firmware_update_go {} {
         regaMonitor.stop();
         InterfaceMonitor.stop();
       }
-      //var pb = "action=update_start";
-      //var opts = {
-      //  postBody: pb,
-      //  sendXML: false
-      //};
-      //new Ajax.Request(url, opts);
-      window.location.href=url+"&action=update_start"
+      var pb = "action=update_start";
+      var opts = {
+        postBody: pb,
+        sendXML: false
+      };
+      new Ajax.Request(url, opts);
     }
   }
 }
@@ -269,8 +268,8 @@ proc action_firmware_update_cancel {} {
     }
   } else {
    catch { exec /bin/sh -c "rm -rf `readlink -f /usr/local/.firmwareUpdate` /usr/local/.firmwareUpdate" }
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/EULA.*"}
-   catch { exec /bin/sh -c "rm -f /usr/local/tmp/update_script"}
+   catch { exec /bin/sh -c "rm -f /tmp/EULA.*"}
+   catch { exec /bin/sh -c "rm -f /usr/local/tmp/firmwareUpdateFile"}
   }
 
   cgi_javascript {
@@ -938,14 +937,7 @@ proc action_askCreateBackup {} {
           const cb = document.getElementById('accept');
           const action = "acceptEula";
           if(cb.checked) {
-            //window.location.href=url+"&action=createBackup";
-            var pb = "action=createBackup";
-            var opts = {
-              postBody: pb,
-              sendXML: false,
-              asynchronous: false
-            };
-            new Ajax.Request(url, opts);
+            window.open(url+"&action=createBackup", "_blank");
           } 
           dlgPopup.hide();
           dlgPopup.setWidth(800);
@@ -961,8 +953,7 @@ proc action_askCreateBackup {} {
 }
 
 proc action_createBackup {} {
-  http_head
-  catch { exec touch /tmp/createBackup }
+  [create_backup]
 }
 
 proc action_firmware_upload {} {
@@ -1006,35 +997,80 @@ proc action_firmware_upload {} {
   } else {
 
     cd /usr/local/tmp/
-    set TMPDIR "[file tail $filename-dir]"
-    exec mkdir -p $TMPDIR
 
     #
     # check if the uploaded file is a valid firmware update file
     #
 
-    set file_invalid [catch {exec tar zxvf $filename update_script EULA.en EULA.de -C /usr/local/}]
+    catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
+    set file_invalid 1
 
     # check for .tar.gz or .tar
-    if {$file_invalid == 0} {
+    if {$file_invalid != 0} {
       set file_invalid [catch {exec file -b $filename | egrep -q "(gzip compressed|tar archive)"} result]
       if {$file_invalid == 0} {
         # the file seems to be a tar archive (perhaps with gzip compression)
-        set file_invalid [catch {exec /bin/tar -C $TMPDIR --no-same-owner -xmf $filename} result]
-        file delete -force -- $filename
+        set file_invalid [catch {exec /bin/tar -C /tmp --warning=no-timestamp --no-same-owner --wildcards -xmf $filename "EULA.*"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .zip
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | grep -q "Zip archive data"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a zip archive containing data
+        set file_invalid [catch {exec /usr/bin/unzip -q -o -d /tmp $filename EULA.en EULA.de 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for .img
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be a full-fledged SD card image with MBR boot sector, etc. so lets
+        # check if we have exactly 3 partitions
+        set file_invalid [catch {exec /usr/sbin/parted -sm $filename print 2>/dev/null | tail -1 | egrep -q "3:.*:ext4:"} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for ext4 rootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "ext4 filesystem.*rootfs"} result]
+      if {$file_invalid == 0} {
+        # the file seems to be an ext4 fs of the rootfs lets check if the ext4 is valid
+        set file_invalid [catch {exec /sbin/e2fsck -nf $filename 2>/dev/null} result]
+        if {$file_invalid == 0} {
+          catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
+        }
+      }
+    }
+
+    # check for vfat bootfs filesystem
+    if {$file_invalid != 0} {
+      set file_invalid [catch {exec file -b $filename | egrep -q "DOS/MBR boot sector.*bootfs.*FAT"} result]
+      if {$file_invalid == 0} {
+        catch { exec ln -sfn $filename /usr/local/.firmwareUpdate }
       }
     }
 
     #
     # test if the above checks were successfull or not
     #
-    if {$file_invalid == 0} {
-      catch { exec ln -sf tmp/$TMPDIR /usr/local/.firmwareUpdate }
+    if { $file_invalid == 0 && [file exists /usr/local/.firmwareUpdate] } {
       #set action "acceptEula"
       set action "askCreateBackup"
     } else {
       file delete -force -- $filename
-      file delete -force -- $filename-dir
+      catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
       set action "firmware_update_invalid"
     }
 
@@ -1230,10 +1266,6 @@ proc action_shutdown_go {} {
 
 proc action_update_start {} {
   puts ""
-  if { [file exists "/tmp/createBackup"] } {
-    catch { [create_backup] }
-  }
-
   catch { exec killall hss_lcd }
   catch { exec lcdtool {Saving   Data...  } }
   rega system.Save()

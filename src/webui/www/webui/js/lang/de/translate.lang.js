@@ -560,7 +560,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsSecurityMessageCreateSysBackupTitle" : "System-Backup erstellen",
     "dialogSettingsSecurityMessageCreateSysBackupContent" : "Das System-Backup wird jetzt erstellt. Dieser Vorgang kann einige Minuten dauern.",
     "dialogSettingsSecurityMessageSysBackupInvalidFileTitle" : "System-Backup einspielen: Ung%FCltiges Dateiformat",
-    "dialogSettingsSecurityMessageSysBackupInvalidFileContent" : "Die ausgew%E4hlte Datei enth%E4lt kein Homematic System-Backup. Bitte w%E4hlen Sie eine g%FCltige Backup-Datei aus.",
+    "dialogSettingsSecurityMessageSysBackupInvalidFileContent" : "Die ausgew%E4hlte Datei enth%E4lt kein konsistentes Homematic System-Backup. Bitte w%E4hlen Sie eine g%FCltige Backup-Datei aus.",
     "dialogSettingsSecurityMessageSysBackupPerformTitle" : "System-Backup einspielen - Sicherheitsabfrage",
     "dialogSettingsSecurityMessageSysBackupPerformContent" : "Best%E4tigen Sie hier, um das System-Backup einzuspielen.",
     "dialogSettingsSecurityMessageSysBackupBtnPerformRestore" : "System-Backup einspielen",

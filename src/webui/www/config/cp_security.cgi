@@ -78,8 +78,8 @@ proc getSGTIN_CCU {} {
 proc getSGTIN_Backup {migrationMode} {
 
   switch $migrationMode {
-    "CCU2_CCU2" {set path_crRFD "/tmp/backup/usr/local/etc/config/crRFD/data"}
-    "CCU2_CCU3" {set path_crRFD "/tmp/backup/usr/local/etc/config/crRFD/data"}
+    "CCU2_CCU2" {set path_crRFD "/usr/local/tmp/backup/usr/local/etc/config/crRFD/data"}
+    "CCU2_CCU3" {set path_crRFD "/usr/local/tmp/backup/usr/local/etc/config/crRFD/data"}
     "CCU3_CCU3" {set path_crRFD "/usr/local/eQ-3-Backup/restore/etc/config/crRFD/data"}
   }
 
@@ -136,8 +136,8 @@ proc readBackupStatus {} {
 proc checkUserBackupValidility {migrationMode} {
 
   switch $migrationMode {
-    "CCU2_CCU2" {set pathBackup "/tmp/backup/usr/local/"}
-    "CCU2_CCU3" {set pathBackup "/tmp/backup/usr/local/"}
+    "CCU2_CCU2" {set pathBackup "/usr/local/tmp/backup/usr/local/"}
+    "CCU2_CCU3" {set pathBackup "/usr/local/tmp/backup/usr/local/"}
     "CCU3_CCU3" {set pathBackup "/usr/local/eQ-3-Backup/restore/"}
   }
 
@@ -297,7 +297,7 @@ proc action_factory_reset_go {} {
     } else {
       exec touch /usr/local/.doFactoryReset
     }
-    exec kill -SIGQUIT 1
+    exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
   }]} {
 
     # TWIST-22
@@ -372,14 +372,20 @@ proc action_factory_reset_go {} {
 
 proc action_backup_restore_check {} {
   global env
-  cd /tmp/
+  cd /usr/local/tmp/
   
   http_head
   set i 0
   if { [catch {
-    exec tar xf new_config.tar
-    file delete -force /tmp/new_config.tar
-  
+    exec find /usr/local/tmp -maxdepth 1 -type f -not ( -name new_config.tar -or -name .nobackup ) -delete
+    exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/new_config.tar 2>/dev/null
+    file delete -force /usr/local/tmp/new_config.tar
+
+  # check archive consistency if there is a signature.sha256
+  if { [file exists /usr/local/tmp/signature.sha256] } {
+    exec sha256sum -s -c signature.sha256
+  }
+
   set config_version [read_version "firmware_version"]
   set ccu1_backup false
   if { [version_compare $config_version 2.0.0] < 0 } {
@@ -510,10 +516,10 @@ proc action_backup_restore_check {} {
 
 proc action_backup_restore_go {} {
   global env
-  cd /tmp/
+  cd /usr/local/tmp/
   http_head
     
-  set system_version [read_version "/boot/VERSION"]
+  set system_version [read_version "/VERSION"]
   set config_version [read_version "firmware_version"]
   set ccu1_backup false
   if { [version_compare $config_version 2.0.0] < 0 } {
@@ -596,20 +602,20 @@ proc action_backup_restore_go {} {
     if { "CCU2_CCU2" == $migration_mode } {
       # CCU2 ==> CCU2
       set backuperror false
-      set source_version [read_version "/tmp/firmware_version"]
+      set source_version [read_version "/usr/local/tmp/firmware_version"]
       set source_version [split $source_version .]
       set source_major [lindex $source_version 0]
       set source_minor [lindex $source_version 1]
       set source_patch [lindex $source_version 2]
       if { (($source_major == 2)  && ($source_minor > 17)) || (($source_major == 2) && ($source_minor == 17) && ($source_patch >= 14))} {
-        # extract backup to /tmp to enable checkUsrBackup.sh to validate backup
-        file delete -force /tmp/backup
-        file mkdir /tmp/backup
-        cd /tmp/backup
-        if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+        # extract backup to /usr/local/tmp to enable checkUsrBackup.sh to validate backup
+        file delete -force /usr/local/tmp/backup
+        file mkdir /usr/local/tmp/backup
+        cd /usr/local/tmp/backup
+        if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
-          file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+          file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
           return
           #set backuperror true
         } else {
@@ -622,7 +628,7 @@ proc action_backup_restore_go {} {
             # Start /etc/init.d/S62HMServer start
             cgi_javascript {puts "MessageBox.close();"}
             put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} [getBackupErrorMessage $checkBackupState $migration_mode]"
-            file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+            file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
             cgi_javascript {puts "homematic('User.restartHmIPServer');"}
             return
           } 
@@ -646,7 +652,7 @@ proc action_backup_restore_go {} {
           # append msg $errorMessage
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
-          file delete -force /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
+          file delete -force /usr/local/tmp/firmware_version /usr/local/tmp/signature /usr/local/tmp/usr_local.tar.gz /usr/local/tmp/backup
           return
         } else {
           set backuperror false
@@ -658,24 +664,25 @@ proc action_backup_restore_go {} {
     file delete -force /usr/local/eQ-3-Backup/restore
     file mkdir /usr/local/eQ-3-Backup/restore
     cd /usr/local/eQ-3-Backup/restore
-      if { [catch {exec tar xzf /tmp/usr_local.tar.gz --strip 2} errorMessage] } {
+      if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz --strip 2} errorMessage] } {
           # show message "Beim Einspielen des Systembackups ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut. "
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
           set backuperror true
         } else {
           set backuperror false
+          exec touch /usr/local/.doBackupRestore
         }
     } elseif { "CCU2_CCU3" == $migration_mode } {
           # CCU2 ==> CCU3
-        # be sure /tmp/backup is empty
-        file delete -force /tmp/backup
+        # be sure /usr/local/tmp/backup is empty
+        file delete -force /usr/local/tmp/backup
         # be sure restore directory is empty
         file delete -force /usr/local/eQ-3-Backup/restore
-        file mkdir /tmp/backup
+        file mkdir /usr/local/tmp/backup
 
-        cd /tmp/backup
-        if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+        cd /usr/local/tmp/backup
+        if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
           cgi_javascript {puts "MessageBox.close();"}
           put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
           set backuperror true
@@ -683,8 +690,8 @@ proc action_backup_restore_go {} {
           # only do this when the compatibility check says ok:
           #copy old files
           file mkdir /usr/local/eQ-3-Backup/restore/etc/config
-          if { [file exists /tmp/backup/usr/local/etc/config] } {
-            cd /tmp/backup/usr/local/etc/config
+          if { [file exists /usr/local/tmp/backup/usr/local/etc/config] } {
+            cd /usr/local/tmp/backup/usr/local/etc/config
           }
 
           if { [file exists InterfacesList.xml] } { file copy InterfacesList.xml /usr/local/eQ-3-Backup/restore/etc/config/InterfacesList.xml }
@@ -717,26 +724,31 @@ proc action_backup_restore_go {} {
 
           set backuperror false
           cd /
+          exec touch /usr/local/.doBackupRestore
         }
       }
     } else {  # backup for version < 2
+      catch {
+        exec pkill ReGaHss
+        exec sleep 5
+      }
       #delete existing files
-      file delete -force /tmp/backup
+      file delete -force /usr/local/tmp/backup
       file delete -force /etc/config/hs485d /etc/config/hs485types /etc/config/rfd /etc/config/userprofiles
       file delete -force /etc/config/homematic.regadom /etc/config/homematic.regadom.bak
       file delete -force /etc/config/ids /etc/config/ntpclient /etc/config/rega.conf /etc/config/syslog
       file delete -force /etc/config/tweaks /etc/config/TZ /etc/config/server.pem /etc/config/keys
       file delete -force /etc/config/time.conf
 
-      file mkdir /tmp/backup
-      cd /tmp/backup
-      if { [catch {exec tar xzf /tmp/usr_local.tar.gz} errorMessage] } {
+      file mkdir /usr/local/tmp/backup
+      cd /usr/local/tmp/backup
+      if { [catch {exec tar --warning=no-timestamp --no-same-owner -xf /usr/local/tmp/usr_local.tar.gz} errorMessage] } {
         put_message "\${dialogSettingsSecurityMessageSysBackupErrorTitle}" "\${dialogSettingsSecurityMessageSysBackupErrorContent} $errorMessage"
         set backuperror true
       } else {
         #copy old files
-        if { [file exists /tmp/backup/usr/local/etc/config] } {
-          cd /tmp/backup/usr/local/etc/config
+        if { [file exists /usr/local/tmp/backup/usr/local/etc/config] } {
+          cd /usr/local/tmp/backup/usr/local/etc/config
         }
 
         if { [file exists hs485d] } { file copy hs485d /etc/config/hs485d }
@@ -790,11 +802,13 @@ proc action_backup_restore_go {} {
         catch {exec eq3configcmd rfd-interface-copy rfd.conf /etc/config/rfd.conf}
 
         set backuperror false
+        exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+        return
       }
     cd /
   }
 
-  set source_version [read_version "/tmp/firmware_version"]
+  set source_version [read_version "/usr/local/tmp/firmware_version"]
 
   set source_version [split $source_version .]
   set source_major [lindex $source_version 0]
@@ -818,8 +832,7 @@ proc action_backup_restore_go {} {
   cgi_javascript {puts "MessageBox.close();"}
 
   if { "false" == $backuperror } {
-    exec mount -o remount,ro /usr/local
-    exec mount -o remount,rw /usr/local
+    exec sync
     division {class="popupTitle"} {
       puts "\${dialogSettingsSecurityMessageSysBackupRestartSystemTitle}"
     }
@@ -860,8 +873,6 @@ proc action_backup_restore_go {} {
   cgi_javascript {
     puts "translatePage('#messagebox');"
   }
-
-  file delete -force /tmp/new_config.tar /tmp/firmware_version /tmp/signature /tmp/usr_local.tar.gz /tmp/backup
 }
 
 proc put_message {title msg args} {
@@ -1515,7 +1526,7 @@ proc action_put_page {} {
 }
 
 proc action_create_backup {} {
-  [create_backup]
+  create_backup
 }
 
 proc action_backup_upload {} {
