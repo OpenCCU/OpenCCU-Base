@@ -41,7 +41,7 @@ proc getMaintenance {chn p descr address} {
 
   puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/HmIP-ParamHelp.js');</script>"
 
-  if {([string equal $devType "HmIP-CCU3"] == 1) || ([string equal $devType "RPI-RF-MOD"] == 1)} {
+  if {([string equal $devType "HmIP-CCU3"] == 1) || ([string equal $devType "RPI-RF-MOD"] == 1) || ([string equal $devType "HmIP-RFUSB"] == 1)} {
     append html "[getNoParametersToSet]"
     return $html
   }

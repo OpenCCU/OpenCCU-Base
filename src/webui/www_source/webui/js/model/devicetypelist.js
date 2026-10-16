@@ -20,7 +20,8 @@ DeviceTypeList = Singleton.create({
     "HM-Sec-SD-Team",
     "HM-Sec-SD-2-Team",
     "HmIP-CCU3",
-    "RPI-RF-MOD"
+    "RPI-RF-MOD",
+    "HmIP-RFUSB"
   ],
   
   /**
