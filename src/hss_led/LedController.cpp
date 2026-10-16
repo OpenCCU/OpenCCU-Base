@@ -418,7 +418,8 @@ static std::string dispatch(State& state, const std::string& message, uid_t uid,
   bool valid = false;
   if (v[1] == "status" && v.size() == 2) {
     return "OK owner=" + std::string(state.overrideActive ? "override" : state.automatic ? "auto" : "system") +
-        " backend=" + backend.name + " pending=" + std::to_string(dirty) + " pattern=" + state.effective().wire();
+        " backend=" + backend.name + " pending=" + std::to_string(dirty) +
+        " disabled=" + std::to_string(exists(disabled)) + " pattern=" + state.effective().wire();
   }
   if ((uid == administrator || uid == reporter) && v[1] == "report" && v.size() == 6) {
     valid = parsePattern(v, 2, changed.report);
@@ -598,6 +599,7 @@ static const char usage[] =
     "  Maximum: 86400000 ms. Alternate/blink require positive durations.\n"
     "  COLOR 0 selects a steady color; unequal phase durations are allowed.\n\n"
     "Commands return after acceptance; status shows pending hardware updates.\n"
+    "  disabled=1: /etc/config/disableLED forces the radio LED off.\n"
     "Control changes require root. The hss_led daemon must be running.\n\n"
     "Examples:\n"
     "  hss_ledctl --led rpi-rf-mod alternate blue red slow\n"
