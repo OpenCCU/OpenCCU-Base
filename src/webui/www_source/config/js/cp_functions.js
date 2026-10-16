@@ -59,8 +59,8 @@ showNewFirmwareDownload = function() {
   CreateCPPopup("/config/cp_maintenance.cgi", "downloadOnly=1");
 };
 
-CreateCPPopup = function(src, pb) {
-  dlgPopup = new cpMessageBox(src, pb);
+CreateCPPopup = function(src, pb, errorLbl) {
+  dlgPopup = new cpMessageBox(src, pb, errorLbl);
 
   PopupClose = function() {
     dlgPopup.close();
@@ -100,7 +100,7 @@ cpMessageBox = Class.create();
 
 cpMessageBox.prototype =
 {
-  initialize: function(src, pb)
+  initialize: function(src, pb, errorLbl)
   {
     if ( $('messagebox') ){
       $("messagebox").hide();
@@ -112,7 +112,7 @@ cpMessageBox.prototype =
     this.setWidth(800);
 
     this.createMessagebox();
-    this.LoadFromFile(src, pb);
+    this.LoadFromFile(src, pb, errorLbl);
   },
 
   getViewPortDim : function()
@@ -236,7 +236,7 @@ cpMessageBox.prototype =
     this.removeMessagebox();
   },
   
-  LoadFromFile: function(src, pb) {
+  LoadFromFile: function(src, pb, errorLbl) {
     var url = src;
     if(url.indexOf('?sid=') === -1)
     {                                                                                 
@@ -252,6 +252,15 @@ cpMessageBox.prototype =
       onComplete: function(trans) {
         centerMessageBox();
         $('messagebox').style.display="";
+      },
+      onFailure: function(response) {
+        $('centerbox').hide();
+        $('trlayer').hide();
+        if(typeof errorLbl != 'undefined') {
+          MessageBox.show(translateKey('lblError'), translateKey(errorLbl), '', 480,120);
+        } else {
+          Ajax_failure(url, response.statusText);
+        }
       }
     };
     new Ajax.Updater('messagebox',url,opt);
