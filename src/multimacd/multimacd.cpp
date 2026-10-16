@@ -34,6 +34,8 @@ static const char* CONFIG_DEFAULTS[] = {
 //	"Transparent Cmdline Pattern",	"*update*",
 	"Bidcos Exe Pattern",			"*/bin/rfd",
 	"Default Subsystem",			"HmIP",
+	"Traffic Log",					"0",
+	"Traffic Log Directory",		"/var/log",
 //	"Loop Master Device",			"/dev/eq3loop",
 //	"Loop Slave Device Bidcos",			"mmd_bidcos",
 //	"Loop Slave Device HmIP",			"mmd_hmip",
@@ -88,12 +90,13 @@ static void usage(const char* procname)
 {
   std::cout << "multimacd " << MULTIMACD_VERSION << " (" << __DATE__ << ")" << std::endl
             << std::endl
-            << "Usage: " << procname << " [-f config file] [-c] [-l loglevel] [-p devnode] [-d]" << std::endl
+            << "Usage: " << procname << " [-f config file] [-c] [-l loglevel] [-p devnode] [-d] [-t]" << std::endl
             << "    -f: use alternate config file" << std::endl
             << "    -c: log to console instead of syslog" << std::endl
             << "    -l: set log level" << std::endl
             << "    -p: specify coprocessor device node" << std::endl
-            << "    -d: run as daemon/service" << std::endl;
+            << "    -d: run as daemon/service" << std::endl
+            << "    -t: log all radio rx/tx traffic to daily files in /var/log" << std::endl;
 
   if(logger)
     delete logger;
@@ -161,6 +164,7 @@ int main(int argc, char **argv)
     bool cmdline_log_console=false;
     std::string config_filename = CONFIG_FILENAME;
     bool cmdline_daemonize=false;
+    bool cmdline_traffic_log=false;
 	const char* device = NULL;
 
 	installSignalHandlers();
@@ -180,6 +184,8 @@ int main(int argc, char **argv)
             cmdline_log_console=true;
         }else if(strcmp(argv[i], "-d")==0){
             cmdline_daemonize=true;
+        }else if(strcmp(argv[i], "-t")==0){
+            cmdline_traffic_log=true;
         }else{
             usage(argv[0]);
         }
@@ -201,6 +207,10 @@ int main(int argc, char **argv)
 	if( cmdline_loglevel >= 0 )
 	{
 		config_data.SetIntValue("Log Level", cmdline_loglevel);
+	}
+	if( cmdline_traffic_log )
+	{
+		config_data.SetIntValue("Traffic Log", 1);
 	}
 
 	setup_logging( config_data );
