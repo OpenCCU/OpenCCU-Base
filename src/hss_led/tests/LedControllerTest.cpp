@@ -108,7 +108,10 @@ int main() {
     check(state.effective().a == 3);
     check(command("1 system 3 3 0 0") == "OK accepted" && !state.overrideActive && !state.automatic);
     check(command("1 report 4 4 0 0", 1234) == "OK accepted" && state.effective().a == 3);
-    put(disabled, ""); check(state.effective().a == 0); unlink(disabled.c_str());
+    check(command("1 status").find(" disabled=0 ") != std::string::npos);
+    put(disabled, ""); check(state.effective().a == 0);
+    check(command("1 status").find(" disabled=1 pattern=0 0 0 0") != std::string::npos);
+    unlink(disabled.c_str());
     std::string before = state.wire();
     for (const auto& msg : {"1 override 9 0 10 10", "1 report 1 2 0 0", "1 auto extra", "2 release", "1 system 1 2 0 1"})
       check(command(msg).compare(0, 3, "ERR") == 0 && state.wire() == before);
