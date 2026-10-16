@@ -2,6 +2,55 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0265 (252b946) Release ####################################
+
+2026-10-16 Jens Maus <mail@jens-maus.de>
+
+  * fix ReGaHss crashing (SIGSEGV) if a script created a very long string,
+    e.g. by doubling a string in a loop ('a = a # a;'): if allocating the
+    memory of a string failed, the string was left without buffer and the
+    next access crashed. A string now keeps its current buffer and contents
+    if allocating a larger one fails. Furthermore, strings created by the
+    concatenation operator '#' and by .Replace() are limited to a length of
+    32 MiB and the output of a script (Write(), WriteLine(), ...) to 32 MiB
+    per request, so that a script cannot use up all memory: exceeding a
+    limit (or a failed allocation) now ends the script with a script
+    runtime error. .Replace() now also builds its result at once instead of
+    moving the rest of the string for each occurrence (which took very
+    long for many occurrences) and leaves the string unchanged for an empty
+    search string (it never ended for it, e.g. "abc".Replace("", "x")).
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1420)
+  * fix the error page of the web server (e.g. "Sitzung ungültig oder
+    abgelaufen!" for an invalid session) showing its message and link on
+    the same line when embedded into the WebUI: they were output as two
+    paragraphs, which the WebUI does not display on separate lines. They are
+    now output in one paragraph separated by a line break, and the link is
+    omitted if the error page has none.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1598)
+  * fix programs not reacting to an update of a device datapoint or system
+    variable although their condition was met: the conditions of programs
+    are evaluated asynchronously, but used the current value of the
+    triggering datapoint instead of the value of the update. If the
+    datapoint had been updated again meanwhile (e.g. by the next event of
+    a system.multicall, like TIMER_GET of a CUxD timer, or by a script
+    setting a system variable twice), the condition was evaluated with the
+    newer value. The value of the triggering update is now used for the
+    triggering datapoint, all other datapoints of the conditions are still
+    evaluated with their current value.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1734)
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1278)
+  * fix URL encoded characters in the URL parameters of remote script
+    calls (e.g. /x.exe?v=dom.GetObject('SV').State('A%26B')) and pages:
+    the URL was decoded before it was split into its parameters and then
+    decoded a second time, so that an encoded '&' (%26, but also %2526)
+    split the parameter, an encoded '+' (%2B) became a space and a '%' not
+    followed by two hex digits (e.g. "50%25x" or "%4'") removed parts of
+    the parameter. The parameters are now split first and each parameter
+    is decoded once, so that %26, %2B and %25 result in '&', '+' and '%'.
+    A '&' that is not encoded still separates the parameters (as defined
+    for URLs), a '+' still results in a space.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/2216)
+
 #### R1.00.0388.0264 (138ef45) Release ####################################
 
 2026-10-15 Jens Maus <mail@jens-maus.de>
