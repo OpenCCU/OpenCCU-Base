@@ -501,6 +501,12 @@ bool CCU2BidcosRemoteInterface::republishAllDevices()
 		bool done = AddDeviceRemote(devices.at(i));
 		if(done) {
 			LOG(Logger::LOG_DEBUG, "CCU2BidcosRemoteInterface::republishAllDevices(): Re-added device with address %d(dec)",devices.at(i));
+			//Restore the channel authentication policy, as it is set after adding a device on startup
+			int aes_key;
+			uint64 aes_channels;
+			if(GetDeviceAesPolicy(devices.at(i), &aes_key, &aes_channels)) {
+				SetDeviceAesPolicy(devices.at(i), aes_key, aes_channels);
+			}
 		}
 		else {
 			LOG(Logger::LOG_ERROR, "CCU2BidcosRemoteInterface::republishAllDevices(): Could not republish device with address %d(dec) to coprocessor.",devices.at(i));
