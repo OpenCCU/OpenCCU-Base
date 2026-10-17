@@ -738,7 +738,7 @@ RemoveLink = function(iface, sender_address, receiver_address, sender_type, redi
 {
   var questionRemoveLink = ((iface == "HmIP-RF") && (sender_type != "HmIP-SMI55") && (sender_type != "HmIP-SMI55-A") && (sender_address.split(":")[0] == receiver_address.split(":")[0])) ? translateKey('dialogQuestionRemoveInternalLink') : translateKey('dialogQuestionRemoveLink');
 
-  new YesNoDialog(translateKey('dialogSafetyCheck'), questionRemoveLink, function(result) {
+  new YesNoDialog(translateKey('dialogSafetyCheck'), questionRemoveLink.replace('%s', sender_address+' - '+receiver_address), function(result) {
     if (result == YesNoDialog.RESULT_YES)
     {
       ResetPostString();

@@ -700,7 +700,7 @@ jQuery.extend(true,langJSON, {
     "channelModeHumidityLimiter" :  "Feuchtigkeitsbegrenzer",
     "channelModeTactileSwitch" :  "Taster",
     "channelModeTemperatureLimiter" : "Temperaturbegrenzer",
-    "dialogQuestionRemoveInternalLink" :  "<span class='attention'>ACHTUNG:</span><br/><br>Es handelt sich hier um eine interne Verkn%FCpfung des Ger%E4tes. Das L%F6schen dieser Verkn%FCpfung kann dazu f%FChren, dass das Ger%E4t unbedienbar wird. In diesem Fall m%FCssen Sie die Verkn%FCpfung neu erstellen.<br/><br/>M%F6chten Sie die Verkn%FCpfung wirklich l%F6schen?",
+    "dialogQuestionRemoveInternalLink" :  "<span class='attention'>ACHTUNG:</span><br/><br>Es handelt sich hier um eine interne Verkn%FCpfung des Ger%E4tes. Das L%F6schen dieser Verkn%FCpfung kann dazu f%FChren, dass das Ger%E4t unbedienbar wird. In diesem Fall m%FCssen Sie die Verkn%FCpfung neu erstellen.<br/><br/>M%F6chten Sie die Verkn%FCpfung '%s' wirklich l%F6schen?",
     "descriptionTransmitterDataTransmissionCondition0" :  "<b>Modus 1</b><br/><br/>Senden auf Pegel%E4nderung am Daten%FCbertragungspin (DU30) von HIGH- auf LOW-Pegel.",
     "descriptionTransmitterDataTransmissionCondition1" :  "<b>Modus 2</b><br/><br/>Senden auf Pegel%E4nderung am Daten%FCbertragungspin (DU30) von LOW- auf HIGH-Pegel.",
     "descriptionTransmitterDataTransmissionCondition2" :  "<b>Modus 3</b><br/><br/>Senden auf Pegel%E4nderung am Daten%FCbertragungspin (DU30) auf jede Logikpegel%E4nderung.",
