@@ -257,7 +257,8 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
               Write('<div class="CLASS06412">Bearbeiten...</div>');
             }
             if ((bDelAllowed) && (!oFav.Unerasable())) {
-                Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#');">${btnRemove}</div>');
+                string sDelName = oFav.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+                Write('<div class="CLASS06409 StdButton" onclick="DeleteFavorite('#sID#',\''#sDelName#'\');">${btnRemove}</div>');
             }
             else {
               Write('<div class="CLASS06412">${btnRemove}</div>');
@@ -416,10 +417,11 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
     updateContent("/pages/tabs/user/newFav.htm");
   }
   
-  DeleteFavorite = function(id)
+  DeleteFavorite = function(id,name)
   {
     var _id_ = id;
-    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveFavorite"), function(result) {
+    var _name_ = String(name).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    new YesNoDialog(translateKey("dialogSafetyCheck"), translateKey("dialogQuestionRemoveFavorite").replace(/%s/, function() { return _name_; }), function(result) {
       if (result == YesNoDialog.RESULT_YES) { iseFavorites.RemoveList(_id_); }
     });     
   };

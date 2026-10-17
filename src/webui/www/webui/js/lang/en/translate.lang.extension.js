@@ -700,7 +700,7 @@ jQuery.extend(true, langJSON, {
     "channelModeHumidityLimiter" :  "Humidity limiter",
     "channelModeTactileSwitch" :  "Push-button",
     "channelModeTemperatureLimiter" : "Temperature limiter",
-    "dialogQuestionRemoveInternalLink" :  "<span class='attention'>PLEASE NOTE:</span><br/><br>This is an internal connection of the device. It may occur that the device cannot be operated any more if you delete this connection. In this case, you have to create the connection again.<br/><br/>Do you really want to delete the connection?",
+    "dialogQuestionRemoveInternalLink" :  "<span class='attention'>PLEASE NOTE:</span><br/><br>This is an internal connection of the device. It may occur that the device cannot be operated any more if you delete this connection. In this case, you have to create the connection again.<br/><br/>Do you really want to delete the connection '%s'?",
     "descriptionTransmitterDataTransmissionCondition0" :  "<b>Mode 1</b><br/><br/>Transmit on level change of data transmission pin (DU30) from HIGH to LOW level.",
     "descriptionTransmitterDataTransmissionCondition1" :  "<b>Mode 2</b><br/><br/>Transmit on level change of data transmission pin (DU30) from LOW to HIGH level.",
     "descriptionTransmitterDataTransmissionCondition2" :  "<b>Mode 3</b><br/><br/>Transmit on level change of data transmission pin (DU30) on every logic level change.",
