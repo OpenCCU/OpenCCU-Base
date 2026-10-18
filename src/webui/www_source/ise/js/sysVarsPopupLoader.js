@@ -68,25 +68,25 @@ sysVarsPopupLoader.prototype = {
       IseSort(arSysVars,this.colName,false,true);
       for (var i = 0; i < arSysVars.length; i++) 
       {
-        var tr = Builder.node('tr', {id: arSysVars[i]['trid']});
-        var td = Builder.node('td', {className: 'SysVarsTblPopup'}, strCut(translateString(arSysVars[i]['name']), true));
-        tr.appendChild(td);
-        td = Builder.node('td', {className: 'SysVarsTblPopup'}, translateString(arSysVars[i]['desc']));
-        tr.appendChild(td);
-        td = Builder.node('td', {className: 'SysVarsTblPopup'}, translateString(arSysVars[i]['typenames']));
-        tr.appendChild(td);
-        td = Builder.node('td', {className: 'SysVarsTblPopup'}, translateString(arSysVars[i]['values']));
-        tr.appendChild(td);
-        td = Builder.node('td', {className: 'SysVarsTblPopup'}, translateString(arSysVars[i]['unit']));
-        tr.appendChild(td);
-        
         var sOnclick = "PopupClose();";
         if( this.sec ) sOnclick = "restorePrevious();";
         sOnclick = "saveDlgResult("+arSysVars[i]['id']+");"+sOnclick;
-      
-        td = Builder.node('td', {className: 'WhiteBkg'}, [
-          Builder.node('div', {className: 'StdButton', onclick:sOnclick}, translateKey('btnSelect'))
-         ]);
+
+        var cName = 'SysVarsTblPopup';
+        if( arSysVars[i]['internal'] === 'true' ) {
+          cName = 'LightGrayBkg SysVarsTblPopup';
+        }
+
+        var tr = Builder.node('tr', {id: arSysVars[i]['trid'], className:cName, onclick:sOnclick, onmouseover:'this.className="SysVarsTblPopup_Highlight";', onmouseout:'this.className="' + cName + '";'});
+        var td = Builder.node('td', {}, translateString(arSysVars[i]['name']));
+        tr.appendChild(td);
+        td = Builder.node('td', {}, translateString(arSysVars[i]['desc']));
+        tr.appendChild(td);
+        td = Builder.node('td', {}, translateString(arSysVars[i]['typenames']));
+        tr.appendChild(td);
+        td = Builder.node('td', {}, translateString(arSysVars[i]['values']));
+        tr.appendChild(td);
+        td = Builder.node('td', {}, translateString(arSysVars[i]['unit']));
         tr.appendChild(td);
 
         tableBody.appendChild(tr);       
