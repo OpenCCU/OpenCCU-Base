@@ -40,6 +40,7 @@ iseFilter.prototype = {
     this.bTypeValueList = false;
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
+    this.bTypeString = false;
     this.bColLeft = false;
     this.bColCenter = false;
     this.bNameLeft = false;
@@ -286,6 +287,12 @@ iseFilter.prototype = {
             if (!bRet) { bRet = true; }
           }
         }
+        if (this.bTypeString) {
+          if (obj['type'] == "string")
+          {
+            if (!bRet) { bRet = true; }
+          }
+        }
         return bRet;
       }
     }
@@ -339,6 +346,7 @@ iseFilter.prototype = {
     if (this.bTypeValueList) return true;
     if (this.bTypeNumber) return true;
     if (this.bTypeAlarm) return true;
+    if (this.bTypeString) return true;
     return false; 
   },
     
@@ -415,6 +423,7 @@ iseFilter.prototype = {
     this.bTypeValueList = false;
     this.bTypeNumber = false;
     this.bTypeAlarm = false;
+    this.bTypeString = false;
     conInfo("Alle Filter wurden zurückgesetzt.");
   }
 };
@@ -447,6 +456,7 @@ selectFilters = function(fltObj, divToShow)
       $("cbValueList").checked = fltObj.bTypeValueList;
       $("cbNumber").checked = fltObj.bTypeNumber;
       $("cbAlarm").checked = fltObj.bTypeAlarm;
+      $("cbString").checked = fltObj.bTypeString;
       break;
     case "btnFilterIfaceSub":
       $("cbSend").checked = fltObj.isFilterType(FIL_IFACE_S); 
@@ -573,7 +583,8 @@ setAFilter = function(fltObj, sId)
       fltObj.bTypeLogic = $("cbLogic").checked;
       fltObj.bTypeValueList = $("cbValueList").checked;
       fltObj.bTypeNumber = $("cbNumber").checked;
-      fltObj.bTypeAlarm = $("cbAlarm").checked; 
+      fltObj.bTypeAlarm = $("cbAlarm").checked;
+      fltObj.bTypeString = $("cbString").checked;
       break;
     case "colPos":
       fltObj.bColLeft = $("cbColLeft").checked; 
