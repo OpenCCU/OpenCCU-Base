@@ -225,17 +225,28 @@ iseInitUpdateArrays();
             }
           }
         }
-      }
-      else
-      {
-        if (oSV.IsTypeOf(OT_ALARMDP)) 
+        else
         {
-          if ((oSV.Value() == false) || (oSV.Value() == "")) {
-            sAlarmMessage = oSV.ValueName0();
+          ! triggered by a system variable without a channel or a time module
+          if( oLastTrigger.IsTypeOf( OT_CALENDARDP ) )
+          {
+            sLastTriggerName = "${alarmTriggerTimeModule}";
           }
-          else {
-            sAlarmMessage = oSV.ValueName1();
+          else
+          {
+            sLastTriggerName = oLastTrigger.Name();
           }
+        }
+      }
+
+      ! the message of the alarm, if the trigger has none
+      if( (!sAlarmMessage.Length()) && oSV.IsTypeOf(OT_ALARMDP) )
+      {
+        if ((oSV.Value() == false) || (oSV.Value() == "")) {
+          sAlarmMessage = oSV.ValueName0();
+        }
+        else {
+          sAlarmMessage = oSV.ValueName1();
         }
       }
       
