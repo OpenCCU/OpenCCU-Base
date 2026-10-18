@@ -77,6 +77,7 @@ public:
 	HS485Device* GetDeviceByAddress(uint32_t address);
 	HS485FirmwareManager* GetFirmwareManager(){return &fw_mgr;};
 	bool ClearConfigCache(const std::string& address);
+	bool RestoreConfigToDevice(const std::string& address);
 	bool ActivateLinkParamset(const std::string address, const std::string& peer, bool longpress);
 
 

@@ -96,6 +96,7 @@ public:
 	bool UpdateFirmware();
 	bool GetConfig(XmlRpc::XmlRpcValue* c);
 	bool RestoreConfig(XmlRpc::XmlRpcValue& c, const bool disableEEPCacheFlushing = true);
+	bool RestoreConfigToDevice();
 	void RequestSave(int timeout=0);
 
 	virtual bool SetDefaultConfig() { return true; }
