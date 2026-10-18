@@ -1221,10 +1221,10 @@ proc put_Header {} {
       append SENTRY(NAME) ".$address"
   }
   # Interface.restoreConfigToDevice needs admin rights and is only
-  # implemented by the BidCos interfaces, not by the HmIP server
+  # implemented by rfd (BidCos-RF), not by hs485d or the HmIP server
   global REGA_SESSION
   set SHOWRESTORE 0
-  if {[info exists REGA_SESSION(UPL)] && $REGA_SESSION(UPL) >= 8 && ($iface eq $HMRFIdentifier || $iface eq "BidCos-Wired")} then {
+  if {[info exists REGA_SESSION(UPL)] && $REGA_SESSION(UPL) >= 8 && $iface eq $HMRFIdentifier} then {
     set SHOWRESTORE [expr {[get_user_easylinkmode] == "false"}]
   }
   set SENTRY(IMAGE) "<div id=\"picDiv_thumb\" class=\"CLASS22005\" onmouseover=\"picDivShow(jg_250, '$dev_descr(TYPE)', 250, '-1', this);\" onmouseout=\"picDivHide(jg_250);\"></div>"
