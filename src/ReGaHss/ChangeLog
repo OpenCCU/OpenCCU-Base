@@ -2,6 +2,98 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0266 (cf594f8) Release ####################################
+
+2026-10-18 Jens Maus <mail@jens-maus.de>
+
+  * fix delays of programs between 2 and 3 hours being shifted by an hour on
+    the day of the change to daylight saving time: a delay (and a time of
+    day) was converted to the time of day of today, which does not exist for
+    02:00 to 02:59 on that day, so that e.g. a delay of 2 hours was output as
+    1 hour (e.g. by the WebUI, which then saved it) and also saved this way
+    to the homematic.regadom (e.g. by its automatic saving), so that the
+    delay was 1 hour afterwards. A delay or time of day is output and saved
+    as is now.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/584)
+  * fix the script of a program ending with a script runtime error after
+    setting an alarm which has an expression (AlExpression()): the
+    expression is evaluated while State() is called, by the same parser as
+    the running script, which overwrote the code of the script. A script
+    evaluated while another one is executed is parsed and executed by a
+    separate parser now, which knows the current variables.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/84)
+  * log a warning if the script of a program (or the expression of an alarm
+    or mapping) uses a variable it does not declare before, which is only
+    known because another script declared it or the script itself in an
+    earlier execution: all these scripts share their variables, which is
+    going to change in a future version so that the variables of a script
+    are local to it. The warning is logged once per variable and script,
+    names the program and the variables and refers to
+    system.SetSessionVar()/GetSessionVar() to share values between scripts.
+    The behavior of the scripts is unchanged.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/84)
+  * fix the script of a program (or the expression of an alarm or mapping)
+    with a syntax error being executed partially: the code generated up to
+    the syntax error was executed, e.g. the statements before it and the
+    statement containing it with a truncated parameter (such as a State()
+    call with an incomplete value). Like a script of a web request (e.g.
+    "Skript testen" of the WebUI), such a script is no longer executed at
+    all and an error naming the program (or alarm, mapping) is logged.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/84)
+  * fix the next time of monthly time modules repeated every n months (e.g.
+    "1st Wednesday of every 6th month"): the day of the reference time was
+    compared with the day in a later month of the repetition, so that a
+    repetition was skipped (e.g. 07.07.2021 instead of 06.01.2021 from
+    01.07.2020) or a wrong day was computed for a time module on a day of
+    the month (e.g. the 22nd instead of the 15th). Furthermore, a monthly
+    time module no longer skips the next month at the end of a month (e.g.
+    on the 31st of August the 1st Wednesday of October instead of
+    September was computed).
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/886)
+
+2026-10-17 Jens Maus <mail@jens-maus.de>
+
+  * fix Next() of a time module which was not active since the start of
+    ReGaHss (e.g. of an inactive or expired program) logging "interface
+    pointer are not initialized" and returning an empty string instead of
+    the next time, which made e.g. Next().Format() end the script with a
+    script runtime error: the timer thread only initializes and updates
+    time modules while they are active. Next() now initializes a time module
+    if necessary and always updates an inactive one, which may have been
+    changed since. Furthermore, the initialization of a time module by the
+    timer thread no longer replaces its data while a script queries it.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/889)
+  * fix calling a method on the result of a method call whose last parameter
+    is a method call without parameters, e.g.
+    'dom.GetObject(o.Channel()).Name()' or 's.Substr(0, s.Length()).Trim()':
+    the end of the parameters of the outer method call was taken as the end
+    of the inner method call, so that the following method (Name(), Trim())
+    was called on the parameter instead of the result of the outer method
+    call, which ended the script with a script runtime error or returned a
+    wrong result. Putting the outer method call into parentheses is no
+    longer necessary.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/983)
+
+2026-10-16 Jens Maus <mail@jens-maus.de>
+
+  * fix LastValue() of the number of active alarms and service messages
+    (ID_GW_SYSALARM, ID_GW_SYSSERVICE) always returning the current value:
+    the number was set again on every update of any alarm or service
+    message data point (e.g. with every status message of a device), even
+    if it did not change, which overwrote its previous value and triggered
+    programs on updates of it. It is now only set if it changes. Note that
+    LastValue() returns the value before the last update of a data point,
+    LastChangeValue() the value before its last change.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/467)
+  * fix the WebUI showing alarms or service messages after a restart of
+    ReGaHss which did not exist (anymore): the alarm states are not saved
+    in the DOM file, so all alarms are inactive after a restart, but the
+    number of active alarms and service messages (ID_GW_SYSALARM,
+    ID_GW_SYSSERVICE) shown in the WebUI header kept its value from before
+    the restart until the next alarm changed. Both are now recomputed when
+    the DOM file is loaded.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/1016)
+
 #### R1.00.0388.0265 (252b946) Release ####################################
 
 2026-10-16 Jens Maus <mail@jens-maus.de>
