@@ -1146,7 +1146,7 @@
         <td class="tBodyCell bgWhite taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>
-        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label></td>
+        <td class="tBodyCell bgWhite"><input type="checkbox" onchange="isePrograms.SetVisibility(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_systeminternal" <% if( oPrg.Internal() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_systeminternal">${lblSystemIntern}</label><br/><input type="checkbox" onchange="isePrograms.SetExecuteOnStartup(<% Write(oPrg.ID()); %>,this.checked);" id="p<% Write(oPrg.ID()); %>_executeonstartup" <% if( oPrg.ExecuteOnStartup() ) { Write( "checked" ); } %> /><label for="p<% Write(oPrg.ID()); %>_executeonstartup">${lblExecuteOnStartup}</label></td>
       </tr>
       <tr>
         <td colspan="5">

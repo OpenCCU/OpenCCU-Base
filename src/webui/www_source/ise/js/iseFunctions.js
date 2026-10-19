@@ -1105,6 +1105,25 @@ ise.Programs.prototype = {
     new Ajax.Request(url,opts);    
   },
 
+  // whether the program is executed at the start of the central unit (ReGaHss)
+  SetExecuteOnStartup: function( id, value )
+  {
+    var url = "/esp/programs.htm?sid="+SessionId;
+    var pb = '';
+    pb += 'string action = "SetExecuteOnStartup";';
+    pb += 'string id = "'+id+'";';
+    pb += 'string value = "'+value+'";';
+    var opts =
+    {
+      postBody: ReGa.encode(pb),
+      onComplete:function(t)
+      {
+        if(dbg){alert( t.responseText );}
+      }
+    };
+    new Ajax.Request(url,opts);
+  },
+
   // ### CONDITIONS ###
   AddCondition: function(rid) {
     var url = "/esp/programs.htm?sid="+SessionId;

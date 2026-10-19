@@ -940,6 +940,22 @@ function ::SetVisibility()
   return;
 }
 
+function ::SetExecuteOnStartup()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && system.IsVar("id") && system.IsVar("value") )
+  {
+    object oTmp = dom.GetObject( system.GetVar("id") );
+    if( oTmp )
+    {
+      if( system.GetVar("value") == "true" ) { oTmp.ExecuteOnStartup( true ); }
+      if( system.GetVar("value") == "false" ) { oTmp.ExecuteOnStartup( false ); }
+      Write( oTmp.ExecuteOnStartup() );
+    }
+  }
+  return;
+}
+
 function ::DeleteProgram()
 {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
