@@ -501,7 +501,7 @@
             </mappings>
             <valueList/>
           </status_parameter>
-          <status_parameter aggregation="LAST" control="HEATING_CONTROL.SETPOINT" default="20.0" max="30.0" min="5.0"
+          <status_parameter aggregation="LAST" control="HEATING_CONTROL.SETPOINT" default="20.0" max="30.5" min="4.5"
                      name="SET_TEMPERATURE" operations="7" tab_order="4" type="FLOAT" unit="°C">
             <mappings>
               <mapping>
