@@ -2,6 +2,45 @@
 ReGaHss ChangeLog
 -----------------
 
+#### R1.00.0388.0267 (ce00ba6) Release ####################################
+
+2026-10-19 Jens Maus <mail@jens-maus.de>
+
+  * fix State(true) of a program called by a script not evaluating the
+    program: without a trigger data point "true" was not taken as a boolean,
+    so that the program was not executed (while e.g. State(1) was). This
+    allows e.g. a script to evaluate a program at once after activating it
+    with Active(true).
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/228)
+  * fix a program being executed when it is activated, e.g. a new program at
+    its first save in the WebUI or a program activated in the program list:
+    a program is no longer executed when it is activated and only reacts to
+    its next trigger.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/228)
+  * add the setting ExecuteOnStartup() of a program, whether it is executed
+    at the start of ReGaHss (if its conditions are met): all active programs
+    were executed at the start, which e.g. sent commands to many devices
+    (duty cycle). A program not to be executed at the start only reacts to
+    its next trigger. A new program is not executed at the start, a program
+    saved by an earlier version is executed at the start as before.
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/223)
+  * add the option "ScriptVariableScope=local" (in /etc/config/rega.conf)
+    which makes the variables of the script of a program (and of the
+    expression of an alarm or mapping) local to its execution: all these
+    scripts share their variables, so that a script can use a variable
+    declared by another script or kept by an earlier execution of itself
+    (only if that script has run since the start of ReGaHss), and the
+    syntax check of the WebUI's script editor declares the variables of the
+    checked script for all of them. With this option, using a variable which
+    is not declared before is a syntax error, like in a script of a web
+    request (e.g. "Skript testen" of the WebUI), and values can still be
+    shared between scripts with system.SetSessionVar() and
+    system.GetSessionVar() (or GetVar()). Without it ("global", default) the
+    scripts share their variables like before. The warning about a variable
+    used from another script is shorter now and refers to
+    system.SetSessionVar()/GetSessionVar().
+    (cf. https://github.com/OpenCCU/OpenCCU/issues/84)
+
 #### R1.00.0388.0266 (cf594f8) Release ####################################
 
 2026-10-18 Jens Maus <mail@jens-maus.de>
