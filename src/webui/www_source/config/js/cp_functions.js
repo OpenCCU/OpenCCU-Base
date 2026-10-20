@@ -55,6 +55,11 @@ showMaintenanceCP = function()
   CreateCPPopup("/config/cp_maintenance.cgi");
 };
 
+showAdvancedSettingsCP = function()
+{
+  CreateCPPopup("/config/cp_advancedsettings.cgi");
+};
+
 showNewFirmwareDownload = function() {
   CreateCPPopup("/config/cp_maintenance.cgi", "downloadOnly=1");
 };
