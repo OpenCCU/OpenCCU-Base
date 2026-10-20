@@ -708,6 +708,17 @@ bool HS485Manager::ClearConfigCache(const std::string& address)
 	return true;
 }
 
+bool HS485Manager::RestoreConfigToDevice(const std::string& address)
+{
+	HS485LogicalInstance* inst=GetInstance(address);
+	if(!inst){
+		throw XmlRpcException("Unknown instance", -2);
+	}
+	HS485Device* dev=inst->GetDevice();
+	if(!dev)return false;
+	return dev->RestoreConfigToDevice();
+}
+
 bool HS485Manager::ActivateLinkParamset(const std::string address, const std::string& peer, bool longpress)
 {
 	HS485LogicalInstance* inst=GetInstance(peer);
