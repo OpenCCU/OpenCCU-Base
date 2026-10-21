@@ -517,7 +517,7 @@ jQuery.extend(true,langJSON, {
 	  "forward" : "Weiter zur Startseite",
     "unknownMessage" : "unbekannte Meldung",
     "alarmTriggerTimeModule" : "Zeitmodul",
-    "lblExecuteOnStartup" : "Beim Start ausf&uuml;hren",
+    "lblExecuteOnStartup" : "autostart",
     "thProgramOptions" : "Optionen",
     "dialogEulaTitle" : "Endbenutzer-Lizenzvertrag",
     "acceptEula" : "Ich stimme den Bedingungen des Lizenzvertrags zu",
