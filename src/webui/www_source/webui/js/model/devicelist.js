@@ -212,6 +212,17 @@ DeviceList = Singleton.create({
     }
     return dispname;
   },
+  // reload the gateways after their configuration was saved and update the gateway names of the devices
+  refreshBidCosGateways: function()
+  {
+    if (typeof this.BidCosGateways === 'undefined') { return; }
+    this.loadBidCosGateways();
+    for (var id in this.devices) {
+      var device = this.devices[id];
+      var gwName = this.loadIfDisplayName({"interface": device.interfaceName, "address": device.address});
+      if (gwName !== device.interfaceDisplayName) { device.updateInterfaceDisplayName(gwName); }
+    }
+  },
   updateInterfaceDisplayName:function(addr,gwName) {
     var _this_ = this;
     for (var id in _this_.devices) {
