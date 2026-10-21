@@ -1215,7 +1215,7 @@ BidcosRfPage.Device.prototype =
         "interfaceId": gateway.getAddress(),
         "roaming": roaming
       });
-      if (result !== true) { return; }
+      if (result !== true) { return false; }
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
@@ -1949,7 +1949,8 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
    **/
   ok: function()
   {
-    if (this.m_action) { this.m_action(this); }
+    // keep the dialog open if the assignment was rejected
+    if (this.m_action && this.m_action(this) === false) { return; }
     this.close();
   },
   
