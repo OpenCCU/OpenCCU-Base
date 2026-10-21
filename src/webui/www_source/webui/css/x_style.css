@@ -2950,6 +2950,12 @@ color: $_(textColorA); /* white */
 	height: 40px;
 }
 
+/* keep the program options (systemintern, run at startup) on one line each */
+.CLASS04803 > td:last-child {
+	white-space: nowrap;
+	text-align: left;
+}
+
 /* rega\pages\tabs\admin\views\programlist.htm */
 
 .CLASS04900 {
