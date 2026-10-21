@@ -185,7 +185,11 @@ DeviceList = Singleton.create({
       }
       this.BidCosGateways.sort((a, b) => a.m_userName.localeCompare(b.m_userName, undefined, { numeric: true, sensitivity: 'base' }));
       for (var i = 0, len = this.BidCosGateways.length; i < len; i++) {
-        var filterEntry = {id:this.BidCosGateways[i].m_userName, name:this.BidCosGateways[i].m_userName};
+        // the id is used in HTML attributes, the name as HTML text of the interface filter
+        var filterEntry = {
+          id: "INTERFACE_BIDCOS_GW_" + String(this.BidCosGateways[i].m_address).replace(/[^A-Za-z0-9_-]/g, "_"),
+          name: String(this.BidCosGateways[i].m_userName).escapeHTML()
+        };
         this.BidCosGatewayFilters.push(filterEntry);
         DeviceListPage.INTERFACES.push(filterEntry);
       }
