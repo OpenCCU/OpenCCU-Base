@@ -247,6 +247,10 @@ DeviceList = Singleton.create({
     this.devices  = {};
     this.channels = {};
     this.groups   = {};
+    // refresh the gateway assignments, they may have changed since the last load
+    if (typeof this.BidCosGateways !== 'undefined') {
+      this.allBidCosDevsList = homematic("Interface.listDevices", {"interface": "BidCos-RF"});
+    }
 
     var self=this;
     homematic("Device.listAllDetail", null, function(deviceList) {

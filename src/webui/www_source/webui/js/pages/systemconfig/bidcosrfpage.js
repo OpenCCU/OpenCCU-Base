@@ -1209,16 +1209,21 @@ BidcosRfPage.Device.prototype =
     
     if (gateway)
     {
-      homematic("Interface.setBidcosInterface", {
+      var result = homematic("Interface.setBidcosInterface", {
         "interface": "BidCos-RF",
         "deviceId": this.m_address,
         "interfaceId": gateway.getAddress(),
         "roaming": roaming
       });
+      if (result !== true) { return; }
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
-      DeviceList.updateInterfaceDisplayName(this.m_address, (gateway.getUserName()).length > 0 ? gateway.getUserName() : 'BidCos-RF');
+      var gatewayName = gateway.getUserName();
+      if (gatewayName.length === 0) {
+        gatewayName = (gateway === BidcosRfPage.getDefaultGateway()) ? 'BidCos-RF' : gateway.getAddress();
+      }
+      DeviceList.updateInterfaceDisplayName(this.m_address, gatewayName);
     }
   }
 };
