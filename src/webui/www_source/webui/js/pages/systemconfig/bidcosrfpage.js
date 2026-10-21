@@ -422,6 +422,9 @@ BidcosRfPage =
     homematic("BidCoS_Wired.setConfigurationWired", {
       "interfaces": gatewaysWired
     });
+
+    // show the saved gateway names in the device list
+    DeviceList.refreshBidCosGateways();
   
     
  //   if (/*(useInternalAntenna == false) &&*/ (homematic("BidCoS_RF.isKeySet", null))) //TODO Check if this is okay
