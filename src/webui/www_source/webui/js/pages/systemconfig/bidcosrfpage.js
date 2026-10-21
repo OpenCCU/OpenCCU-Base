@@ -1218,6 +1218,7 @@ BidcosRfPage.Device.prototype =
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
+      DeviceList.updateInterfaceDisplayName(this.m_address, (gateway.getUserName()).length > 0 ? gateway.getUserName() : 'BidCos-RF');
     }
   }
 };
