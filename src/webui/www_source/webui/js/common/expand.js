@@ -132,8 +132,7 @@ String.prototype.ex_compareTo = function(other)
     var strA = this.toLowerCase();
     var strB = other.toLowerCase();
   
-    if      (strA > strB) { return 1; }
-    else if (strA < strB) { return -1; }
+    return strA.localeCompare(strB, undefined, {numeric: true, sensitivity: 'base'});
   }
   
   return 0;
