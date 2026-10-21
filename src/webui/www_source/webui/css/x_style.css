@@ -2950,9 +2950,14 @@ color: $_(textColorA); /* white */
 	height: 40px;
 }
 
-/* keep the program options (systemintern, run at startup) on one line each */
-.CLASS04803 > td:last-child {
+/* keep each program option (systemintern, run at startup, ...) on one line */
+/* in the program editor and in the program list (CLASS04904) */
+.CLASS04803 > td:last-child,
+.CLASS04904 {
 	white-space: nowrap;
+}
+
+.CLASS04803 > td:last-child {
 	text-align: left;
 }
 
