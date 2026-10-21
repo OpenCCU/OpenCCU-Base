@@ -48,6 +48,7 @@ Device = Class.create({
       this.typeDescription = deviceType.description;
       this.isDeletable = deviceType.isDeletable();
       this.isOperateGroupOnly = (data["operateGroupOnly"] == "true") ? true : false;
+      this.interfaceDisplayName = data["interface_displayname"];
       this.deviceInputCheck = false;
 
       if (this.typeName.indexOf("-WGS") != -1) {
@@ -168,6 +169,14 @@ Device = Class.create({
 
   getDeviceInputCheck: function() {
     return this.deviceInputCheck;
+  },
+
+  updateInterfaceDisplayName: function(interfaceDisplayName) {
+    this.interfaceDisplayName = interfaceDisplayName;
+    var devInterfaceDisplayNameCell = document.getElementById('DeviceInterfaceDisplayName' + this.id);
+    if (devInterfaceDisplayNameCell !== null && typeof(devInterfaceDisplayNameCell) !== 'undefined') {
+      devInterfaceDisplayNameCell.innerHTML = String(interfaceDisplayName).escapeHTML();
+    }
   },
 
   m_onUpdateChannel: function(channel, eventArgs)

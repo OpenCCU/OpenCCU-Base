@@ -179,7 +179,7 @@ if (PLATFORM == "Central") {
             (this.TypeNameFilter.match(device.typeName))                 &&
             (this.DescriptionFilter.match(translateKey(device.typeDescription)))       &&
             (this.AddressFilter.match(device.address))                   &&
-            (this.InterfaceFilter.matchString(device.interfaceName))     &&
+            (this.InterfaceFilter.matchString(device.interfaceDisplayName))     &&
             (this.ModeFilter.matchStringArray(device.modes)) &&
             (this.RoomFilter.matchArray(device.rooms))                   &&
             (this.FuncFilter.matchArray(device.subsections)));

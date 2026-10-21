@@ -1209,15 +1209,21 @@ BidcosRfPage.Device.prototype =
     
     if (gateway)
     {
-      homematic("Interface.setBidcosInterface", {
+      var result = homematic("Interface.setBidcosInterface", {
         "interface": "BidCos-RF",
         "deviceId": this.m_address,
         "interfaceId": gateway.getAddress(),
         "roaming": roaming
       });
+      if (result !== true) { return false; }
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
+      var gatewayName = gateway.getUserName();
+      if (gatewayName.length === 0) {
+        gatewayName = (gateway === BidcosRfPage.getDefaultGateway()) ? 'BidCos-RF' : gateway.getAddress();
+      }
+      DeviceList.updateInterfaceDisplayName(this.m_address, gatewayName);
     }
   }
 };
@@ -1943,7 +1949,8 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
    **/
   ok: function()
   {
-    if (this.m_action) { this.m_action(this); }
+    // keep the dialog open if the assignment was rejected
+    if (this.m_action && this.m_action(this) === false) { return; }
     this.close();
   },
   
