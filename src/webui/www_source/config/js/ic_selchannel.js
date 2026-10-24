@@ -484,7 +484,7 @@ AddLink = function(iface, sender_address, sender_group, receiver_address, name, 
   ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 ShowNewLinkSummary = function(iface, sender_address, receiver_address, name, description, group_name, group_description)
