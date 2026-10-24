@@ -178,7 +178,7 @@ ActivateLinkParamset = function (iface, sender_address, receiver_address, hideWa
   poststr += "&receiver_address=" + receiver_address;
   poststr += "&cmd=activateLinkParamset";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 SetLinkInfo = function (iface, sender_address, receiver_address, name, description) {
@@ -193,7 +193,7 @@ SetLinkInfo = function (iface, sender_address, receiver_address, name, descripti
   poststr += "&description=" + elv_toQueryString(description);
   poststr += "&cmd=setLinkInfo";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -234,7 +234,7 @@ SetEasyMode = function (iface, address, peer, special_input_id, paramid) {
     }
     poststr += "&new_profilepath=" + is_newProfile(paramid).split('-')[0] + fileExtension;
   }
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 CollectData_SaveProfileSettings = function (reload) {

@@ -208,6 +208,27 @@ SendRequest = function(scriptname, html_container_id, callback)
   new Ajax.Updater(id, scriptname, opt);
 };
 
+SendPOSTRequest = function(scriptname, html_container_id, callback)
+{
+  scriptname = Get_ReGa_Path(scriptname);
+  var params = poststr;
+
+  if ((html_container_id) && (html_container_id !== "")) { id = html_container_id; }
+  else                                                   { id = Get_UI_CONTENTBOX_ID(); }
+
+  var _callback_ = callback; 
+  
+  var opt =
+  {
+    method:'post',
+    parameters:params,
+    evalScripts:true,
+    onComplete: function() { if (_callback_) { _callback_(); } }
+  };
+
+  new Ajax.Updater(id, scriptname + '?sid=' + document.getElementById('global_sid').value, opt);
+};
+
 ShowLoadingBox = function(msg)
 {
   
@@ -502,7 +523,7 @@ PrepareDeleteDeviceForm_old = function(iface, sn, devname, devtype)
   poststr += "&devname=" + devname;
   poststr += "&devtype=" + devtype;
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 
   ProgressBar = new ProgressBarMsgBox("Verknüpfungen und Programme werden abgefragt...", 1);
   ProgressBar.show();
@@ -753,7 +774,7 @@ RemoveLink = function(iface, sender_address, receiver_address, sender_type, redi
       if ((redirect_url) && (redirect_url !== "")) { poststr += "&redirect_url=" + redirect_url; }
       else                                         { poststr += "&redirect_url=IC_LINKPEERLIST"; }
 
-      SendRequest('ic_ifacecmd.cgi');
+      SendPOSTRequest('ic_ifacecmd.cgi');
     }
   }, "html");
 };
@@ -822,7 +843,7 @@ CheckConfigPending = function(iface, sender_address, receiver_address, redirect_
   poststr += "&receiver_address=" +receiver_address;
   poststr += "&cmd=ShowConfigPendingMsg";
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 
@@ -1015,7 +1036,7 @@ DetermineParameterValue = function(iface, address, ps_id, param_id, html_inputel
   poststr += "&param_id="          + param_id;
   poststr += "&html_inputelem_id=" + html_inputelem_id;
 
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 
   //ProgressBar = new ProgressBarMsgBox("Parameter wird festgesetzt...", 1);
   ProgressBar = new ProgressBarMsgBox(translateKey("dialogDetermineParameterTitle"), 1);
