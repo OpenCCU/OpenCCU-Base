@@ -2353,7 +2353,7 @@
       <parameter id="SET_TEMPERATURE" operations="read,write,event" control="HEATING_CONTROL.SETPOINT">
         <docu brief="Solltemperatur" default="false">						
         </docu>
-        <logical type="float" min="5.0" max="30.0" default="20.0" unit="&#176;C"></logical>
+        <logical type="float" min="4.5" max="30.5" default="20.0" unit="&#176;C"></logical>
         <physical type="integer" interface="command" value_id="SET_TEMPERATURE" no_init="true">
           <set request="SET_TEMPERATURE_SET"/>
           <event frame="INFO_LEVEL"/>
@@ -2583,7 +2583,7 @@
                             <a href="#PartyModePriorisierung">Betriebsarten</a>). 
 						</p>
 					</docu>
-					<logical type="float" min="5.0" max="30.0" default="20.0" unit="&#176;C"/>
+					<logical type="float" min="4.5" max="30.5" default="20.0" unit="&#176;C"/>
 					<physical type="integer" interface="config"  list="3" index="45.0" size="0.6"/>
 					<conversion type="float_integer_scale" factor="2"/>
 				</parameter>
@@ -2610,7 +2610,7 @@
                             <a href="#PartyModePriorisierung">Betriebsarten</a>). 
 						</p>
 					</docu>
-					<logical type="float" min="5.0" max="30.0" default="20.0" unit="&#176;C"/>
+					<logical type="float" min="4.5" max="30.5" default="20.0" unit="&#176;C"/>
 					<physical type="integer" interface="config"  list="3" index="173.0" size="0.6"/>
 					<conversion type="float_integer_scale" factor="2"/>
 				</parameter>
