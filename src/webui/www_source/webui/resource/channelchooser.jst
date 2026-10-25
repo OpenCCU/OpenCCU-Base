@@ -47,7 +47,7 @@
       {eval}actualDeviceAddress = "";{/eval}
 
       {for channel in channels}
-        {if channel.device.inInbox != true}
+        {if ((channel.device.inInbox != true) && (channel.address != "BidCoS-RF:0")) }
           {var virtualChannel = ""}
           {var classExpertOnly = "hidden j_expertChannel"}
           {var channelTypeID = channel.deviceType.id.toUpperCase()}
@@ -92,6 +92,8 @@
           {if channel.channelType == "VIR-OL-GTW-CH"} {var virtualChannel = "hidden"} {/if}
           {if channel.channelType == "VIR-HUE-GTW-CH"} {var virtualChannel = "hidden"} {/if}
 
+          {if (channel.index == 0)} {var virtualChannel = classExpertOnly} {/if}
+          
           {if channel.channelType != "_MAINTENANCE"}
               <tr class="ChannelChooserRow ${virtualChannel}" id="${PREFIX}${channel.id}" onclick="ChannelChooser.select(this.id);" onmouseover="this.className='ChannelChooserRow_Highlight';" onmouseout="this.className='ChannelChooserRow';">
                 <td class="ChannelChooserCell">${channel.name}<br/><br/><span class="j_extChnDescr">${channel.typeDescription}_${channel.address}</span></td>

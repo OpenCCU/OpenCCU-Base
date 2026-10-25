@@ -18,7 +18,7 @@ set script {
   foreach(channelId, device.Channels())
   {
     var channel = dom.GetObject(channelId);
-    if (false == channel.Internal())
+    if (channel)
     {
       string programId;
       foreach(programId, channel.ChnEnumDPUsagePrograms())

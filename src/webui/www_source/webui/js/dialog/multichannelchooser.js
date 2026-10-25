@@ -228,9 +228,7 @@ MultiChannelChooser = Singleton.create({
       var self = this;
       if (this.match(channel)) {
         if (channel.device.interfaceName == this.HmIPIdentifier || channel.device.interfaceName == this.HmIPWIdentifier) {
-          if (channel.index > 0) {
-            this.filterHmIPChannels(channel, result);
-          }
+          this.filterHmIPChannels(channel, result);
         } else {
           result.push(channel);
         }
