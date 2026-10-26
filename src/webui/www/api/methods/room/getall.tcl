@@ -28,7 +28,7 @@ set script {
     
       Write("CHANNELS {");
       string channelId;
-      foreach(channelId, room.EnumUsedIDs())
+      foreach(channelId, room.EnumIDs())
       {
         Write("{" # channelId # "} ");
       }
