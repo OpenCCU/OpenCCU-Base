@@ -8,6 +8,8 @@
 DeviceConfigDialog = Singleton.create({
   LAYER_ID: "DeviceConfigDialogLayer",
   NAME_ID: "DeviceConfigDialog_DeviceName",
+  SEPARATOR_ID: "DeviceConfigDialog_DeviceChannelsRenameSeparator",
+  RENAME_OWN_ID: "DeviceConfigDialog_renameChannelIncludingOwn",
   USABLE_ID: "DeviceConfigDialog_isUsable",
   VISIBLE_ID: "DeviceConfigDialog_isVisible",
   LOGGED_ID: "DeviceConfigDialog_isLogged",
@@ -58,6 +60,9 @@ DeviceConfigDialog = Singleton.create({
       this.__hideLogging();
     }
     translateJSTemplate("#DeviceConfigDialog");
+	jQuery("#DeviceConfigDialogTestHintImg").attr('title', translateKey("generalDeviceConfigHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameChannelButtonHintImg").attr('title', translateKey("generalDeviceRenameChannelHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameIncludingOwnHintImg").attr('title', translateKey("generalDeviceRenameChannelIncludingOwnHint"));
   },
 
   __hideFunctionTest: function() {
@@ -113,6 +118,34 @@ DeviceConfigDialog = Singleton.create({
   abort: function()
   {
     this.close(this.RESULT_ABORT);
+  },
+  
+  /**
+  * Benennt alle Channel des Device um
+  **/
+
+  ready: function()
+  {
+    this.ok();
+  },
+  
+  renameChannels: function() {
+    if (confirm(translateKey("generalDeviceRenameChannelsConfirm"))) {
+      var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
+
+      this.device.channels.each(function(channel) {
+        var chNumber = channel.address.split(':')[1];
+        var origChName = this.device.name+":"+chNumber;
+
+        // Channel bereits umbenannt und Option "eigene Namen umbenennen" wurde deaktiviert
+        if (channel.name !== origChName && renameOwnChannelNames === false) return true;
+
+        var chName = $(this.NAME_ID).value+ $(this.SEPARATOR_ID).value + chNumber;
+        homematic("Channel.setName", {id: channel.id, name: chName});
+        channel.setName(chName);
+      }, this);
+      this.ok();
+    }
   },
   
   /**
