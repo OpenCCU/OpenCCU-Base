@@ -464,7 +464,7 @@ ChannelChooser = Singleton.create({
 
     channels.each(function(channel) {
       var self = this;
-      if (this.match(channel)) {
+      if (this.match(channel) && (channel.address != "BidCoS-RF:0")) {
 
         if ((channel.device.interfaceName == this.HmIPIdentifier) || (channel.device.interfaceName == this.HmIPWIdentifier)) {
           if ((this.src == this.PRG_CONDITION) || (this.src == this.FAV_CHANNELS)) {

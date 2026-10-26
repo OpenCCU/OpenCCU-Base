@@ -49,7 +49,7 @@
     <tbody>
       {eval}actualDeviceAddress = "";{/eval}
       {for channel in channels}
-        {if ((channel.device.inInbox != true) && (channel.address != "BidCoS-RF:0"))}
+        {if channel.device.inInbox != true}
           {var virtualChannel = ""}
           {var classExpertOnly = "hidden j_expertChannel"}
           {var channelTypeID = channel.deviceType.id.toUpperCase()}
