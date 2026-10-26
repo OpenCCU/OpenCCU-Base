@@ -1,11 +1,11 @@
 ##
 # User.stopHmIPServer
-# Stoppt den Lighttpd Webserver
+# Stoppt den HMIPServer
 #
 # Parameter:
 #   keine
 #
 # Rückgabewert: true
 
-exec -- /usr/bin/nohup /etc/init.d/S62HMServer stop >/dev/null &
+exec /usr/bin/monit stop HMIPServer >/dev/null &
 jsonrpc_response true

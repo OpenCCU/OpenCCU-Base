@@ -1,12 +1,11 @@
 ##
 # User.restartHmIPServer
-# Restartet den Lighttpd Webserver
+# Restartet den HMIPServer
 #
 # Parameter:
 #   keine
 #
 # Rückgabewert: true
 
-#exec /etc/init.d/S62HMServer start &
-exec -- /usr/bin/nohup /etc/init.d/S62HMServer restart >/dev/null &
+exec /usr/bin/monit restart HMIPServer >/dev/null &
 jsonrpc_response true
