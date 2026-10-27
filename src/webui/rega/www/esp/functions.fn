@@ -113,17 +113,26 @@ function ::WriteDPText()
            }
         }
         
-        if( tbBinary && (tbRead || tbAction) )
+        ! Keys without the =TRUE/=FALSE suffix, used as fallback below
+        string tsBaseShortKey = tsShortKey;
+        string tsBaseLongKey = tsLongKey;
+        string tsBinaryValueText = "";
+
+        ! Event-only datapoints (e.g. the HmIP VALVE_STATE_* service flags)
+        ! and write/event datapoints (e.g. BOOST_MODE) carry a value too
+        if( tbBinary && (tbRead || tbEvent || tbAction) )
         {
           if( sValue == "0" )
           {
             tsShortKey = tsShortKey#"=FALSE";
             tsLongKey = tsLongKey#"=FALSE";
+            tsBinaryValueText = "${lblNo}";
           }
           else
           {
             tsShortKey = tsShortKey#"=TRUE";
             tsLongKey = tsLongKey#"=TRUE";
+            tsBinaryValueText = "${lblYes}";
           }
         }
         
@@ -143,6 +152,23 @@ function ::WriteDPText()
         if( !sVTmp.Length() )
         {
           sVTmp = web.webKeyFromStringTable( tsShortKey );
+          if( !sVTmp.Length() )
+          {
+            if( tsBinaryValueText.Length() )
+            {
+              ! No =TRUE/=FALSE entry: show the plain label with Yes/No,
+              ! never the plain label alone as it reads like an active state
+              sVTmp = web.webKeyFromStringTable( tsBaseLongKey );
+              if( !sVTmp.Length() )
+              {
+                sVTmp = web.webKeyFromStringTable( tsBaseShortKey );
+              }
+              if( sVTmp.Length() )
+              {
+                sVTmp = sVTmp#": "#tsBinaryValueText;
+              }
+            }
+          }
           if( !sVTmp.Length() )
           {
             sVTmp = "${unknownMessage} ("#tsShortKey#")";

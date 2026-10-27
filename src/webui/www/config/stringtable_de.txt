@@ -285,6 +285,7 @@ BOOST_MODE=FALSE	${stringTableBoostModeFalse}
 BOOST_MODE=TRUE	${stringTableBoostModeTrue}
 BOOST_STATE	${stringTableBoostState}
 BOOST_TIME	${stringTableBoostTime}
+QUICK_VETO_TIME	${stringTableQuickVetoTime}
 BOOTED=FALSE	${stringTableBootedFalse}
 BOOTED=TRUE	${stringTableBootedTrue}
 BRIGHTNESS	${stringTableBrightness}

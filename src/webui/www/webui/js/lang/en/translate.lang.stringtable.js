@@ -76,6 +76,7 @@ jQuery.extend(true,langJSON, {
     "stringTableBoostModeTrue" : "Boost mode ON",
     "stringTableBoostState" : "Boost state",
     "stringTableBoostTime" : "Boost duration",
+    "stringTableQuickVetoTime" : "Quick veto duration",
     "stringTableBrightness" : "Brightness",
     "stringTableColor" : "Color",
     "stringTableBrightnessFilter" : "Brightness filter",
