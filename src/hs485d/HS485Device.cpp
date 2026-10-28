@@ -412,9 +412,11 @@ void HS485Device::SetDeviceDescription(HS485DeviceDescription* description, bool
 			int start=ch_desc->GetIndex();
 			int count=ch_desc->GetCount();
 			for(int j=0;j<count;j++){
-				HS485Channel* ch=channels[j+start]=CreateChannel();
-				ch->SetParent(this, j+start, ch_desc);
-				if(ch_desc->HasSubdescriptions())ch->GetBehaviour();
+				if(!AddChannel(j+start, ch_desc->GetType())){
+					HS485Channel* ch=channels[j+start]=CreateChannel();
+					ch->SetParent(this, j+start, ch_desc);
+				}
+				if(ch_desc->HasSubdescriptions())channels[j+start]->GetBehaviour();
 			}
 			i++;
 			ch_desc=description->GetChannel(i);
@@ -902,9 +904,11 @@ bool HS485Device::Rebuild(const bool enforceConfigRestore /*=false*/, const bool
 			int count=ch_desc->GetCount();
 			for(int j=0;j<count;j++){
 				if(!channels[j+start]){
-					HS485Channel* ch=channels[j+start]=CreateChannel();
-					ch->SetParent(this, j+start, ch_desc);
-					if(ch_desc->HasSubdescriptions())ch->GetBehaviour();
+					if(!AddChannel(j+start, ch_desc->GetType())){
+						HS485Channel* ch=channels[j+start]=CreateChannel();
+						ch->SetParent(this, j+start, ch_desc);
+					}
+					if(ch_desc->HasSubdescriptions())channels[j+start]->GetBehaviour();
 				}else{
 					channels[j+start]->SetDescription(ch_desc);
 				}
