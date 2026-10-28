@@ -23,7 +23,6 @@ jQuery.extend(true,langJSON, {
     "lblBGColorBR" : "Background-<br/>Colour",
     "lblBehaviour" : "Response",
     "lblBellButton" : "Bell button",
-    "lblBetaTest" : "Field tester",
     "lblBlueLong" : "Blue long",
     "lblBlueShort" : "Blue short",
     "lblBreak" : "Pause",
