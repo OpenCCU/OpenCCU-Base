@@ -17,13 +17,13 @@ lappend PATHLIST [list  250	"/config/img/devices/250/173_hmip-bsl.png"]
 
 set P ""
 
-lappend P {"1" 1 0.525 0.650 0.025}
-lappend P {"2" 1 0.510 0.360 0.025}
+lappend P {"1" 1 0.505 0.635 0.050}
+lappend P {"2" 1 0.505 0.360 0.050}
 
-lappend P {"12" 1 0.525 0.650 0.025}
-lappend P {"13" 1 0.525 0.650 0.025}
-lappend P {"14" 1 0.525 0.650 0.025}
+lappend P {"8" 1 0.505 0.360 0.050}
+lappend P {"9" 1 0.505 0.360 0.050}
+lappend P {"10" 1 0.505 0.360 0.050}
 
-lappend P {"8" 1 0.510 0.360 0.025}
-lappend P {"9" 1 0.510 0.360 0.025}
-lappend P {"10" 1 0.510 0.360 0.025}
+lappend P {"12" 1 0.505 0.635 0.050}
+lappend P {"13" 1 0.505 0.635 0.050}
+lappend P {"14" 1 0.505 0.635 0.050}
