@@ -15,6 +15,7 @@ using namespace XmlRpc;
 
 AsyncXmlRpcSender::AsyncXmlRpcSender(const std::string& url):c(url)
 {
+	c.setTimeout(30000); // a receiver that does not answer must not keep the thread and its socket for ever
 }
 
 AsyncXmlRpcSender::~AsyncXmlRpcSender(void)
