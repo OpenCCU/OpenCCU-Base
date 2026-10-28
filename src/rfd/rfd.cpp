@@ -71,7 +71,7 @@ XmlRpcServerProxy serverProxy(&s);
 static bool run=true;
 
 
-//#ifdef DEBUG_SHUTDOWN
+#ifdef DEBUG_SHUTDOWN
 // XmlRpc-Methode, die nach Aufruf rfd sauber herunterf�hrt.
 // Sollte aus Sicherheitsgr�nden nur einkompiliert werden, wenn 
 // das Herunterfahren debuggt werden soll.
@@ -86,7 +86,7 @@ public:
 		run=false;
 	}
 }xmlRpcMethodExit(&s);
-//#endif
+#endif
 
 static class CustomXmlRpcLogHandler : public XmlRpcLogHandler {
 public:
