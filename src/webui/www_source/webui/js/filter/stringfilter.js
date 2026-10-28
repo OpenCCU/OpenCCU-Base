@@ -3,6 +3,36 @@
  **/
  
 /**
+ * Checks if a text is a valid regular expression.
+ **/
+const isValidRegex = function(possiblyValidRegex)
+{
+  try
+  {
+    new RegExp(possiblyValidRegex);
+  }
+  catch(err)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Checks if a text matches the filter as entered by the user, used as a
+ * case-insensitive regular expression. Callers also check the filter as
+ * plain text, so text with special characters like "(" or "+" still matches.
+ **/
+const matchesFilterRegex = function(text, filter)
+{
+  if ((typeof filter != "string") || (filter === "")) { return false; }
+  if (!isValidRegex(filter)) { return false; }
+
+  return new RegExp(filter, "i").test(text);
+}
+
+/**
  * Konstrukor. Filter für Zeichenketten
  **/
 StringFilter = function(name, callback)
@@ -82,6 +112,8 @@ StringFilter = function(name, callback)
     
     var patternList = m_value.toLowerCase().split("|");
     //var patternList = m_value.split("|");
+    if (matchesFilterRegex(text, m_value)) { return true; }
+
     text            = text.toLowerCase();
     
     for (var i = 0, len = patternList.length; i < len; i++)
