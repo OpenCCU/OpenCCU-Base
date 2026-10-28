@@ -68,6 +68,9 @@ void HS485Device::CheckConfigPendingEvent()
 void HS485Device::ClearChannels()
 {
 	for(channels_t::iterator it=channels.begin();it!=channels.end();it++){
+		//a HS485MaintenanceChannel registers itself for the internal values of this device
+		LogicalInstance::EventReceiver* rec=dynamic_cast<LogicalInstance::EventReceiver*>(it->second);
+		if(rec)UnregisterInternalValueEvents(rec);
 		delete it->second;
 	}
 	channels.clear();
