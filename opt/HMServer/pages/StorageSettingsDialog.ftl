@@ -12,7 +12,6 @@
   var tdMicroSDElm = jQuery("#tdMicroSD"),
   tdUSBStorageElm = jQuery("#tdUSBStorage"),
 	tdLEDSElm = jQuery("#tdLEDS");
-	trFieldTest = jQuery("#fieldTest");
 
 	var base_url = "/pages/jpages/system/StorageSettings/";
     dlgResult = 0;
@@ -20,7 +19,6 @@
   if (product >= 3) {
     tdUSBStorageElm.show();
 		tdLEDSElm.show();
-		trFieldTest.show();
   } else {
     tdMicroSDElm.show();
   }
@@ -104,10 +102,10 @@
     var opt = {
       onComplete: function(t) {
         var arResponse = t.responseText.split(","),
-        currency = arResponse[0];
-        priceCur = arResponse[1];
-        priceGas = arResponse[2];
-        gasHeatingValue = arResponse[3];
+        currency = arResponse[0],
+        priceCur = arResponse[1],
+        priceGas = arResponse[2],
+        gasHeatingValue = arResponse[3],
         gasConditionNumber = arResponse[4];
 
         if ((arResponse.length == 6) && (t.responseText != "noConfig")) {
@@ -277,7 +275,7 @@
                     <b>${"$"}{lblCurrency}</b>
                   </td>
                   <td>
-                    <select id="currency"/>
+                    <select id="currency"></select>
                   </td>
                 </tr>
                 <tr><td colspan="2"><hr></td></tr>
@@ -356,25 +354,10 @@
 			</td>
 		</tr>
 
-    <tr id="fieldTest" class="hidden">
-      <td>${"$"}{lblBetaTest}</td>
-      <td align="left" width="35%" class="CLASS21115">
-        <table>
-          <tr>
-            <td class="CLASS21112"><label class="CLASS04904">${"$"}{showDeviceBetaFw}</label></td>
-            <td><input id="inputShowBetaFw" type="checkbox" onClick="activateDeviceBetaFw()" /></td>
-          </tr>
-        </table>
-      </td>
-      <td class="CLASS21113" align="left">
-        <p> ${"$"}{hintDeviceBetaFw} </p>
-      </td>
-    </tr>
-
     <tr id='setWebUIColor' class='hidden'>
       <td>WebUI Color Scheme</td>
       <td class='CLASS21115'>
-        <div class="StdButton CLASS04907" onClick="setColorWebUI();"">Set Color </div>
+        <div class="StdButton CLASS04907" onClick="setColorWebUI();">Set Color</div>
       </td>
       <td class='CLASS21115'></td>
     </tr>
@@ -397,9 +380,4 @@
    if (setWebUIColor == true) {
      jQuery('#setWebUIColor').show();	
    }
-
-   if (homematic("CCU.existsFile", {"file" : "/etc/config/fieldTestActive"})) {
-      jQuery("#inputShowBetaFw").prop("checked",true);
-   }
-
 </script>
