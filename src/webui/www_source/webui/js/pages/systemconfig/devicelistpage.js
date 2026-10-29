@@ -704,6 +704,8 @@ if (PLATFORM == "Central") {
     translatePage(".j_rooms, .j_functions"); // this translates the room name as well the function name within the main devicelist (Settings > Devices)
     jQuery("#DeviceListPage_RoomFilter").draggable();
     jQuery("#DeviceListPage_FuncFilter").draggable();
+
+    DeviceList.updateDeviceStatus();
   },
   
   onRemoveDevice: function(whatEver)

@@ -135,6 +135,162 @@ Device = Class.create({
   },
 
   /**
+   * Startet die Aktualisierung der Werte des Gerätestatus
+   **/
+  updateStatus:function(deviceStatus, rssiListHmRF)
+  {
+    // catch DUTY_CYCLE or DUTYCYCLE
+    if (typeof(deviceStatus.DUTY_CYCLE) !== "undefined")
+      this.DUTY_CYCLE = !!+deviceStatus.DUTY_CYCLE;
+    if (typeof(deviceStatus.DUTYCYCLE) !== "undefined")
+      this.DUTY_CYCLE = !!+deviceStatus.DUTYCYCLE;
+
+    // catch OPERATING_VOLTAGE
+    if (typeof(deviceStatus.OPERATING_VOLTAGE) !== "undefined")
+      this.OPERATING_VOLTAGE = deviceStatus.OPERATING_VOLTAGE;
+
+    // catch SABOTAGE
+    if (typeof(deviceStatus.SABOTAGE) !== "undefined")
+      this.SABOTAGE = !!+deviceStatus.SABOTAGE;
+
+    // catch UNREACH
+    if (typeof(deviceStatus.UNREACH) !== "undefined")
+      this.UNREACH = !!+deviceStatus.UNREACH;
+
+    // catch ERROR_OVERHEAT
+    if (typeof(deviceStatus.ERROR_OVERHEAT) !== "undefined")
+      this.ERROR_OVERHEAT = !!+deviceStatus.ERROR_OVERHEAT;
+
+    // catch LOWBAT or LOW_BAT
+    if (typeof(deviceStatus.LOWBAT) !== "undefined")
+      this.LOWBAT = !!+deviceStatus.LOWBAT;
+    if (typeof(deviceStatus.LOW_BAT) !== "undefined")
+      this.LOWBAT = !!+deviceStatus.LOW_BAT;
+
+    // catch CONFIG_PENDING
+    if (typeof(deviceStatus.CONFIG_PENDING) !== "undefined")
+      this.CONFIG_PENDING = !!+deviceStatus.CONFIG_PENDING;
+
+    // catch UPDATE_PENDING
+    if (typeof(deviceStatus.UPDATE_PENDING) !== "undefined")
+      this.UPDATE_PENDING = !!+deviceStatus.UPDATE_PENDING;
+
+    // catch RSSI_DEVICE and RSSI_PEER
+    // in case of a BidCos-RF device we take the RSSI
+    // values fron the supplied rssiListHmRF
+    if (this.interfaceName === 'BidCos-RF')
+    {
+      if (rssiListHmRF !== null)
+      {
+        var address = this.address;
+        var rssiInfo = rssiListHmRF.find(function(x) { return x.name === address });
+
+        if (rssiInfo !== null && typeof(rssiInfo) !== 'undefined' &&
+            rssiInfo.partner !== null && typeof(rssiInfo.partner) !== 'undefined')
+        {
+          var rssiData = rssiInfo.partner[0].rssiData;
+          this.RSSI_DEVICE = rssiData[0];
+          this.RSSI_PEER = rssiData[1];
+          if(this.RSSI_DEVICE === 65536)
+            this.RSSI_DEVICE = -65535;
+          if(this.RSSI_PEER === 65536)
+            this.RSSI_PEER = -65535;
+        }
+      }
+    }
+    else
+    {
+      if (typeof(deviceStatus.RSSI_DEVICE) !== "undefined")
+        this.RSSI_DEVICE = deviceStatus.RSSI_DEVICE;
+
+      if (typeof(deviceStatus.RSSI_PEER) !== "undefined")
+        this.RSSI_PEER = deviceStatus.RSSI_PEER;
+    }
+
+    // update/calculate the web colors for displaying
+    // the RSSI values like in devconfig
+    if (this.RSSI_DEVICE !== null || this.RSSI_PEER !== null)
+      this.updateRssiColors();
+
+    // now we update the table cell with a pregenerated HTML
+    var cell = document.getElementById('DeviceStatus' + this.id);
+    if (cell !== null && typeof(cell) !== 'undefined')
+    {
+      var html = '';
+
+      if (this.enabledServiceMsg === false)
+        html += '<span style="background-color: #FFFF00;">NO&nbsp;SERVICEMSG</span><br/>';
+
+      if (this.CONFIG_PENDING === true)
+        html += '<span style="background-color: #FFFF00;">CONFIG</span><br/>';
+
+      if (this.UPDATE_PENDING === true)
+        html += '<span style="background-color: #FFFF00;">UPDATE</span><br/>';
+
+      if (this.LOWBAT === true)
+        html += '<span style="background-color: #FFFF00;">LOWBAT</span><br/>';
+
+      if (this.UNREACH === true)
+        html += '<span style="background-color: #FFFF00;">UNREACH</span><br/>';
+
+      if (this.ERROR_OVERHEAT === true)
+        html += '<span style="background-color: #FF0000;">OVERHEAT</span><br/>';
+
+      if (this.SABOTAGE === true)
+        html += '<span style="background-color: #FF0000;">SABOTAGE</span><br/>';
+
+      if (this.OPERATING_VOLTAGE && parseFloat(this.OPERATING_VOLTAGE) > 0)
+        html += parseFloat(this.OPERATING_VOLTAGE).toFixed(1) + '&nbsp;V<br/>';
+
+      if (this.RSSI_DEVICE && this.RSSI_DEVICE > -65535)
+        html += this.RSSI_DEVICE + '&nbsp;dBm&nbsp;<span style="background-color: ' + this.rssiDeviceColor + '">&darr;</span><br/>';
+
+      if (this.RSSI_PEER && this.RSSI_PEER > -65535)
+        html += this.RSSI_PEER + '&nbsp;dBm&nbsp;<span style="background-color: ' + this.rssiPeerColor + '">&uarr;</span><br/>';
+
+      if (this.DUTY_CYCLE === true)
+        html += '<span style="background-color: #FFFF00;">DUTYCYCLE</span><br/>';
+
+      cell.innerHTML = html;
+    }
+  },
+
+  /**
+   * Startet die Aktualisierung der RSSI Werte
+   **/
+  updateRssiColors:function()
+  {
+    var getColorCode = function(rssi)
+    {
+      var RSSI_BAD = -120.0;
+      var RSSI_MEDIUM = -100.0;
+      var RSSI_GOOD = -20.0;
+
+      var rssi_color = function(lower_bound, upper_bound, rssi)
+      {
+        var result = 256 * (rssi - lower_bound) / (upper_bound - lower_bound);
+        if (result < 0)   result = 0;
+        if (result > 255) result = 255;
+        return Math.round(result);
+      };
+
+      if (rssi > -65535)
+      {
+        var red = rssi_color(RSSI_GOOD, RSSI_MEDIUM, rssi);
+        var green = rssi_color(RSSI_BAD, RSSI_MEDIUM, rssi);
+        return "#" + ('00'+(red).toString(16)).substr(-2)
+                   + ('00'+(green).toString(16)).substr(-2)
+                   + "00";
+      }
+      else
+        return "#000000";
+    };
+
+    this.rssiDeviceColor = getColorCode(this.RSSI_DEVICE);
+    this.rssiPeerColor = getColorCode(this.RSSI_PEER);
+  },
+
+  /**
    * Legt den Namen des Geräts fest.
    **/
   setName: function(name)
