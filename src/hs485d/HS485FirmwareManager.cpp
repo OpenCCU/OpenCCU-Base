@@ -64,6 +64,10 @@ std::string HS485FirmwareManager::GetFirmwareVersion(const std::string& type)
 			LOG(Logger::LOG_ERROR, "Could not read firmware file for type %s", type.c_str());
 			return "";
 		}
+		if(ff.version<hf->GetStart()){//the version address lies before the firmware data
+			LOG(Logger::LOG_ERROR, "Firmware file for type %s does not contain the version address", type.c_str());
+			return "";
+		}
 		unsigned int firmwarePos=ff.version-(hf->GetStart());
 		ucVec& buffer=hf->GetBuffer();
 		if(buffer.size()<=firmwarePos+1){
