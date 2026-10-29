@@ -13,6 +13,7 @@
 #include "PropertyMap.h"
 #include <fstream>
 #include <string.h>
+#include <vector>
 #include <stdlib.h>
 
 #include "utils.h"
@@ -66,9 +67,13 @@ int PropertyMap::ReadFromFile(std::string filename)
     std::string section;
     current_section.clear();
 	if(is.good()){
-		char line[256];
-		while(!is.eof()){
-			is.getline(line, 256);
+		std::string read_line;
+		//std::getline() has no length limit and ends the loop on any failure; is.getline(line, 256) set the
+		//failbit on a longer line without ever reaching eof(), so the loop never ended
+		while(std::getline(is, read_line)){
+			std::vector<char> buffer(read_line.begin(), read_line.end());
+			buffer.push_back(0);
+			char* line=&buffer[0];
 			char* left=line;
 			char* end=line+strlen(line);
             // remove trailing line end characters
@@ -87,13 +92,18 @@ int PropertyMap::ReadFromFile(std::string filename)
                 if(section.size() && section[section.size()-1]==']')section=section.substr(0, section.size()-1);
                 continue;
             }
-			left=right+1;
+			//a line without '=' has no value: right+1 would be behind the terminating 0
+			left=(right<end)?right+1:end;
 			right=strchr(left, '#');
 			if(!right)right=end;
 			*right=0;
 			std::string value=left;
 			string_trim(&value);
         	section_map[section][key]=value;
+		}
+		if(is.bad()){//a read error (e.g. the path is a directory), not the end of the file
+			LOG(Logger::LOG_ERROR, "Property file \"%s\" could not be read", filename.c_str());
+			return -1;
 		}
         dirty=false;
 		return 1;
