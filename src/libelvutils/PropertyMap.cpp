@@ -101,6 +101,10 @@ int PropertyMap::ReadFromFile(std::string filename)
 			string_trim(&value);
         	section_map[section][key]=value;
 		}
+		if(is.bad()){//a read error (e.g. the path is a directory), not the end of the file
+			LOG(Logger::LOG_ERROR, "Property file \"%s\" could not be read", filename.c_str());
+			return -1;
+		}
         dirty=false;
 		return 1;
 	}else{
