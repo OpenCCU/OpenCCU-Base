@@ -27,7 +27,7 @@ iseFrequency.prototype = {
     this.min = min;
     this.max = max;
     this.factor = 100/(max-min);
-    this.unit = " mHz";
+    this.unit = "&nbsp;mHz";
     if(bSliderPosFlag) 
     {
         this.bSliderPosFlag = bSliderPosFlag;

@@ -711,7 +711,7 @@ function ::WriteDestinationText()
                         
                         if( unit.Length() && sValue == "" )
                         {
-                          sRet=sRet#" "#unit;
+                          sRet=sRet#"&nbsp;"#unit;
                         }
                       }
                     }

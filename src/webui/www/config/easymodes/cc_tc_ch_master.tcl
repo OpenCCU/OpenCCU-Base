@@ -137,7 +137,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 	# Heizungsregler die gesendeten Werte in Grad Celsius erwartet. Die Werte werden durch CC_conv_CF errechnet
 	append HTML_PARAMS(separate_1) "<input type=\"hidden\" id=\"separate_${special_input_id}_6\" name=\"TEMPERATUR_LOWERING_VALUE\">"
 	#Das C in <span>C</span> der naechsten Zeile wird in der Funktion /js/ic_setprofiles/CC_setUnit() evtl. in F(ahrenheit) gewandelt
-	append HTML_PARAMS(separate_1) "&deg;<span class=\"CF\">C</span></td></tr>"
+	append HTML_PARAMS(separate_1) "&nbsp;&deg;<span class=\"CF\">C</span></td></tr>"
 
 #	Komforttemperatur
 	append HTML_PARAMS(separate_1) "<tr><td>$PROFILE_PNAME(TEMPERATUR_COMFORT_VALUE)&nbsp;&nbsp;<img src=\"/ise/img/cc_sun.png\"></td><td>"
@@ -146,7 +146,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 	# Heizungsregler die gesendeten Werte in Grad Celsius erwartet. Die Werte werden durch CC_conv_CF errechnet
 	append HTML_PARAMS(separate_1) "<input type=\"hidden\" id=\"separate_${special_input_id}_5\" name=\"TEMPERATUR_COMFORT_VALUE\">"
 	#Das C in <span>C</span> der naechsten Zeile wird in der Funktion /js/ic_setprofiles/CC_setUnit() evtl. in F(ahrenheit) gewandelt
-	append HTML_PARAMS(separate_1) "&deg;<span class=\"CF\">C</span></td></tr>"
+	append HTML_PARAMS(separate_1) "&nbsp;&deg;<span class=\"CF\">C</span></td></tr>"
 	
 #	append HTML_PARAMS(separate_1) "<td colspan=\"2\"><hr class=\"CLASS20600\"/>"
 	append HTML_PARAMS(separate_1) "<td colspan=\"2\"><hr>"
@@ -193,7 +193,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 	# Heizungsregler die gesendeten Werte in Grad Celsius erwartet. Die Werte werden durch CC_conv_CF errechnet
 	append HTML_PARAMS(separate_1) "<input type=\"hidden\" id=\"separate_${special_input_id}_8\" name=\"TEMPERATUR_PARTY_VALUE\">"
 	#Das C in <span>C</span> der naechsten Zeile wird in der Funktion /js/ic_setprofiles/CC_setUnit() evtl. in F(ahrenheit) gewandelt
-	append HTML_PARAMS(separate_1) "&deg;<span class=\"CF\">C</span></td></tr></table>"
+	append HTML_PARAMS(separate_1) "&nbsp;&deg;<span class=\"CF\">C</span></td></tr></table>"
 
 #	rechte Zelle endet
 	append HTML_PARAMS(separate_1) "</td></tr></table>"

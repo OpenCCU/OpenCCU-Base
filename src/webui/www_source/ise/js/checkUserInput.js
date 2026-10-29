@@ -67,11 +67,18 @@ checkTemperatureMinMax = function(input, MinVal, MaxVal) {
   var isFarVal = false;
   if (!checkDecimal(tmpInput)) {
     // Zeichen für Temperaturangaben rausfiltern
+    if (tmpInput.indexOf('&deg;C') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;C'));
+    }
     if (tmpInput.indexOf('°C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('°C'));
     }
     if (tmpInput.indexOf('C') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('C'));
+    }
+    if (tmpInput.indexOf('&deg;F') != -1) {
+      tmpInput = tmpInput.substr(0, tmpInput.indexOf('&deg;F'));
+      isFarVal = true;      
     }
     if (tmpInput.indexOf('°F') != -1) {
       tmpInput = tmpInput.substr(0, tmpInput.indexOf('°F'));

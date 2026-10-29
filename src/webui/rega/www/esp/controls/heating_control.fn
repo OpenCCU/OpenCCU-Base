@@ -3,7 +3,7 @@ function ::CreateHeatingControl() {
   real rState = 0;
   real rMin = 4.5;
   real rMax = 30.5;
-  string sUnit = "&deg;<i>C</i>";
+  string sUnit = "&deg;C";
   string bUnit = "V";
   string vUnit = "%";
   string hUnit = "%";
@@ -43,7 +43,7 @@ function ::CreateHeatingControl() {
     sUnit = oLevel.ValueUnit();
     if (sUnit == 'degree')
     {
-      sUnit = "&deg;<i>C</i>";
+      sUnit = "&deg;C";
     }
     ! rMin = oLevel.MetaData("MIN").ToFloat();
     ! rMax = oLevel.MetaData("MAX").ToFloat();
@@ -64,10 +64,10 @@ function ::CreateHeatingControl() {
       WriteLine("<table id='"#chnId#"tblShowTemp' class='ControlBtnInfo hidden' style='width:200px'>");
         WriteLine("<tr>");
           WriteLine("<td>${stringTableWeatherTemperature}</td>");
-          WriteLine("<td><span id='"#chnId#"actTemp'></span><span><b>"#sUnit#"</b></span></td>");
+          WriteLine("<td><span id='"#chnId#"actTemp'></span><span>&nbsp;<b>"#sUnit#"</b></span></td>");
         WriteLine("</tr>");
       WriteLine("</table>");
-      !WriteLine("<div class='ControlBtnInfo _CLASS02550' style='line-height:15px; min-width:200px' id='"#chnId#"actualTemp' ><span>${stringTableWeatherTemperature}</span><span id='actTemp'"#sUnit#"></span></div>");
+      !WriteLine("<div class='ControlBtnInfo _CLASS02550' style='line-height:15px; min-width:200px' id='"#chnId#"actualTemp' ><span>${stringTableWeatherTemperature}</span><span id='actTemp'>&nbsp;"#sUnit#"</span></div>");
     WriteLine("</td>");
   WriteLine("</tr>");
 
@@ -92,7 +92,7 @@ function ::CreateHeatingControl() {
        WriteLine("<table id='"#chnId#"tblShowBatteryState' class='ControlBtnInfo hidden' style='width:200px"#cssDisplay#"'>");
          WriteLine("<tr>");
            WriteLine("<td>${stringTableClimateControlRTTransceiverBatteryState}</td>");
-           WriteLine("<td><span id='"#chnId#"actBatteryState'></span><span><b>"#bUnit#"</b></span></td>");
+           WriteLine("<td><span id='"#chnId#"actBatteryState'></span><span>&nbsp;<b>"#bUnit#"</b></span></td>");
         WriteLine("</tr>");
        WriteLine("</table>");
      WriteLine("</td>");
@@ -106,7 +106,7 @@ function ::CreateHeatingControl() {
        WriteLine("<table id='"#chnId#"tblShowValveState' class='ControlBtnInfo hidden' style='width:200px"#cssDisplay#"'>");
          WriteLine("<tr>");
            WriteLine("<td>${stringTableHeatingLevel}</td>");
-           WriteLine("<td><span id='"#chnId#"actValveState'></span><span><b>"#vUnit#"</b></span></td>");
+           WriteLine("<td><span id='"#chnId#"actValveState'></span><span>&nbsp;<b>"#vUnit#"</b></span></td>");
          WriteLine("</tr>");
        WriteLine("</table>");
      WriteLine("</td>");
@@ -119,7 +119,7 @@ function ::CreateHeatingControl() {
     WriteLine("  <div id='button"#chnId#"' class='PercBtn' >");
     WriteLine("  <table width='100%' height='100%' class='CLASS02530'>");
     WriteLine("    <tr class='CLASS02531'>");
-    WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='4' class='CLASS02542' style='text-align:center' "#sReadOnly#" /><span id='"#chnId#"unitDegree'><b>"#sUnit#"</b></span></td></tr>");
+    WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='4' class='CLASS02542' style='text-align:center' "#sReadOnly#" /><span id='"#chnId#"unitDegree'>&nbsp;<b>"#sUnit#"</b></span></td></tr>");
     WriteLine("      <input id='"#chnId#"Perc' type='hidden' value='"#rState.ToString(2)#"' />");
     WriteLine("      <td style='text-align:center;' class='CLASS02548'>");
     WriteLine("      <table cellspacing='0' cellpadding='0'><tr><td><img id='"#chnId#"Up' height='12px' width='40px' src='/ise/img/up.png' class='CLASS02543' /></td></tr><tr><td><img id='"#chnId#"Down' height='12px' width='40px' src='/ise/img/down.png' class='CLASS02543' /></td></tr></table>");
@@ -266,7 +266,7 @@ function ::CreateHeatingControlHmIP() {
   integer chInterfaceID = ch.Interface();
   object chInterface = dom.GetObject(chInterfaceID);
 
-  string tUnit = "&deg;<i>C</i>";
+  string tUnit = "&deg;C";
   string hUnit = "&#37;";
   string bUnit = "V";
   string vUnit = "%";
@@ -397,7 +397,7 @@ function ::CreateHeatingControlHmIP() {
       WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
         WriteLine("<tr>");
           WriteLine("<td  id='"#chnId#"ACTUAL_TEMPERATURE'>${stringTableWeatherTemperature}</td>");
-          WriteLine("<td><span id='"#chnId#"valACTUAL_TEMPERATURE'></span><span><b>"#tUnit#"</b></span></td>");
+          WriteLine("<td><span id='"#chnId#"valACTUAL_TEMPERATURE'></span><span>&nbsp;<b>"#tUnit#"</b></span></td>");
         WriteLine("</tr>");
       WriteLine("</table>");
     WriteLine("</td>");
@@ -407,7 +407,7 @@ function ::CreateHeatingControlHmIP() {
         WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
           WriteLine("<tr>");
             WriteLine("<td>${stringTableWeatherHumidity}</td>");
-            WriteLine("<td><span id='"#chnId#"valHUMIDITY'></span><span><b>"#hUnit#"</b></span></td>");
+            WriteLine("<td><span id='"#chnId#"valHUMIDITY'></span><span>&nbsp;<b>"#hUnit#"</b></span></td>");
           WriteLine("</tr>");
         WriteLine("</table>");
       WriteLine("</td>");
@@ -430,7 +430,7 @@ function ::CreateHeatingControlHmIP() {
         WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
           WriteLine("<tr>");
             WriteLine("<td id='"#chnId#"LEVEL'>${stringTableHeatingLevel}</td>");
-            WriteLine("<td><span id='"#chnId#"valLEVEL'></span><span><b>"#vUnit#"</b></span></td>");
+            WriteLine("<td><span id='"#chnId#"valLEVEL'></span><span>&nbsp;<b>"#vUnit#"</b></span></td>");
           WriteLine("</tr>");
         WriteLine("</table>");
       WriteLine("</td>");
@@ -444,7 +444,7 @@ function ::CreateHeatingControlHmIP() {
         WriteLine("<table class='ControlBtnInfo' style='width:205px'>");
           WriteLine("<tr>");
             WriteLine("<td>${stringTableClimateControlRTTransceiverBatteryState}</td>");
-            WriteLine("<td><span id='"#chnId#"valBATTERY_STATE'></span><span><b>"#bUnit#"</b></span></td>");
+            WriteLine("<td><span id='"#chnId#"valBATTERY_STATE'></span><span>&nbsp;<b>"#bUnit#"</b></span></td>");
           WriteLine("</tr>");
         WriteLine("</table>");
       WriteLine("</td>");
@@ -463,7 +463,7 @@ function ::CreateHeatingControlHmIP() {
     WriteLine("  <div id='button"#chnId#"' class='PercBtn' >");
     WriteLine("  <table width='100%' height='100%' class='CLASS02530'>");
     WriteLine("    <tr class='CLASS02531'>");
-    WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='4' class='CLASS02542' style='text-align:center' "#sReadOnly#" /><span id='"#chnId#"unitDegree'><b>"#tUnit#"</b></span></td></tr>");
+    WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='4' class='CLASS02542' style='text-align:center' "#sReadOnly#" /><span id='"#chnId#"unitDegree'>&nbsp;<b>"#tUnit#"</b></span></td></tr>");
     WriteLine("      <input id='"#chnId#"Perc' type='hidden' value='"#rState.ToString(2)#"' />");
     WriteLine("      <td style='text-align:center;' class='CLASS02548'>");
     WriteLine("      <table cellspacing='0' cellpadding='0'><tr><td><img id='"#chnId#"Up' height='12px' width='40px' src='/ise/img/up.png' class='CLASS02543' /></td></tr><tr><td><img id='"#chnId#"Down' height='12px' width='40px' src='/ise/img/down.png' class='CLASS02543' /></td></tr></table>");
@@ -682,7 +682,7 @@ function ::CreateHeatingControlHmIP() {
 
 ! ALPHA-IP-RBGa
 function ::CreateHeatingControlHmIPa() {
-  string tUnit = "&deg;<i>C</i>";
+  string tUnit = "&deg;C";
   string hUnit = "&#37;";
   real actTemp = -1.0;
   real setPointValue = -1.0;
@@ -727,7 +727,7 @@ function ::CreateHeatingControlHmIPa() {
     WriteLine("<td>");
       WriteLine("<table class='ControlBtnInfo' style='width:200px'>");
         WriteLine("<tr>");
-          WriteLine("<td>${stringTableWeatherTemperature}:&nbsp;"#actTemp.ToString(2)#"<span><b>"#tUnit#"</b></span></td>");
+          WriteLine("<td>${stringTableWeatherTemperature}:&nbsp;"#actTemp.ToString(2)#"<span>&nbsp;<b>"#tUnit#"</b></span></td>");
         WriteLine("</tr>");
       WriteLine("</table>");
     WriteLine("</td>");
@@ -745,7 +745,7 @@ function ::CreateHeatingControlHmIPa() {
     WriteLine("<td>");
       WriteLine("<table class='ControlBtnInfo' style='width:200px'>");
         WriteLine("<tr>");
-          WriteLine("<td>${stringTableSetPointTemperature}: "#setPointValue.ToString(2)#"<span><b>"#tUnit#"</b></span></td>");
+          WriteLine("<td>${stringTableSetPointTemperature}: "#setPointValue.ToString(2)#"<span>&nbsp;<b>"#tUnit#"</b></span></td>");
         WriteLine("</tr>");
       WriteLine("</table>");
     WriteLine("</td>");

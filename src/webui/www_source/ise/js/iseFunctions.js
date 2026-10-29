@@ -1711,7 +1711,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "°C") && (value != min) && (value != max)) {
+    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
