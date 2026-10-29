@@ -50,7 +50,8 @@ bool HSSTypeConversionStringUnsignedInteger::LogicalToPhysical(LogicalInstance* 
 {
 		
     try{
-			const char* strValue = ((std::string) in).c_str();
+			const std::string str = in;//keep the string alive while it is read (a cast creates a temporary)
+			const char* strValue = str.c_str();
 			unsigned int uintValue = 0;
 			
 			if (strValue != NULL)
