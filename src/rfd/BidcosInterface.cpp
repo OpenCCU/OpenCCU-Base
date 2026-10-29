@@ -281,7 +281,7 @@ int BidcosInterface::GetDutyCycleLowerBound() const
 
 int BidcosInterface::GetDutyCycleUpperBound() const
 {
-	if (duty_cycle_threshold <= DUTYCYCLE_THRESHOLDMAP_SIZE)
+	if (duty_cycle_threshold < DUTYCYCLE_THRESHOLDMAP_SIZE - 1)//the last threshold has no entry above it
 	{
 		return DUTYCYCLE_THRESHOLDMAP[duty_cycle_threshold + 1];
 	}
