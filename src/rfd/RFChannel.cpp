@@ -181,6 +181,13 @@ bool RFChannel::setValueWithWriteDependencies(HSSParameter* param, XmlRpc::XmlRp
 	//XmlRpc::XmlRpcValue set;
 	//set.assertStruct();
 	const std::vector<HSSParameter::WriteDependency>& writeDepends = param->getWriteDependencies();
+	//callSetValue() would take an empty value as 0 (or false, ""): refuse it before anything is written
+	for(unsigned int i = 0; i < writeDepends.size(); i++) {
+		const std::string& name = writeDepends.at(i).name;
+		if(jsonObj.contains(name) && jsonObj.getString(name).empty()) {
+			throw XmlRpc::XmlRpcException("Empty value for " + name, -5);
+		}
+	}
 	std::string commandParamId;
 	for(unsigned int i = 0; i < writeDepends.size(); i++) {
 		HSSParameter::WriteDependency depend = writeDepends.at(i);

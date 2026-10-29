@@ -146,10 +146,10 @@ bool JSONObject::parseBlock(const std::string& block)
 			std::string::size_type keyvalueEnd = s.find(value);//remove value
 			if(keyvalueEnd != std::string::npos) {
 				keyvalueEnd += (value.length()+1);
-				if(keyvalueEnd < s.length()-1) {
+				if(keyvalueEnd + 1 < s.length()) {//s.length()-1 would underflow for an empty s (a key without value)
 					s = s.substr(keyvalueEnd);
 					trim(s);
-					if(s.at(0) == ',') {
+					if(!s.empty() && s.at(0) == ',') {
 						s.erase(0, 1);
 					}
 					trim(s);
