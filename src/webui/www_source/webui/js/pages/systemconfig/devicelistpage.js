@@ -706,6 +706,7 @@ if (PLATFORM == "Central") {
     jQuery("#DeviceListPage_FuncFilter").draggable();
 
     DeviceList.updateDeviceStatus();
+    eQ3.HomeMatic.Event.fire({type: 'DeviceListPageLoaded'});
   },
   
   onRemoveDevice: function(whatEver)
