@@ -43,6 +43,7 @@ Device = Class.create({
 
       this.interfaceName = data["interface"];
       this.isReadyConfig = data["isReady"];
+      this.enabledServiceMsg = (data["enabledServiceMsg"] == "true") ? true : false;
       this.deviceType = deviceType;
       this.typeName = deviceType.name;
       this.typeDescription = deviceType.description;
@@ -318,6 +319,23 @@ Device = Class.create({
   setLogging: function(isLogged)
   {
   },  
+
+  /**
+   * Legt fest, ob das Geraet Servicemeldungen auslöst oder nicht
+   **/
+  setEnabledServiceMsg: function(enabledServiceMsg)
+  {
+    if (this.enabledServiceMsg != enabledServiceMsg)
+    {
+      var result = homematic("Device.setEnabledServiceMsg", {id: this.id, isEnabled: enabledServiceMsg});
+      if (typeof(result) == "boolean" && result === true)
+      {
+        this.enabledServiceMsg = enabledServiceMsg;
+      }
+    }
+    
+    return this.enabledServiceMsg;
+  },
 
   setDeviceInputCheck: function() {
     this.deviceInputCheck = true;
