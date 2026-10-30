@@ -34,7 +34,15 @@ set script {
 !   Write(" DEVICE_TYPE {"# device.HssType() # "}"); 
     Write(" DEVICE_TYPE {"# device.Label() # "}");
     Write(" GROUP_ONLY {"# device.MetaData("operateGroupOnly") # "}");
-  
+ 
+    Write(" SERVICE_MSG {");
+    if (device.MetaData("enabledServiceMsg") == null) {
+      Write("true");
+    } else {
+      Write(device.MetaData("enabledServiceMsg"));
+    }
+    Write("}");
+ 
     Write(" CHANNELS {"); 
     if (device.TypeName() == "DEVICE")
     {
@@ -145,6 +153,7 @@ append result ",\"address\":[json_toString $device(ADDRESS)]"
 append result ",\"interface\":[json_toString $device(INTERFACE)]"
 append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
 append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
+append result ",\"enabledServiceMsg\":[json_toString $device(SERVICE_MSG)]"
 
 set first 1
 append result ",\"channels\":\["

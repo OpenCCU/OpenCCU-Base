@@ -35,6 +35,15 @@ set deviceDescrScript {
     }
 
     Write(" GROUP_ONLY {"# device.MetaData("operateGroupOnly") # "}");
+
+    Write(" SERVICE_MSG {");
+    if (device.MetaData("enabledServiceMsg") == null) {
+      Write("true");
+    } else {
+      Write(device.MetaData("enabledServiceMsg"));
+    }
+    Write("}");
+ 
     Write(" CHANNELS {");
 
     var first = true;
@@ -227,6 +236,7 @@ foreach id $deviceIds {
   append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
   append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
   append result ",\"isReady\":[json_toString $device(READY_CONFIG)]"
+  append result ",\"enabledServiceMsg\":[json_toString $device(SERVICE_MSG)]"
 
 
 #
