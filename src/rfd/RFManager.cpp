@@ -1277,6 +1277,11 @@ bool RFManager::SetBidcosInterface(const std::string& device_address,
 	if (!inst) {
 		throw XmlRpcException("Unknown instance", -2);
 	}
+	//An empty id selects the default interface; any other id must name a configured interface.
+	//Otherwise the device would silently end up on the default interface while reporting the given id.
+	if (!interface_id.empty() && !GetInterfaceConcentrator()->HasInterface(interface_id)) {
+		throw XmlRpcException("Unknown interface", -2);
+	}
 	RFDevice* dev = inst->GetDevice();
 	return dev->SetBidcosInterface(interface_id, roaming);
 }

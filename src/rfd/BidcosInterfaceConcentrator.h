@@ -197,6 +197,8 @@ public:
     void OnTimer(uint32_t cookie);
     //! Liefert die Seriennummer des Standardinterfaces zur�ck
     std::string GetDefaultInterfaceId();
+    //! Returns true if an interface with this serial number is configured
+    bool HasInterface(const std::string& interface_id);
 	bool IsInterfaceUpdatable(int address);
 	bool SetInterfaceTo100kMode(int address);
 	bool SetInterfaceTo10kMode(int address);
