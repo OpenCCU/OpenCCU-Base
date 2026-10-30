@@ -1382,7 +1382,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
 
           append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
           append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
-          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', [expr $min + 0.001], [expr $max + 0.001], parseFloat([expr 1 / $factor]));\" /></td>"
+          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
           append s "<td><div id=\"${input_idval}_unit\" $hidden>$unit ($min-$max)</div></td>"
       }
       "ENUM" {

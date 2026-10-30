@@ -801,7 +801,7 @@ set comment {
         # append html "<td>[getTextField $param $ps($param) $chn $prn]&nbsp[getUnit $param]&nbsp;[getMinMaxValueDescr $param]</td>"
 
         append html "<td>"
-          append html "<input id='$param\_$chn\_$prn' type='text' size='5' value=[expr [format {%1.1f} $ps($param)] / 10] onblur=\"ProofAndSetValue(this.id, this.id, '0.0', '6.0', 1); setVal(this.value, $chn, $prn);\">&nbsp[getUnit $param]"
+          append html "<input id='$param\_$chn\_$prn' type='text' size='5' value='[format {%1.1f} [expr $ps($param). / 10]]' onblur=\"ProofAndSetValue(this.id, this.id, '0.0', '6.0', 1); setVal(this.value, $chn, $prn);\">&nbsp[getUnit $param]"
           append html "<input id='separate_CHANNEL_$chn\_$prn' name='$param' type='text' class='hidden'>"
         append html "</td>"
       append html "</tr>"
@@ -4375,7 +4375,7 @@ proc getCondSwitchTransmitter {chn p descr} {
         append html "<td>\${stringTableCondThresholdLo}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresLo_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
         append html "</td>"
@@ -4389,7 +4389,7 @@ proc getCondSwitchTransmitter {chn p descr} {
         append html "<td>\${stringTableCondThresholdHi}</td>"
         append html "<td>"
 
-          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[expr $ps($param). / 100]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.0', [getUserDefinedMaxValue $devType $param], 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
+          append html "<input id=\"thresHi_$chn\_$prn\" type=\"text\" size=\"5\" value=\"[format {%1.2f} [expr $ps($param). / 100]]\" onblur=\"ProofAndSetValue(this.id, this.id, '0.00', '[getUserDefinedMaxValue $devType $param]', 1); jQuery(this).next().val(this.value * 100)\"/>&nbsp;[getUserDefinedCondTXThresholdUnitMinMaxDescr $devType $param]"
           append html "[getTextField $param $ps($param) $chn $prn class=\"hidden\"]"
 
        append html "</td>"
