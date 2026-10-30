@@ -39,14 +39,26 @@ namespace EQ3
         pthread_attr_t attributes;
         pthread_attr_init(&attributes);
         pthread_attr_setstacksize(&attributes, DEFAULT_STACK_SIZE);
-        pthread_create(&m_thread, &attributes, Actor::ThreadFunction, (void*) this);
+        //running from here on, not only once Run() got the lock: a message or a Stop() right after Start()
+        //would otherwise be dropped, or Run() would set it again after Stop() and wait for ever
+        pthread_mutex_lock(&m_access);
+        m_isRunning = true;
+        pthread_mutex_unlock(&m_access);
+        int err = pthread_create(&m_thread, &attributes, Actor::ThreadFunction, (void*) this);
+        if (err)
+        {
+            LOG(Logger::LOG_ERROR, "Actor::Start(): pthread_create failed (%d)", err);
+            pthread_mutex_lock(&m_access);
+            m_isRunning = false;
+            pthread_mutex_unlock(&m_access);
+            m_thread = 0;
+        }
         pthread_attr_destroy(&attributes);
     }
 
     void Actor::Run()
     {
         pthread_mutex_lock(&m_access);
-        m_isRunning = true;
         while (m_isRunning)
         {
         	while(!m_conditionMet)
@@ -110,10 +122,18 @@ namespace EQ3
         }
         pthread_mutex_unlock(&m_access);
 
-        void* status;
-        LOG(Logger::LOG_ALL, "Actor::Stop(): Waiting for thread joining");
-        pthread_join(m_thread, &status);
-        LOG(Logger::LOG_ALL, "Actor::Stop(): Thread joined");
+        if (m_thread)//join only once: ~Actor() calls Stop() again after an explicit Stop()
+        {
+            void* status;
+            LOG(Logger::LOG_ALL, "Actor::Stop(): Waiting for thread joining");
+            int err = pthread_join(m_thread, &status);
+            if (err)
+            {
+                LOG(Logger::LOG_ERROR, "Actor::Stop(): pthread_join failed (%d)", err);
+            }
+            m_thread = 0;
+            LOG(Logger::LOG_ALL, "Actor::Stop(): Thread joined");
+        }
 
     }
 
