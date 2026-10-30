@@ -47,7 +47,6 @@ int CCU2SerialPortWrapperLinux::SendData(const std::string& data)
 #endif
 	unsigned int count=0;
 	int retval;
-	tcflush(fd, TCIFLUSH);
 	int i=0;
 	while(count<data.size()){
 		retval=write(fd, data.data()+count, data.size()-count);
