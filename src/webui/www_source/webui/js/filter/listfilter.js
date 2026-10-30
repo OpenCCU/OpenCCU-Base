@@ -17,7 +17,30 @@ ListFilter = Class.create({
     this.callback = callback;
     this.id       = name.replace(/\./g, "_");
     this.formId   = this.id + "Form";
-    this.reset();
+    var self = this;
+    function fltrHandler() {
+      self.restoreFilters();
+      eQ3.HomeMatic.Event.unsubscribe('DeviceListPageLoaded', fltrHandler);
+    }
+    eQ3.HomeMatic.Event.subscribe('DeviceListPageLoaded', fltrHandler);
+  },
+
+  restoreFilters: function() {
+    var filterValues = null;
+    try { filterValues = localStorage.getItem(this.id); } catch (e) {}
+    if(filterValues) {
+      try {
+        filterValues = JSON.parse(filterValues);
+        if (!$(this.formId)) { return; }
+        var values = $(this.formId).values;
+        for (var i = 0, len = values.length; i < len; i++) {
+         if(filterValues.indexOf(values[i].value) !== -1) {
+            values[i].checked = true;
+          }
+        }
+        this.set();
+      } catch(e) { console.log(e); }
+    }
   },
 
   /**
@@ -128,16 +151,20 @@ ListFilter = Class.create({
     if ($(this.formId))
     {
       var values = $(this.formId).values;
+      var filterValues = [];
 
       for (var i = 0, len = values.length; i < len; i++)
       {
         this.select(values[i].value, values[i].checked);
+        if(values[i].checked) filterValues.push(values[i].value);
       }
 
       if ($(this.id))    {
         $(this.id).hide();
         try {jQuery("#"+ this.id).draggable("destroy");} catch (e) {}
       }
+      // JSON.stringify encodes an array twice???
+      try { localStorage.setItem(this.id, JSON.parse(JSON.stringify(filterValues))); } catch (e) {}
       if (this.callback) { this.callback(); }
     }
   },
@@ -173,7 +200,8 @@ ListFilter = Class.create({
     {
       this.list[i]._selected = false;
     }
-    
+
+    try { localStorage.removeItem(this.id); } catch (e) {}
     this.close();
   }
   

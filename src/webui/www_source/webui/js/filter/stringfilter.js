@@ -43,10 +43,11 @@ StringFilter = function(name, callback)
   
   
   var m_name     = name;
-  var m_value    = "";
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -153,6 +154,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -171,6 +173,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -193,7 +196,6 @@ StringFilter = function(name, callback)
   /*# Initialisierung #*/
   /*###################*/
   
-  this.reset();
   
 };
 
