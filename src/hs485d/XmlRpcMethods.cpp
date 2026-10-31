@@ -436,6 +436,24 @@ public:
 	}
 };
 
+/*
+ * void restoreConfigToDevice(String address)
+ *
+ * Sends all configuration data of a device stored on the CCU to the
+ * device again (same as restoreConfigToDevice of rfd).
+ */
+class XmlRpcMethodRestoreConfigToDevice : public XmlRpcServerMethod
+{
+public:
+	XmlRpcMethodRestoreConfigToDevice(XmlRpcServer* s):XmlRpcServerMethod("restoreConfigToDevice", s){};
+	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
+	{
+		if(!mgr.RestoreConfigToDevice((std::string&)params[0])){
+			throw XmlRpcException("Failure");
+		}
+	}
+};
+
 #if 0
 /*
  * void activateLinkParamset(String address, String peer_address, Boolean long_press)
@@ -653,6 +671,7 @@ void InitXmlRpcMethods(XmlRpcServer& s)
 	static XmlRpcMethodDeleteDevice xmlRpcMethodDeleteDevice(&s);
 	static XmlRpcMethodReportValueUsage xmlRpcMethodReportValueUsage(&s);
 	static XmlRpcMethodClearConfigCache xmlRpcMethodClearConfigCache(&s);
+	static XmlRpcMethodRestoreConfigToDevice xmlRpcMethodRestoreConfigToDevice(&s);
 	static XmlRpcMethodLogLevel xmlRpcMethodLogLevel(&s);
 	static XmlRpcMethodReplaceDevice XmlRpcMethodReplaceDevice(&s);
 	static XmlRpcMethodListReplaceableDevices xmlRpcMethodListReplaceableDevices(&s);
