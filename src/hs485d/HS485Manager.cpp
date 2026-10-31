@@ -98,6 +98,8 @@ bool HS485Manager::ReplaceDevice(const std::string& oldDeviceSerial, const std::
 
 		//delete the xml file of replaced dev
 		delete newDev;
+		//make the replacement known to IsDeviceReplaced() right away and drop entries that still point to newDev
+		initReplacementHistory();
 		std::string filename(deviceFilesPath);
 		filename+="/"+oldDeviceSerial+".dev";
 		unlink(filename.c_str());
@@ -607,6 +609,8 @@ bool HS485Manager::DeleteDevice(const std::string& address, int flags)
 	dev_instances.erase(dev->GetSerial());
 	address_map.erase(dev->GetAddress());
 	delete dev;
+	//drop replacement history entries that still point to the deleted device
+	initReplacementHistory();
 	ValidateServiceMessages();
 	return true;
 }

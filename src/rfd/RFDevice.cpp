@@ -1733,6 +1733,8 @@ bool RFDevice::replaceDevice(RFDevice *oldDevice)
 		//linkDevIt->second->CheckConfigPendingEvent();
 	}
 	//tauschhistorie hinzuf�gen
+	//take over the history of the old device, so that after A -> B -> C the device C still knows A
+	this->replace_history.insert(this->replace_history.end(), oldDevice->replace_history.begin(), oldDevice->replace_history.end());
 	this->replace_history.push_back(oldDevice->serial);
 	this->roaming = oldDevice->roaming;
 	RFManager::GetSingleton()->GetInterfaceConcentrator()->AddDevice(this->address,this->bidcos_interface_id,this->roaming );

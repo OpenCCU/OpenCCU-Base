@@ -236,7 +236,7 @@ bool HSSManager::CommitReplacedDevices(const std::string url,const std::string& 
 					params[0]=id;
 					params[1]=it->first;
 					params[2] = newDevice;
-					XmlRpcCallAsync("replaceDevice", params);
+					XmlRpcCallAsync("replaceDevice", params, url);
 				}
 
 			}
@@ -320,13 +320,17 @@ bool HSSManager::PlatformInit(const std::string& url, const std::string& id, boo
 				std::map<std::string, int>::iterator it;
 				for(it=remote_version_map.begin();it!=remote_version_map.end();it++){
                     std::string newDevice;
-                    if(supportReplaceDevice && IsDeviceReplaced(it->first,newDevice))
+                    //the channels (A:1, ...) of a replaced device A go with replaceDevice for A
+                    const std::string deviceAddress = it->first.substr(0, it->first.find(':'));
+                    if(supportReplaceDevice && IsDeviceReplaced(deviceAddress,newDevice))
                     {
-                        XmlRpcValue replaceDeviceParams;
-                        replaceDeviceParams[0]=id;
-                        replaceDeviceParams[1]=it->first;
-                        replaceDeviceParams[2] = newDevice;
-                        XmlRpcCallAsync("replaceDevice", replaceDeviceParams);
+                        if(deviceAddress == it->first){
+                            XmlRpcValue replaceDeviceParams;
+                            replaceDeviceParams[0]=id;
+                            replaceDeviceParams[1]=it->first;
+                            replaceDeviceParams[2] = newDevice;
+                            XmlRpcCallAsync("replaceDevice", replaceDeviceParams, url);
+                        }
                     }else{
                         deleteDevicesArray[deleteDevicesArray.size()] = it->first;
                     }
