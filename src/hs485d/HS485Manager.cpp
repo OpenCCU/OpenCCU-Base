@@ -609,6 +609,8 @@ bool HS485Manager::DeleteDevice(const std::string& address, int flags)
 	dev_instances.erase(dev->GetSerial());
 	address_map.erase(dev->GetAddress());
 	delete dev;
+	//drop replacement history entries that still point to the deleted device
+	initReplacementHistory();
 	ValidateServiceMessages();
 	return true;
 }
