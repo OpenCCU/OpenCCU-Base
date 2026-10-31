@@ -132,6 +132,7 @@ void HSSManager::ReportEvent(const std::string& address, const std::string& valu
 bool HSSManager::XmlRpcCallSync(const char* method, XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue* result, const std::string& url)
 {
 	XmlRpcClient c(url);
+	c.setTimeout(30000); // this runs on the daemon's main loop: do not wait forever for a receiver that does not answer
 	if(!c.execute(method, params, *result)){
 		LOG(Logger::LOG_ERROR, "XmlRpc transport error calling %s(%s) on %s:", method, params.toText().c_str(), c.getURL().c_str());
 	}else{

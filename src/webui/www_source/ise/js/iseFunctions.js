@@ -1105,6 +1105,25 @@ ise.Programs.prototype = {
     new Ajax.Request(url,opts);    
   },
 
+  // whether the program is executed at the start of the central unit (ReGaHss)
+  SetExecuteOnStartup: function( id, value )
+  {
+    var url = "/esp/programs.htm?sid="+SessionId;
+    var pb = '';
+    pb += 'string action = "SetExecuteOnStartup";';
+    pb += 'string id = "'+id+'";';
+    pb += 'string value = "'+value+'";';
+    var opts =
+    {
+      postBody: ReGa.encode(pb),
+      onComplete:function(t)
+      {
+        if(dbg){alert( t.responseText );}
+      }
+    };
+    new Ajax.Request(url,opts);
+  },
+
   // ### CONDITIONS ###
   AddCondition: function(rid) {
     var url = "/esp/programs.htm?sid="+SessionId;
@@ -1320,7 +1339,7 @@ ise.Programs.prototype = {
     };
     new Ajax.Request(url,opts);
   },
-  Delete: function(id)
+  Delete: function(id,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -1332,12 +1351,12 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
   },
-  Restore: function(orig,copy)
+  Restore: function(orig,copy,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -1350,12 +1369,12 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
   },
-  CopyToNewProgram: function(id)
+  CopyToNewProgram: function(id,prevPage)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
@@ -1367,7 +1386,7 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        WebUI.enter(ProgramListPage);        
+        WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
@@ -1432,6 +1451,24 @@ ise.SingleCondition.prototype =
     new Ajax.Request(url,opts);        
   },
 
+  SetNegateCondition: function(scid,nc) {                                                          
+    var url = "/esp/sico.htm?sid="+SessionId;            
+    var pb = '';                          
+    pb += 'string action = "SetNegateCondition";';                                     
+    pb += 'string scid = "'+scid+'";';               
+    pb += 'string nc = "'+nc+'";';                                                                     
+    var opts =                                                                                     
+    {                                                
+      postBody: ReGa.encode(pb),      
+      onComplete:function(t)                                    
+      {                                          
+        if(dbg){alert( t.responseText );}                                                      
+        ReloadSingleCondition(scid);                                                       
+      }                                              
+    };                                
+    new Ajax.Request(url,opts);                                  
+  },
+  
   SetLeftValue: function(scid,lv)
   {
     var url = "/esp/sico.htm?sid="+SessionId;
@@ -1674,7 +1711,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "°C") && (value != min) && (value != max)) {
+    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
@@ -1941,6 +1978,27 @@ ise.User.prototype =
     new Ajax.Updater("userSysVarTbl", url, opts);
   },
   
+  MoveSysVar: function(uid, svId, dir) {
+    var url = "/esp/system.htm?sid=" + SessionId;
+    var pb = "string action = 'UserMoveSysVarBuildTable';";
+    pb += "integer userId = "+ uid +";";
+    pb += "integer svId = " + svId + ";";
+    pb += "integer svMoveDirection = " + dir + ";";
+    var opts = {
+      postBody: ReGa.encode(pb),
+      onSuccess: function(t) {
+        // funktioniert seltsamerweise nur durch den "Updater"-Aufruf nicht
+        $("userSysVarTbl").innerHTML = t.responseText;
+      },
+      onComplete: function(response) {
+        if (200 == response.status) {
+          translatePage("#userSysVarTbl");
+        }
+      }
+    };
+    new Ajax.Updater("userSysVarTbl", url, opts);
+  },
+    
   buildTmpSysVarTable: function(arSysVars) {
     var url = "/esp/system.htm?sid="+SessionId;
     var pb = "string action = 'BuildUserSvTable';";

@@ -15,6 +15,7 @@
     <col style="width:25px;"/>
     <col style="width:25px;"/>
     <col style="width:25px;"/>
+    <col style="width:25px;"/>
     <col style="width:11%;"/>
   </colgroup>
   <thead>
@@ -30,6 +31,7 @@
       <th class="DeviceListHead clickable" name="thTransmitMode" onclick="DeviceListPage.sortBy('NAME');">&Uuml;bertragungsmodus</th>
       <th class="DeviceListHead clickable" name="thFuncs" onclick="DeviceListPage.sortBy('NAME');">Gewerke</th>
       <th class="DeviceListHead clickable" name="thRooms" onclick="DeviceListPage.sortBy('NAME');">R&auml;ume</th>
+      <th class="DeviceListHead"><img name="lblRSSI" src="/ise/img/rssi-icon.png" width="24px" height="24px" alt="RSSI" title="RSSI"/></th>
       <th class="DeviceListHead"><img name="lblVisible" src="/ise/img/visible.png" width="24px" height="24px" alt="sichtbar" title="sichtbar"/></th>
       <th class="DeviceListHead"><img name="lblUsable" src="/ise/img/usable.png" width="24px" height="24px" alt="bedienbar" title="bedienbar"/></th>
       <th class="DeviceListHead"><img name="lblRecorded" src="/ise/img/logged.png" width="24px" height="24px" alt="protokolliert" title="protokolliert"/></th>
@@ -50,29 +52,27 @@
       <th class="Filter CLASS10901">&nbsp;</th>
       <th class="Filter CLASS10901">&nbsp;</th>
       <th class="Filter CLASS10901">&nbsp;</th>
+      <th class="Filter CLASS10901">&nbsp;</th>
     </tr>
   </thead>
   <tbody>
     {for device in devices}
       {if !device.inInbox}
         <tr id="${PREFIX}${device.id}" class="DeviceListRow" onclick="DeviceListPage.selectDevice('${device.id}');" onmouseover="this.className='DeviceListRow_Highlight';" onmouseout="this.className='DeviceListRow';">
-          {if (device.typeName != "HmIP-CCU3") && (device.typeName != "RPI-RF-MOD")  && (device.typeName != "HmIP-HAP") && (device.typeName != "HmIP-HAP-A") && (device.typeName != "HmIP-HAP2") && (device.typeName != "HmIP-HAP2-A") && (device.typeName != "HmIP-HAP-B1") && (device.typeName != "HmIP-HAP JS1")}
-            <td class="DeviceListCell_Invisible" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">
-              <img id="${PREFIX}${device.id}PLUS" onclick="DeviceListPage.expandDevice(event, '${device.id}');" src="/ise/img/plus.png" width="16px" height="16px" alt="Kan&auml;le anzeigen" title="Kan&auml;le anzeigen" {if device._expanded} style="display:none;"{/if}/>
-              <img id="${PREFIX}${device.id}MINUS" onclick="DeviceListPage.collapseDevice(event, '${device.id}');" src="/ise/img/minus.png" width="16px" height="16px" alt="Kan&auml;le verbergen" title="Kan&auml;le verbergen" {if !device._expanded} style="display:none;"{/if}/>
-            </td>
-            {else}
-             <td class="DeviceListCell_Invisible" />
-          {/if}
+          <td class="DeviceListCell_Invisible" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">
+            <img id="${PREFIX}${device.id}PLUS" onclick="DeviceListPage.expandDevice(event, '${device.id}');" src="/ise/img/plus.png" width="16px" height="16px" alt="Kan&auml;le anzeigen" title="Kan&auml;le anzeigen" {if device._expanded} style="display:none;"{/if}/>
+            <img id="${PREFIX}${device.id}MINUS" onclick="DeviceListPage.collapseDevice(event, '${device.id}');" src="/ise/img/minus.png" width="16px" height="16px" alt="Kan&auml;le verbergen" title="Kan&auml;le verbergen" {if !device._expanded} style="display:none;"{/if}/>
+          </td>
           <td class="DeviceListCell" colspan="3">${device.name}</td>
           <td class="DeviceListCell" >${device.typeName}</td>
           <td class="DeviceListThumbnail" ><div id="${PREFIX}${device.id}Thumbnail" class="thumbnail" onmouseover="picDivShow(jg_250, '${device.deviceType.id}', 250, '', this);" onmouseout="picDivHide(jg_250);">${device.getThumbnailHTML()}</div></td>
           <td class="DeviceListCell" name="${device.typeDescription}" >${device.typeDescription}</td>
           <td class="DeviceListCell" >${device.address}${device.rfAddress}</td>
-          <td class="DeviceListCell" >${device.interfaceName}</td>
+          <td class="DeviceListCell" id="DeviceInterfaceDisplayName${device.id}" >${device.interfaceDisplayName|default:''|h}</td>
           <td class="DeviceListCell j_chMode" >{for name in device.modes}${name}<br />{forelse}&#160;{/for}</td>
           <td class="DeviceListCell j_functions" >{for subsection in device.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
           <td class="DeviceListCell j_rooms" >{for room in device.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+          <td class="DeviceListCell" id="DeviceStatus${device.id}" ></td>
           <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isVisible}checked="checked"{/if}/></td>
           <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isUsable}checked="checked"{/if}/></td>
           <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isLogged}checked="checked"{/if}/></td>
@@ -103,6 +103,7 @@
             <td class="DeviceListCell j_chMode" >{for name in group.modes}${name}<br />{forelse}&#160;{/for}</td>
             <td class="DeviceListCell" >{for subsection in group.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
             <td class="DeviceListCell" >{for room in group.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+            <td class="DeviceListCell" ></td>
             <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isVisible}checked="checked"{/if}/></td>
             <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isUsable}checked="checked"{/if}/></td>
             <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isLogged}checked="checked"{/if}/></td>
@@ -124,6 +125,7 @@
               <td class="DeviceListCell j_chMode" >${channel.mode}</td>
               <td class="DeviceListCell" >{for subsection in channel.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
               <td class="DeviceListCell" >{for room in channel.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" ></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isVisible}checked="checked"{/if} /></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isUsable}checked="checked"{/if} /></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isLogged}checked="checked"{/if} /></td>
@@ -154,6 +156,7 @@
               <td class="DeviceListCell j_chMode" >${channel.mode}</td>
               <td class="DeviceListCell" >{for subsection in channel.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
               <td class="DeviceListCell" >{for room in channel.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" ></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isVisible}checked="checked"{/if} /></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isUsable}checked="checked"{/if} /></td>
               <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isLogged}checked="checked"{/if} /></td>
@@ -169,7 +172,7 @@
     {forelse}
       <tr class="DeviceListRow">
         <td class="DeviceListCell_Invisible">&#160;</td>
-        <td class="DeviceListCell" name="noDevicesAvailable" colspan="15">Keine Ger&auml;te verf&uuml;gbar</td>
+        <td class="DeviceListCell" name="noDevicesAvailable" colspan="16">Keine Ger&auml;te verf&uuml;gbar</td>
       </tr>
     {/for}
   </tbody>
@@ -187,6 +190,7 @@
       <td class="DeviceListFoot"><div class="CLASS10905" /></td>
       <td class="DeviceListFoot"><div class="CLASS10905" /></td>
       <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10904" /></td>
       <td class="DeviceListFoot"><div class="CLASS10904" /></td>
       <td class="DeviceListFoot"><div class="CLASS10904" /></td>
       <td class="DeviceListFoot"><div class="CLASS10904" /></td>

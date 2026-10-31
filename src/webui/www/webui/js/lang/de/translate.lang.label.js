@@ -23,7 +23,6 @@ jQuery.extend(true,langJSON, {
     "lblBGColorBR" : "Hintergrund-<br/>Farbe",
     "lblBehaviour" : "Verhalten",
     "lblBellButton" : "Klingeltaster",
-    "lblBetaTest" : "Feld-Tester",
     "lblBlueLong" : "Blau lang",
     "lblBlueShort" : "Blau kurz",
     "lblBreak" : "Pause",

@@ -76,12 +76,13 @@ function ::WriteConditionText()
                 if( bOK )
                 {
                 
-                  boolean bSysVarGeneric = ( (iLVT == ivtSystemId) && (oLV.ValueType() == ivtFloat) && (oLV.ValueSubType() == istGeneric) );
+                  boolean bSysVarGeneric = ( (iLVT == ivtSystemId) && ((oLV.ValueType() == ivtFloat) || (oLV.ValueType() == ivtInteger)) && (oLV.ValueSubType() == istGeneric) );
 
                   if( !bSysVarGeneric )
                   {
+                    if (oSC.NegateCondition()) { sRet = sRet#" ${ruleConditionLblNot} ";}
                     !sRet = sRet#" bei";
-                    !sRet = sRet#" ${ruleConditionLblWhen}";
+                    sRet = sRet#" ${ruleConditionLblWhen}";
                   }
 
                   !SPHM-934
@@ -95,7 +96,7 @@ function ::WriteConditionText()
                         sVN0 = sVN0.Replace("&", "&amp;");
                         sVN0 = sVN0.Replace("<", "&lt;");
                         sVN0 = sVN0.Replace(">", "&gt;");
-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN0#', ';
+                        sRet = sRet#' '#sVN0#' ';
                       }
                       if( iRV1 == 1 )
                       {
@@ -103,7 +104,7 @@ function ::WriteConditionText()
                         sVN1 = sVN1.Replace("&", "&amp;");
                         sVN1 = sVN1.Replace("<", "&lt;");
                         sVN1 = sVN1.Replace(">", "&gt;");
-                        sRet = sRet#', ${ruleConditionLblWhen} '#sVN1#', ';
+                        sRet = sRet#' '#sVN1#' ';
                       }
                     }
                   }
@@ -292,8 +293,12 @@ function ::WriteConditionText()
                   {
                     !sRet = sRet#' <i>im Wertebereich</i> ';
 
-                    if (iCT1 != 5) {
-                      Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
+                    if( bSysVarGeneric && oSC.NegateCondition() ) {
+                      Write( ' <i>${ruleConditionLblNot} ${ruleConditionLblWithinValueRange}</i> ' );
+                    } else {
+                      if (iCT1 != 5) {
+                        Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
+                      }
                     }
 
                     string sCT = "";
@@ -706,7 +711,7 @@ function ::WriteDestinationText()
                         
                         if( unit.Length() && sValue == "" )
                         {
-                          sRet=sRet#" "#unit;
+                          sRet=sRet#"&nbsp;"#unit;
                         }
                       }
                     }
@@ -935,6 +940,22 @@ function ::SetVisibility()
       if( system.GetVar("value") == "true" ) { oTmp.Internal( true ); }
       if( system.GetVar("value") == "false" ) { oTmp.Internal( false ); }
       Write( oTmp.Internal() );
+    }
+  }
+  return;
+}
+
+function ::SetExecuteOnStartup()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && system.IsVar("id") && system.IsVar("value") )
+  {
+    object oTmp = dom.GetObject( system.GetVar("id") );
+    if( oTmp )
+    {
+      if( system.GetVar("value") == "true" ) { oTmp.ExecuteOnStartup( true ); }
+      if( system.GetVar("value") == "false" ) { oTmp.ExecuteOnStartup( false ); }
+      Write( oTmp.ExecuteOnStartup() );
     }
   }
   return;

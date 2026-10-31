@@ -3,6 +3,36 @@
  **/
  
 /**
+ * Checks if a text is a valid regular expression.
+ **/
+const isValidRegex = function(possiblyValidRegex)
+{
+  try
+  {
+    new RegExp(possiblyValidRegex);
+  }
+  catch(err)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Checks if a text matches the filter as entered by the user, used as a
+ * case-insensitive regular expression. Callers also check the filter as
+ * plain text, so text with special characters like "(" or "+" still matches.
+ **/
+const matchesFilterRegex = function(text, filter)
+{
+  if ((typeof filter != "string") || (filter === "")) { return false; }
+  if (!isValidRegex(filter)) { return false; }
+
+  return new RegExp(filter, "i").test(text);
+}
+
+/**
  * Konstrukor. Filter für Zeichenketten
  **/
 StringFilter = function(name, callback)
@@ -13,10 +43,11 @@ StringFilter = function(name, callback)
   
   
   var m_name     = name;
-  var m_value    = "";
   var m_callback = callback;
   
   var m_id     = name.replace(/\,/g, "_");
+  var m_value    = "";
+  try { m_value = localStorage.getItem(m_id) || ""; } catch (e) {}
   var m_textId = m_id + "Text";
 
   var isSet = function()
@@ -82,6 +113,8 @@ StringFilter = function(name, callback)
     
     var patternList = m_value.toLowerCase().split("|");
     //var patternList = m_value.split("|");
+    if (matchesFilterRegex(text, m_value)) { return true; }
+
     text            = text.toLowerCase();
     
     for (var i = 0, len = patternList.length; i < len; i++)
@@ -121,6 +154,7 @@ StringFilter = function(name, callback)
       }
     }
     if ($(m_id))     { $(m_id).hide(); }
+    try { localStorage.setItem(m_id, $(m_textId).value); } catch (e) {}
     if (m_callback)  { m_callback(); }
   };
   
@@ -139,6 +173,7 @@ StringFilter = function(name, callback)
   this.reset = function()
   {
     m_value = "";
+    try { localStorage.removeItem(m_id); } catch (e) {}
     this.close();
   };
 
@@ -161,7 +196,6 @@ StringFilter = function(name, callback)
   /*# Initialisierung #*/
   /*###################*/
   
-  this.reset();
   
 };
 

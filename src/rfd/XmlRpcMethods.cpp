@@ -13,6 +13,14 @@
 
 using namespace XmlRpc;
 
+//! Throws a fault when a method is called with fewer than count arguments
+static void RequireParams(XmlRpc::XmlRpcValue& params, int count)
+{
+	if(params.getType()!=XmlRpcValue::TypeArray || params.size()<count){
+		throw XmlRpcException("Insufficient parameters.", -1);
+	}
+}
+
 //#define LOG_METHOD_CALLS
 
 #ifdef LOG_METHOD_CALLS
@@ -172,6 +180,7 @@ public:
 	XmlRpcMethodGetParamsetDescription(XmlRpcServer* s):XmlRpcServerMethod("getParamsetDescription", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		result.assertStruct();
 		if(!RFManager::GetSingleton()->GetParamsetDescription((std::string&)params[0], (std::string&)params[1], &result)){
 			throw XmlRpcException("Failure");
@@ -198,6 +207,7 @@ public:
 	XmlRpcMethodPutParamset(XmlRpcServer* s):XmlRpcServerMethod("putParamset", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(params.size() == 4) {
 			if(!RFManager::GetSingleton()->PutParamsetValues((std::string&)params[0], (std::string&)params[1], params[2], (std::string&)params[3])){
 				throw XmlRpcException("Failure");
@@ -228,6 +238,7 @@ public:
 	XmlRpcMethodGetParamset(XmlRpcServer* s):XmlRpcServerMethod("getParamset", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		result.assertStruct();
 		if(params.size()==3)
 		{
@@ -262,6 +273,7 @@ public:
 	XmlRpcMethodDetermineParameter(XmlRpcServer* s):XmlRpcServerMethod("determineParameter", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(!RFManager::GetSingleton()->DetermineParameter((std::string&)params[0], (std::string&)params[1], (std::string&)params[2])){
 			throw XmlRpcException("Failure");
 		}
@@ -285,6 +297,7 @@ public:
 	XmlRpcMethodGetValue(XmlRpcServer* s):XmlRpcServerMethod("getValue", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		if(params.size() == 3)
 		{
 			if(!RFManager::GetSingleton()->GetValue(params[0], params[1],params[2], &result)){
@@ -318,6 +331,7 @@ public:
 	XmlRpcMethodSetValue(XmlRpcServer* s):XmlRpcServerMethod("setValue", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(params.size() == 4) {//DTAG Feature: dynamic rx_mode change
 			if(!RFManager::GetSingleton()->SetValue(params[0], params[1], params[2], (std::string&)params[3])){
 				throw XmlRpcException("Failure");
@@ -490,6 +504,7 @@ public:
 	XmlRpcMethodRemoveLink(XmlRpcServer* s):XmlRpcServerMethod("removeLink", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		if(!RFManager::GetSingleton()->RemoveLink((std::string&)params[0], (std::string&)params[1])){
 			throw XmlRpcException("Failure");
 		}
@@ -690,6 +705,7 @@ public:
 	XmlRpcMethodGetParamsetId(XmlRpcServer* s):XmlRpcServerMethod("getParamsetId", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		std::string& id=result;
 		if(!RFManager::GetSingleton()->GetParamsetId(params[0], params[1], &id)){
 			throw XmlRpcException("Failure");
@@ -943,6 +959,7 @@ public:
 	XmlRpcMethodGetMetadata(XmlRpcServer* s):XmlRpcServerMethod("getMetadata", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
         if(!RFManager::GetSingleton()->MetadataGet(((std::string&)params[0]).c_str(), ((std::string&)params[1]).c_str(), &result)){
 			throw XmlRpcException("Failure");
 		}
@@ -968,6 +985,7 @@ public:
 	XmlRpcMethodSetMetadata(XmlRpcServer* s):XmlRpcServerMethod("setMetadata", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(!RFManager::GetSingleton()->MetadataSet(((std::string&)params[0]).c_str(), ((std::string&)params[1]).c_str(), params[2])){
 			throw XmlRpcException("Failure");
 		}
@@ -1033,6 +1051,7 @@ public:
 	XmlRpcMethodSetVolatileMetadata(XmlRpcServer* s):XmlRpcServerMethod("setVolatileMetadata", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		const char* dataId = ((std::string&)params[0]).c_str();
 		XmlRpc::XmlRpcValue& value = params[1];
 		
@@ -1075,6 +1094,7 @@ public:
 	XmlRpcMethodSetInterfaceClock(XmlRpcServer* s):XmlRpcServerMethod("setInterfaceClock", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		result = RFManager::GetSingleton()->SetInterfaceClock( (int)params[0], (int)params[1] );
 	}
 };

@@ -25,6 +25,8 @@ BidcosRfPage =
   m_gatewayTableKeyHeader: null,
   m_gatewayTableIPHeader: null,
   m_gatewayTableStateHeader: null,
+  m_gatewayTableDCStateHeader: null,
+  m_gatewayTableFWStateHeader: null,
   m_gatewayTableActionHeader: null,
   m_gatewayTableBody: null,
   m_optionsButtonBar: null,
@@ -137,7 +139,19 @@ BidcosRfPage =
     //this.m_gatewayTableStateHeader.appendChild(document.createTextNode("Status"));
     this.m_gatewayTableStateHeader.appendChild(document.createTextNode(translateKey("thState")));
     this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableStateHeader);
-    
+
+    /* Spaltenüberschrift DutyCycle Status (Tabelle für BidCoS-RF Gateways */
+    this.m_gatewayTableDCStateHeader = document.createElement("th");
+    this.m_gatewayTableDCStateHeader.className = "bidcosrf_tableheader";
+    this.m_gatewayTableDCStateHeader.appendChild(document.createTextNode(translateKey("lblDutyCycle")));
+    this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableDCStateHeader);
+
+    /* Spaltenüberschrift Firmware Status (Tabelle für BidCoS-RF Gateways */
+    this.m_gatewayTableFWStateHeader = document.createElement("th");
+    this.m_gatewayTableFWStateHeader.className = "bidcosrf_tableheader";
+    this.m_gatewayTableFWStateHeader.appendChild(document.createTextNode(translateKey("thFirmware")));
+    this.m_gatewayTableHeadRow.appendChild(this.m_gatewayTableFWStateHeader);
+
     /* Spaltenüberschrift Verbunden (Tabelle für BidCoS-RF Gateways */
     this.m_gatewayTableActionHeader = document.createElement("th");
     this.m_gatewayTableActionHeader.className = "bidcosrf_tableheader";
@@ -408,6 +422,9 @@ BidcosRfPage =
     homematic("BidCoS_Wired.setConfigurationWired", {
       "interfaces": gatewaysWired
     });
+
+    // show the saved gateway names in the device list
+    DeviceList.refreshBidCosGateways();
   
     
  //   if (/*(useInternalAntenna == false) &&*/ (homematic("BidCoS_RF.isKeySet", null))) //TODO Check if this is okay
@@ -420,6 +437,18 @@ BidcosRfPage =
       MessageBox.show(translateKey("dialogInfo"), translateKey("dialogSettingsBidcosRFSaveConfigSucceed"));
       WebUI.enter(BidcosRfPage);
  //   }
+  },
+  
+  // Text for the connection state of a LAN gateway (Interface.getLGWConnectionStatus)
+  getLGWConnectionText: function(connstat)
+  {
+    if (connstat == "NO_ERROR") {
+      return translateKey("lanGatewayLblConnected");
+    }
+    if (connstat == "WRONG_KEY") {
+      return translateKey("errorWrongPassword");
+    }
+    return translateKey("lanGatewayLblNotConnected");
   },
   
   onUpdate: function()
@@ -445,51 +474,61 @@ BidcosRfPage =
         for (var i = 0, len = rfGateways.length; i < len; i++)
         {
    	      if(globalLGWTypes.HMLGW2 == rfGateways[i].getType()) {//NEW RF Gateway
-   	        //var hmlgw2GW = rfGateways[i];
-   	        var lgwStatus = null;
-		    homematic("Interface.getLGWConnectionStatus", {"interface" : "BidCos-RF", "serial" : rfGateways[i].getAddress()}, function(lgwStatus) {
-		        var textB = "";
-		        var lgw = null;
-		        if(lgwStatus) 
+   	        // Keep the gateway of this request, the loop variable is stale in the callback
+   	        (function(lgw) {
+		      homematic("Interface.getLGWConnectionStatus", {"interface" : "BidCos-RF", "serial" : lgw.getAddress()}, function(lgwStatus) {
+		        var textB = translateKey("lanGatewayLblNotActive");
+		        lgw.setDCState("");
+		        lgw.setFWState("");
+		        if (lgwStatus && lgwStatus.serial == lgw.getAddress())
 		        {
-				    for(var j = 0; j < rfGateways.length; j++) {
-				    	if(rfGateways[j].getAddress() == lgwStatus.serial) {
-				    	 lgw = rfGateways[j];
-				    	}
-				    }
-		        	if(lgw) 
-		        	{
-					  if(lgwStatus.connstat == "NO_ERROR") {
-					    textB = translateKey("lanGatewayLblConnected");
-					  }
-					  else if(lgwStatus.connstat == "CONNECT_FAILED") {
-					    textB = translateKey("lanGatewayLblNotConnected");
-					  }
-					  else if(lgwStatus.connstat == "WRONG_KEY") {
-					    textB = translateKey("errorWrongPassword");
-					  }
-					  else if(lgwStatus.connstat == "") {
-					  	textB = translateKey("lanGatewayLblNotConnected");
-					  }
-					  else {
-					    textB = translateKey("lanGatewayLblNotConnected");
-					  }
-					}
-					else 
-					{
-				      textB = translateKey("lanGatewayLblNotActive");
-					}
-					lgw.setState(textB);
-			  }//if lgwstatus
-			  else {
-			  	lgw.setState(translateKey("lanGatewayLblNotActive"));
-			  }
-		    });
+		          // Duty cycle and firmware are only valid while the gateway is connected
+		          for (var loop = 0; lgwStatus.connstat == "NO_ERROR" && loop < gatewayStatus.length; loop++) {
+		            if (lgwStatus.serial == gatewayStatus[loop].address) {
+		              var dutyCycle = gatewayStatus[loop].dutyCycle;
+		              var textDC = (dutyCycle == null || dutyCycle === "") ? "" : dutyCycle + "%";
+		              lgw.setDCState(textDC);
+
+		              var textFW = (gatewayStatus[loop].fwVersion == null) ? "" : String(gatewayStatus[loop].fwVersion);
+		              lgw.setFWState(textFW);
+		            }
+		          }
+		          textB = BidcosRfPage.getLGWConnectionText(lgwStatus.connstat);
+		        }
+		        lgw.setState(textB);
+		      });
+   	        })(rfGateways[i]);
    	      }
 		  else //all other rf gateways
 		  {
 			  var text = "";
 	   	      var status = rfGateways[i].determineState(gatewayStatus);
+	   	      var cfglan = rfGateways[i].getAddress(gatewayStatus);
+
+	   	      rfGateways[i].setDCState("");
+	   	      rfGateways[i].setFWState("");
+
+	   	      for (var loop = 0; loop < gatewayStatus.length; loop++) {
+	   	      	var gatewaysn = gatewayStatus[loop].address;
+
+	   	      	if (cfglan == gatewaysn) {
+	   	      		var dutyCycle = gatewayStatus[loop].dutyCycle;
+	   	      		var textDC = (dutyCycle == null || dutyCycle === "") ? "" : dutyCycle + "%";
+	   	      		rfGateways[i].setDCState(textDC);
+
+	   	      		// HM-CFG-LAN reports its firmware 0.965 as "965"
+	   	      		var fwVersion = String(gatewayStatus[loop].fwVersion || "");
+	   	      		var textFW = fwVersion;
+	   	      		if (/^[0-9]+$/.test(fwVersion)) {
+	   	      			textFW = "0." + fwVersion;
+	   	      			if (parseInt(fwVersion, 10) < 965) {
+	   	      				textFW += " (Update: 0.965)";
+	   	      			}
+	   	      		}
+	   	      		rfGateways[i].setFWState(textFW);
+	   	      	}
+	   	  	  }
+
 		      if (status)
 		      {
 		        text = (status.isConnected) ? translateKey("lanGatewayLblConnected") : translateKey("lanGatewayLblNotConnected");
@@ -523,44 +562,17 @@ BidcosRfPage =
     /* Wired Gateways */
     for(var k = 0, length = wiredGateways.length; k < length ; k++)
     {
-      	var wiredLGW = wiredGateways[k];
-		    homematic("Interface.getLGWConnectionStatus", {"interface" : "BidCos-Wired", "serial" : wiredLGW.getAddress()}, function(lgwStatus) {
-		    var textB = "";
-		    var lgw = null;
-		    if(lgwStatus) 
-		    {
-				for(var j = 0; j < wiredGateways.length; j++) {
-					if(wiredGateways[j].getAddress() == lgwStatus.serial) {
-					 lgw = wiredGateways[j];
-					}
-				}
-		    	if(lgw) 
-		    	{
-				  if(lgwStatus.connstat == "NO_ERROR") {
-					textB = translateKey("lanGatewayLblConnected");
-				  }
-				  else if(lgwStatus.connstat == "CONNECT_FAILED") {
-					textB = translateKey("lanGatewayLblNotConnected");
-				  }
-				  else if(lgwStatus.connstat == "WRONG_KEY") {
-					textB = translateKey("errorWrongPassword");
-				  }
-				  else if(lgwStatus.connstat == "") {
-				  	textB = translateKey("lanGatewayLblNotConnected");
-				  }
-				  else {
-					textB = translateKey("lanGatewayLblNotConnected");
-				  }
-				}
-				else {
-				  textB = translateKey("lanGatewayLblNotActive");
-				}
-				lgw.setState(textB);
-		  }//if lgwstatus
-		  else {
-		  	lgw.setState(translateKey("lanGatewayLblNotActive"));
+      // Keep the gateway of this request, the loop variable is stale in the callback
+      (function(lgw) {
+		homematic("Interface.getLGWConnectionStatus", {"interface" : "BidCos-Wired", "serial" : lgw.getAddress()}, function(lgwStatus) {
+		  var textB = translateKey("lanGatewayLblNotActive");
+		  if (lgwStatus && lgwStatus.serial == lgw.getAddress())
+		  {
+		    textB = BidcosRfPage.getLGWConnectionText(lgwStatus.connstat);
 		  }
+		  lgw.setState(textB);
 		});
+      })(wiredGateways[k]);
     }
   },
   
@@ -690,6 +702,8 @@ BidcosRfPage.Gateway.prototype =
   m_keyLabel: null,
   m_ipLabel: null,
   m_stateLabel: null,
+  m_stateDCLabel: null,
+  m_stateFWLabel: null,
   m_actionCell: null,
   m_deleteButton: null,
   m_onDeleteHandler: null,
@@ -742,6 +756,16 @@ BidcosRfPage.Gateway.prototype =
     this.m_stateLabel.className = "bidcosrf_tablecell";
     this.m_element.appendChild(this.m_stateLabel);
     
+    /* DutyCycle Status */
+    this.m_stateDCLabel = document.createElement("td");
+    this.m_stateDCLabel.className = "bidcosrf_tablecell";
+    this.m_element.appendChild(this.m_stateDCLabel);
+    
+    /* Firmware Status */
+    this.m_stateFWLabel = document.createElement("td");
+    this.m_stateFWLabel.className = "bidcosrf_tablecell";
+    this.m_element.appendChild(this.m_stateFWLabel);
+
     /* Aktion */
     this.m_actionCell = document.createElement("td");
     this.m_actionCell.className = "bidcosrf_actioncell";
@@ -881,6 +905,18 @@ BidcosRfPage.Gateway.prototype =
     return this;
   },
   
+  setDCState: function(state)
+  {
+    this.m_stateDCLabel.innerHTML = "";
+    this.m_stateDCLabel.appendChild(document.createTextNode(state));
+  },
+  
+  setFWState: function(state)
+  {
+    this.m_stateFWLabel.innerHTML = "";
+    this.m_stateFWLabel.appendChild(document.createTextNode(state));
+  },
+
   getElement: function()
   {
     return this.m_element;
@@ -1176,15 +1212,21 @@ BidcosRfPage.Device.prototype =
     
     if (gateway)
     {
-      homematic("Interface.setBidcosInterface", {
+      var result = homematic("Interface.setBidcosInterface", {
         "interface": "BidCos-RF",
         "deviceId": this.m_address,
         "interfaceId": gateway.getAddress(),
         "roaming": roaming
       });
+      if (result !== true) { return false; }
       //jQuery("."+gateway.getAddress()).attr("class","bidcosrf_tablecell " + gateway.getAddress().replace(/\s+/g,""));
       this.setGateway(gateway.getAddress());
       this.setRoaming(roaming);
+      var gatewayName = gateway.getUserName();
+      if (gatewayName.length === 0) {
+        gatewayName = (gateway === BidcosRfPage.getDefaultGateway()) ? 'BidCos-RF' : gateway.getAddress();
+      }
+      DeviceList.updateInterfaceDisplayName(this.m_address, gatewayName);
     }
   }
 };
@@ -1910,7 +1952,8 @@ BidcosRfPage.EditAssignmentDialog = Class.create({
    **/
   ok: function()
   {
-    if (this.m_action) { this.m_action(this); }
+    // keep the dialog open if the assignment was rejected
+    if (this.m_action && this.m_action(this) === false) { return; }
     this.close();
   },
   

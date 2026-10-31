@@ -242,6 +242,13 @@ public:
 	 *  \see SetInternalValue()
 	 */
 	virtual bool RegisterInternalValueEvent(const std::string& id, EventReceiver* rec);
+	//! Removes every registration of an observer of internal values
+	/*! Must be called before a registered receiver is deleted, otherwise
+	 *  SendInternalValueEvent() would call the deleted object.
+	 *  \param rec receiver whose registrations are removed
+	 *  \see RegisterInternalValueEvent()
+	 */
+	void UnregisterInternalValueEvents(EventReceiver* rec);
 	//! Weist ein Ger�t an, das zu einer Verkn�pfung geh�rende Parameterset (Profil) auszuf�hren
 	/*! �ber diese Methode ist das Testen von Verkn�pfungseinstellungen realisiert
 	 *  Muss von abgeleiteten Klassen implementiert werden, sofern diese das Testen von

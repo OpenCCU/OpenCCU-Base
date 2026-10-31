@@ -85,6 +85,10 @@ int Hexfile::Read(const std::string& filename)
         }
         if(rectype==0x01){
             fclose(f);
+			if(start<0 || (ucVec::size_type)start>=buffer.size()){//no data before the end record
+				LOG(Logger::LOG_ERROR, "Hex file \"%s\" contains no data", filename.c_str());
+				return -1;
+			}
 			buffer.erase(buffer.begin(), buffer.begin()+start);
             return 1;
         }else if(rectype>0x01){

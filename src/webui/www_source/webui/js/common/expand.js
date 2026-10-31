@@ -85,8 +85,9 @@ Array.prototype.ex_joinProperty = function(name, separator)
  **/
 Array.prototype.ex_sortBy = function(name, sortReverse)
 {
-  this.sort(function(a,b) { return Object.ex_compare(a[name], b[name]); });
-  if (sortReverse) { this.reverse(); }
+  // apply the direction in the comparison, so equal entries keep their order in both directions
+  var order = sortReverse ? -1 : 1;
+  this.sort(function(a,b) { return order * Object.ex_compare(a[name], b[name]); });
   
   return this;
 };
@@ -98,8 +99,9 @@ Array.prototype.ex_sortBy = function(name, sortReverse)
  **/
 Array.prototype.ex_sortByProperty = function(name, sortReverse)
 {
-  this.sort(function(a, b) { return Object.ex_compare(a[name](), b[name]()); });
-  if (sortReverse) { this.reverse(); }
+  // apply the direction in the comparison, so equal entries keep their order in both directions
+  var order = sortReverse ? -1 : 1;
+  this.sort(function(a, b) { return order * Object.ex_compare(a[name](), b[name]()); });
   
   return this;
 };
@@ -132,8 +134,7 @@ String.prototype.ex_compareTo = function(other)
     var strA = this.toLowerCase();
     var strB = other.toLowerCase();
   
-    if      (strA > strB) { return 1; }
-    else if (strA < strB) { return -1; }
+    return strA.localeCompare(strB, undefined, {numeric: true, sensitivity: 'base'});
   }
   
   return 0;

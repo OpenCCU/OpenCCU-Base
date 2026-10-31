@@ -42,6 +42,7 @@ DeviceList = Singleton.create({
     {
       var id = data["id"];
       device = this.devices[id];
+      data["interface_displayname"] = this.loadIfDisplayName(data);
 
       if (typeof(device) != "undefined") 
       {
@@ -154,6 +155,89 @@ DeviceList = Singleton.create({
     return singles;
   },
   
+  // returns false and keeps the previously loaded gateways if a request fails
+  loadBidCosGateways: function()
+  {
+    var allBidCosDevsList = homematic("Interface.listDevices", {"interface": "BidCos-RF"});
+    var rfGateways = homematic("BidCoS_RF.getConfigurationRF");
+    if (!allBidCosDevsList || !rfGateways || !rfGateways.interfaces) {
+      if (typeof this.BidCosGateways === 'undefined') { this.BidCosGateways = []; }
+      if (typeof this.BidCosGatewayFilters === 'undefined') { this.BidCosGatewayFilters = []; }
+      return false;
+    }
+    // remove the gateway entries of a previous load from the interface filter
+    if (this.BidCosGatewayFilters) {
+      for (var j = 0; j < this.BidCosGatewayFilters.length; j++) {
+        var idx = DeviceListPage.INTERFACES.indexOf(this.BidCosGatewayFilters[j]);
+        if (idx > -1) { DeviceListPage.INTERFACES.splice(idx, 1); }
+      }
+    }
+    this.BidCosGatewayFilters = [];
+    this.BidCosGateways=[];	   
+    this.allBidCosDevsList = allBidCosDevsList;
+    for (var i = 0, len = rfGateways.interfaces.length; i < len; i++) {
+      var gateway = rfGateways.interfaces[i];
+      if (gateway.type === globalLGWTypes.HMLGW2) {
+        this.BidCosGateways.push(
+         new BidcosRfPage.Gateway()
+          .setGatewayClass("RF")
+          .setType(gateway.type)
+          .setUserName((gateway.userName.length > 0) ? gateway.userName : gateway.serialNumber)
+          .setAddress(gateway.serialNumber)
+          .setKey(gateway.encryptionKey)
+          .setIP(gateway.ipAddress)
+        );
+      }
+    }
+    this.BidCosGateways.sort((a, b) => a.m_userName.localeCompare(b.m_userName, undefined, { numeric: true, sensitivity: 'base' }));
+    for (var i = 0, len = this.BidCosGateways.length; i < len; i++) {
+      // the id is used in HTML attributes, the name as HTML text of the interface filter
+      var filterEntry = {
+        id: "INTERFACE_BIDCOS_GW_" + String(this.BidCosGateways[i].m_address).replace(/[^A-Za-z0-9_-]/g, "_"),
+        name: String(this.BidCosGateways[i].m_userName).escapeHTML()
+      };
+      this.BidCosGatewayFilters.push(filterEntry);
+      DeviceListPage.INTERFACES.push(filterEntry);
+    }
+    return true;
+  },
+  
+  loadIfDisplayName: function(data) 
+  {
+    if (typeof this.BidCosGateways === 'undefined') { this.loadBidCosGateways(); }
+    var dispname = data["interface"];
+    if ( this.allBidCosDevsList && this.BidCosGateways.length > 0 && data["interface"] === "BidCos-RF") {
+      var idx = this.allBidCosDevsList.findIndex(({ address }) => address === data["address"]);
+      if (idx > -1) {
+        var _device= this.allBidCosDevsList[idx];
+        var gwIdx = this.BidCosGateways.findIndex(({ m_address }) => m_address === _device["interface"]);
+        if ( gwIdx > -1 ) {
+          dispname = (this.BidCosGateways[gwIdx].m_userName.length > 0) ?  this.BidCosGateways[gwIdx].m_userName : _device["interface"]; 
+        }
+      }
+    }
+    return dispname;
+  },
+  // reload the gateways after their configuration was saved and update the gateway names of the devices
+  refreshBidCosGateways: function()
+  {
+    if (typeof this.BidCosGateways === 'undefined') { return; }
+    if (!this.loadBidCosGateways()) { return; }
+    for (var id in this.devices) {
+      var device = this.devices[id];
+      var gwName = this.loadIfDisplayName({"interface": device.interfaceName, "address": device.address});
+      if (gwName !== device.interfaceDisplayName) { device.updateInterfaceDisplayName(gwName); }
+    }
+  },
+  updateInterfaceDisplayName:function(addr,gwName) {
+    var _this_ = this;
+    for (var id in _this_.devices) {
+      var device = _this_.devices[id];
+      if (device.address === addr) {
+        device.updateInterfaceDisplayName(gwName);
+      }
+    }
+  },
   /**
    * Lädt die Geräteliste erneut
    **/
@@ -194,6 +278,10 @@ DeviceList = Singleton.create({
     this.devices  = {};
     this.channels = {};
     this.groups   = {};
+    // refresh the gateways and their assignments, they may have changed since the last load
+    if (typeof this.BidCosGateways !== 'undefined') {
+      this.loadBidCosGateways();
+    }
 
     var self=this;
     homematic("Device.listAllDetail", null, function(deviceList) {
@@ -204,6 +292,7 @@ DeviceList = Singleton.create({
         {
           var id = data["id"];
           var device = self.devices[id];
+          data["interface_displayname"] =  self.loadIfDisplayName(data);
 
           if (typeof(device) != "undefined")
           {
@@ -234,6 +323,36 @@ DeviceList = Singleton.create({
   */
   },
   
+  /**
+   * Startet die Aktualisierung des Status aller Geräte.
+   **/
+  updateDeviceStatus:function()
+  {
+    var _this_ = this;
+
+    homematic("Interface.rssiInfo", {"interface": "BidCos-RF"}, function(rssiInfo) {
+      for (var id in _this_.devices)
+      {
+        var device = _this_.devices[id];
+        if (device !== null && typeof(device) !== 'undefined' && device.interfaceName !== 'VirtualDevices')
+        {
+          homematic("Device.listStatus", {"id": device.id, "address": device.address, "interface": device.interfaceName}, function(data) {
+            if (data !== null && typeof(data) !== 'undefined')
+            {
+              var id = data["ID"];
+              if (id !== null && typeof(id) !== 'undefined')
+              {
+                var device = _this_.devices[id];
+                if (device !== null && typeof(device) !== 'undefined')
+                  device.updateStatus(data, rssiInfo);
+              }
+            }
+          });
+        }
+      }
+    });
+  },
+
   /**
    * Startet die Akualisierung eines Geräts.
    **/

@@ -29,6 +29,15 @@ bool LogicalInstance::RegisterInternalValueEvent(const std::string& id, LogicalI
 	return true;
 }
 
+void LogicalInstance::UnregisterInternalValueEvents(LogicalInstance::EventReceiver* rec)
+{
+	event_receivers_t::iterator it=event_receivers.begin();
+	while(it!=event_receivers.end()){
+		if(it->second==rec)event_receivers.erase(it++);
+		else ++it;
+	}
+}
+
 void LogicalInstance::SendInternalValueEvent(const std::string& id)
 {
 	XmlRpcValue val;

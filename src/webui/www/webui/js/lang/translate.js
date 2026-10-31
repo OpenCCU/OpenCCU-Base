@@ -1,3 +1,8 @@
+
+// This one should not be initialized for each lang, 
+// as that is lateron used for indication of loaded Ressources
+var EscapedLangDict = {};
+
 function isNoProgramScript(cont) {
   if ((cont == "#prgrulecontent") || (jQuery("#scrinp").length > 0)) {
     return false;
@@ -12,8 +17,8 @@ function setTextContent(cont, callback) {
   container = (cont == undefined) ? container : cont;
 
   jQuery(container)
-    .addBack()
     .find("*")
+    .addBack()
     .contents()
     .filter(function () {
       return this.nodeType === 3;
@@ -68,12 +73,34 @@ function translatePage(container, callback) {
  * @param {string} key The key to translate
  * @return {*} The translated key
  */
-function translateKey(key) {
-  //if (HMIdentifier[getLang()] == {} || langJSON[getLang()] == {}) {
-  if (Object.keys(HMIdentifier[getLang()]).length === 0 || Object.keys(langJSON[getLang()]).length === 0) {
-    loadTextResource();
+function translateKey(key, lang) {
+  if(null == lang) lang = getLang();
+  // This check is more performant then always processing all Keys.
+  if(EscapedLangDict[lang] === undefined) {
+    if (Object.keys(HMIdentifier[lang]).length === 0 ||
+        Object.keys(langJSON[lang]).length === 0) {
+      loadTextResource();
+    } else {
+      EscapedLangDict[lang] = {};
+    }
+    var text = langJSON[lang][key];
+    if(text === undefined) text = key;
+    return unescape(text);
   }
-  return unescape((langJSON[getLang()][key] != undefined) ? langJSON[getLang()][key] : key);
+  
+  // Use the cached unescaped text only while the text in langJSON is unchanged,
+  // because resources loaded later (e.g. by the easymodes) add or override keys
+  var keyText = langJSON[lang][key];
+  if(keyText === undefined) keyText = key;
+  var cached = EscapedLangDict[lang][key];
+  if(cached !== undefined && cached.text === keyText) {
+    return cached.result;
+  }
+
+  // Unescape the ressource and cache it
+  var result = unescape(keyText);
+  EscapedLangDict[lang][key] = {text: keyText, result: result};
+  return result;
 }
 
 /**
@@ -97,10 +124,10 @@ function translateButtons(key) {
  */
 function translateJSTemplate(container) {
   var origKey, translatedKey;
-
-  jQuery.each(jQuery(container+" *[name]"), function() {
-    origKey = jQuery(this).attr("name");
-    translatedKey =  translateKey(origKey);
+  var lang = getLang();
+  jQuery.each(jQuery(container+" *[name]"), function(i, e) {
+    origKey = e.getAttribute("name");
+    translatedKey =  translateKey(origKey, lang);
 
     // Set the html of an element or the title of an image only if a valid translation is available.
     if (origKey != translatedKey) {
@@ -109,11 +136,17 @@ function translateJSTemplate(container) {
       switch (this.tagName) {
         case "IMG":
           // An image gets the tooltip translated.
-          jQuery(this).attr("title", translatedKey);
+          e.setAttribute("title", translatedKey);
           break;
         default:
-          // All other elements are getting the innerHTML replaced
-          jQuery(this).html(translatedKey);
+          // Replacing textContent with translation is faster
+          // but elements with html tags <..> or entities &..; have
+          // to be stored using innerHTML
+          if(translatedKey.indexOf("<") >= 0 || translatedKey.indexOf("&") >= 0) {
+            e.innerHTML = translatedKey;
+          } else {
+            e.textContent = translatedKey;
+          }
           break;
       }
     }

@@ -55,6 +55,11 @@ showMaintenanceCP = function()
   CreateCPPopup("/config/cp_maintenance.cgi");
 };
 
+showAdvancedSettingsCP = function()
+{
+  CreateCPPopup("/config/cp_advancedsettings.cgi");
+};
+
 showNewFirmwareDownload = function() {
   CreateCPPopup("/config/cp_maintenance.cgi", "downloadOnly=1");
 };
@@ -276,6 +281,9 @@ cpMessageBox.prototype =
   
   ShowPopup: function() {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };
 
@@ -407,5 +415,8 @@ cpMessageBox2.prototype =
   ShowPopup: function()
   {
     this.show();
+    setTimeout(function() {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }, 100);
   }
 };

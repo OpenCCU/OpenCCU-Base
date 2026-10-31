@@ -338,11 +338,31 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
     if (file.substring(0, UI_PATH.length) == UI_PATH)
     {
       //method: 'get' ist für die ELV-CGIs notwendig.
-      opts = {evalScripts: true, method: 'get', onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        evalScripts: true,
+        method: 'get',
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     else
     {
-      opts = {postBody: ReGa.encode(pb),evalScripts: true, onComplete:function(){iseRefr(true);bUpdateContentRunning=false;}};
+      opts = {
+        postBody: ReGa.encode(pb),
+        evalScripts: true,
+        onComplete:function(){
+          iseRefr(true);
+          bUpdateContentRunning=false;
+          setTimeout(function() {
+            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+          }, 100);
+        }
+      };
     }
     /* ELV --> */
     
@@ -622,15 +642,25 @@ loadNewLinkPage = function()
 };
 
 setPath = function (path) {
-  var s = "<span onclick='WebUI.enter(StartPage);'>" +translateKey('startPage')+"</span>";
-  if ((path.length > 0) && $("PagePath")) {
-    if ($("PagePath"))$("PagePath").innerHTML = s + " &gt; " + path;
+  var title=document.title;
+  if (title != 'OpenCCU WebUI') {
+    title = '[' + title.escapeHTML() + '] ';
+  } else {
+    title = '';
   }
-  else {
-    if ($("PagePath"))$("PagePath").innerHTML = "<span id='PagePathSpan'>"+translateKey('startPage')+"</span>";
+
+  if ($("PagePath")) {
+    var s = '';
+    if (path.length > 0) {
+      s = "<span onclick='WebUI.enter(StartPage);'>" + title + translateKey('startPage') + "</span>&nbsp;&gt; " + path;
+    } else {
+      s = "<span id='PagePathSpan'>" + title + translateKey('startPage') + "</span>";
+    }
+
+    $("PagePath").innerHTML = s;
+    translatePage("#PagePath");
   }
-  translatePage("#PagePath");
-};
+};  
 
 
 
@@ -1729,14 +1759,14 @@ convertDomTime = function(s) {
   return arTmp[0]+':'+arTmp[1];
 };
 
-ExecuteProgram = function(dpid)
+ExecuteProgram = function(dpid, thenOnly)
 {
   var url = "/esp/exec.htm?sid=" + SessionId;
   var pb = "";
   pb += "object o = dom.GetObject( "+dpid+" );";
   pb += "if( o )";
   pb += "{";
-  pb += "  o.ProgramExecute();";
+  pb += (thenOnly === true) ? "  o.ProgramExecute();" : "  o.State(1);";
   pb += "}";
   var opts = {postBody: ReGa.encode(pb)};
   if(dbg)alert(pb);
@@ -1893,51 +1923,15 @@ iseArraySwap = function(arr,entryA,entryB)
 iseSortMultiArray = function(arr,dsc,dir,sln, sessionVar,popup)
 {
   conInfo("Sort multi array.");
-  do
-  {
-    var n = arr.length - 1;
-    var bSwapped = false;
-    for(var i=0;i<n;i++)
-    {
-      if( typeof arr[i][dsc] == "undefined" )
-      {
-        arr[i][dsc] = "";
-      }
-      if( typeof arr[i+1][dsc] == "undefined" )
-      {
-        arr[i+1][dsc] = "";
-      }      
-      var item = arr[i][dsc].toLowerCase();
-      item = item.replace("ö", "o");
-      item = item.replace("ä", "a");
-      item = item.replace("ü", "u");
-      item = item.replace("ß", "ss");
-      var nextitem = arr[i+1][dsc].toLowerCase();
-      nextitem = nextitem.replace("ö", "o");
-      nextitem = nextitem.replace("ä", "a");
-      nextitem = nextitem.replace("ü", "u");
-      nextitem = nextitem.replace("ß", "ss");
-      if( dir === 0 )
-      {
-        if( item > nextitem )
-        {
-          iseArraySwap(arr,i,i+1);
-          bSwapped = true;
-        }
-      }
-      else
-      {
-        if( item < nextitem )
-        {
-          iseArraySwap(arr,i,i+1);
-          bSwapped = true;
-        }
-      }
-    }
-  } while( bSwapped );
-    
+  const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+  // a missing (undefined or null) value sorts as an empty string; the stable sort keeps rows with equal values in order in both directions
+  var order = (dir === 1) ? -1 : 1;
+  arr.sort( (x, y) => {
+    var a = (x[dsc] == null) ? "" : String(x[dsc]);
+    var b = (y[dsc] == null) ? "" : String(y[dsc]);
+    return order * collator.compare(a, b);
+  } );
   if (!popup) iseTransferSortedArray(arr,dsc,sln, sessionVar);
-  
 };
 
 iseTransferSortedArray = function(arr,dsc,sortListNumber, sessionVar)
@@ -2576,7 +2570,7 @@ changeRoomOrSubsection = function(id)
 
 
 showDutyCycle = function() {
-  if (jQuery("#PagePathSpan").text() == translateKey("startPage")) {
+  if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var ifaceBidCosRF = "BidCos-RF",
       ifaceHmIPRF = "HmIP-RF",
       arInterfaceDutyCycle = {},
@@ -2655,7 +2649,7 @@ showDutyCycle = function() {
 showDutyCycleHmIP = function() {
   // Currently only in use for HAPs. Here we collect the available HAP addresses.
   // The display of the HAP-DutyCycle is done in showDCAllInterfaces()
-  if (jQuery("#PagePathSpan").text() == translateKey("startPage")) {
+  if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var linkElem = jQuery("#iFaceShowAll"),
       arRelevantAddresses = [];
 
@@ -2680,7 +2674,7 @@ showDutyCycleHmIP = function() {
 
 //Attention: To work properly Adapter.Local.Device.Enabled of the crRFD.conf must be set to true
 showCarrierSense = function() {
-  if (jQuery("#PagePathSpan").text() == translateKey("startPage")) {
+  if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var ccuAddress = homematic("CCU.getSerial"),
       linkElem = jQuery("#lblCarrierSense"),
       arHAPAddresses = [];
@@ -4065,22 +4059,6 @@ setColorWebUI = function() {
   dlg.run();
   dlg.resetHeight();
 };
-
-function activateDeviceBetaFw() {
-  var showBetaDevFw = jQuery("#inputShowBetaFw").is(":checked"),
-    fieldTestActive = "/etc/config/fieldTestActive";
-
-  if (showBetaDevFw) {
-    if (! homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.createFile", {'file': fieldTestActive});
-    }
-  } else {
-    if (homematic('CCU.existsFile', {'file': fieldTestActive})) {
-      homematic("CCU.removeFieldTestActive");
-    }
-  }
-};
-
 
 /**
  *

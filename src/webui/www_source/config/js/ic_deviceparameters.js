@@ -67,7 +67,7 @@ FirmwareUpdate = function(devType) {
     poststr += "&iface=" + $F('global_iface');
     poststr += "&address=" + $F('global_address');
     poststr += "&cmd=firmware_update";
-    SendRequest('ic_ifacecmd.cgi');
+    SendPOSTRequest('ic_ifacecmd.cgi');
     ProgressBar = new ProgressBarMsgBox(translateKey("performingFirmwareUpdate"), 1);
     ProgressBar.show();
     ProgressBar.StartKnightRiderLight();
@@ -427,7 +427,7 @@ SetParameters = function(iface, address, special_input_id)
 
 
 
-  SendRequest('ic_ifacecmd.cgi', null, function() {
+  SendPOSTRequest('ic_ifacecmd.cgi', null, function() {
     if (device)
     {
       DeviceList.beginUpdateDevice(device.id);
@@ -446,7 +446,7 @@ SendInternalKeyPress = function(iface, sender, receiver, longKeyPress)
   poststr += "&receiver=" + receiver;
   poststr += "&longKeyPress=" + simLongKeyPress;
   poststr += "&cmd=SendInternalKeyPress";
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 SetInternalKey = function(iface, address, special_input_id, peerAddress)
@@ -475,7 +475,7 @@ SetInternalKey = function(iface, address, special_input_id, peerAddress)
   AddSeparateSettings('subset_'   + special_input_id + '_', pnr);
   
   //alert(poststr);
-  SendRequest('ic_ifacecmd.cgi');
+  SendPOSTRequest('ic_ifacecmd.cgi');
 };
 
 ShowInternalKeyProfile = function(selectelem, channel, counter)

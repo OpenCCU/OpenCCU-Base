@@ -93,6 +93,18 @@ private:
 
 	std::string serial;
 
+	/** \brief Blocks communication over send/receive methods if true while reconnecting*/
+	bool blockRXTX;
+	/** \brief Number of send/receive operations in progress*/
+	unsigned int activeRXTXOperations;
+	pthread_mutex_t mutexBlockRXTX;
+
+	/** Returns false if communication is blocked, otherwise counts the operation as active. */
+	bool beginRXTX();
+	void endRXTX();
+	/** Blocks new send/receive operations and waits for active operations to finish. */
+	void blockRXTXAndWait();
+
 	void writeLGWStatusToFile(const std::string& serial, const std::string& statusText);
 
 };

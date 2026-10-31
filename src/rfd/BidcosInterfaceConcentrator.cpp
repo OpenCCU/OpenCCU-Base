@@ -973,6 +973,11 @@ void BidcosInterfaceConcentrator::OnTimer(uint32_t cookie)
     }
 }
 
+bool BidcosInterfaceConcentrator::HasInterface(const std::string& interface_id)
+{
+	return GetInterface(interface_id) != NULL;
+}
+
 std::string BidcosInterfaceConcentrator::GetDefaultInterfaceId()
 {
     if(default_interface)return default_interface->GetSerialNumber();

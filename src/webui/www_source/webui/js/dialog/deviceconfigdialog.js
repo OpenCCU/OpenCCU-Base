@@ -8,9 +8,12 @@
 DeviceConfigDialog = Singleton.create({
   LAYER_ID: "DeviceConfigDialogLayer",
   NAME_ID: "DeviceConfigDialog_DeviceName",
+  SEPARATOR_ID: "DeviceConfigDialog_DeviceChannelsRenameSeparator",
+  RENAME_OWN_ID: "DeviceConfigDialog_renameChannelIncludingOwn",
   USABLE_ID: "DeviceConfigDialog_isUsable",
   VISIBLE_ID: "DeviceConfigDialog_isVisible",
   LOGGED_ID: "DeviceConfigDialog_isLogged",
+  SERVICEMSG_ID: "DeviceConfigDialog_enabledServiceMsg",
   TEST_RESULT_ID: "DeviceConfigDialogTestResult",
   RESULT_OK: 1,
   RESULT_ABORT: 0,
@@ -36,6 +39,7 @@ DeviceConfigDialog = Singleton.create({
     this.isVisibilityChanged = false;
     this.isUsabilityChanged = false;
     this.isLoggingChanged = false;   
+    this.enabledServiceMsgChanged = false;
     this.callback = callback;
     this.layer = document.createElement("div");
     this.layer.id = this.LAYER_ID;
@@ -58,6 +62,9 @@ DeviceConfigDialog = Singleton.create({
       this.__hideLogging();
     }
     translateJSTemplate("#DeviceConfigDialog");
+	jQuery("#DeviceConfigDialogTestHintImg").attr('title', translateKey("generalDeviceConfigHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameChannelButtonHintImg").attr('title', translateKey("generalDeviceRenameChannelHintTooltip"));
+	jQuery("#DeviceConfigDialogRenameIncludingOwnHintImg").attr('title', translateKey("generalDeviceRenameChannelIncludingOwnHint"));
   },
 
   __hideFunctionTest: function() {
@@ -102,6 +109,8 @@ DeviceConfigDialog = Singleton.create({
         if (this.isUsabilityChanged) { channel.setUsability(isUsable); }
         if (this.isLoggingChanged) { channel.setLogging(isLogged); }
       }, this);
+      var enabledServiceMsg = $(this.SERVICEMSG_ID).checked;
+      if (this.enabledServiceMsgChanged) { this.device.setEnabledServiceMsg(enabledServiceMsg); }
 
       this.close(this.RESULT_OK);
     }
@@ -113,6 +122,36 @@ DeviceConfigDialog = Singleton.create({
   abort: function()
   {
     this.close(this.RESULT_ABORT);
+  },
+  
+  /**
+  * Benennt alle Channel des Device um
+  **/
+
+  ready: function()
+  {
+    this.ok();
+  },
+  
+  renameChannels: function() {
+    var chNamePrefix = $(this.NAME_ID).value + $(this.SEPARATOR_ID).value;
+    if (!isTextAllowed(chNamePrefix)) return;
+
+    if (confirm(translateKey("generalDeviceRenameChannelsConfirm"))) {
+      var renameOwnChannelNames = $(this.RENAME_OWN_ID).checked;
+
+      this.device.channels.each(function(channel) {
+        var chNumber = channel.address.split(':')[1];
+        var origChName = this.device.name+":"+chNumber;
+
+        // Channel bereits umbenannt und Option "eigene Namen umbenennen" wurde deaktiviert
+        if (channel.name !== origChName && renameOwnChannelNames === false) return true;
+
+        var chName = chNamePrefix + chNumber;
+        channel.setName(chName);
+      }, this);
+      this.ok();
+    }
   },
   
   /**

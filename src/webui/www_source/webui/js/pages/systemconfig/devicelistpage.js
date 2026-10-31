@@ -179,7 +179,7 @@ if (PLATFORM == "Central") {
             (this.TypeNameFilter.match(device.typeName))                 &&
             (this.DescriptionFilter.match(translateKey(device.typeDescription)))       &&
             (this.AddressFilter.match(device.address))                   &&
-            (this.InterfaceFilter.matchString(device.interfaceName))     &&
+            (this.InterfaceFilter.matchString(String(device.interfaceDisplayName).escapeHTML()))     &&
             (this.ModeFilter.matchStringArray(device.modes)) &&
             (this.RoomFilter.matchArray(device.rooms))                   &&
             (this.FuncFilter.matchArray(device.subsections)));
@@ -306,7 +306,6 @@ if (PLATFORM == "Central") {
     var result = true;
     switch (channel.channelType) {
       case "ALARM_COND_SWITCH_TRANSMITTER":
-      case "MAINTENANCE":
       case "WEEK_PROGRAM":
         result = false;
         break;
@@ -688,22 +687,26 @@ if (PLATFORM == "Central") {
       setFooter(this.FLAT_FOOTER_HTML);
     }
 
-    jQuery(".j_chMode").each(function(){
-      var elm = jQuery(this);
-
-        switch (elm.text()) {
-          case "Gesichert":
-            elm.html(translateKey("lblSecured"));
-            break;
-          case "Standard":
-            elm.html(translateKey("lblStandard"));
-        }
+    var translatedSecure = translateKey("lblSecured");
+    var translatedStandard = translateKey("lblStandard");
+    jQuery(".j_chMode").each(function(i, e){
+      switch (e.textContent) {
+        case "Gesichert":
+          e.textContent = translatedSecure;
+          break;
+        case "Standard":
+          e.textContent = translatedStandard;
+          break;
+      }
     });
 
     translateJSTemplate("#DeviceListTable");
     translatePage(".j_rooms, .j_functions"); // this translates the room name as well the function name within the main devicelist (Settings > Devices)
     jQuery("#DeviceListPage_RoomFilter").draggable();
     jQuery("#DeviceListPage_FuncFilter").draggable();
+
+    DeviceList.updateDeviceStatus();
+    eQ3.HomeMatic.Event.fire({type: 'DeviceListPageLoaded'});
   },
   
   onRemoveDevice: function(whatEver)

@@ -34,7 +34,15 @@ set script {
 !   Write(" DEVICE_TYPE {"# device.HssType() # "}"); 
     Write(" DEVICE_TYPE {"# device.Label() # "}");
     Write(" GROUP_ONLY {"# device.MetaData("operateGroupOnly") # "}");
-  
+ 
+    Write(" SERVICE_MSG {");
+    if (device.MetaData("enabledServiceMsg") == null) {
+      Write("true");
+    } else {
+      Write(device.MetaData("enabledServiceMsg"));
+    }
+    Write("}");
+ 
     Write(" CHANNELS {"); 
     if (device.TypeName() == "DEVICE")
     {
@@ -44,7 +52,7 @@ set script {
       foreach(channelId, device.Channels())
       {
         var channel = dom.GetObject(channelId);
-        if (false == channel.Internal())
+        if (channel)
         {
           if (true != first) { Write(" "); } else { first = false; }
           Write("{");
@@ -67,6 +75,12 @@ set script {
               if (OPERATION_WRITE & operations) { writable  = true; }
               if (OPERATION_EVENT & operations) { eventable = true; }
             }
+          }
+
+          var isInternal = channel.Internal();
+          if(isInternal)
+          {
+            writable = false;
           }
           
           var isUsable = false;
@@ -115,6 +129,7 @@ set script {
           Write(" EVENTABLE {" # eventable # "}");
           Write(" AES_AVAILABLE {" # isAesAvailable # "}");
           Write(" VIRTUAL {" # isVirtual # "}");
+          Write(" INTERNAL {" # isInternal # "}");
           Write(" CHANNEL_TYPE {" # channel.HssType() # "}");
           Write("}");
         }
@@ -138,6 +153,7 @@ append result ",\"address\":[json_toString $device(ADDRESS)]"
 append result ",\"interface\":[json_toString $device(INTERFACE)]"
 append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
 append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
+append result ",\"enabledServiceMsg\":[json_toString $device(SERVICE_MSG)]"
 
 set first 1
 append result ",\"channels\":\["
@@ -167,6 +183,7 @@ foreach _channel $device(CHANNELS) {
 	append result ",\"isEventable\":$channel(EVENTABLE)"
 	append result ",\"isAesAvailable\":$channel(AES_AVAILABLE)"
 	append result ",\"isVirtual\":$channel(VIRTUAL)"
+	append result ",\"isInternal\":$channel(INTERNAL)"
 	append result ",\"channelType\":[json_toString $channel(CHANNEL_TYPE)]"
 	append result "\}"
 	

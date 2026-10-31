@@ -7,7 +7,7 @@ set unit_min  "min"
 set unit_sec  "s"
 set unit_day "d"
 set unit_perc  "%"
-set unit_temp   " &deg;C"
+set unit_temp   "&nbsp;&deg;C"
 set unit_cf    "0"
 set free_value  "\${enterValue}"
 
@@ -27,9 +27,9 @@ proc GetTempUnit {} {
   catch {
     switch $dev_ps(DISPLAY_TEMPERATUR_UNIT) {
 
-        0  {set unit_temp  " &deg;C"; return 0}
-        1  {set unit_temp  " &deg;F"; return 1}
-      default {set unit_temp  " *"; return -1}
+        0  {set unit_temp  "&nbsp;&deg;C"; return 0}
+        1  {set unit_temp  "&nbsp;&deg;F"; return 1}
+      default {set unit_temp  "&nbsp;*"; return -1}
     }
   }
   return 0

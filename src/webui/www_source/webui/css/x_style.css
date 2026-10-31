@@ -1245,9 +1245,11 @@
 
 .CLASS02104 {
 	cursor:pointer;
-	line-height: 100px;
 	height:100px;
 	width:100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .CLASS02105 {
@@ -2950,6 +2952,17 @@ color: $_(textColorA); /* white */
 	height: 40px;
 }
 
+/* keep each program option (systemintern, run at startup, ...) on one line */
+/* in the program editor and in the program list (CLASS04904) */
+.CLASS04803 > td:last-child,
+.CLASS04904 {
+	white-space: nowrap;
+}
+
+.CLASS04803 > td:last-child {
+	text-align: left;
+}
+
 /* rega\pages\tabs\admin\views\programlist.htm */
 
 .CLASS04900 {
@@ -3017,6 +3030,7 @@ color: $_(textColorA); /* white */
 
 .CLASS05004 {
 	background-color:$_(white); /* white */
+	cursor:pointer;
 }
 
 .CLASS05005 {

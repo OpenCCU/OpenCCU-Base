@@ -31,6 +31,20 @@
       </div>
     </div>
     {/if}
+    {if ChannelConfigDialog.getCentralLinkInterface(channel)}
+      <div id="channelCentralLink" class="ChannelConfigDialogSection">
+      <div class="CLASS11003"><span name="generalDeviceChannelConfigLblCentralLink">Taster-/Schaltevent an Zentrale</span>&nbsp;<img src="/ise/img/help.png" style="cursor: pointer; width:18px; height:18px; position:relative; top:2px" onclick="ChannelConfigDialog.showConfigCentralLinkHelp();"></div>
+      <hr />
+       <div>
+        <table border="0" class="ChannelConfigDialogTable" width="250px">
+          <tr>
+            <td width="50%"><div id="ChannelConfigDialogCreateCentralLinkButton" class="StdButton" name="channelConfigBtnCreateCentralLink" onclick="ChannelConfigDialog.createCentralLink();">Aktivieren</div></td>
+            <td width="50%"><div id="ChannelConfigDialogRemoveCentralLinkButton" class="{if !channel.hasProgramIds()}StdButton{else}StdButtonInactive{/if}" name="channelConfigBtnRemoveCentralLink" onclick="{if !channel.hasProgramIds()}ChannelConfigDialog.removeCentralLink();{/if}">Deaktivieren</div></td>
+          </tr>
+        </table>
+      </div>
+      </div>
+    {/if}
   </div>
 
   <div id="ChannelConfigDialogContentMain">

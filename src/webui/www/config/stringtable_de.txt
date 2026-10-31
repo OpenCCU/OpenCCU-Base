@@ -285,6 +285,7 @@ BOOST_MODE=FALSE	${stringTableBoostModeFalse}
 BOOST_MODE=TRUE	${stringTableBoostModeTrue}
 BOOST_STATE	${stringTableBoostState}
 BOOST_TIME	${stringTableBoostTime}
+QUICK_VETO_TIME	${stringTableQuickVetoTime}
 BOOTED=FALSE	${stringTableBootedFalse}
 BOOTED=TRUE	${stringTableBootedTrue}
 BRIGHTNESS	${stringTableBrightness}
@@ -476,6 +477,8 @@ COND_TX_THRESHOLD_LO	${stringTableCondThresholdLo}
 COND_TX_THRESHOLD_LO_POWER	${stringTableCondThresholdLoPower}
 CONFIG_PENDING=FALSE	${stringTableConfigPendingFalse}
 CONFIG_PENDING=TRUE	${stringTableConfigPendingTrue}
+STICKY_UNREACH=FALSE	${stringTableStickyUnreachFalse}
+STICKY_UNREACH=TRUE	${stringTableStickyUnreachTrue}
 CONF_BUTTON_TIME	${stringTableConfButtonTime}
 CONF_BUTTON_TIME=PERMANENT	${stringTableConfButtonTimePermanent}
 CONTROL_MODE=AUTO-MODE	${stringTableClimateControlRTTransceiverAutoMode}

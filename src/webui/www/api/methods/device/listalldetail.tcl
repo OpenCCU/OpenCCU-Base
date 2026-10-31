@@ -35,6 +35,15 @@ set deviceDescrScript {
     }
 
     Write(" GROUP_ONLY {"# device.MetaData("operateGroupOnly") # "}");
+
+    Write(" SERVICE_MSG {");
+    if (device.MetaData("enabledServiceMsg") == null) {
+      Write("true");
+    } else {
+      Write(device.MetaData("enabledServiceMsg"));
+    }
+    Write("}");
+ 
     Write(" CHANNELS {");
 
     var first = true;
@@ -43,7 +52,7 @@ set deviceDescrScript {
     foreach(channelId, device.Channels())
     {
       var channel = dom.GetObject(channelId);
-      if (false == channel.Internal())
+      if (channel)
       {
         if (true != first) { Write(" "); } else { first = false; }
         Write("{");
@@ -66,6 +75,12 @@ set deviceDescrScript {
             if (OPERATION_WRITE & operations) { writable  = true; }
             if (OPERATION_EVENT & operations) { eventable = true; }
           }
+        }
+
+        var isInternal = channel.Internal();
+        if(isInternal)
+        {
+          writable = false;
         }
 
         var isUsable = false;
@@ -115,6 +130,7 @@ set deviceDescrScript {
         Write(" EVENTABLE {" # eventable # "}");
         Write(" AES_AVAILABLE {" # isAesAvailable # "}");
         Write(" VIRTUAL {" # isVirtual # "}");
+        Write(" INTERNAL {" # isInternal # "}");
         Write(" CHANNEL_TYPE {" # chnType # "}");
         Write(" CHANNEL_NAME {" # channel.Label() # "}");
 
@@ -220,6 +236,7 @@ foreach id $deviceIds {
   append result ",\"type\":[json_toString $device(DEVICE_TYPE)]"
   append result ",\"operateGroupOnly\":[json_toString $device(GROUP_ONLY)]"
   append result ",\"isReady\":[json_toString $device(READY_CONFIG)]"
+  append result ",\"enabledServiceMsg\":[json_toString $device(SERVICE_MSG)]"
 
 
 #
@@ -253,6 +270,7 @@ foreach id $deviceIds {
     append result ",\"isEventable\":$channel(EVENTABLE)"
     append result ",\"isAesAvailable\":$channel(AES_AVAILABLE)"
     append result ",\"isVirtual\":$channel(VIRTUAL)"
+    append result ",\"isInternal\":$channel(INTERNAL)"
     append result ",\"channelType\":[json_toString $channel(CHANNEL_TYPE)]"
 
     if {[info exists channel(MODE_MULTI_MODE_CHANNEL)] == 1} {

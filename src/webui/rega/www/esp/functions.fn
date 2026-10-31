@@ -113,17 +113,26 @@ function ::WriteDPText()
            }
         }
         
-        if( tbBinary && (tbRead || tbAction) )
+        ! Keys without the =TRUE/=FALSE suffix, used as fallback below
+        string tsBaseShortKey = tsShortKey;
+        string tsBaseLongKey = tsLongKey;
+        string tsBinaryValueText = "";
+
+        ! Event-only datapoints (e.g. the HmIP VALVE_STATE_* service flags)
+        ! and write/event datapoints (e.g. BOOST_MODE) carry a value too
+        if( tbBinary && (tbRead || tbEvent || tbAction) )
         {
           if( sValue == "0" )
           {
             tsShortKey = tsShortKey#"=FALSE";
             tsLongKey = tsLongKey#"=FALSE";
+            tsBinaryValueText = "${lblNo}";
           }
           else
           {
             tsShortKey = tsShortKey#"=TRUE";
             tsLongKey = tsLongKey#"=TRUE";
+            tsBinaryValueText = "${lblYes}";
           }
         }
         
@@ -143,6 +152,23 @@ function ::WriteDPText()
         if( !sVTmp.Length() )
         {
           sVTmp = web.webKeyFromStringTable( tsShortKey );
+          if( !sVTmp.Length() )
+          {
+            if( tsBinaryValueText.Length() )
+            {
+              ! No =TRUE/=FALSE entry: show the plain label with Yes/No,
+              ! never the plain label alone as it reads like an active state
+              sVTmp = web.webKeyFromStringTable( tsBaseLongKey );
+              if( !sVTmp.Length() )
+              {
+                sVTmp = web.webKeyFromStringTable( tsBaseShortKey );
+              }
+              if( sVTmp.Length() )
+              {
+                sVTmp = sVTmp#": "#tsBinaryValueText;
+              }
+            }
+          }
           if( !sVTmp.Length() )
           {
             sVTmp = "${unknownMessage} ("#tsShortKey#")";
@@ -515,9 +541,26 @@ function ::showHideHmIPChannel() {
         || (chn.HssType().Find("ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER") != -1)
         || (chn.HssType().Find("SERVO_VIRTUAL_RECEIVER") != -1)
         ) {
-          if (virtChnCounter >= 3) {virtChnCounter = 0;}
-          virtChnCounter = virtChnCounter + 1;
-          if (virtChnCounter != 1) {bShowChannel = false; return;}
+          ! Show only the first of the three virtual channels of a group. The groups follow
+          ! their status channel, so count the virtual channels directly before this one.
+          ! This does not depend on the order of the channel list, which can be sorted by name.
+          integer iVirtChnPos = 0;
+          integer iVirtPrevChnNo = chNumber - 1;
+          boolean bVirtPrevChn = true;
+          string sVirtChnId;
+          while (bVirtPrevChn && (iVirtPrevChnNo > 0)) {
+            bVirtPrevChn = false;
+            foreach (sVirtChnId, oDev.Channels()) {
+              object oVirtChn = dom.GetObject(sVirtChnId);
+              if ((oVirtChn.ChnNumber() == iVirtPrevChnNo) && (oVirtChn.HssType().Find("_VIRTUAL_RECEIVER") != -1)) {bVirtPrevChn = true;}
+            }
+            if (bVirtPrevChn) {
+              iVirtChnPos = iVirtChnPos + 1;
+              if (iVirtChnPos >= 3) {iVirtChnPos = 0;}
+              iVirtPrevChnNo = iVirtPrevChnNo - 1;
+            }
+          }
+          if (iVirtChnPos != 0) {bShowChannel = false; return;}
         } else {
           ! HmIP-MIOB and HmIP-WHS2
           ! Hide all SWITCH_VIRTUAL_RECEIVER channels other than 3 and 7 (the 2nd virtual channel instead of the first one) when the expert mode is not active

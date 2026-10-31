@@ -7,8 +7,6 @@ var preURL = (WEBUI_VERSION.split(".")[0] < 3) ? "" : "ccu3-";
 StartPage = Singleton.create(Page, {
   MAINMENU_ID: "MAINMENU_STARTPAGE",
   downloadURLServer: "https://"+preURL+"update.homematic.com/firmware/download?cmd=download",
-  fieldTestURLServer: "https://fieldtest-ccu3-update.homematic.com/firmware/download?cmd=download",
-  fieldTestActive: "/etc/config/fieldTestActive",
   downloadURL : "",
   prevDownloadURL : "",
   devList: [],
@@ -66,11 +64,7 @@ StartPage = Singleton.create(Page, {
 
     this.serial = homematic("CCU.getSerial");
 
-    if (homematic('CCU.existsFile', {'file': this.fieldTestActive})) {
-      this.downloadURL = this.fieldTestURLServer;
-    } else {
-      this.downloadURL = this.downloadURLServer;
-    }
+    this.downloadURL = this.downloadURLServer;
 
     if (this.prevDownloadURL != this.downloadURL) {
       this.devList = [];
@@ -346,14 +340,18 @@ StartPage = Singleton.create(Page, {
   showUpdate: function() {
     var fn = function() {
       var result = homematic.com.isUpdateAvailable();
-      if ((result) && ($("updateCol")) && ($("updateRow"))) {
-        var updateText = translateKey('firmware') + " " + homematic.com.getLatestVersion() + " " + translateKey('isAvailable');
+      if ((result) && ($("updateCol"))) {
+        var updateText = " (" + homematic.com.getLatestVersion() + " " + translateKey('isAvailable') + ")";
+        if (getUPL() == UPL_ADMIN) {
         jQuery("#updateCol").text(updateText)
           .addClass("firmwareAvailable")
           .unbind("click").bind("click", function() {
             showNewFirmwareDownload();
           });
-        jQuery("#updateRow").show();
+        } else {
+          jQuery("#updateCol").text(updateText);
+        }
+        jQuery("#updateCol").show();
       }
       return result;
     };

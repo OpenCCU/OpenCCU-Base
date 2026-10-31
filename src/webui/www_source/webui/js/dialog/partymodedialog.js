@@ -334,7 +334,7 @@ PartyModeDialog = Class.create({
     // Adds a selectbox for the temperature to the party mode dialog
     var selBox = "<select>";
     for (var loop = 5; loop <= 30; loop++) {
-      selBox += "<option value='"+loop+"'>"+loop+"°C</option>";
+      selBox += "<option value='"+loop+"'>"+loop+"&nbsp;&deg;C</option>";
     }
     selBox += "</select>";
 
