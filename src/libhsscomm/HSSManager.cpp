@@ -236,7 +236,7 @@ bool HSSManager::CommitReplacedDevices(const std::string url,const std::string& 
 					params[0]=id;
 					params[1]=it->first;
 					params[2] = newDevice;
-					XmlRpcCallAsync("replaceDevice", params);
+					XmlRpcCallAsync("replaceDevice", params, url);
 				}
 
 			}
@@ -326,7 +326,7 @@ bool HSSManager::PlatformInit(const std::string& url, const std::string& id, boo
                         replaceDeviceParams[0]=id;
                         replaceDeviceParams[1]=it->first;
                         replaceDeviceParams[2] = newDevice;
-                        XmlRpcCallAsync("replaceDevice", replaceDeviceParams);
+                        XmlRpcCallAsync("replaceDevice", replaceDeviceParams, url);
                     }else{
                         deleteDevicesArray[deleteDevicesArray.size()] = it->first;
                     }

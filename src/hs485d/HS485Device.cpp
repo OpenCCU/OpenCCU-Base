@@ -1072,12 +1072,12 @@ bool HS485Device::replaceDeviceWith(HS485Device* newDevice)
 		}
 		++oldDevChannelIter;
 	}
+	//Update replacement history before this device takes the serial of newDevice
+	replacementHistory.push_back(this->serial);//store old/this device serial in history.
 	//Set serial and address of newDevice to this (old device) to take identity of newDevice.
 	SetSerial(newDevice->serial);
 	SetAddress(newDevice->address);
 	//SetSysinfo(newDevice->sysinfo);
-	//Update replacement history
-	replacementHistory.push_back(this->serial);//store old/this device serial in history.
 
 	return true;
 }
