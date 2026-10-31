@@ -11,6 +11,7 @@
 #include "UnixSerialPortWrapper.h"
 #include <termios.h>
 #include <unistd.h>
+#include <poll.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -53,20 +54,12 @@ int UnixSerialPortWrapper::SendData(const std::string& data)
 }
 int UnixSerialPortWrapper::WaitForData(int msTime)
 {
-	fd_set inFd, outFd, excFd;
-	FD_ZERO(&inFd);
-	FD_ZERO(&outFd);
-	FD_ZERO(&excFd);
-
-	FD_SET(fd, &inFd);
-	
-	// Check for events
-	int nEvents;
-	struct timeval tv;
-	tv.tv_sec = msTime/1000;
-	tv.tv_usec = (msTime%1000)*1000;
-	nEvents = select(fd+1, &inFd, &outFd, &excFd, &tv);
-	return nEvents;
+	// poll() instead of select(): an fd_set only holds descriptors below FD_SETSIZE (1024)
+	struct pollfd pfd;
+	pfd.fd = fd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+	return poll(&pfd, 1, msTime);
 }
 int UnixSerialPortWrapper::ReadData(std::string* data)
 {

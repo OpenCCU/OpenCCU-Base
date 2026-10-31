@@ -13,6 +13,7 @@
 #include "ws2tcpip.h"
 #else
 #include <unistd.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -135,6 +136,14 @@ bool MulticastSender::SendUDPMessage(const std::string& msg, std::vector<std::st
         uint64_t now=time_millis();
         if(static_cast<int64_t>(now-abs_rx_timeout) >= 0)break;
 
+#ifndef WIN32
+        // poll() instead of select(): an fd_set only holds descriptors below FD_SETSIZE (1024)
+        struct pollfd pfd;
+        pfd.fd = mcast_receive_socket;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
+        int n_events=poll(&pfd, 1, (int)(abs_rx_timeout-now));
+#else
         struct timeval wait_time;
         wait_time.tv_sec=(abs_rx_timeout-now)/1000;
         wait_time.tv_usec=((abs_rx_timeout-now)%1000)*1000;
@@ -148,9 +157,10 @@ bool MulticastSender::SendUDPMessage(const std::string& msg, std::vector<std::st
         FD_SET(mcast_receive_socket, &inFd);
 
         int n_events=select(maxFd+1, &inFd, &outFd, &excFd, &wait_time);
+#endif
         if(n_events < 0)
         {
-            perror("select");
+            perror("poll");
             goto cleanup;
         }
         if(n_events>0){

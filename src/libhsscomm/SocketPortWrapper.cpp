@@ -10,6 +10,7 @@
 #include "SocketPortWrapper.h"
 #ifndef WIN32
 #include <unistd.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -59,6 +60,15 @@ int SocketPortWrapper::SendData(const std::string& data)
 }
 int SocketPortWrapper::WaitForData(int msTime)
 {
+	int nEvents;
+#ifndef WIN32
+	// poll() instead of select(): an fd_set only holds descriptors below FD_SETSIZE (1024)
+	struct pollfd pfd;
+	pfd.fd = fd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+	nEvents = poll(&pfd, 1, msTime);
+#else
 	fd_set inFd, outFd, excFd;
 	FD_ZERO(&inFd);
 	FD_ZERO(&outFd);
@@ -67,13 +77,13 @@ int SocketPortWrapper::WaitForData(int msTime)
 	FD_SET(fd, &inFd);
 	
 	// Check for events
-	int nEvents;
 	struct timeval tv;
 	tv.tv_sec = msTime/1000;
 	tv.tv_usec = (msTime%1000)*1000;
 	nEvents = select(fd+1, &inFd, &outFd, &excFd, &tv);
+#endif
 	if(nEvents == -1){
-		LOG(Logger::LOG_ERROR, "select error");
+		LOG(Logger::LOG_ERROR, "poll error");
 	}
 	return nEvents;
 }
