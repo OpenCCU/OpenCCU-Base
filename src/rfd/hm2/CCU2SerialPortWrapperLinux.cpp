@@ -87,8 +87,13 @@ int CCU2SerialPortWrapperLinux::handleReadError(const char* what)
 	if(errno == EINTR) {
 		return 0;
 	}
+	return handleReadError(what, strerror(errno));
+}
+
+int CCU2SerialPortWrapperLinux::handleReadError(const char* what, const char* reason)
+{
 	if(!readError) {
-		LOG(Logger::LOG_ERROR, "CCU2SerialPortWrapperLinux::ReadData(): %s() failed: %s", what, strerror(errno));
+		LOG(Logger::LOG_ERROR, "CCU2SerialPortWrapperLinux::ReadData(): %s() failed: %s", what, reason);
 		readError = true;
 	}
 	// The error usually persists (e.g. a hung up /dev/mmd_bidcos after a
@@ -114,6 +119,9 @@ int CCU2SerialPortWrapperLinux::ReadData(std::string* data)
 	const ssize_t count = read(fd, buf, sizeof(buf));
 	if(count < 0) {
 		return handleReadError("read");
+	}
+	if(count == 0) { //end of file: the device is gone (e.g. a hung up pty or an unplugged USB adapter)
+		return handleReadError("read", "end of file");
 	}
 	readError = false;
 	if(count>0){

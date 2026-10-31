@@ -57,6 +57,8 @@ protected:
 	int WaitForData(int msTime);
 	//! Handles a failed select()/read() in ReadData()
 	int handleReadError(const char* what);
+	//! Logs the error once, sets readError and waits a second
+	int handleReadError(const char* what, const char* reason);
 };
 
 }
