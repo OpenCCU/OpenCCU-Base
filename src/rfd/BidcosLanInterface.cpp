@@ -22,6 +22,7 @@ BidcosLanInterface::BidcosLanInterface()
 
 BidcosLanInterface::~BidcosLanInterface()
 {
+	StopInterface(); //join the receive thread before the connection is destroyed
 }
 
 BidcosInterfaceConnection* BidcosLanInterface::GetConnection()

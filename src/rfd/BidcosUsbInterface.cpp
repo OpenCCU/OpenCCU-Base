@@ -15,6 +15,7 @@ BidcosUsbInterface::BidcosUsbInterface(void)
 
 BidcosUsbInterface::~BidcosUsbInterface(void)
 {
+	StopInterface(); //join the receive thread before the connection is destroyed
 }
 
 BidcosInterfaceConnection* BidcosUsbInterface::GetConnection()
