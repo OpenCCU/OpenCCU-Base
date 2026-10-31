@@ -58,7 +58,9 @@ CCU2CommController::CCU2CommController(CCU2BidcosRemoteInterface* bidcosRemoteIn
 	//pthread_mutexattr_settype(&mutexAttr, PTHREAD_MUTEX_ERRORCHECK);
 
 	pthread_mutex_init( &mutexSystemCommandRequest, &mutexAttr );
+	pthread_mutex_init( &mutexSystemCommandExchange, &mutexAttr );
 	pthread_mutex_init( &mutexBidcosRequest, &mutexAttr );
+	pthread_mutex_init( &mutexBidcosRequestExchange, &mutexAttr );
 	pthread_mutex_init( &mutexBidcosTelegramRequest, &mutexAttr );
 
 	pthread_cond_init( &waitConditionSystemCommandRequest, NULL);
@@ -95,7 +97,9 @@ CCU2CommController::~CCU2CommController(void)
 	pthread_attr_destroy( &startCoprocessorAppThreadAttributes );
 
 	pthread_mutex_destroy( &mutexSystemCommandRequest );
+	pthread_mutex_destroy( &mutexSystemCommandExchange );
 	pthread_mutex_destroy( &mutexBidcosRequest );
+	pthread_mutex_destroy( &mutexBidcosRequestExchange );
 	pthread_mutex_destroy( &mutexBidcosTelegramRequest );
 	pthread_mutex_destroy( &mutexCoprocessorState );
 
@@ -249,6 +253,9 @@ bool CCU2CommController::sendSystemCommand(const SystemCommand systemCommand, co
 	//Create coprocessor command
 	LOG(Logger::LOG_ALL, "CCU2CommController::SendSystemCommdand()");
 	CCU2CoprocessorCommand copCmd(systemCommand, cmdData);
+	//one system command at a time: waitForCoProcessorResponse() releases mutexSystemCommandRequest
+	//while it waits, and a second command would overwrite the pending request in the meantime
+	pthread_mutex_lock(&mutexSystemCommandExchange);
 	pthread_mutex_lock(&mutexSystemCommandRequest);
 
 	//Perform send
@@ -265,6 +272,7 @@ bool CCU2CommController::sendSystemCommand(const SystemCommand systemCommand, co
 		int sent = pPortWrapper->SendData( reqFrameStr );
 		if(reqFrameStr.size() != (unsigned int)sent) {
 			pthread_mutex_unlock(&mutexSystemCommandRequest);
+			pthread_mutex_unlock(&mutexSystemCommandExchange);
 			return false;
 		}
 
@@ -299,6 +307,7 @@ bool CCU2CommController::sendSystemCommand(const SystemCommand systemCommand, co
 	//Finish request and unlock mutex
 	systemCommandRequestInfo.responseStatus = RESPONSE_IDLE;
 	pthread_mutex_unlock(&mutexSystemCommandRequest);
+	pthread_mutex_unlock(&mutexSystemCommandExchange);
 	return returnCode;
 }
 
@@ -969,6 +978,8 @@ CCU2CoprocessorCommand CCU2CommController::internalSendBidcosRequest(CCU2Coproce
 bool CCU2CommController::sendBidcosRequest(const BidcosCommand bidcosCommand, const std::string& param, std::string* responseData) {
 	//LOG(Logger::LOG_DEBUG, "CCU2CommController::sendBidcosRequest(): Begin");
 	bool done = false;
+	//one request at a time, see sendSystemCommand()
+	pthread_mutex_lock(&mutexBidcosRequestExchange);
 	pthread_mutex_lock(&mutexBidcosRequest);
 
 	CCU2CoprocessorCommand reqCommand(bidcosCommand, param);
@@ -990,6 +1001,7 @@ bool CCU2CommController::sendBidcosRequest(const BidcosCommand bidcosCommand, co
 		//Maybe log here...
 	}
 	pthread_mutex_unlock(&mutexBidcosRequest);
+	pthread_mutex_unlock(&mutexBidcosRequestExchange);
 	//LOG(Logger::LOG_DEBUG, "CCU2CommController::sendBidcosRequest(): End");
 	return done;
 }

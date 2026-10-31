@@ -169,8 +169,13 @@ protected:
 
 	/** \brief Mutex for system-type commands to coprocessor. */
 	pthread_mutex_t mutexSystemCommandRequest;
+	/** Held for a whole system command exchange (send, wait, read the answer), so that a second command
+	 *  waits instead of overwriting the pending request while the first one waits for its answer. */
+	pthread_mutex_t mutexSystemCommandExchange;
 	/** \brief Mutex for bidcos-type request to coprocessor.*/
 	pthread_mutex_t mutexBidcosRequest;
+	/** Held for a whole sendBidcosRequest() exchange, see mutexSystemCommandExchange. */
+	pthread_mutex_t mutexBidcosRequestExchange;
 	/** \brief Mutex for bidcos- / homemeatic telegrams.*/
 	pthread_mutex_t mutexBidcosTelegramRequest;
 
