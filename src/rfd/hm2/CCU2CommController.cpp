@@ -504,38 +504,40 @@ void CCU2CommController::handleIncomingResponse(const CCU2CoprocessorCommand& co
 			pthread_cond_signal( &waitConditionBidcosTelegramRequest );
 			pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 		}
-		else if( (bidcosRequestInfo.responseStatus == RESPONSE_WAIT) &&
-			(CCU2CoprocessorCommand::isResponseOfRequest( bidcosRequestInfo.requestCmd, copCmd )) )
-		{
-			if(Logger::WouldLog(Logger::LOG_ALL)) {
-				LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Got an bidcos msg. Response waiting --> Handling as response...", interfaceSerial.c_str());
-			}
+		else {
+			//check the pending request under its mutex: if it times out and the next request starts in the meantime,
+			//its late answer must not be stored for the next request
 			pthread_mutex_lock(&mutexBidcosRequest);
-			bidcosRequestInfo.responseCmd = copCmd;
-			if(copCmd.isResponseStatusOk()) {
-				bidcosRequestInfo.responseStatus = RESPONSE_OK;
+			const bool isPendingResponse = (bidcosRequestInfo.responseStatus == RESPONSE_WAIT) &&
+				CCU2CoprocessorCommand::isResponseOfRequest( bidcosRequestInfo.requestCmd, copCmd );
+			if(isPendingResponse) {
 				if(Logger::WouldLog(Logger::LOG_ALL)) {
-					LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response ok", interfaceSerial.c_str());
+					LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Got an bidcos msg. Response waiting --> Handling as response...", interfaceSerial.c_str());
 				}
-			}
-			else if(copCmd.isResponseStatusBusy()) {
-				bidcosRequestInfo.responseStatus = RESPONSE_FAIL_BUSY;
-				if(Logger::WouldLog(Logger::LOG_ALL)) {
-					LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response not ok. Coprocessor busy.", interfaceSerial.c_str());
+				bidcosRequestInfo.responseCmd = copCmd;
+				if(copCmd.isResponseStatusOk()) {
+					bidcosRequestInfo.responseStatus = RESPONSE_OK;
+					if(Logger::WouldLog(Logger::LOG_ALL)) {
+						LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response ok", interfaceSerial.c_str());
+					}
 				}
-			}
-			else {
-				bidcosRequestInfo.responseStatus = RESPONSE_FAIL;
-				if(Logger::WouldLog(Logger::LOG_ALL)) {
-					LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response not ok", interfaceSerial.c_str());
+				else if(copCmd.isResponseStatusBusy()) {
+					bidcosRequestInfo.responseStatus = RESPONSE_FAIL_BUSY;
+					if(Logger::WouldLog(Logger::LOG_ALL)) {
+						LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response not ok. Coprocessor busy.", interfaceSerial.c_str());
+					}
 				}
+				else {
+					bidcosRequestInfo.responseStatus = RESPONSE_FAIL;
+					if(Logger::WouldLog(Logger::LOG_ALL)) {
+						LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Response not ok", interfaceSerial.c_str());
+					}
+				}
+				predicateWaitConditionBidcosRequest = true;
+				pthread_cond_signal( &waitConditionBidcosRequest );
 			}
-			predicateWaitConditionBidcosRequest = true;
-			pthread_cond_signal( &waitConditionBidcosRequest );
 			pthread_mutex_unlock(&mutexBidcosRequest);
-		}
-		else {//no current request or not a response for that request -> handle as event
-			if(pBidcosRemoteInterfcace != NULL) {
+			if( (!isPendingResponse) && (pBidcosRemoteInterfcace != NULL) ) {//no current request or not a response for that request -> handle as event
 				if(Logger::WouldLog(Logger::LOG_ALL)) {
 					LOG(Logger::LOG_ALL, "(%s) CCU2CommController::handleIncomingSerialFrame(): Got an bidcos msg. No response waiting or not a response --> Handling as event...", interfaceSerial.c_str());
 				}
@@ -547,10 +549,11 @@ void CCU2CommController::handleIncomingResponse(const CCU2CoprocessorCommand& co
 	}
 	//COMMANDTYPE_SYSTEM
 	else if(copCmd.getCommandType() == COMMANDTYPE_SYSTEM) {
+		//check the pending command under its mutex, see the BidCoS request above
+		pthread_mutex_lock(&mutexSystemCommandRequest);
 		if(systemCommandRequestInfo.responseStatus == RESPONSE_WAIT) {
 			if(copCmd.isResponseValid()) {
 				if( CCU2CoprocessorCommand::isResponseOfRequest( systemCommandRequestInfo.requestCmd, copCmd ) ) {
-					pthread_mutex_lock(&mutexSystemCommandRequest);
 					systemCommandRequestInfo.responseCmd = copCmd;
 					if(copCmd.isResponseStatusOk()) {
 						systemCommandRequestInfo.responseStatus = RESPONSE_OK;
@@ -566,7 +569,6 @@ void CCU2CommController::handleIncomingResponse(const CCU2CoprocessorCommand& co
 					}
 					predicateWaitConditionSystemCommandRequest = true;
 					pthread_cond_signal( &waitConditionSystemCommandRequest );
-					pthread_mutex_unlock(&mutexSystemCommandRequest);
 				}
 				else {
 					//TODO Handle other messages!!!!
@@ -581,6 +583,7 @@ void CCU2CommController::handleIncomingResponse(const CCU2CoprocessorCommand& co
 
 			}
 		}
+		pthread_mutex_unlock(&mutexSystemCommandRequest);
 	}
 	else {
 		LOG(Logger::LOG_ERROR, "(%s) CCU2CommController::handleIncomingSerialFrame(): Unknown response type. Dropped message.", interfaceSerial.c_str());
