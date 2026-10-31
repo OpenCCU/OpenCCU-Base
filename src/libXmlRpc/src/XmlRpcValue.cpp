@@ -139,6 +139,14 @@ namespace XmlRpc {
   }
 
 
+  void XmlRpcValue::reserveArray(int extra)
+  {
+    if (_type == TypeInvalid)
+      assertArray(0);
+    if (_type == TypeArray && extra > 0)
+      _value.asArray->reserve(_value.asArray->size() + extra);
+  }
+
   void XmlRpcValue::assertArray(int size)
   {
     if (_type == TypeInvalid) {

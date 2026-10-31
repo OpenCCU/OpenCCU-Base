@@ -12,6 +12,14 @@
 
 using namespace XmlRpc;
 
+//! Throws a fault when a method is called with fewer than count arguments
+static void RequireParams(XmlRpc::XmlRpcValue& params, int count)
+{
+	if(params.getType()!=XmlRpcValue::TypeArray || params.size()<count){
+		throw XmlRpcException("Insufficient parameters.", -1);
+	}
+}
+
 extern HS485Manager mgr;
 
 //#define LOG_METHOD_CALLS
@@ -107,6 +115,7 @@ public:
 	XmlRpcMethodGetParamsetDescription(XmlRpcServer* s):XmlRpcServerMethod("getParamsetDescription", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		result.assertStruct();
 		if(!mgr.GetParamsetDescription((std::string&)params[0], (std::string&)params[1], &result)){
 			throw XmlRpcException("Failure");
@@ -126,6 +135,7 @@ public:
 	XmlRpcMethodGetParamsetId(XmlRpcServer* s):XmlRpcServerMethod("getParamsetId", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		std::string& id=result;
 		if(!HS485Manager::GetSingleton()->GetParamsetId(params[0], params[1], &id)){
 			throw XmlRpcException("Failure");
@@ -150,6 +160,7 @@ public:
 	XmlRpcMethodPutParamset(XmlRpcServer* s):XmlRpcServerMethod("putParamset", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(!mgr.PutParamsetValues((std::string&)params[0], (std::string&)params[1], params[2])){
 			throw XmlRpcException("Failure");
 		}
@@ -171,6 +182,7 @@ public:
 	XmlRpcMethodGetParamset(XmlRpcServer* s):XmlRpcServerMethod("getParamset", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		result.assertStruct();
 		if(!mgr.GetParamsetValues((std::string&)params[0], (std::string&)params[1], &result)){
 			throw XmlRpcException("Failure");
@@ -220,6 +232,7 @@ public:
 	XmlRpcMethodGetValue(XmlRpcServer* s):XmlRpcServerMethod("getValue", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		if(!mgr.GetValue(params[0], params[1], &result)){
 			throw XmlRpcException("Failure");
 		}
@@ -241,6 +254,7 @@ public:
 	XmlRpcMethodSetValue(XmlRpcServer* s):XmlRpcServerMethod("setValue", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 3);
 		if(!mgr.SetValue(params[0], params[1], params[2])){
 			throw XmlRpcException("Failure");
 		}
@@ -397,6 +411,7 @@ public:
 	XmlRpcMethodRemoveLink(XmlRpcServer* s):XmlRpcServerMethod("removeLink", s){};
 	void execute(XmlRpc::XmlRpcValue& params, XmlRpc::XmlRpcValue& result)
 	{
+		RequireParams(params, 2);
 		if(!mgr.RemoveLink((std::string&)params[0], (std::string&)params[1])){
 			throw XmlRpcException("Failure");
 		}

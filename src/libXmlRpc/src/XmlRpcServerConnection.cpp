@@ -291,6 +291,11 @@ XmlRpcServerConnection::executeMethod(const std::string& methodName,
 
   if ( ! method) return false;
 
+  // Methods index params[i] beyond the arguments a client sent, which grows the array. Without room
+  // the array moves its elements, and a reference or c_str() a method took to an earlier argument
+  // then points to freed memory. Reserve room for more arguments than any method reads.
+  params.reserveArray(8);
+
   method->execute(params, result);
 
   // Ensure a valid result value
