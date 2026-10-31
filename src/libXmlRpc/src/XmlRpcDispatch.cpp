@@ -6,6 +6,7 @@
 #include "XmlRpcSource.h"
 #include "XmlRpcUtil.h"
 
+#include <errno.h>
 #include <math.h>
 #include <sys/timeb.h>
 #include <time.h>
@@ -130,7 +131,10 @@ XmlRpcDispatch::work(int32_t msTime)
 	
 	if (nEvents < 0)
 	{
-		XmlRpcUtil::error("Error in XmlRpcDispatch::work: error in select (%d).", nEvents);
+		// A signal (e.g. SIGTERM, whose handler ends the daemon's main loop)
+		// interrupts select(); that is no error worth logging.
+		if (errno != EINTR)
+			XmlRpcUtil::error("Error in XmlRpcDispatch::work: error in select (%d).", nEvents);
 		_inWork = false;
 		return false;
 	}
