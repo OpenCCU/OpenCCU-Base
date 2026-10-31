@@ -141,8 +141,6 @@ int main(int argc, char* argv[])
 	logger=new SyslogLogger("hs485d");
     Logger::LogLevel loglevel=Logger::LOG_INFO;
 
-	signal(SIGTERM, sigterm_handler);
-	signal(SIGINT, sigterm_handler);
 #ifndef WIN32
 	signal(SIGCHLD, SIG_IGN);//we are not interested in exit messages from our childs.
 	const struct rlimit rl={RLIM_INFINITY, RLIM_INFINITY};
@@ -411,6 +409,11 @@ int main(int argc, char* argv[])
 */
 	mgr.Init(cfgFilePath);
 
+	//handle SIGTERM and SIGINT only from here on: until now there is nothing to
+	//save, so a signal during startup (e.g. while waiting for a gateway) still
+	//terminates the process at once
+	signal(SIGTERM, sigterm_handler);
+	signal(SIGINT, sigterm_handler);
 	try{
 		while(run ){
 			int64_t timeout=TimerTarget::s_timerQueue.TimeBeforeNextDue();
@@ -418,13 +421,14 @@ int main(int argc, char* argv[])
 				TimerTarget::s_timerQueue.Execute();
 				timeout=TimerTarget::s_timerQueue.TimeBeforeNextDue();
 			}
-			s.work(timeout);
+			s.work(timeout < 0 || timeout > 1000 ? 1000 : timeout); //wake up at least once a second to notice a shutdown request
 		}
 	}catch(XmlRpcException e){
 		LOG(Logger::LOG_FATAL_ERROR, "exception catched at top level: %s", e.getMessage().c_str());
 	}
+	pController->Stop(); //join its threads before the derived parts of the controller are destroyed
 	s.getDispatcher()->removeSource(pController);
-	delete pController; //stops its threads and deletes the port wrapper
+	delete pController; //deletes the port wrapper
 	delete logger;
 	exit(0);
 }

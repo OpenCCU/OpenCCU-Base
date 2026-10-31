@@ -195,8 +195,6 @@ int main(int argc, char* argv[])
 #else
 #endif
 
-	signal(SIGTERM, sigterm_handler);
-	signal(SIGINT, sigterm_handler);
 #ifndef WIN32
 	signal(SIGCHLD, SIG_IGN);//we are not interested in exit messages from our childs.
 	const struct rlimit rl={RLIM_INFINITY, RLIM_INFINITY};
@@ -398,6 +396,12 @@ int main(int argc, char* argv[])
     }
 #endif
 
+	//handle SIGTERM and SIGINT only from here on: until now there is nothing to
+	//save, so a signal during startup (e.g. while waiting for a gateway) still
+	//terminates the process at once
+	signal(SIGTERM, sigterm_handler);
+	signal(SIGINT, sigterm_handler);
+
     writeInitDoneFile(config_data);
 
 	while(run ){
@@ -406,7 +410,11 @@ int main(int argc, char* argv[])
 			TimerTarget::s_timerQueue.Execute();
 			timeout=TimerTarget::s_timerQueue.TimeBeforeNextDue();
 		}
-		s.work(timeout);
+		s.work(timeout < 0 || timeout > 1000 ? 1000 : timeout); //wake up at least once a second to notice a shutdown request
+	}
+	//run what is already due, e.g. a device save requested by the last RPC call
+	while(TimerTarget::s_timerQueue.TimeBeforeNextDue() == 0){
+		TimerTarget::s_timerQueue.Execute();
 	}
 
     s.getDispatcher()->removeSource(mgr->GetInterfaceConcentrator());
