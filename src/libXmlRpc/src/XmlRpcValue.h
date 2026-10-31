@@ -121,7 +121,7 @@ namespace XmlRpc {
 
     //! Reserve room for extra more array elements, so that growing the array by up to that many elements
     //! (e.g. with operator[]) does not move the existing ones and keeps references to them valid.
-    //! An invalid value becomes an empty array; values of other types are left alone.
+    //! An invalid value becomes an empty array; values of other types and extra <= 0 are left alone.
     void reserveArray(int extra);
 
     //! Check for the existence of a struct member by name.

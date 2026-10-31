@@ -143,7 +143,7 @@ namespace XmlRpc {
   {
     if (_type == TypeInvalid)
       assertArray(0);
-    if (_type == TypeArray)
+    if (_type == TypeArray && extra > 0)
       _value.asArray->reserve(_value.asArray->size() + extra);
   }
 
