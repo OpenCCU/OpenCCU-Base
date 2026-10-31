@@ -173,7 +173,10 @@ void LGWPortWrapper::disconnect()
 void LGWPortWrapper::reconnect()
 {
 //	LOG(Logger::LOG_ALL, "LGWPortWrapper::reconnect()");
-	//no locking here, because read/write connect and disconnect do that
+	//Block reads and sends and wait for the ones in flight before the old socket is closed:
+	//LanConnection::send() uses the socket without its mutex. A close() does not wake a
+	//receive waiting in poll() either, so disconnecting first would not shorten the wait.
+	blockRXTXAndWait();
 	disconnect();
 	bool reconnected = false;
 	const unsigned int basetimeout = 5; //5 seconds
