@@ -10,6 +10,7 @@
 #include <Logger.h>
 #include "UdpCannel.h"
 #include <sys/time.h>
+#include <poll.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -63,13 +64,12 @@ int UdpCannel::BindServer() {
 ssize_t UdpCannel::ReceiveMessage(std::string& recv_buf) {
 	ssize_t nread;
 	char ptr[BUFFER_SIZE];
-	struct timeval waitTimeout;
-	waitTimeout.tv_sec = 5;
-	waitTimeout.tv_usec = 0;
-	fd_set readSet;
-	FD_ZERO(&readSet);
-	FD_SET(sockfd,&readSet);
-	int ret = select(sockfd+1,&readSet,NULL,NULL,&waitTimeout);
+	// poll() instead of select(): an fd_set only holds descriptors below FD_SETSIZE (1024)
+	struct pollfd pfd;
+	pfd.fd = sockfd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+	int ret = poll(&pfd, 1, 5000);
 	if(ret < 1)
 	{
 		return 0;

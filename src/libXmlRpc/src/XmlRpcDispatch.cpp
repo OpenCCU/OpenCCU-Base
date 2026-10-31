@@ -21,7 +21,11 @@
 # endif
 #else
 # include <sys/time.h>
+# include <poll.h>
 #endif  // _WINDOWS
+
+#include <map>
+#include <vector>
 
 #include <asm/bitsperlong.h>
 
@@ -90,51 +94,44 @@ XmlRpcDispatch::work(int32_t msTime)
 	_inWork = true;
 	
 	
-	// Construct the sets of descriptors we are interested in
-	fd_set inFd, outFd, excFd;
-	FD_ZERO(&inFd);
-	FD_ZERO(&outFd);
-	FD_ZERO(&excFd);
-	
-	int maxFd = -1;     // Not used on windows
+	// Construct the list of descriptors we are interested in. poll() instead of select(): an fd_set only
+	// holds descriptors below FD_SETSIZE (1024), and FD_SET() with a larger one writes past the set.
+	std::vector<struct pollfd> fds;
+	std::map<int, size_t> fdIndex;     // descriptor -> its entry in fds
 	bool dataPending = false;
 	SourceList::iterator it;
 	for (it=_sources.begin(); it!=_sources.end(); ++it) {
 		int fd = it->getSource()->getfd();
 		unsigned mask=it->getMask()|it->getSource()->getExtraMask();
-		if (mask & ReadableEvent) FD_SET(fd, &inFd);
-		if (mask & WritableEvent) FD_SET(fd, &outFd);
-		if (mask & Exception)     FD_SET(fd, &excFd);
-		if (mask && fd > maxFd)   maxFd = fd;
+		if ( ! mask) continue;
+		short events = 0;
+		if (mask & ReadableEvent) events |= POLLIN;
+		if (mask & WritableEvent) events |= POLLOUT;
+		if (mask & Exception)     events |= POLLPRI;
 		if (mask & DataPending)	  dataPending = true;
+		std::map<int, size_t>::iterator idx = fdIndex.find(fd);
+		if (idx == fdIndex.end()) {
+			struct pollfd pfd;
+			pfd.fd = fd;
+			pfd.events = events;
+			pfd.revents = 0;
+			fdIndex[fd] = fds.size();
+			fds.push_back(pfd);
+		} else {
+			fds[idx->second].events |= events;
+		}
 	}
 	
-	// Check for events
-	int nEvents;
-	if (msTime <= 0){
-		nEvents = select(maxFd+1, &inFd, &outFd, &excFd, NULL);
-	}
-	else 
-	{
-		struct timeval tv;
-		if( dataPending )
-		{
-			//At least one source has data to be immediately processed. Just poll the other sources.
-			tv.tv_sec = 0;
-			tv.tv_usec = 0;
-		}else{
-			tv.tv_sec = msTime/1000;
-			tv.tv_usec = (msTime%1000)*1000;
-		}
-		nEvents = select(maxFd+1, &inFd, &outFd, &excFd, &tv);
-	}
+	// Check for events. At least one source with data to be processed at once: just poll the others.
+	int timeout = (msTime <= 0) ? -1 : (dataPending ? 0 : msTime);
+	int nEvents = poll(fds.empty() ? NULL : &fds[0], fds.size(), timeout);
 	
 	if (nEvents < 0)
 	{
 		// A signal (e.g. SIGTERM, whose handler ends the daemon's main loop)
-		// interrupts select(); that is no error worth logging.
+		// interrupts poll(); that is no error worth logging.
 		if (errno != EINTR)
-			XmlRpcUtil::error("Error in XmlRpcDispatch::work: error in select (%d).", nEvents);
+			XmlRpcUtil::error("Error in XmlRpcDispatch::work: error in poll (%d).", nEvents);
 		_inWork = false;
 		return false;
 	}
@@ -144,22 +141,28 @@ XmlRpcDispatch::work(int32_t msTime)
 	{
 		SourceList::iterator thisIt = it++;
 		XmlRpcSource* src = thisIt->getSource();
-		int fd = src->getfd();
+		std::map<int, size_t>::iterator idx = fdIndex.find(src->getfd());
 		unsigned newMask = (unsigned) -1;
-		if (fd <= maxFd) {
+		if (idx != fdIndex.end()) {  // a source added while handling events is polled next time
+			const struct pollfd& pfd = fds[idx->second];
+			short ready = pfd.revents;
+			// as with select(), a hang-up or an error makes the descriptor readable and writable,
+			// so the source sees it on its next read or write
+			if (ready & (POLLHUP | POLLERR | POLLNVAL))
+				ready |= pfd.events & (POLLIN | POLLOUT);
 			// If you select on multiple event types this could be ambiguous
 			unsigned mask=src->getExtraMask();
 			if ( mask & DataPending )
 			{
 				newMask&=src->handleEvent(DataPending);
 			}else{
-				if (FD_ISSET(fd, &inFd)){
+				if (ready & POLLIN){
 					newMask&=src->handleEvent(ReadableEvent);
 				}
 			}
-			if (FD_ISSET(fd, &outFd))
+			if (ready & POLLOUT)
 				newMask &= src->handleEvent(WritableEvent);
-			if (FD_ISSET(fd, &excFd))
+			if (ready & POLLPRI)
 				newMask &= src->handleEvent(Exception);
 			
 			if ( ! newMask) {

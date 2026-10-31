@@ -18,6 +18,7 @@
 #	include <netinet/in.h>
 #	include <arpa/inet.h>
 #       include <unistd.h>
+#	include <poll.h>
 #	define closesocket(x) close(x)
 #endif
 
@@ -209,6 +210,19 @@ void* UDPDatagramSender::receiverThreadFunction(void* pStructReceiverThreadInfo)
 			break;
 		}
 
+#ifndef WIN32
+        // poll() instead of select(): an fd_set only holds descriptors below FD_SETSIZE (1024)
+        struct pollfd pfd;
+        pfd.fd = pInfo->receiveSocket;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
+        int n_events=poll(&pfd, 1, (int)(abs_rx_timeout-now));
+        if(n_events < 0)
+        {
+            pInfo->pUDPDatagramSender->perror("poll");
+            pthread_exit(NULL);
+        }
+#else
         struct timeval wait_time;
         wait_time.tv_sec=(abs_rx_timeout-now)/1000;
         wait_time.tv_usec=((abs_rx_timeout-now)%1000)*1000;
@@ -234,6 +248,7 @@ void* UDPDatagramSender::receiverThreadFunction(void* pStructReceiverThreadInfo)
 			FD_CLR((unsigned int)pInfo->receiveSocket, &inFd);
 			pthread_exit(NULL);
         }
+#endif
         if(n_events>0) {
             char* rx_buffer=new char[UDP_RX_BUFFER_SIZE];
 
@@ -252,7 +267,6 @@ void* UDPDatagramSender::receiverThreadFunction(void* pStructReceiverThreadInfo)
 				}
 			delete[] rx_buffer;
         }
-		FD_CLR((unsigned int)pInfo->receiveSocket, &inFd);
     }
 	pthread_exit(NULL);
 	//return NULL;
