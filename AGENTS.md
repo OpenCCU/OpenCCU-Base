@@ -50,6 +50,13 @@ what you could and could not test.
 - **Daemon versions:** a user-visible change to `rfd` or `hs485d` bumps
   `src/<daemon>/version.sh` and `src/<daemon>/generated-<daemon>-version.h`
   together, either in the same pull request or in a collected bump.
+- **Daemon changelogs:** a pull request with a user-visible change to `rfd` or
+  `hs485d` (including changes of the libraries they are built with) adds an
+  entry to `src/<daemon>/CHANGELOG.md` under `## Unreleased` (create the
+  heading at the top if it is missing), in the style of the existing entries:
+  what was wrong or what is new, written for users, with links to the pull
+  request and the fixed issue. A version bump renames `## Unreleased` to
+  `## <version> (<date>)`.
 - WebUI, Tcl and ReGa code must escape every user-controlled value.
 - Changes to the closed-source binaries come from eQ-3; do not patch them.
 

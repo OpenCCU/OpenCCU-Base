@@ -1,1 +1,1 @@
-#define RFD_VERSION "2.6.7"
+#define RFD_VERSION "2.6.8"
