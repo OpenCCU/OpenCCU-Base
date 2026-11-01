@@ -210,3 +210,18 @@ jobs:
             -maxdepth 1 -name '*.xml' | wc -l)
           test "${source_rf_count}" -eq "${staged_rf_count}"
           test "${source_hs485_count}" -eq "${staged_hs485_count}"
+
+  webui-tests:
+    name: WebUI tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Run WebUI tests
+        run: node --test tests/webui/test-proofandsetvalue.js

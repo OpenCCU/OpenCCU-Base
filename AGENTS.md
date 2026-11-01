@@ -24,6 +24,7 @@ cmake --preset x86_64-linux-gnu -DDEPLOY_TO_REPO=OFF   # configure (also aarch64
 cmake --build --preset x86_64-linux-gnu --target rfd   # build one target (rfd, hs485d, XmlRpc, elvutils, …)
 make build-x86_64-linux-gnu                             # configure + build everything for one platform
 python3 tests/test-components.py                       # build/install selection tests
+node --test tests/webui/test-proofandsetvalue.js       # WebUI ProofAndSetValue() tests
 ```
 
 Always pass `-DDEPLOY_TO_REPO=OFF` (or use the `Makefile`), otherwise the build
