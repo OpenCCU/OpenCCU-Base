@@ -86,6 +86,18 @@ function showDisplayConfigTextHelp() {
   MessageBox.show(title, content,'', 475, 450);
 };
 
+function toggleSerialNumberDisplay() {
+  var tb = document.getElementById("fwUpdates");
+  if (tb) {
+    var th = tb.getElementsByTagName("th")[2];
+    // an empty value restores the default table-cell/table-column display
+    var display = (th.style.display === "none") ? "" : "none";
+    th.style.display = display;
+    tb.getElementsByTagName("col")[2].style.display = display;
+    document.querySelectorAll('#fwUpdates tbody tr td:nth-child(3)').forEach(el=>el.style.display = display)
+  }
+};
+
 StatusDisplayDialogAcousticEPaper = Class.create({
  
   initialize: function(title, content, value, callback, contentType) {
