@@ -375,6 +375,13 @@ bool HS485Manager::AddNewDevice(unsigned int address, HS485Frame* add_frame/*=NU
 			}
 			dev_instance->SetDeviceDescription(dev);
 			dev_instance->SetEnforcedParameters();
+			//a replaced device that is added again is no longer replaced (as in rfd)
+			std::map<std::string, HS485Device*>::iterator replaced=replacementHistory.find(dev_instance->GetSerial());
+			if(replaced!=replacementHistory.end()){
+				replaced->second->DeleteFromReplacementHistory(dev_instance->GetSerial());
+				replaced->second->RequestSave();
+				initReplacementHistory();
+			}
 			dev_instances[dev_instance->GetSerial()]=dev_instance;
 			address_map[address]=dev_instance;
 			dev_instance->InitNewDevice();

@@ -22,6 +22,7 @@
 #include <fstream>
 #include <type_registry.h>
 #include <inttypes.h>
+#include <algorithm>
 
 using namespace XmlRpc;
 
@@ -1005,6 +1006,14 @@ bool HS485Device::IsCompatible(const HS485Device* newDevice)
 const std::vector<std::string>& HS485Device::getReplacementHistory() const
 {
 	return replacementHistory;
+}
+
+bool HS485Device::DeleteFromReplacementHistory(const std::string& serial)
+{
+	std::vector<std::string>::iterator it=std::find(replacementHistory.begin(), replacementHistory.end(), serial);
+	if(it==replacementHistory.end())return false;
+	replacementHistory.erase(it);
+	return true;
 }
 
 bool HS485Device::replaceDeviceWith(HS485Device* newDevice)
