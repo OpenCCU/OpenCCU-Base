@@ -461,6 +461,7 @@ puts "</div>"
     puts "var installTimerHmIP = 0;"
     puts {
       checkKeyserver = function() {
+		var statusElements = jQuery(".keyserver-status");
         new Ajax.Request(url, {
           method: "post",
           postBody: "action=check_keyserver",
@@ -469,14 +470,14 @@ puts "</div>"
             var key = result === "reachable" ? "dialogNewDevicesKeyserverReachable" :
                       result === "unreachable" ? "dialogNewDevicesKeyserverUnreachable" :
                       "dialogNewDevicesKeyserverCheckFailed";
-            jQuery(".keyserver-status")
+            statusElements
               .removeClass("keyserver-reachable keyserver-unreachable")
               .addClass(result === "reachable" ? "keyserver-reachable" :
                         result === "unreachable" ? "keyserver-unreachable" : "")
               .text(translateKey(key) || key);
           },
           onFailure: function() {
-            jQuery(".keyserver-status")
+            statusElements
               .removeClass("keyserver-reachable keyserver-unreachable")
               .text(translateKey("dialogNewDevicesKeyserverCheckFailed") || "dialogNewDevicesKeyserverCheckFailed");
           }
