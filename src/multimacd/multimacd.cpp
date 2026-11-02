@@ -23,6 +23,7 @@
 #endif
 
 #include "generated-multimacd-version.h"
+#include "elvutils_version.h"
 
 static const char* CONFIG_DEFAULTS[] = {
 	"Coprocessor Device Path",		"/dev/mxs_auart_raw.0",
@@ -84,6 +85,12 @@ void installSignalHandlers()
 
 }
 
+static void printVersion()
+{
+  std::cout << "multimacd " << MULTIMACD_VERSION << " (" << __DATE__ << ")" << std::endl
+            << "  libelvutils " << elvutils_version() << std::endl;
+}
+
 static void usage(const char* procname)
 {
   std::cout << "multimacd " << MULTIMACD_VERSION << " (" << __DATE__ << ")" << std::endl
@@ -93,7 +100,8 @@ static void usage(const char* procname)
             << "    -c: log to console instead of syslog" << std::endl
             << "    -l: set log level" << std::endl
             << "    -p: specify coprocessor device node" << std::endl
-            << "    -d: run as daemon/service" << std::endl;
+            << "    -d: run as daemon/service" << std::endl
+            << "    -v, --version: show the versions of multimacd and its libraries" << std::endl;
 
   if(logger)
     delete logger;
@@ -165,6 +173,10 @@ int main(int argc, char **argv)
 
 	installSignalHandlers();
 
+    if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+        printVersion();
+        return 0;
+    }
     for(int i=1;i<argc;i++)
     {
         if(strcmp(argv[i], "-l")==0&&argc>i+1){

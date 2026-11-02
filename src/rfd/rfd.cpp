@@ -57,6 +57,12 @@ char buffer[128];
 #include <errno.h>
 
 #include "generated-rfd-version.h"
+#include "xmlrpc_version.h"
+#include "xmlparser_version.h"
+#include "hsscomm_version.h"
+#include "elvutils_version.h"
+#include "landeviceutils_version.h"
+#include "unifiedlancomm_version.h"
 
 using namespace XmlRpc;
 
@@ -132,6 +138,17 @@ static const char* CONFIG_FILENAMES[] = {
     NULL
 };
 
+static void printVersion()
+{
+  std::cout << "rfd " << RFD_VERSION << " (" << __DATE__ << ")" << std::endl
+            << "  libXmlRpc " << xmlrpc_version() << std::endl
+            << "  libxmlparser " << xmlparser_version() << std::endl
+            << "  libhsscomm " << hsscomm_version() << std::endl
+            << "  libelvutils " << elvutils_version() << std::endl
+            << "  libLanDeviceUtils " << landeviceutils_version() << std::endl
+            << "  libUnifiedLanComm " << unifiedlancomm_version() << std::endl;
+}
+
 static void usage(const char* procname)
 {
   std::cout << "RFD " << RFD_VERSION << " (" << __DATE__ << ")" << std::endl
@@ -151,7 +168,8 @@ static void usage(const char* procname)
             << "    -f: use alternate config file" << std::endl
             << "    -c: log to console instead of syslog" << std::endl
             << "    -l: set log level" << std::endl
-            << "    -s: sniffing mode" << std::endl;
+            << "    -s: sniffing mode" << std::endl
+            << "    -v, --version: show the versions of rfd and its libraries" << std::endl;
 
 	if(logger)
     delete logger;
@@ -200,6 +218,10 @@ int main(int argc, char* argv[])
 	const struct rlimit rl={RLIM_INFINITY, RLIM_INFINITY};
 	setrlimit(RLIMIT_CORE, &rl);
 #endif
+    if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+        printVersion();
+        return 0;
+    }
     for(int i=1;i<argc;i++)
     {
         if(strcmp(argv[i], "-l")==0&&argc>i+1){

@@ -1,5 +1,6 @@
-// Version of libelvutils (see version.sh and CHANGELOG.md). A program can print it
-// by declaring: extern "C" const char* elvutils_version();
+// Version of libelvutils (see version.sh and CHANGELOG.md).
+// Declared in elvutils_version.h.
+#include "elvutils_version.h"
 #include "generated-elvutils-version.h"
 
 extern "C" const char* elvutils_version()

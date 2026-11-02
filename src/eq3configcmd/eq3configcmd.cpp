@@ -14,14 +14,16 @@
 
 #include <CommandManager.h>
 #include "generated-eq3configcmd-version.h"
+#include "eq3config_version.h"
 
 void printUsage();
 void removeLeadingPathseperators(std::string& filename);
 
 int main(int argc, char** argv)
 {
-	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
-		std::cout << "eq3configcmd " EQ3CONFIGCMD_VERSION " (" __DATE__ ")" << std::endl;
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+		std::cout << "eq3configcmd " EQ3CONFIGCMD_VERSION " (" __DATE__ ")" << std::endl
+			<< "  libeq3config " << eq3config_version() << std::endl;
 		return 0;
 	}
 

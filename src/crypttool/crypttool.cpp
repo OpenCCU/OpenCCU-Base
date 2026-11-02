@@ -23,8 +23,15 @@
 
 #include "crypttoolconfig.h"
 #include "generated-crypttool-version.h"
+#include "elvutils_version.h"
 
 const char* defaultKey = "Markus is awesome";
+
+static void printVersion()
+{
+	printf("crypttool %s (%s)\n", CRYPTTOOL_VERSION, __DATE__);
+	printf("  libelvutils %s\n", elvutils_version());
+}
 
 static void usage(const char* procname)
 {
@@ -48,6 +55,7 @@ static void usage(const char* procname)
 	printf("    -i: key index for -S\n");
 	printf("    -y: log to syslog instead of console\n");
 	printf("    -l: set log level\n");
+	printf("    --version: show the versions of crypttool and its libraries\n");
 	printf("    -f: path to crypttool configuration file\n");
 
 	if(logger)
@@ -267,8 +275,8 @@ int get_index(crypttoolconfig& crypttoolconfig, int key_type)
 
 int main(int argc, char* argv[])
 {
-	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
-		printf("crypttool %s (%s)\n", CRYPTTOOL_VERSION, __DATE__);
+	if(argc == 2 && (strcmp(argv[1], "--version") == 0)) {
+		printVersion();
 		return 0;
 	}
 

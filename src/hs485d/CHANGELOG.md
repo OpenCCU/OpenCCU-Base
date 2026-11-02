@@ -9,6 +9,14 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and
 `generated-hs485d-version.h`).
 
+## Unreleased
+
+* add the option `-v` / `--version`, which prints the version of hs485d and the
+  versions of the OpenCCU-Base libraries it uses (libXmlRpc, libxmlparser,
+  libhsscomm, libelvutils, libLanDeviceUtils, libUnifiedLanComm), as reported
+  by the loaded libraries. The libraries now have versions of their own.
+  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294))
+
 ## 1.4.0 (2026-11-01)
 
 * add the RPC method `restoreConfigToDevice`, which writes the configuration

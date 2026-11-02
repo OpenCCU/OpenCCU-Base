@@ -13,6 +13,7 @@
 #endif
 
 #include "XmlRpc.h"
+#include "xmlrpc_version.h"
 
 using namespace XmlRpc;
 
@@ -24,7 +25,12 @@ using namespace XmlRpc;
 #endif
 
 // Version id
-const char XmlRpc::XMLRPC_VERSION[] = "XMLRPC++ 0.12";
+const char XmlRpc::XMLRPC_VERSION[] = "XMLRPC++ " XMLRPC_VERSION_NUMBER;
+
+extern "C" const char* xmlrpc_version()
+{
+  return XMLRPC_VERSION_NUMBER;
+}
 
 // Default log verbosity: 0 for no messages through 5 (writes everything)
 int XmlRpcLogHandler::_verbosity = 0;

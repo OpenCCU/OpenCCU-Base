@@ -53,8 +53,9 @@ what you could and could not test.
   `libhsscomm`, `libelvutils`, `libLanDeviceUtils`, `libUnifiedLanComm`,
   `libeq3config`), in `MODULE_VERSION` (`eq3_char_loop`, `bcm2835_raw_uart`),
   in the Tcl package version (`tclrega`, `tclrpc`, `tcl_homematic`) or in the
-  library's own version (`XMLRPC_VERSION` of `libXmlRpc`, `@version` in
-  `xmlParser.h` of `libxmlparser`).
+  library's version header (`XMLRPC_VERSION_NUMBER` in `xmlrpc_version.h` of
+  `libXmlRpc`, `XMLPARSER_VERSION_NUMBER` in `xmlparser_version.h` of
+  `libxmlparser`, kept equal to `@version` in `xmlParser.h`).
   A user-visible change raises it (a fix the patch level, a new function the
   minor version), either in the same pull request or in a collected bump.
   CMake generates the header from `version.sh` with `openccu_version_header()`;
@@ -62,7 +63,12 @@ what you could and could not test.
   `src/<daemon>/generated-<daemon>-version.h`, which is bumped together with
   `version.sh`. Never give the shared libraries a CMake `VERSION` or
   `SOVERSION`: their SONAME must stay the plain `lib<name>.so`, which ReGaHss
-  and the OpenCCU packaging load.
+  and the OpenCCU packaging load. Each library returns its version from
+  `<lib>_version()` (declared in `<lib>_version.h`); a program's `--version`
+  (and `-v` where the option is free) prints its own version and the versions
+  of the OpenCCU-Base libraries whose functions it calls, read from the loaded
+  libraries (check with `nm -D --undefined-only`, not only the link line).
+  A program links only the OpenCCU-Base libraries whose functions it calls.
 - **Daemon changelogs:** a pull request with a user-visible change to `rfd` or
   `hs485d` (including changes of the libraries they are built with) adds an
   entry to `src/<daemon>/CHANGELOG.md` under `## Unreleased` (create the
