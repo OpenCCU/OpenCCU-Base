@@ -15,6 +15,7 @@
 #include <SyslogLogger.h>
 #include <fstream>
 #include <iostream>
+#include "generated-SetInterfaceClock-version.h"
 
 
 void printUsage();
@@ -102,6 +103,7 @@ std::string readPortFromFile(const char* filename) {
 
 void printUsage() {
 	std::string msg;
+	msg.append("\nSetInterfaceClock " SETINTERFACECLOCK_VERSION " (" __DATE__ ")\n");
 	msg.append("\nSetInterfaceClock [IP:Port]\n");
 	msg.append("- Calls xml-rpc method SetInterfaceClock. -\n");
 	msg.append("Paremeters:\n");

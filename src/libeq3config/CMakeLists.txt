@@ -52,3 +52,6 @@ target_include_directories(eq3config PRIVATE
 target_link_libraries(eq3config PRIVATE pthread rt crypto LanDeviceUtils UnifiedLanComm elvutils)
 set_target_properties(eq3config PROPERTIES OUTPUT_NAME eq3config)
 openccu_stage_target(eq3config lib)
+
+target_sources(eq3config PRIVATE version.cpp)
+openccu_version_header(eq3config eq3config EQ3CONFIG_VERSION)

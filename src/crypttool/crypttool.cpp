@@ -22,11 +22,13 @@
 #include "openssl/evp.h"
 
 #include "crypttoolconfig.h"
+#include "generated-crypttool-version.h"
 
 const char* defaultKey = "Markus is awesome";
 
 static void usage(const char* procname)
 {
+	printf("crypttool %s (%s)\n\n", CRYPTTOOL_VERSION, __DATE__);
 	printf("%s [-k key] [-t key_type] [-e] [-d] [-s] [-S] [-v] [-r] [-g] [-y] [-l loglevel] [-f path/to/configFile]\n", procname);
 	printf("  Actions: (Default action is to encrypt with the current user key)\n");
 	printf("    -d: decrypt\n");

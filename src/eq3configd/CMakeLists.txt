@@ -13,4 +13,5 @@ target_include_directories(eq3configd PRIVATE
 )
 target_link_libraries(eq3configd PRIVATE pthread crypto elvutils)
 
+openccu_version_header(eq3configd eq3configd EQ3CONFIGD_VERSION)
 openccu_stage_target(eq3configd bin)

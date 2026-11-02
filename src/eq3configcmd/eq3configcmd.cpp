@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <CommandManager.h>
+#include "generated-eq3configcmd-version.h"
 
 void printUsage();
 void removeLeadingPathseperators(std::string& filename);
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
 
 void printUsage() {
 	std::cout << std::endl
-		<< "eq3configcmd, (c) 2013 eQ-3 Entwicklung GmbH" << std::endl
+		<< "eq3configcmd " EQ3CONFIGCMD_VERSION " (" __DATE__ "), (c) 2013 eQ-3 Entwicklung GmbH" << std::endl
 		<< std::endl
 		<< "Usage:" << std::endl
 		<< "\t eq3configcmd <command> [<args>]" << std::endl << std::endl

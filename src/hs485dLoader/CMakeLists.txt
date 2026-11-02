@@ -11,4 +11,5 @@ target_include_directories(hs485dLoader PRIVATE
 )
 target_link_libraries(hs485dLoader PRIVATE pthread m c elvutils xmlparser)
 
+openccu_version_header(hs485dLoader hs485dLoader HS485DLOADER_VERSION)
 openccu_stage_target(hs485dLoader bin)

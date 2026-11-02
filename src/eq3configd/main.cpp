@@ -28,6 +28,7 @@
 #include <md5.h>
 
 #include "include/udpframe.h"
+#include "generated-eq3configd-version.h"
 #include "include/networkconfig.h"
 
 #include <openssl/evp.h>
@@ -59,6 +60,7 @@ const uint8_t UDP_CRYPT_SIGNATURE[UDP_CRYPT_SIGNATURE_SIZE] = "eQ-3__UDP-Crypt";
 
 static void usage(const char* procname)
 {
+	printf("eq3configd %s (%s)\n\n", EQ3CONFIGD_VERSION, __DATE__);
 	printf("%s [-c] [-l loglevel]\n", procname);
 
 	printf("  Options:\n");

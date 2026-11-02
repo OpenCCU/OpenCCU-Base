@@ -8,4 +8,5 @@ target_include_directories(SetInterfaceClock PRIVATE
   "${CMAKE_SOURCE_DIR}/src/libxmlparser"
 )
 target_link_libraries(SetInterfaceClock PRIVATE XmlRpc hsscomm xmlparser elvutils pthread crypto)
+openccu_version_header(SetInterfaceClock SetInterfaceClock SETINTERFACECLOCK_VERSION)
 openccu_stage_target(SetInterfaceClock bin)

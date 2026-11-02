@@ -18,6 +18,7 @@
 #include <xmlParser.h>
 #include <fstream>
 #include <iostream>
+#include "generated-hs485dLoader-version.h"
 
 
 
@@ -329,6 +330,7 @@ std::string trim(const std::string& str)
 
 void printUsage()
 {
+	printf("hs485dLoader %s (%s)\n\n", HS485DLOADER_VERSION, __DATE__);
 	printf("hs485dLoader -l LEVEL [-ds] [-dw] [-dd] [-ilf /path/to/InterfacesList.xml] /pathto/hs485d.conf\n\n");
 	printf("\t-l LEVEL:  Log Level for hs485d; Default is 5\n");
 	printf("\t-ds:       Do not start hs485d, just write InterfacesList.xml\n");
