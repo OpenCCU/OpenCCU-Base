@@ -23,15 +23,16 @@ add_executable(hss_led
   hss_led_util.cpp
 )
 target_compile_features(hss_led PRIVATE cxx_std_11)
-target_compile_definitions(hss_led PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64 PLATFORM_CCU3)
+target_compile_definitions(hss_led PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64 PLATFORM_CCU3 HSS_LED_STATUS_MONITOR)
 target_compile_options(hss_led PRIVATE -Wall)
 target_include_directories(hss_led PRIVATE
   "${CMAKE_SOURCE_DIR}/src/libelvutils"
   "${CMAKE_SOURCE_DIR}/src/libxmlparser"
   "${CMAKE_SOURCE_DIR}/src/libXmlRpc/src"
 )
-target_link_libraries(hss_led PRIVATE XmlRpc elvutils xmlparser pthread)
+target_link_libraries(hss_led PRIVATE XmlRpc elvutils pthread)
 endif()
+openccu_version_header(hss_led hss_led HSS_LED_VERSION)
 set_property(TARGET hss_led PROPERTY OPENCCU_RUNTIME_ALIASES hss_ledctl)
 openccu_stage_target(hss_led bin)
 
@@ -42,5 +43,7 @@ if(HSS_LED_BUILD_TESTS)
   target_compile_options(hss_led_state_test PRIVATE -Wall -Wextra -Werror)
   target_compile_definitions(hss_led_state_test PRIVATE LED_TEST_BUILD)
   target_link_libraries(hss_led_state_test PRIVATE pthread)
+  add_dependencies(hss_led_state_test hss_led-version-header)
+  target_include_directories(hss_led_state_test PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
   add_test(NAME hss_led_state COMMAND hss_led_state_test)
 endif()

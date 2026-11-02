@@ -69,6 +69,7 @@
 #include <stddef.h>
 #include <limits.h>
 #include <new>
+#include "xmlparser_version.h"
 #include "xmlParser.h"
 
 //#ifdef WIN32
@@ -2217,3 +2218,8 @@ XMLNode      XMLNode::getChildNode (int i) { if (!d) return emptyXMLNode;      i
 char         XMLNode::isDeclaration(     ) { if (!d) return 0;                 return d->isDeclaration; }
 char         XMLNode::isEmpty      (     ) { return (d==NULL); }
 int          XMLNode::nElement     (     ) { if (!d) return 0; return d->nChild+d->nText+d->nClear+d->nAttribute; }
+
+extern "C" const char* xmlparser_version()
+{
+    return XMLPARSER_VERSION_NUMBER;
+}

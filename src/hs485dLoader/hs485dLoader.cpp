@@ -10,6 +10,7 @@
 #include <SyslogLogger.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <PropertyMap.h>
 #include <unistd.h>
 #include <string>
@@ -18,6 +19,8 @@
 #include <xmlParser.h>
 #include <fstream>
 #include <iostream>
+#include "generated-hs485dLoader-version.h"
+#include "elvutils_version.h"
 
 
 
@@ -44,6 +47,12 @@ std::string retrieveXmlRpcPort();
 std::string trim(const std::string& str);
 
 //Implementations
+static void printVersion()
+{
+	printf("hs485dLoader %s (%s)\n", HS485DLOADER_VERSION, __DATE__);
+	printf("  libelvutils %s\n", elvutils_version());
+}
+
 int main(int argc, char** argv)
 {
 	int logLevel = 5;
@@ -53,6 +62,10 @@ int main(int argc, char** argv)
 	bool writeInterfacesXML = true;
 	bool startAsDaemon = true;
 	std::string interfacesXmlPath("/etc/config/InterfacesList.xml");
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+		printVersion();
+		return 0;
+	}
 	//Parse args
 	if(argc < 2) {
 		printUsage();
@@ -329,10 +342,12 @@ std::string trim(const std::string& str)
 
 void printUsage()
 {
+	printf("hs485dLoader %s (%s)\n\n", HS485DLOADER_VERSION, __DATE__);
 	printf("hs485dLoader -l LEVEL [-ds] [-dw] [-dd] [-ilf /path/to/InterfacesList.xml] /pathto/hs485d.conf\n\n");
 	printf("\t-l LEVEL:  Log Level for hs485d; Default is 5\n");
 	printf("\t-ds:       Do not start hs485d, just write InterfacesList.xml\n");
 	printf("\t-dw:       Do not write /etc/config/InterfacesList.xml, just start hs485d\n");
 	printf("\t-dd:       Do not start as daemon process.\n");
 	printf("\t-ilp:      Path to InterfacesList.xml (default is /etc/config/InterfacesList.xml)\n");
+	printf("\t-v, --version: Show the versions of hs485dLoader and its libraries\n");
 }

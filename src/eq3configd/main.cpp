@@ -28,6 +28,8 @@
 #include <md5.h>
 
 #include "include/udpframe.h"
+#include "generated-eq3configd-version.h"
+#include "elvutils_version.h"
 #include "include/networkconfig.h"
 
 #include <openssl/evp.h>
@@ -57,14 +59,22 @@ const uint8_t UDP_CRYPT_RANDOM_SIZE = 16;
 const uint8_t UDP_CRYPT_SIGNATURE_SIZE = 16;
 const uint8_t UDP_CRYPT_SIGNATURE[UDP_CRYPT_SIGNATURE_SIZE] = "eQ-3__UDP-Crypt";
 
+static void printVersion()
+{
+	printf("eq3configd %s (%s)\n", EQ3CONFIGD_VERSION, __DATE__);
+	printf("  libelvutils %s\n", elvutils_version());
+}
+
 static void usage(const char* procname)
 {
+	printf("eq3configd %s (%s)\n\n", EQ3CONFIGD_VERSION, __DATE__);
 	printf("%s [-c] [-l loglevel]\n", procname);
 
 	printf("  Options:\n");
 	printf("    -t: device type identifier to publish\n");
 	printf("    -c: log to console instead of syslog\n");
 	printf("    -l: set log level\n");
+	printf("    -v, --version: show the versions of eq3configd and its libraries\n");
 }
 
 int main(int argc, char* argv[])
@@ -84,6 +94,11 @@ int main(int argc, char* argv[])
 	Logger::LogLevel loglevel=Logger::LOG_INFO;
 	std::string deviceType = "";
 	
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+		printVersion();
+		return 0;
+	}
+
 	// analyse commandline parameters
 	for(int i = 1; i < argc; i++)
 	{

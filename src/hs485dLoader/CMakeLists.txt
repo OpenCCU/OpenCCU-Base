@@ -9,6 +9,7 @@ target_include_directories(hs485dLoader PRIVATE
   "${CMAKE_SOURCE_DIR}/src/libelvutils"
   "${CMAKE_SOURCE_DIR}/src/libxmlparser"
 )
-target_link_libraries(hs485dLoader PRIVATE pthread m c elvutils xmlparser)
+target_link_libraries(hs485dLoader PRIVATE pthread m c elvutils)
 
+openccu_version_header(hs485dLoader hs485dLoader HS485DLOADER_VERSION)
 openccu_stage_target(hs485dLoader bin)

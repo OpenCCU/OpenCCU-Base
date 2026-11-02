@@ -82,6 +82,29 @@ function(openccu_stage_target target_name dest_subdir)
 
 endfunction()
 
+# Generates generated-<name>-version.h with "#define <macro> "<version>"" from
+# the version.sh of the calling directory and lets <target> include it.
+function(openccu_version_header target name macro)
+  set(_text "${CMAKE_CURRENT_BINARY_DIR}/${name}-version.txt")
+  set(_header "${CMAKE_CURRENT_BINARY_DIR}/generated-${name}-version.h")
+  add_custom_command(
+    OUTPUT "${_header}"
+    BYPRODUCTS "${_text}"
+    COMMAND "${CMAKE_COMMAND}" -E env sh "${CMAKE_CURRENT_SOURCE_DIR}/version.sh"
+      > "${_text}"
+    COMMAND "${CMAKE_COMMAND}"
+      "-DINPUT=${_text}"
+      "-DOUTPUT=${_header}"
+      "-DMACRO_NAME=${macro}" -P "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/version.sh"
+      "${CMAKE_SOURCE_DIR}/cmake/WriteVersionHeader.cmake"
+    VERBATIM
+  )
+  add_custom_target(${name}-version-header DEPENDS "${_header}")
+  add_dependencies(${target} ${name}-version-header)
+  target_include_directories(${target} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+endfunction()
+
 include(cmake/Components.cmake)
 
 message(STATUS "OpenCCU platform           : ${TARGET_PLATFORM}")

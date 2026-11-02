@@ -28,3 +28,6 @@ target_include_directories(LanDeviceUtils PRIVATE "${CMAKE_SOURCE_DIR}/src/libel
 target_link_libraries(LanDeviceUtils PRIVATE pthread crypto elvutils)
 set_target_properties(LanDeviceUtils PROPERTIES OUTPUT_NAME LanDeviceUtils)
 openccu_stage_target(LanDeviceUtils lib)
+
+target_sources(LanDeviceUtils PRIVATE src/version.cpp)
+openccu_version_header(LanDeviceUtils LanDeviceUtils LANDEVICEUTILS_VERSION)

@@ -65,3 +65,6 @@ target_include_directories(hsscomm PRIVATE
 target_link_libraries(hsscomm PRIVATE pthread elvutils xmlparser XmlRpc)
 set_target_properties(hsscomm PROPERTIES OUTPUT_NAME hsscomm)
 openccu_stage_target(hsscomm lib)
+
+target_sources(hsscomm PRIVATE version.cpp)
+openccu_version_header(hsscomm hsscomm HSSCOMM_VERSION)

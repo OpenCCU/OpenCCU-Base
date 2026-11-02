@@ -26,3 +26,6 @@ target_compile_options(elvutils PRIVATE -Wall -fPIC)
 target_link_libraries(elvutils PRIVATE crypto)
 set_target_properties(elvutils PROPERTIES OUTPUT_NAME elvutils)
 openccu_stage_target(elvutils lib)
+
+target_sources(elvutils PRIVATE version.cpp)
+openccu_version_header(elvutils elvutils ELVUTILS_VERSION)

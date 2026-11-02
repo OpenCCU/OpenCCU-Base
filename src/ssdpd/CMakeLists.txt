@@ -7,4 +7,5 @@ target_compile_definitions(ssdpd PRIVATE _TIME_BITS=64 _FILE_OFFSET_BITS=64)
 target_compile_options(ssdpd PRIVATE -Wall)
 target_link_libraries(ssdpd PRIVATE pthread)
 
+openccu_version_header(ssdpd ssdpd SSDPD_VERSION)
 openccu_stage_target(ssdpd bin)

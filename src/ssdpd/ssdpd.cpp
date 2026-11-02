@@ -18,6 +18,7 @@
 #include <sstream>
 #include <errno.h>
 #include <vector>
+#include "generated-ssdpd-version.h"
 #include <sys/time.h>
 #include <poll.h>
 
@@ -340,6 +341,11 @@ static std::string getSerialNum() {
 }
 int main(int argc, char ** argv) {
 	char buffer[2048];
+
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+		printf("ssdpd %s (%s)\n", SSDPD_VERSION, __DATE__);
+		return 0;
+	}
 
 	struct sockaddr_in sa_mcast_client;
 	struct sockaddr_in sa_peer;

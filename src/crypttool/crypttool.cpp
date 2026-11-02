@@ -22,11 +22,20 @@
 #include "openssl/evp.h"
 
 #include "crypttoolconfig.h"
+#include "generated-crypttool-version.h"
+#include "elvutils_version.h"
 
 const char* defaultKey = "Markus is awesome";
 
+static void printVersion()
+{
+	printf("crypttool %s (%s)\n", CRYPTTOOL_VERSION, __DATE__);
+	printf("  libelvutils %s\n", elvutils_version());
+}
+
 static void usage(const char* procname)
 {
+	printf("crypttool %s (%s)\n\n", CRYPTTOOL_VERSION, __DATE__);
 	printf("%s [-k key] [-t key_type] [-e] [-d] [-s] [-S] [-v] [-r] [-g] [-y] [-l loglevel] [-f path/to/configFile]\n", procname);
 	printf("  Actions: (Default action is to encrypt with the current user key)\n");
 	printf("    -d: decrypt\n");
@@ -46,6 +55,7 @@ static void usage(const char* procname)
 	printf("    -i: key index for -S\n");
 	printf("    -y: log to syslog instead of console\n");
 	printf("    -l: set log level\n");
+	printf("    --version: show the versions of crypttool and its libraries\n");
 	printf("    -f: path to crypttool configuration file\n");
 
 	if(logger)
@@ -265,6 +275,11 @@ int get_index(crypttoolconfig& crypttoolconfig, int key_type)
 
 int main(int argc, char* argv[])
 {
+	if(argc == 2 && (strcmp(argv[1], "--version") == 0)) {
+		printVersion();
+		return 0;
+	}
+
 	int key_type = -1;
 	int key_index = -1;
 	char* key = NULL;

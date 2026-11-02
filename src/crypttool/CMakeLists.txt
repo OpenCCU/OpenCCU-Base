@@ -9,6 +9,7 @@ target_compile_options(crypttool PRIVATE -Wall)
 target_include_directories(crypttool PRIVATE "${CMAKE_SOURCE_DIR}/src/libelvutils")
 target_link_libraries(crypttool PRIVATE crypto pthread elvutils)
 
+openccu_version_header(crypttool crypttool CRYPTTOOL_VERSION)
 openccu_stage_target(crypttool bin)
 
 add_custom_command(TARGET crypttool POST_BUILD

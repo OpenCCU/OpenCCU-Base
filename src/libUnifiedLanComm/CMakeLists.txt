@@ -20,3 +20,6 @@ target_include_directories(UnifiedLanComm PRIVATE
 target_link_libraries(UnifiedLanComm PRIVATE pthread LanDeviceUtils elvutils)
 set_target_properties(UnifiedLanComm PROPERTIES OUTPUT_NAME UnifiedLanComm)
 openccu_stage_target(UnifiedLanComm lib)
+
+target_sources(UnifiedLanComm PRIVATE src/version.cpp)
+openccu_version_header(UnifiedLanComm UnifiedLanComm UNIFIEDLANCOMM_VERSION)

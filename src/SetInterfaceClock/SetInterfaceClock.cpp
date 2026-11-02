@@ -10,11 +10,15 @@
 //
 #include <ctime>
 #include <stdio.h>
+#include <string.h>
 #include <XmlRpc.h>
 #include <TimeZoneInfo.h>
 #include <SyslogLogger.h>
 #include <fstream>
 #include <iostream>
+#include "generated-SetInterfaceClock-version.h"
+#include "xmlrpc_version.h"
+#include "elvutils_version.h"
 
 
 void printUsage();
@@ -23,8 +27,20 @@ std::string readPortFromFile(const char* filename);
 
 using namespace XmlRpc;
 
+static void printVersion()
+{
+	printf("SetInterfaceClock %s (%s)\n", SETINTERFACECLOCK_VERSION, __DATE__);
+	printf("  libXmlRpc %s\n", xmlrpc_version());
+	printf("  libelvutils %s\n", elvutils_version());
+}
+
 int main(int argc, char* argv[])
 {
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+		printVersion();
+		return 0;
+	}
+
 	Logger* log = (Logger*)new SyslogLogger("SetInterfaceClock");
 	log->SetLevel((Logger::LogLevel)1);
 
@@ -102,6 +118,7 @@ std::string readPortFromFile(const char* filename) {
 
 void printUsage() {
 	std::string msg;
+	msg.append("\nSetInterfaceClock " SETINTERFACECLOCK_VERSION " (" __DATE__ ")\n");
 	msg.append("\nSetInterfaceClock [IP:Port]\n");
 	msg.append("- Calls xml-rpc method SetInterfaceClock. -\n");
 	msg.append("Paremeters:\n");

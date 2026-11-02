@@ -2,15 +2,24 @@
 #ifndef OPENCCU_LED_CLI_H
 #define OPENCCU_LED_CLI_H
 #include <ostream>
+#include "generated-hss_led-version.h"
+#ifdef HSS_LED_STATUS_MONITOR
+#include "elvutils_version.h"
+#include "xmlrpc_version.h"
+#endif
 
 namespace LedCli {
 static const unsigned slowMs = 500;
 static const unsigned fastMs = 100;
 
 inline void version(std::ostream& out, const char* program, bool recovery = false) {
-  out << program << " 2.3 (built " << __DATE__ << " " << __TIME__ << ")";
+  out << program << " " HSS_LED_VERSION " (built " << __DATE__ << " " << __TIME__ << ")";
   if (recovery) out << " [recovery]";
   out << '\n';
+#ifdef HSS_LED_STATUS_MONITOR
+  out << "  libXmlRpc " << xmlrpc_version() << '\n'
+      << "  libelvutils " << elvutils_version() << '\n';
+#endif
 }
 
 inline void daemonHelp(std::ostream& out, bool recovery = false) {
