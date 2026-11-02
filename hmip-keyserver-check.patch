@@ -1,0 +1,83 @@
+diff --git a/www/config/cp_add_device.cgi b/www/config/cp_add_device.cgi
+--- a/www/config/cp_add_device.cgi
++++ b/www/config/cp_add_device.cgi
+@@ -21,2 +21,5 @@
+ set HS485D_URL "bin://127.0.0.1:$portnumber"
++
++set KEYSERVER_HOST "secgtw.homematic.com"
++set KEYSERVER_PORT 8443
+ 
+@@ -204,3 +207,3 @@
+         append html "<tr>"
+-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
++          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
+           append html "<td>"
+@@ -306,3 +309,3 @@
+         append html "<tr>"
+-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
++          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
+           append html "<td>"
+@@ -397,2 +400,4 @@
+ 
++  puts "<style>.keyserver-status.keyserver-reachable { color: green; } .keyserver-status.keyserver-unreachable { color: red; }</style>"
++
+   initJavascript
+@@ -457,2 +462,24 @@
+     puts {
++      checkKeyserver = function() {
++        new Ajax.Request(url, {
++          method: "post",
++          postBody: "action=check_keyserver",
++          onSuccess: function(transport) {
++            var result = transport.responseText.trim();
++            var key = result === "reachable" ? "dialogNewDevicesKeyserverReachable" :
++                      result === "unreachable" ? "dialogNewDevicesKeyserverUnreachable" :
++                      "dialogNewDevicesKeyserverCheckFailed";
++            jQuery(".keyserver-status")
++              .removeClass("keyserver-reachable keyserver-unreachable")
++              .addClass(result === "reachable" ? "keyserver-reachable" :
++                        result === "unreachable" ? "keyserver-unreachable" : "")
++              .text(translateKey(key) || key);
++          },
++          onFailure: function() {
++            jQuery(".keyserver-status")
++              .removeClass("keyserver-reachable keyserver-unreachable")
++              .text(translateKey("dialogNewDevicesKeyserverCheckFailed") || "dialogNewDevicesKeyserverCheckFailed");
++          }
++        });
++      };
+       update_new_device_count = function() {
+@@ -766,2 +793,3 @@
+     puts "translatePage('#messagebox');"
++    puts "checkKeyserver();"
+     puts "dlgPopup.readaptSize();"
+@@ -983,2 +1011,11 @@
+ 
++proc action_check_keyserver {} {
++  global KEYSERVER_HOST KEYSERVER_PORT
++  if {[catch {exec nc -z -w 3 $KEYSERVER_HOST $KEYSERVER_PORT}]} {
++    puts "unreachable"
++  } else {
++    puts "reachable"
++  }
++}
++
+ cgi_eval {
+diff --git a/www/webui/js/lang/de/translate.lang.js b/www/webui/js/lang/de/translate.lang.js
+--- a/www/webui/js/lang/de/translate.lang.js
++++ b/www/webui/js/lang/de/translate.lang.js
+@@ -1,1 +1,5 @@
+     "commentDialogNewDevices" : "***********************************************",
++    "dialogNewDevicesKeyserverChecking" : "eQ-3-Keyserver: Erreichbarkeit wird gepr%FCft ...",
++    "dialogNewDevicesKeyserverReachable" : "eQ-3-Keyserver: Erreichbar",
++    "dialogNewDevicesKeyserverUnreachable" : "eQ-3-Keyserver: Nicht erreichbar",
++    "dialogNewDevicesKeyserverCheckFailed" : "eQ-3-Keyserver: Pr%FCfung fehlgeschlagen",
+diff --git a/www/webui/js/lang/en/translate.lang.js b/www/webui/js/lang/en/translate.lang.js
+--- a/www/webui/js/lang/en/translate.lang.js
++++ b/www/webui/js/lang/en/translate.lang.js
+@@ -1,1 +1,5 @@
+     "commentDialogNewDevices" : "***********************************************",
++    "dialogNewDevicesKeyserverChecking" : "eQ-3 key server: Checking connectivity ...",
++    "dialogNewDevicesKeyserverReachable" : "eQ-3 key server: Reachable",
++    "dialogNewDevicesKeyserverUnreachable" : "eQ-3 key server: Not reachable",
++    "dialogNewDevicesKeyserverCheckFailed" : "eQ-3 key server: Check failed",
