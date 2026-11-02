@@ -86,6 +86,11 @@ int main(int argc, char* argv[])
 	Logger::LogLevel loglevel=Logger::LOG_INFO;
 	std::string deviceType = "";
 	
+	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
+		printf("eq3configd %s (%s)\n", EQ3CONFIGD_VERSION, __DATE__);
+		return 0;
+	}
+
 	// analyse commandline parameters
 	for(int i = 1; i < argc; i++)
 	{

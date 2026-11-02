@@ -1,6 +1,8 @@
 // Version of libUnifiedLanComm (see version.sh and CHANGELOG.md). A program can print it
-// by declaring: extern const char UNIFIEDLANCOMM_VERSION_STRING[];
+// by declaring: extern "C" const char* unifiedlancomm_version();
 #include "generated-UnifiedLanComm-version.h"
 
-extern const char UNIFIEDLANCOMM_VERSION_STRING[];
-const char UNIFIEDLANCOMM_VERSION_STRING[] = UNIFIEDLANCOMM_VERSION;
+extern "C" const char* unifiedlancomm_version()
+{
+	return UNIFIEDLANCOMM_VERSION;
+}

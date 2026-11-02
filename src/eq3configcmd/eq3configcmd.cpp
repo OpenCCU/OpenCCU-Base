@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <string>
 #include <stdlib.h>
+#include <string.h>
 
 #include <CommandManager.h>
 #include "generated-eq3configcmd-version.h"
@@ -19,6 +20,11 @@ void removeLeadingPathseperators(std::string& filename);
 
 int main(int argc, char** argv)
 {
+	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
+		std::cout << "eq3configcmd " EQ3CONFIGCMD_VERSION " (" __DATE__ ")" << std::endl;
+		return 0;
+	}
+
 	if(argc >= 1) {
 		//Parse command line args...
 		//First must be the commandName

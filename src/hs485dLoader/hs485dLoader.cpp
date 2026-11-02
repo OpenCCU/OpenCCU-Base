@@ -10,6 +10,7 @@
 #include <SyslogLogger.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <PropertyMap.h>
 #include <unistd.h>
 #include <string>
@@ -54,6 +55,10 @@ int main(int argc, char** argv)
 	bool writeInterfacesXML = true;
 	bool startAsDaemon = true;
 	std::string interfacesXmlPath("/etc/config/InterfacesList.xml");
+	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
+		printf("hs485dLoader %s (%s)\n", HS485DLOADER_VERSION, __DATE__);
+		return 0;
+	}
 	//Parse args
 	if(argc < 2) {
 		printUsage();

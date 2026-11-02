@@ -267,6 +267,11 @@ int get_index(crypttoolconfig& crypttoolconfig, int key_type)
 
 int main(int argc, char* argv[])
 {
+	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
+		printf("crypttool %s (%s)\n", CRYPTTOOL_VERSION, __DATE__);
+		return 0;
+	}
+
 	int key_type = -1;
 	int key_index = -1;
 	char* key = NULL;

@@ -10,6 +10,7 @@
 //
 #include <ctime>
 #include <stdio.h>
+#include <string.h>
 #include <XmlRpc.h>
 #include <TimeZoneInfo.h>
 #include <SyslogLogger.h>
@@ -26,6 +27,11 @@ using namespace XmlRpc;
 
 int main(int argc, char* argv[])
 {
+	if(argc == 2 && strcmp(argv[1], "--version") == 0) {
+		printf("SetInterfaceClock %s (%s)\n", SETINTERFACECLOCK_VERSION, __DATE__);
+		return 0;
+	}
+
 	Logger* log = (Logger*)new SyslogLogger("SetInterfaceClock");
 	log->SetLevel((Logger::LogLevel)1);
 

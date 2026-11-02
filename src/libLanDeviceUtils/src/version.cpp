@@ -1,6 +1,8 @@
 // Version of libLanDeviceUtils (see version.sh and CHANGELOG.md). A program can print it
-// by declaring: extern const char LANDEVICEUTILS_VERSION_STRING[];
+// by declaring: extern "C" const char* landeviceutils_version();
 #include "generated-LanDeviceUtils-version.h"
 
-extern const char LANDEVICEUTILS_VERSION_STRING[];
-const char LANDEVICEUTILS_VERSION_STRING[] = LANDEVICEUTILS_VERSION;
+extern "C" const char* landeviceutils_version()
+{
+	return LANDEVICEUTILS_VERSION;
+}
