@@ -1,0 +1,1420 @@
+# ReGaHss ChangeLog
+
+Changes of `ReGaHss`, the logic engine of the CCU: device and system
+variable database, programs, HomeMatic script interpreter and backend of
+the WebUI. Newest version first. Changes of the OpenCCU-Base libraries it
+uses (libXmlRpc, libxmlparser) are in their own changelogs in OpenCCU-Base
+(`src/lib*/CHANGELOG.md`).
+
+Changes not yet released are collected under `Unreleased` and get the
+version and date with the next release (Release workflow, `version.sh`).
+The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
+dated with their newest entry.
+
+## R1.00.0388.0268 (2026-11-02)
+
+* add the option `-v` / `--version`, which prints the version of ReGaHss and
+  the versions of the OpenCCU-Base libraries it uses (libXmlRpc,
+  libxmlparser), as reported by the loaded libraries ("unknown" for a
+  library without a version of its own).
+  (cf. [OpenCCU/OpenCCU-Base#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294))
+
+## R1.00.0388.0267 (2026-10-19)
+
+* fix State(true) of a program called by a script not evaluating the
+  program: without a trigger data point "true" was not taken as a boolean,
+  so that the program was not executed (while e.g. State(1) was). This
+  allows e.g. a script to evaluate a program at once after activating it
+  with Active(true).
+  (cf. [OpenCCU/OpenCCU#228](https://github.com/OpenCCU/OpenCCU/issues/228))
+* fix a program being executed when it is activated, e.g. a new program at
+  its first save in the WebUI or a program activated in the program list:
+  a program is no longer executed when it is activated and only reacts to
+  its next trigger.
+  (cf. [OpenCCU/OpenCCU#228](https://github.com/OpenCCU/OpenCCU/issues/228))
+* add the setting ExecuteOnStartup() of a program, whether it is executed
+  at the start of ReGaHss (if its conditions are met): all active programs
+  were executed at the start, which e.g. sent commands to many devices
+  (duty cycle). A program not to be executed at the start only reacts to
+  its next trigger. A new program is not executed at the start, a program
+  saved by an earlier version is executed at the start as before.
+  (cf. [OpenCCU/OpenCCU#223](https://github.com/OpenCCU/OpenCCU/issues/223))
+* add the option "ScriptVariableScope=local" (in /etc/config/rega.conf)
+  which makes the variables of the script of a program (and of the
+  expression of an alarm or mapping) local to its execution: all these
+  scripts share their variables, so that a script can use a variable
+  declared by another script or kept by an earlier execution of itself
+  (only if that script has run since the start of ReGaHss), and the
+  syntax check of the WebUI's script editor declares the variables of the
+  checked script for all of them. With this option, using a variable which
+  is not declared before is a syntax error, like in a script of a web
+  request (e.g. "Skript testen" of the WebUI), and values can still be
+  shared between scripts with system.SetSessionVar() and
+  system.GetSessionVar() (or GetVar()). Without it ("global", default) the
+  scripts share their variables like before. The warning about a variable
+  used from another script is shorter now and refers to
+  system.SetSessionVar()/GetSessionVar().
+  (cf. [OpenCCU/OpenCCU#84](https://github.com/OpenCCU/OpenCCU/issues/84))
+
+## R1.00.0388.0266 (2026-10-18)
+
+* fix delays of programs between 2 and 3 hours being shifted by an hour on
+  the day of the change to daylight saving time: a delay (and a time of
+  day) was converted to the time of day of today, which does not exist for
+  02:00 to 02:59 on that day, so that e.g. a delay of 2 hours was output as
+  1 hour (e.g. by the WebUI, which then saved it) and also saved this way
+  to the homematic.regadom (e.g. by its automatic saving), so that the
+  delay was 1 hour afterwards. A delay or time of day is output and saved
+  as is now.
+  (cf. [OpenCCU/OpenCCU#584](https://github.com/OpenCCU/OpenCCU/issues/584))
+* fix the script of a program ending with a script runtime error after
+  setting an alarm which has an expression (AlExpression()): the
+  expression is evaluated while State() is called, by the same parser as
+  the running script, which overwrote the code of the script. A script
+  evaluated while another one is executed is parsed and executed by a
+  separate parser now, which knows the current variables.
+  (cf. [OpenCCU/OpenCCU#84](https://github.com/OpenCCU/OpenCCU/issues/84))
+* log a warning if the script of a program (or the expression of an alarm
+  or mapping) uses a variable it does not declare before, which is only
+  known because another script declared it or the script itself in an
+  earlier execution: all these scripts share their variables, which is
+  going to change in a future version so that the variables of a script
+  are local to it. The warning is logged once per variable and script,
+  names the program and the variables and refers to
+  system.SetSessionVar()/GetSessionVar() to share values between scripts.
+  The behavior of the scripts is unchanged.
+  (cf. [OpenCCU/OpenCCU#84](https://github.com/OpenCCU/OpenCCU/issues/84))
+* fix the script of a program (or the expression of an alarm or mapping)
+  with a syntax error being executed partially: the code generated up to
+  the syntax error was executed, e.g. the statements before it and the
+  statement containing it with a truncated parameter (such as a State()
+  call with an incomplete value). Like a script of a web request (e.g.
+  "Skript testen" of the WebUI), such a script is no longer executed at
+  all and an error naming the program (or alarm, mapping) is logged.
+  (cf. [OpenCCU/OpenCCU#84](https://github.com/OpenCCU/OpenCCU/issues/84))
+* fix the next time of monthly time modules repeated every n months (e.g.
+  "1st Wednesday of every 6th month"): the day of the reference time was
+  compared with the day in a later month of the repetition, so that a
+  repetition was skipped (e.g. 07.07.2021 instead of 06.01.2021 from
+  01.07.2020) or a wrong day was computed for a time module on a day of
+  the month (e.g. the 22nd instead of the 15th). Furthermore, a monthly
+  time module no longer skips the next month at the end of a month (e.g.
+  on the 31st of August the 1st Wednesday of October instead of
+  September was computed).
+  (cf. [OpenCCU/OpenCCU#886](https://github.com/OpenCCU/OpenCCU/issues/886))
+* fix Next() of a time module which was not active since the start of
+  ReGaHss (e.g. of an inactive or expired program) logging "interface
+  pointer are not initialized" and returning an empty string instead of
+  the next time, which made e.g. Next().Format() end the script with a
+  script runtime error: the timer thread only initializes and updates
+  time modules while they are active. Next() now initializes a time module
+  if necessary and always updates an inactive one, which may have been
+  changed since. Furthermore, the initialization of a time module by the
+  timer thread no longer replaces its data while a script queries it.
+  (cf. [OpenCCU/OpenCCU#889](https://github.com/OpenCCU/OpenCCU/issues/889))
+* fix calling a method on the result of a method call whose last parameter
+  is a method call without parameters, e.g.
+  'dom.GetObject(o.Channel()).Name()' or 's.Substr(0, s.Length()).Trim()':
+  the end of the parameters of the outer method call was taken as the end
+  of the inner method call, so that the following method (Name(), Trim())
+  was called on the parameter instead of the result of the outer method
+  call, which ended the script with a script runtime error or returned a
+  wrong result. Putting the outer method call into parentheses is no
+  longer necessary.
+  (cf. [OpenCCU/OpenCCU#983](https://github.com/OpenCCU/OpenCCU/issues/983))
+* fix LastValue() of the number of active alarms and service messages
+  (ID_GW_SYSALARM, ID_GW_SYSSERVICE) always returning the current value:
+  the number was set again on every update of any alarm or service
+  message data point (e.g. with every status message of a device), even
+  if it did not change, which overwrote its previous value and triggered
+  programs on updates of it. It is now only set if it changes. Note that
+  LastValue() returns the value before the last update of a data point,
+  LastChangeValue() the value before its last change.
+  (cf. [OpenCCU/OpenCCU#467](https://github.com/OpenCCU/OpenCCU/issues/467))
+* fix the WebUI showing alarms or service messages after a restart of
+  ReGaHss which did not exist (anymore): the alarm states are not saved
+  in the DOM file, so all alarms are inactive after a restart, but the
+  number of active alarms and service messages (ID_GW_SYSALARM,
+  ID_GW_SYSSERVICE) shown in the WebUI header kept its value from before
+  the restart until the next alarm changed. Both are now recomputed when
+  the DOM file is loaded.
+  (cf. [OpenCCU/OpenCCU#1016](https://github.com/OpenCCU/OpenCCU/issues/1016))
+
+## R1.00.0388.0265 (2026-10-16)
+
+* fix ReGaHss crashing (SIGSEGV) if a script created a very long string,
+  e.g. by doubling a string in a loop ('a = a # a;'): if allocating the
+  memory of a string failed, the string was left without buffer and the
+  next access crashed. A string now keeps its current buffer and contents
+  if allocating a larger one fails. Furthermore, strings created by the
+  concatenation operator '#' and by .Replace() are limited to a length of
+  32 MiB and the output of a script (Write(), WriteLine(), ...) to 32 MiB
+  per request, so that a script cannot use up all memory: exceeding a
+  limit (or a failed allocation) now ends the script with a script
+  runtime error. .Replace() now also builds its result at once instead of
+  moving the rest of the string for each occurrence (which took very
+  long for many occurrences) and leaves the string unchanged for an empty
+  search string (it never ended for it, e.g. "abc".Replace("", "x")).
+  (cf. [OpenCCU/OpenCCU#1420](https://github.com/OpenCCU/OpenCCU/issues/1420))
+* fix the error page of the web server (e.g. "Sitzung ungültig oder
+  abgelaufen!" for an invalid session) showing its message and link on
+  the same line when embedded into the WebUI: they were output as two
+  paragraphs, which the WebUI does not display on separate lines. They are
+  now output in one paragraph separated by a line break, and the link is
+  omitted if the error page has none.
+  (cf. [OpenCCU/OpenCCU#1598](https://github.com/OpenCCU/OpenCCU/issues/1598))
+* fix programs not reacting to an update of a device datapoint or system
+  variable although their condition was met: the conditions of programs
+  are evaluated asynchronously, but used the current value of the
+  triggering datapoint instead of the value of the update. If the
+  datapoint had been updated again meanwhile (e.g. by the next event of
+  a system.multicall, like TIMER_GET of a CUxD timer, or by a script
+  setting a system variable twice), the condition was evaluated with the
+  newer value. The value of the triggering update is now used for the
+  triggering datapoint, all other datapoints of the conditions are still
+  evaluated with their current value.
+  (cf. [OpenCCU/OpenCCU#1734](https://github.com/OpenCCU/OpenCCU/issues/1734), [OpenCCU/OpenCCU#1278](https://github.com/OpenCCU/OpenCCU/issues/1278))
+* fix URL encoded characters in the URL parameters of remote script
+  calls (e.g. /x.exe?v=dom.GetObject('SV').State('A%26B')) and pages:
+  the URL was decoded before it was split into its parameters and then
+  decoded a second time, so that an encoded '&' (%26, but also %2526)
+  split the parameter, an encoded '+' (%2B) became a space and a '%' not
+  followed by two hex digits (e.g. "50%25x" or "%4'") removed parts of
+  the parameter. The parameters are now split first and each parameter
+  is decoded once, so that %26, %2B and %25 result in '&', '+' and '%'.
+  A '&' that is not encoded still separates the parameters (as defined
+  for URLs), a '+' still results in a space.
+  (cf. [OpenCCU/OpenCCU#2216](https://github.com/OpenCCU/OpenCCU/issues/2216))
+
+## R1.00.0388.0264 (2026-10-15)
+
+* fix foreach() silently skipping the loop if the loop variable was not
+  declared as string (or as integer for a loop over an integer count),
+  e.g. 'var x; foreach(x, list)' or 'integer x; foreach(x, "A\tB")'.
+  The loop variable may now be declared with any type, as it is set to
+  the elements of the list (string) or the count (integer) anyway.
+  (cf. [OpenCCU/OpenCCU#2612](https://github.com/OpenCCU/OpenCCU/issues/2612))
+* fix the WebUI showing wrong, incomplete or duplicated content (e.g.
+  duplicated control buttons) or not loading at all, and ReGaHss crashing,
+  after system.ClearCache() or system.CacheMode() had been used or when
+  several requests for the same page were processed at the same time:
+  - system.ClearCache() did not clear the cached function lookups of
+    Call() and code cache IDs were reused, so that Call() afterwards
+    executed no or completely different code. Code cache IDs are now never
+    reused and Call() reloads functions no longer cached.
+  - code executing system.ClearCache() itself (or a concurrent request)
+    freed the code still being executed (use-after-free).
+  - the page and file caches were not protected against concurrent
+    access, so that pages processed for the first time by concurrent
+    requests could permanently end up with duplicated or missing content
+    in the cache. Pages are now cached only once completely processed and
+    only valid cache entries are used.
+  - the cached content of files could be modified or released while being
+    used by a concurrent request.
+  (cf. [OpenCCU/OpenCCU#2638](https://github.com/OpenCCU/OpenCCU/issues/2638), [OpenCCU/OpenCCU#1467](https://github.com/OpenCCU/OpenCCU/issues/1467))
+* fix undefined behaviour when loading and saving the parameter sets of
+  devices, channels and UI data in the DOM file: they were accessed as
+  DOM objects (IseObject), which they are not. Behaviour is unchanged,
+  the CI now also tests ReGaHss with UndefinedBehaviorSanitizer.
+
+## R1.00.0388.0263 (2026-10-14)
+
+* fix ReGaHss aborting with "pure virtual method called" / "terminate
+  called without an active exception" (SIGABRT) at the end of a stop (e.g.
+  SIGTERM) if programs with time modules existed: when the DOM was
+  destroyed, a time module condition deleted its calendar datapoint while
+  the DOM container was already partially destroyed (depending on the
+  order of the object IDs). The objects of the DOM are now deleted while
+  the container is still complete.
+* fix the shutdown of the authentication service
+  (AuthenticatorServiceEnabled=true) when ReGaHss is stopped: its thread
+  was cancelled immediately while it was waiting for a request, its object
+  was destroyed without waiting for the thread to end, and the service was
+  only stopped after the DOM it uses had already been destroyed. The
+  service now waits for requests with a timeout, is stopped cooperatively
+  before the runtime threads and the DOM, and is only cancelled if it does
+  not exit within 5s.
+
+## R1.00.0388.0262 (2026-10-13)
+
+* fix enumerations of the type etUserPages (e.g. ID_USERPAGES) not being
+  accessible: dom.GetObject() returned null and dom.DeleteObject()
+  returned false for them, because of a remaining license check for the
+  unreleased user pages feature. Enumerations whose type was set to
+  etUserPages via .EnumType() therefore remained as inaccessible objects
+  in the DOM. The license check was removed, so these objects can be
+  accessed and deleted like any other object.
+  (cf. [OpenCCU/OpenCCU#2640](https://github.com/OpenCCU/OpenCCU/issues/2640))
+* fix sporadic crashes (SIGSEGV, use-after-free, "terminate called
+  without an active exception") and hangs of ReGaHss when it is stopped
+  with SIGTERM: the runtime threads were cancelled immediately instead of
+  being stopped, and resources (e.g. the scheduler list) were freed while
+  other threads still used them. The runtime threads are now stopped
+  cooperatively and are only cancelled if they do not exit within 5s
+  (20s for the final save of the DOM), the XML-RPC server is shut down
+  after its thread exited, and the scheduler list and the history ring
+  buffer are kept until they are no longer used.
+  (cf. [OpenCCU/ReGaHss-Test#196](https://github.com/OpenCCU/ReGaHss-Test/pull/196))
+* fix an out-of-bounds read when a new object (e.g. dom.CreateObject())
+  was added to the internal object map while the map was full: the
+  entry behind the end of the map was read to determine the insert
+  position (reported by AddressSanitizer when creating more than 65535
+  objects). The behaviour does not change otherwise.
+
+## R1.00.0388.0261 (2026-10-12)
+
+* fix .ToString() and .Format() of UTC time values (e.g. currenttime):
+  the time was always output as local time, although the value is UTC
+  (.IsLocalTime() = 0, .Hour() returns the UTC hour). UTC time values
+  are now output as UTC (%Z: GMT, %z: +0000), local time values (e.g.
+  localtime, time stamps) are unchanged. The time 0 resulting from an
+  invalid conversion (e.g. "abc".ToTime()) is now a local time, so its
+  output is unchanged as well.
+  (cf. [OpenCCU/OpenCCU#2670](https://github.com/OpenCCU/OpenCCU/issues/2670))
+* fix .Format() of time values without format raising a script runtime
+  error: it now returns the time like .ToString().
+  (cf. [OpenCCU/OpenCCU#2669](https://github.com/OpenCCU/OpenCCU/issues/2669))
+
+## R1.00.0388.0260 (2026-10-11)
+
+* fix foreach() over an integer count when the script assigns a value of
+  another type (object, idarray, time, real, ...) to the loop variable:
+  the loop used the loop variable itself as counter and continued with
+  the raw internal value of the assigned value (e.g. a pointer or bit
+  pattern), so the loop was aborted or restarted and left such a value
+  in the loop variable. The counter is now kept separately, so the loop
+  continues with the next count in this case. Assigning an integer to
+  the loop variable still sets the counter (like in C). Furthermore, the
+  loop variable keeps its value after break (like in C) instead of being
+  incremented once more, and the loop no longer accesses the loop
+  variable via a reference that becomes invalid if the script declares
+  new variables in the loop.
+  (cf. [OpenCCU/OpenCCU#2613](https://github.com/OpenCCU/OpenCCU/issues/2613),
+  [OpenCCU/OpenCCU#2614](https://github.com/OpenCCU/OpenCCU/issues/2614),
+  [OpenCCU/OpenCCU#2615](https://github.com/OpenCCU/OpenCCU/issues/2615),
+  [OpenCCU/OpenCCU#2616](https://github.com/OpenCCU/OpenCCU/issues/2616),
+  [OpenCCU/OpenCCU#2617](https://github.com/OpenCCU/OpenCCU/issues/2617),
+  [OpenCCU/OpenCCU#2619](https://github.com/OpenCCU/OpenCCU/issues/2619),
+  [OpenCCU/OpenCCU#2620](https://github.com/OpenCCU/OpenCCU/issues/2620),
+  [OpenCCU/OpenCCU#2622](https://github.com/OpenCCU/OpenCCU/issues/2622))
+
+## R1.00.0388.0259 (2026-10-09)
+
+* fix ReGaHss crashing (SIGSEGV) after system.SyslogIPAddress() was set
+  to -1, "" or "255.255.255.255": these values enabled logging via SYSLOG
+  to the broadcast address, sending to it failed and SendTo() logged
+  this error via SYSLOG again, i.e. in an endless recursion until the
+  stack overflowed. Errors of the SYSLOG socket are no longer sent via
+  SYSLOG, and invalid addresses as well as the broadcast address now
+  disable logging via SYSLOG like "0.0.0.0".
+  (cf. [OpenCCU/OpenCCU#2692](https://github.com/OpenCCU/OpenCCU/issues/2692))
+* fix IsTypeOf() of enumerations: an enumeration (e.g. ID_DEVICES of
+  type OT_DEVICES) shares the type bits of its elements, so it was also
+  of their type (e.g. IsTypeOf(OT_DEVICE) returned true). This applied to
+  the script method .IsTypeOf() as well as to all internal type checks,
+  which then accessed the enumeration as an element. E.g. a delayed
+  State() on ID_DATAPOINTS (dom.GetObject(ID_DATAPOINTS).State(1, 500))
+  crashed ReGaHss once executed. An enumeration is now only of the type
+  of an enumeration (e.g. OT_DEVICES, OT_ENUM) or of OT_OBJECT.
+  (cf. [OpenCCU/OpenCCU#2950](https://github.com/OpenCCU/OpenCCU/issues/2950))
+
+## R1.00.0388.0258 (2026-10-08)
+
+* fix ReGaHss sporadically aborting (SIGABRT, "terminate called without
+  an active exception") when stopped with SIGTERM/SIGINT: Stop() of the
+  runtime threads sets the stop event and cancels the thread right away.
+  If the thread function had already returned, the cancellation was
+  acted upon in the cleanup handler of the thread (e.g. in the write()
+  of a log message), which pthread_cleanup_pop() calls in a noexcept
+  destructor in C++, so the cancellation ended in std::terminate().
+  Threads now ignore cancellation requests once their thread function
+  returned.
+* fix ReGaHss aborting (SIGABRT, "terminate called without an active
+  exception") when its web server cannot accept a connection, e.g.
+  because no file descriptors are left (EMFILE): the HTTP listener
+  thread ended on any accept() error and the cleanup handler of this
+  self-deleting thread called pthread_exit(), i.e. unwound out of the
+  noexcept cleanup of the thread, which ended in std::terminate(). The
+  cleanup handler no longer calls pthread_exit() and the listener logs
+  temporary accept() errors and accepts the next connection a second
+  later instead of ending (and leaving ReGaHss without web server).
+
+## R1.00.0388.0257 (2026-10-08)
+
+* fix out-of-bounds access of the DayProfileEntry() script method: the
+  index was passed unchecked to the day profile array of a program, so
+  out-of-range indices read/wrote foreign program properties (e.g.
+  DayTypeProgId(), PrgInfo()), could corrupt the regadom or crash ReGaHss.
+  Only the indices 0..23 (the persisted part of a day profile) are
+  accepted now, invalid indices are rejected (setter: false, getter: 0)
+  and logged as warning.
+  (cf. [OpenCCU/OpenCCU#3179](https://github.com/OpenCCU/OpenCCU/issues/3179))
+* fix ChnNumber() logging an "invalid Address" error for channels without
+  an address (e.g. the internal "Gateway", "StateVariables" and
+  "Communication" channels). Such channels still return -1, but nothing
+  is logged anymore. A non-empty channel address without channel number
+  is logged as warning instead of an error.
+  (cf. [OpenCCU/OpenCCU#3156](https://github.com/OpenCCU/OpenCCU/issues/3156))
+* fix State() of IP data points (OT_IPDP) without value type rejecting or
+  changing the text to send: the value type was guessed from the text,
+  so texts containing a "<" or starting with a type prefix character
+  (e.g. "test", "message") were rejected and others were converted
+  (e.g. "1,5" was sent as "1.500000", "12:00" as "12:00:00"). The text
+  is now sent unchanged, also for a delayed State(text, ms).
+  (cf. [OpenCCU/OpenCCU#3048](https://github.com/OpenCCU/OpenCCU/issues/3048))
+* fix ProgramExecute() keeping the trigger object/value of the previous
+  program execution in the conditions (DestinationObject(),
+  DestinationValue()). Like State(), it now sets them to no trigger
+  object (65535) and the execution value for the rule, its conditions,
+  its sub rules and the main condition.
+  (cf. [OpenCCU/OpenCCU#2978](https://github.com/OpenCCU/OpenCCU/issues/2978))
+
+## R1.00.0388.0256 (2026-10-07)
+
+* fix a NULL pointer dereference (SIGSEGV) in the web server when an HTTP
+  request without a parseable method is received (e.g. an empty request,
+  one starting with a NUL byte or consisting only of whitespace): sscanf()
+  returns EOF instead of 0 in that case, so the method pointer remained
+  NULL and the subsequent strlen(method) crashed ReGaHss. Reachable
+  unauthenticated via the web server (denial of service).
+  (cf. [OpenCCU/OpenCCU#4388](https://github.com/OpenCCU/OpenCCU/issues/4388))
+
+## R1.00.0388.0254 (2026-04-10)
+
+* fix regression when resizing IseEnum, IseIdArray which resulted in
+  the favorite functionality in the WebUI to not work correctly anymore.
+  (cf. [OpenCCU/OpenCCU#3729](https://github.com/OpenCCU/OpenCCU/issues/3729))
+* fix BSearchArray::Resize to perform resize operation in a similar
+  manner like IseEnum and IseIdArray so that freeing the original
+  array will be performed only after the copy operation.
+
+## R1.00.0388.0253 (2026-03-16)
+
+* fix potential issue in IseIdArray::Add, IseIdArray::Resize and
+  IseEnum::Resize which could result in an ISEOBJECTID arrays containing
+  the same ID multiple times due to slightly incorrect way of allocating
+  and re-allocating memory for storing these IDs.
+  (cf. [OpenCCU/OpenCCU#1467](https://github.com/OpenCCU/OpenCCU/issues/1467))
+
+## R1.00.0388.0252 (2025-05-16)
+
+* add debug info to scheduler element construction/destruction to track
+  potential issues with overflowing scheduler lists.
+* reworked struct timespec calculations and added more common timespec
+  normalization when adding milliseconds to a timespec.
+* fix IseMutex::Lock() by ensuring a non-timed lock is only used then
+  the specified timeout value is < 0.
+
+## R1.00.0388.0251 (2025-02-12)
+
+* fix issue with SIGPIPE signals stopping ReGaHss unexpected. Now SIGPIPE
+  signals are ignored and properly handled at each individual situation.
+* minor process signal refactoring returning error messages in case a
+  signal action/handler cannot be assigned.
+* fix minor compiler warnings when compiled with -pedantic
+
+## R1.00.0388.0250 (2025-02-06)
+
+* fix system.Exec() creating zombie processes due to stdout/stderr or
+  syslog outputs between fork() and execl() use resulting in unreliable
+  event delivery once such exec zombie was generated.
+* replace UINT/ULONG datatypes with appropriate uintXX datatypes to match
+  the general uses.
+* use int64_t instead of DWORD for all kind of timeout values in the
+  internal event scheduler. This should help fixing issues with potential
+  timeout overflows.
+
+## R1.00.0388.0249 (2025-01-28)
+
+* fix CLOEXEC file descriptor closing before execl() by using a dirwalk
+  over /proc/self/fd rather than using getrlimit() which resulted in a
+  severe performance penalty under certain situations (e.g. in a
+  containerized environment).
+
+## R1.00.0388.0248 (2025-01-09)
+
+* fix operator= hierarchy issues resulting in e.g. favorites management
+  being broken recently.
+  (cf. [jens-maus/RaspberryMatic#2975](https://github.com/jens-maus/RaspberryMatic/issues/2975))
+
+## R1.00.0388.0247 (2025-01-08)
+
+* fix default exec block timeout limit not being set correctly. Now
+  a blocking system.Exec() call should be perfectly terminated after
+  the default (10 seconds) of blocking.
+
+## R1.00.0388.0246 (2025-01-03)
+
+* implemented a systm.Exec() child execution time monitoring where upon
+  using blocking calls (catching stdout/stderr, no & at the command end)
+  the blocking time duration is monitored and if the used command blocks
+  more than 3 seconds a warning log output is produced with a repeated
+  interval of 1 second. In addition, upon reaching a maximum blocking time
+  (default 10000 ms) the exec child is forcefully killed so that the
+  main process is not blocked for a too long time. Note, that the default
+  maximum block time can be globally modified via a new
+  system.MaxExecBlockTime() script command which takes the time limit in
+  milliseconds. Furthermore, with every system.Exec() execution a user
+  can explicitly override the default by specifying the time limit in
+  milliseconds as the fifth command parameter. Last, not least if such an
+  explicit time limit is specified for system.Exec() as the fifth parameter
+  even non-blocking system.Exec() calls will forcefully kill its exec child
+  so that this new monitor+kill functionality can now be used instead of
+  potentially having to put a "timeout XX" statement before such
+  system.Exec() executions which otherwise could take forever, thus blocking
+  system ressources for a too long time.
+* system.Exec() calls will now properly detach all file descriptors upon
+  execl() execution so that upon a vanishing parent the children won't
+  block any network ports or other file descriptors. This should make
+  the exec calls more independent from the main ReGaHss process.
+* reworked system.Exec() to use setsid() to promote the generated exec
+  childs as dedicated process group leaders with an own PGID group id.
+  This makes it possible to kill the exec child based on its PGID to
+  ensure all of its potential childrens are killed as well then.
+* fix /bin/hm_deldev execution to not block any parent file descriptors
+  upon termination by setting all fds to CLOEXEC.
+* optimize rega startup procedure to make sure hm_startup execution won't
+  block any parent process file descriptors by setting CLOEXEC on all
+  fds upon execution of execl(). Furthermore signal catching now uses
+  sigwait() instead of a suboptimal while/sleep combination.
+* fix operator= overload hierarchy to be GCC13 compatible and slightly
+  reworked some operator= methods to not use pointers but references like
+  the other operator= methods.
+* upon reaching the maximum parallel http connections we print warning and
+  error messages rather than just info syslog messages so that users are
+  informed way earlier that they are having too many parallel HTTP
+  listeners or too many blocking http sessions.
+* rework ExecProcess() to use freopen() for stdout/stderr redirection to
+  to better comply with common standards. In addition, standard logging
+  output routines are used to output potential error output to syslog
+  correctly.
+
+## R1.00.0388.0245 (2024-11-06)
+
+* implement SortByName() sort order and sort type functionality. Now a
+  user can specify 'soAsc' or 'soDesc' as a first parameter to specify
+  the sort order and `stAlpha` or `stNatural` as a second parameter to
+  specify the sort type (alphabetical vs. natural sorting) with the
+  defaults `soAsc` and `stAlpha`.
+* fix issue where negative offset values for AstroDay/Night events did
+  not work.
+
+## R1.00.0388.0244 (2024-11-02)
+
+* fix issue in .UserAccessRights() and .GetHistoryData() not converting
+  their integer parameters correctly to 64bit integers.
+
+## R1.00.0388.0243 (2024-10-27)
+
+* fix issue with .GetAt() indexing not working correctly with 64bit
+  integers.
+
+## R1.00.0388.0242 (2024-10-04)
+
+* remove individual thread stack size settings and rely on the default
+  stack sizes of the underlying operating system instead. This fixes
+  certain crash issues with too low stack sizes in case of deep
+  recursions.
+* add fix to correctly convert to an ISE object ID for certain script
+  functions.
+
+## R1.00.0388.0241 (2024-09-28)
+
+* integrate fixes for dealing with the new 64bit integer default in the
+  script engine by ensuring proper datatype conversions in certain
+  situations.
+
+## R1.00.0388.0240 (2024-09-27)
+
+* fix some more 64bit datatype format related issues by using more
+  specific format specifiers were appropriate. In addition, the main
+  integer datatype in the script environment has been changed to 64bit
+  to fix Y2038 issues.
+* fix some format string specifiers not using right output datatypes.
+* fix bug in special character replacement function when writing out the
+  regadom which resulted in broken regadom on 64bit versions.
+
+## R1.00.0388.0239 (2024-09-20)
+
+* fix string format specification which resulting in negative values not
+  being converted in ToString().
+  (This fixes [jens-maus/RaspberryMatic#2854](https://github.com/jens-maus/RaspberryMatic/issues/2854))
+
+## R1.00.0388.0238 (2024-09-16)
+
+* enabled `_TIME_BITS=64` and removed hard limit <= year 2037 in the internal
+  date check so that time_t values can carry 64bit signed values, thus
+  dealing with dates with year >= 2038.
+
+## R1.00.0388.0237 (2024-02-15)
+
+* fixed system.Srandom() to correctly return true/false to signal success
+  or failure.
+  (This fixes [jens-maus/RaspberryMatic#2644](https://github.com/jens-maus/RaspberryMatic/issues/2644))
+* fixed problem with a generally too small socket read buffer size in the
+  http server part which caused login requests to fail in case the http
+  header (incl. cookies) exceeded that size.
+  (This fixes [jens-maus/RaspberryMatic#2625](https://github.com/jens-maus/RaspberryMatic/issues/2625))
+
+## R1.00.0388.0236 (2024-01-14)
+
+* fixed problem in StrValueByIndex() where upon specifying an index < 0
+  the function returned different results. Now an empty string is returned
+  and a warning will be output in the log accordingly.
+  (This fixes [jens-maus/RaspberryMatic#2597](https://github.com/jens-maus/RaspberryMatic/issues/2597))
+* fixed ChannelType() to allow ictXXX values to be passed as well as
+  plain integer numbers and to correctly return true/false.
+  (This fixes [jens-maus/RaspberryMatic#2605](https://github.com/jens-maus/RaspberryMatic/issues/2605))
+* fixed segfault which occurred when Name() was called on OT_DEVICES
+  objects for renaming this enum-based object.
+  (This fixes [jens-maus/RaspberryMatic#2601](https://github.com/jens-maus/RaspberryMatic/issues/2601))
+* fixed floating point exception issues with Random() function which
+  occurred when min > max in the Random() call and max is one smaller
+  than min. In addition, Random() was returning strange results in case
+  the min value was larger than max.
+  (This fixes [jens-maus/RaspberryMatic#2598](https://github.com/jens-maus/RaspberryMatic/issues/2598))
+
+## R1.00.0388.0235 (2023-06-12)
+
+* added new datapoint applicable LastChangeValue(), LastChangeTimestamp() and
+  LastChangeTimestampSeconds() functions to query the value and timestamps
+  of the last changed value a datapoint had before a new value state
+  (This refs <https://homematic-forum.de/forum/viewtopic.php?f=65&t=79126>)
+
+## R1.00.0388.0234 (2023-04-26)
+
+* fixed incorrect runtime errors being raised for a lot of math functions
+  (Mod, Exp, Exp2, Exp10, Expm1, Log, Log2, Log10, Log1p, Sqrt, Pow, Sin,
+  Cos, Tan, Asin, Acos, Atan, Sinh, Cosh, Tanh, Asinh, Acosh, Atanh) if
+  they run into floating point expections like underflow/overflow, etc.
+  Now they are always executed allowing users to solely evaluate their
+  returned values for such "domain errors" (e.g. returning -inf/-nan)
+  (This fixes [jens-maus/RaspberryMatic#2277](https://github.com/jens-maus/RaspberryMatic/issues/2277))
+
+## R1.00.0388.0233 (2023-01-26)
+
+* fixed a bug in internal data type selection where for certain INTEGER
+  HSS DPs a too narrow ivtByte data type was chosen when teaching in
+  certain devices, thus resulting in data value overflow/underflow,
+  e.g. TIME_OF_OPERATION dp for HmIP-SWSD.
+  (This fixes [jens-maus/RaspberryMatic#2008](https://github.com/jens-maus/RaspberryMatic/issues/2008)).
+
+## R1.00.0388.0232 (2022-06-27)
+
+* fixed a potential integer overflow bug when calculating the next free
+  object id which could end up allocating negative ids.
+
+## R1.00.0388.0231 (2022-06-20)
+
+* fixed a bug where automatically removing unreferenced program objects
+  upon loading+saving the regadom file could lead to invalid memory accesses
+  and crashes if program objects with IDs > 65k exist.
+* fixed issues where parsing through type names was not using the right
+  iterator data type and non static values being unable to return in all
+  cases a `<unknown>` string.
+* fixed a bug in the management of the main object list where it happened
+  that the re-allocation routines did not respect the id ordered nature
+  of the object list, thus causing severe issues ending up in
+  "Already in map" errors and not being able to create new objects anymore.
+  (This refs
+  <https://homematic-forum.de/forum/viewtopic.php?f=65&t=74458&start=160#p722477>).
+
+## R1.00.0388.0230 (2022-03-18)
+
+* fixed a bug in the URL parameter decoding routines which did not
+  decode a '+' character to a white-space in the parameter part of URLs
+  which violated RFC1866.
+  (This fixes [jens-maus/RaspberryMatic#1762](https://github.com/jens-maus/RaspberryMatic/issues/1762))
+
+## R1.00.0388.0229 (2022-01-11)
+
+* fixed a bug in the History.csv export routine where partly invalid csv
+  files were generated if the input data contained a ; or , character
+  itself.
+  (This fixes [jens-maus/RaspberryMatic#1643](https://github.com/jens-maus/RaspberryMatic/issues/1643))
+
+## R1.00.0388.0228 (2021-12-09)
+
+* fixed a bug in the central GetHistoryData() function which returned
+  invalid structured text if the content itself contained the reserved
+  characters ; or \t.
+  (This fixes [jens-maus/RaspberryMatic#1587](https://github.com/jens-maus/RaspberryMatic/issues/1587)).
+
+## R1.00.0388.0227 (2021-10-19)
+
+* fixed an important bug in the central foreach() loop function which was
+  not using the correct way of setting the content of the provided storage
+  variable. This caused runtime issues under certain circumstances which
+  resulted in foreach() calls returning the same string result for all
+  iterations.
+
+## R1.00.0388.0226 (2020-11-02)
+
+* fixed issue in system.Exec() which resulted in permanently opened stdin
+  pipes which could result in ReGaHss running out of file descriptors
+  in long turn.
+
+## R1.00.0388.0225 (2020-10-26)
+
+* fixed a recently created issue in system.Exec() which created never
+  cleared zombie processed in case a command is executed in background
+  mode using the "&" character.
+  (This refs
+  <https://homematic-forum.de/forum/viewtopic.php?f=65&t=61454&p=613916#p613916>)
+* fixed a bug where x.DPArchive() could only be used in case a DP has been
+  previously set visible using x.Visible(). Now both method should work
+  completly independent as expected.
+  (This refs [jens-maus/RaspberryMatic#948](https://github.com/jens-maus/RaspberryMatic/issues/948))
+* fixed a bug within the new delayed State() functionality where
+  State(x, 0, true/false) executions resulted in ScriptRuntimeErrors and
+  where the retrigger argument didn't have the same defaults like
+  old, plain State(x) executions.
+  (This refs [jens-maus/RaspberryMatic#942](https://github.com/jens-maus/RaspberryMatic/issues/942))
+
+## R1.00.0388.0224 (2020-09-29)
+
+* fixed a zero-day issue in the internal script parser which didn't work
+  correctly with nested method calls if the outer and inner method
+  were allowed to take 2+ parameter. This created invalid runtime errors
+  while the execution of these nested calls should have been perfectly
+  valid.
+  (This refs [jens-maus/RaspberryMatic#922](https://github.com/jens-maus/RaspberryMatic/issues/922))
+
+## R1.00.0388.0223 (2020-08-11)
+
+* fixed an issue in system.Exec() where upon executing a system command
+  that waits for stdin input could block ReGaHss execution endlessly. In
+  addition, system.Exec() accepts an additional 4th parameter now
+  to specify the content of stdin. This 4th optional parameter can be
+  be e.g. used to supply information to the command execution in case a
+  non background command is being executed.
+  (This refs [jens-maus/RaspberryMatic#847](https://github.com/jens-maus/RaspberryMatic/issues/847))
+* implemented an additional optional parameter to dom.GetObject() which
+  will take the desired object type (e.g. OT_DEVICE, OT_CHANNEL, etc.) of
+  a request object name or id and only return the object in question
+  if the object type is also matched. This should allow to workaround the
+  issue that if there are two objects with the same name but different
+  object types, that the object can still be retrieved via dom.GetObject()
+  which were not possible before.
+  (This refs [jens-maus/RaspberryMatic#876](https://github.com/jens-maus/RaspberryMatic/issues/876))
+* fixed issue with "break" and "continue" statements which could not be
+  used after a nested foreach() or while() loop and only worked within
+  the first level of a loop.
+  (This refs [jens-maus/RaspberryMatic#878](https://github.com/jens-maus/RaspberryMatic/issues/878))
+* fixed issue that the .ToFloat() function was only allowed for variables
+  of type string while others like .ToInteger() were allowed for all
+  vtXXX object types. This change should, thus, allow to more generally
+  use the "var" datatype and always use .ToFloat() without having to
+  forcefully convert the variable to a string type before.
+  (This refs [jens-maus/RaspberryMatic#883](https://github.com/jens-maus/RaspberryMatic/issues/883))
+
+## R1.00.0388.0222 (2020-07-20)
+
+* fixed a bunch of incorrect case sensitive string comparison checks to
+  actually perform case insensitive matches because, e.g. the RFCs of
+  HTTP protocol defines them to be case-insensitive. This should make
+  all the HTTP related interfaces more tolerable according to the specs.
+* implemented the possibility to send RemoteApi requests also UTF-8
+  encoded using a "Content-Type: xxx; charset=utf8" request header. If
+  found ReGa will automatically convert the content then to ISO-8859-1
+  internally before using it. This should help to send RemoteApi calls
+  using the tclrega.exe interface easier in case only utf8 encoding
+  is possible.
+* fixed the request header parsing to actually only parse the potential
+  header part of the request because otherwise the request content could
+  have influenced header option evaluation.
+
+## R1.00.0388.0221 (2020-07-15)
+
+* fixed some severe buffer overflow issues in the internal string format
+  routines which were mainly used by the remote API xml output
+  functionality and which under certain circumstances could result in
+  invalid xml output being returned.
+  (This refs [jens-maus/RaspberryMatic#870](https://github.com/jens-maus/RaspberryMatic/issues/870))
+
+## R1.00.0388.0220 (2020-06-30)
+
+* fixed the delayed State() functionality to also work with OT_CHANNEL
+  and OT_PROGRAM objects which were just outputting error messages
+  and not executing the specified delayed State() change.
+
+## R1.00.0388.0219 (2020-06-18)
+
+* partly reverted the previous super string escaping fix as it proofed
+  to produce some regressions. Instead the escaping of standard strings
+  was improved to also allow string escaping like "\\\\" which produced
+  syntax errors.
+
+## R1.00.0388.0218 (2020-06-03)
+
+* fixed the parsing/unescaping of the super string (^) for being able to
+  define strings without having to escape single or double quotations.
+  (This refs [jens-maus/RaspberryMatic#225](https://github.com/jens-maus/RaspberryMatic/issues/225))
+
+## R1.00.0388.0217 (2020-05-08)
+
+* implemented the missing functionality to specify an offset time and
+  duration for the sunrise/sunset astro functions. Now TimeSeconds() and
+  CalDuration() can be used together with all already existing
+  SunOffsetType() values to specify the offset and duration accordingly.
+  Note, that to specify a negativ time offset one has to use the
+  "sotBeforeSunXXXX" rather than "sotAfterSunXXX" with SunOffsetType().
+  Furthermore a pure "sotSunrise" or "sotSunset" timer offset will always
+  use a timer offset of zero.
+* integrated a fix for certain @time@ strings which did not convert supplied
+  times correctly because they should assume local time instead.
+* replaced all gettimeofday()/time() calls with proper clock_gettime() uses
+  as e.g. gettimeofday() was defined obsolete in POSIX 2008. In addition,
+  we use CLOCK_MONOTONIC where relative time calculations are performed
+  so that time operatins are more immune to time changes. This change
+  should slightly improve timer reliability in case of time changes
+  performed by users or other applications.
+* fixed some minor compiler warning issues.
+* fixed some potential undefined string copy operations.
+* fixed a minor potential crash bug in low memory conditions.
+
+## R1.00.0388.0216 (2020-04-03)
+
+* fixed UriEncode/UriDecode functions to correctly work on ARM and x86.
+
+## R1.00.0388.0215 (2019-10-08)
+
+* fixed invalid "Compare of ISEVALUEs" error messages when manually
+  re-enabling timer programs with periodic timers.
+
+## R1.00.0388.0214 (2019-09-23)
+
+* Fixed issue licenseinfo.htm was not retrievable without valid session.
+
+## R1.00.0388.0213 (2019-09-05)
+
+* fixed delayed State() variant to directly execute a State() command
+  without involving the scheduler if the supplied delay time is <= 0.
+* fixed bug in delayed State() function which didn't work under all
+  circumstances due to a misconverted value conversion.
+
+## R1.00.0388.0212 (2019-08-28)
+
+* fixed minor regression bug which broke the AutoLogin feature.
+
+## R1.00.0388.0211 (2019-08-26)
+
+* if a system/esp url is accessed without a valid session id the web
+  browser will be instructed to redirect to the login.htm instead. This
+  should make these esp pages more secured to be accessed without a
+  valid session id.
+* fixed several security issues regarding potential remote code execution
+  issues where processing POST requests even worked without a valid
+  session.
+
+## R1.00.0388.0210 (2019-08-19)
+
+* fixed CVE-2019-9583 where certain url redirections to the login page
+  still ended up in exposing session ids in Location http response headers.
+* fixed bug where system.Save() didn't work correctly anymore.
+
+## R1.00.0388.0209 (2019-08-16)
+
+* fixed CVE-2019-9726 which allowed to display the content of any arbirary
+  file on the filesystem due to a NUL-byte vulnerability in the web server.
+* fixed CVE-2019-14474 which an empty Call("") execution caused ReGaHss
+  to crash unexpectively.
+* fixed bug where upon session clearance a warning was output even for empty
+  session ids, thought the session was most probably cleared already.
+* fixed a bug in the new State() function with delay routines where due to
+  missing ISE value conversion the delay functionality didn't work for
+  HSSDP objects. Now the routines try to convert the supplied ISE value to
+  the appropriate type or returns false if the value conversion didn't work
+  and thus the State() call couldn't be executed as expected.
+* fixed invalid "pointer is null" error output in case no channel dps should
+  be cleared.
+
+## R1.00.0388.0208 (2019-06-02)
+
+* modified scheduler to work with milliseconds precision and also
+  changed the tick count routines to use a CLOCK_MONOTONIC_RAW
+  clock which will ensure that the queried time is not influenced
+  by time changes (manual, NTP). Also modified the State()
+  scripting function to be able to specify a delay time in
+  milliseconds which will delay the set operation for the specified
+  amount of time. In addition, with a third boolean parameter a user
+  can disable the retriggering/cleaing of an already scheduled event.
+* fixed a bug in the string to time conversion routines where not all
+  possible @time@ string representations were correctly supported.
+* a time to query the SunAzimuth/SunElevation/SunsetTime/SunriseTime can
+  now be specified as an addition parameter to these system functions so
+  that users can now use these functions with a specific time.
+* implemented a new rega.conf setting (SchedulerListSize) for changing
+  the maximum number scheduled events in the scheduler list and modified
+  it to 10000 due to the sufficient performance of a Pi3.
+* fixed session ID generation to only generate a new session ID for
+  selected pages like index.htm and login.htm and make sure to prevent
+  any further sessionID generation for other pages.
+
+## R1.00.0388.0207 (2019-04-29)
+
+* fixed another minor timer module issue where during winter->summer dst
+  change a periodic timer could have been executed twice with the same
+  begin time. In addition, even timers outside the start/stop times of
+  the dst change were incorrectly executed.
+* fixed another issue in the begin time calculation of period
+  timers which could result in unexpected segfaults under certain
+  conditions.
+* the history buffer size can now be specified/modified using
+  rega.conf by specifying a HistoryBufferSize setting.
+* implemented new system.SunAzimuth() and system.SunAltitude() script
+  functions which will return the current sun position in degrees
+  relative to the current position and time.
+* integrated another time module fix where upon startup all periodic
+  timers fired a single time even though their time didn't match the
+  actual time they should fire.
+* moved scheduler thread startup to be started earlier so that timer
+  evaluations can be performed more early.
+* fixed minor bug where in case a system variable was connected to
+  a channel this reference wasn't cleared correctly upon removal of
+  the channel/device (<https://homematic-forum.de/forum/viewtopic.php?f=31&t=50077>)
+* removed 'Server' HTTP response header to prevent any detailed web
+  server system type analyses.
+* fixed bug in the astro day/night calculation routines where on a DST
+  switch day from midnight till the switch time and incorrect sunrise
+  or sunset time was returned.
+* add timestamp to console output and take care that output is properly
+  synchronized.
+
+## R1.00.0388.0206 (2019-03-21)
+
+* fixed DST/non-DST switching issues in timer module which could have
+  resulted in a segfault if a time interval over the DST switching
+  time was created by a user.
+* implemented a new sunrise/sunset calculation routine which
+  is fully compatible to the way sunrise/sunset is calculated
+  on other homematic devices (e.g. access point, cloud service).
+  Now sunset/sunrise times should exactly match the times
+  calculated throughout all homematic devices/services.
+* fixed some compiler warnings and reduced probability of
+  potential buffer overflows in certain situations.
+
+## R1.00.0388.0205 (2019-03-13)
+
+* replace more buffer overflow prone function uses with buffer
+  overflow safe variants which should catch some known issues
+  in the handling of large http requests.
+* fixed bug in session clearance where a logout didn't completly
+  invalidate all session relevant information.
+* improved login security by preventing unauthorized users from
+  logging into WebUI and using the scripting engine at all.
+* optimized logging output in various areas so that bug reports can
+  be more easily tracked down. Also changed some messages that were
+  previously flagged as "error" messages to be flagged as "warnings"
+  only now that we have that additional category.
+* fixed minor bug where for interfaces with an empty URL the init method
+  was still tried to be executed.
+* added possibility to log warnings instead of just error messages to
+  syslog & co. This should help to better differentiate between real
+  problems and warning messages that are just pure informational
+  messages.
+
+## R1.00.0388.0204 (2018-12-08)
+
+* fixed string backslash unescaping routines to correctly unescape
+  double backslash uses and thus allow to define e.g. \t by using
+  a "\\t" string which were not possible before.
+* implemented missing 'break' and 'continue' statements to break out
+  of while() and foreach() loops and to also continue with the next
+  iteration like this is commonly performed in other script languages.
+  This refs [jens-maus/RaspberryMatic#224](https://github.com/jens-maus/RaspberryMatic/issues/224)
+* fixed bug where elseif() within a while/foreach() loop didn't work as
+  expected but was quiting the loop too early.
+  This fixes [jens-maus/RaspberryMatic#404](https://github.com/jens-maus/RaspberryMatic/issues/404)
+* fixed webserver to only create and reserve a session ID in case a
+  successfull user login is performed (either manual or autologin). This
+  should prevent from Denial-of-Service (DoS) situations where certain
+  internal service could send multiple web requests to identify if
+  a http server is running and thus could eat up all available session
+  slots ending up in "Zu viele gleichzeitige Verbindungen" errors.
+
+  NOTE: This change requires that the file /www/rega/index.htm will
+  contain a small change so that "SessionId" is not a mandatory
+  variable anymore.
+* fixed http response to manage more than 800kb of response payload so
+  that the internal web server of ReGaHss can manage way larger http
+  response data. This should finally allow to, e.g. serve larger
+  system variables http displays at Settings -> Systemvariables with
+  e.g. ~1k of system variables or with longer device list web pages.
+
+## R1.00.0388.0203 (2018-11-11)
+
+* upon loading the interfaces on startup non-existing interfaces are
+  now flagged invalid by wiping the URL parameter so that xmlrpc calls
+  to still existing devices of these non-existing interfaces are returned
+  immediately instead of potentially resulting in long timeouts in trying
+  to contact these interfaces.
+* fixed bug which caused a double execution of State() events on HSSdp
+  device objects.
+
+## R1.00.0388.0202 (2018-10-28)
+
+* more fixes for maintaining more than 65k objects in ReGaHss.
+
+## R1.00.0388.0201 (2018-10-26)
+
+* fixed certain issues related to the 65k object boundary change.
+
+## R1.00.0388.0200 (2018-09-27)
+
+* fixed bug in .State() call on HSSdp objects which always returned false.
+  This fixes [jens-maus/RaspberryMatic#367](https://github.com/jens-maus/RaspberryMatic/issues/367)
+* implemented SortByName() for IseIdArray type which will allow to sort an
+  idarray by the names of the objects being part of the array. It will return
+  true if the sort operation succeded and false if not.
+* fixed "CENTRAL:0" PONG xmlrpc warnings by ignoring PONG events to "CENTRAL"
+  in general. Also switched the unknown HSSDevice messages to info rather
+  than always logging as an error.
+* implemented SHA512-based password storage with automatic conversion of
+  old encoded user passwords once a successfull login had been processed.
+* applied changes to raise the limit for the maximum number of objects from
+  2^16 to 2^31 so that we can support way larger installations in future.
+* fixed "CENTRAL:0" PONG xmlrpc warnings by ignoring PONG events to "CENTRAL"
+  in general. Also switched the unknown HSSDevice messages to info rather
+  than always logging as an error.
+
+## BETA29-2018-08-25 (2018-08-25)
+
+* fixed use of "&" with system.Exec() to background executions which
+  sometimes resulted in stalled zombie processes.
+* fixed incorrect "Failed to close mutex" error outputs when the mutex
+  destroy operation returned EBUSY.
+* don't allow incorrect uses of Variable() which potentially may invalidate
+  important information. Instead we output a warning of the incorrect use
+  and suggest alternative functions to be used.
+* we use dynamic string arrays all over the place now. This finally removes
+  all obsolete string boundaries regarding text length. This e.g. enables to
+  use large texts in DPInfo(), etc.
+* removed 49 character workaround which tried to solve problems with
+  truncated object names that old legacy versions of ReGaHss created and
+  thus object name comparisons with the full name started to fail in newer
+  ReGaHss versions.
+
+## BETA28-2018-02-27 (2018-02-27)
+
+* optimized system.Exec() to avoid creating zombie processes in case
+  background execution using "&" is used.
+
+## BETA27-2018-01-14 (2018-01-14)
+
+* added "incorrect use" warnings for use of Device() on DP objects and
+  LastTimestamp() and LastTimestampSeconds() on channel objects similar to
+  the already existing warning on incorrect use of AlDestMap().
+* added automatic variable stack enlargement which should allow to deal with
+  way more variables on the script execution stack than before.
+* added default charset encoding "iso-8859-1" to all xmlrpc responses so 
+  that clients should have additional information to decode xmlrpc responses
+  correctly.
+
+## BETA26-2017-12-09 (2017-12-09)
+
+* added minimum of 5k for globally modifying the number of Iterations using
+  system.MaxIterations(max)
+
+## BETA25-2017-12-04 (2017-12-04)
+
+* added system.MaxIterations(max) method which allows to modify the maximum
+  number of iterations for while()/foreach() loops. Calling this method
+  with 0 will result in while()/foreach() to loop indefinitly. Calling it
+  with -1 will restore the default of 500000 iterations.
+* removed all ID_XXXXX_MAX_COUNT entries from the public symbolic constant
+  table were they didn't belong to.
+* fixed bug where invalid objects in the shared user object list required
+  multiple restarts to completly cleanup the list.
+
+## BETA24-2017-11-14 (2017-11-14)
+
+* fixed bug where deleting an object didn't remove it from the shared
+  user objects list. Also added an automatic cleanup routine upon loading
+  the regadom which will remove all invalid object ids in the shared user
+  objects list.
+* fixed bug where using ToTime() on a time object and Filename() on a xml
+  object returned incorrect results.
+
+## BETA23-2017-11-07 (2017-11-07)
+
+* fixed more DST related bugs in the time module which could result in
+  various different issues at DST borders.
+* modified error output to be more verbose when assigning incompatible 
+  data to a system variable of a different type.
+
+## BETA22-2017-11-03 (2017-11-03)
+
+* fixed bug where on a DST switching date the internal time module crashed
+  ReGaHss because internal time calculation routines couldn't deal with
+  DST borders.
+* added warning output if the maximum number of iterations for while() and
+  foreach() use has been reached. This should make it easier to reveal
+  situations where while()/foreach() uses show strange results because of
+  the max iteration limitation. Also increased the maximum iterations to
+  500000 because this also only takes a few seconds to be processed and
+  shouldn't block the ReGa too long.
+
+## BETA21-2017-10-01 (2017-10-01)
+
+* modified ToString(p) output for floating point values to be limited to the
+  documented maximum precision of 15 digits. Otherwise an output of a float
+  with higher precision might lead to some confusion.
+* modified floating point comparison epsilon to DBL_EPSILON to be consistent
+  with the documented floating point precision (15 digits).
+* modified == and < comparison operators to use an epsilon-based comparison
+  if applied on a float value comparison. This should make script-based
+  comparisons compatible to the same way webui-based programs perform their
+  comparisons.
+* modified .Trunc() to output the same truncated float value like
+  .ToInteger(). Only if Trunc(p) is used with an additional parameter p
+  the float value will be truncated to the p-th digit based on the
+  real float value.
+* integrated an additional parameter for .ToInteger(p) when being used on
+  float values. If specified, the truncation operation will be based on
+  the result of ToString(p) with the precision p.
+* modified .ToInteger() to truncate a float value based on the same rounding
+  operation like .ToString(). This should make uses of x.ToString().ToInteger()
+  consistent with direct uses of x.ToInteger() again.
+* modified ToString() to output floating point values rounded to the sixth
+  digit again.
+* fixed bug where ToString(p) on an empty string delivered a wrong output.
+* fixed bug where value list and binary-type system variables couldn't be
+  set from programs anymore.
+* fixed bug where char-based system variables couldn't be emptied anymore.
+* fixed another bug with using elseif() which resulted in ScriptRuntimeError
+  outputs even thought all conditions where checked and executed correctly.
+
+## BETA20-2017-09-13 (2017-09-13)
+
+* fixed a bug in the web request response generation which supplied invalid
+  xml formatted data for hm scripts containing string variables with special
+  characters like '<' or '>'. Now these special characters are properly
+  escaped so that valid xml data is returned and thus won't result in, e.g.
+  JSON formatting errors if the script test window is used in the WebUI.
+* fixed a problen where due to implicit BINRPC definitions in how floating
+  point values are supplied, some sensors reported slightly inaccurate float
+  values (e.g. dimmers) resulting in various numeric problems. Now a proper
+  float point rounding method is applied that maintains float values to be 
+  keep accuracy up to the sixth digit.
+* fixed a bug in using multiple elseif() statements in a row which resulted
+  in multiple executions of the alternative branches.
+* fixed a regression bug which were the reason for "CompatibleForCompare"
+  errors on programs using dimmer devices in program conditions.
+* fixed problem that upon changing the value type (integer, float, string)
+  of ISE values after a program was already created using, e.g. system
+  variables or devices returning value in a certain type that ReGaHss
+  aborted program execution by issuing "CompatibleForCompare" errors. Now
+  it will try to convert to the desired type first and only issue this error
+  if a conversion is also not possible.
+* fixed floating point to string conversion routines (e.g. ToString()) to not
+  use any floating point rounding but truncate values after the 6th digit
+  so that output e.g. using WriteLine() is somewhat more consisent and
+  human comparable to the real values.
+* fixed inconsistent rounding operations when using ToString(p) with an
+  optional parameter to specify the precision in case it is used on real
+  or string variables containing a floating point value.
+
+## BETA19-2017-08-31 (2017-08-31)
+
+* fixed the XmlRpcDataType to variable conversion to always perform an
+  integer conversion in case the xmlrpc call returns an integer rather
+  than potentially performing a conversion to byte which might result
+  in incorrect values in variables.
+* reworked HTTPServer startup to allow more than 10 parallel HTTP server
+  worker threads to be running at the same time.
+* added all missing "ID_XXXXXX" type identifiers for constant ise id
+  objects and datapoints. This includes ID_GW_SYSALARM, ID_GW_SYSSERVICE
+  to retrieve the object id for alarm and service messages.
+* reworked system.Exec() to execute the supplied command in the context of
+  a full shell rather than calling the command directly. This enables
+  system.Exec() to execute commands with more than 9 arguments and to use
+  complex shell syntax (such as shell pipes "|", redirections ">" and ";"
+  to execute more than one command). Furthermore, errors on command
+  execution should be reported and handled more properly now.
+* the method .ToString(p) can now also be used on a string-type variable to
+  round a floating point type string to a specified precision p. If a
+  string, however, contains non integer/float characters a .ToString(p)
+  call will just return the unmodified string.
+
+## BETA18-2017-08-26 (2017-08-26)
+
+* implemented "HttpListenerMaxConnections" rega.conf config option to be
+  able to raise the default number of 6 parallel http connections.
+
+## BETA17-2017-08-08 (2017-08-08)
+
+* fixed bug where using escaping control characters strings like "\t"
+  caused a syntax error if specified as an argument to a method.
+* renamed all internal "SINGLECOND" identifiert to "SINGLECONDITION" for
+  consistency reasons.
+* added the following missing symbol constants: OT_CALENDARDPS,
+  OT_INTERFACES, OT_RULE, OT_RULES, OT_SINGLECONDITION, OT_DESTINATION,
+  OT_SINGLEDESTINATION
+* renamed method "RulePRogramID" to "RuleProgramID" to fix typo.
+
+## BETA16-2017-08-04 (2017-08-04)
+
+* implemented an "elseif" token which can be used in complex if/else
+  statements so that code obfuscation can be reduced by using "elseif()"
+  rather than "else { if() }".
+* added new .Replace(s, d) string method which can be used to search
+  for a substring 's' and replace it with 'd' in a string variable.
+* added new .StartsWith(s) and .EndsWith(s) string methods which return
+  true or false depending on the supplied substring.
+* added new .Contains(s) method which returns true/false if a string
+  contains the supplied substring s.
+* added new .Trim(c), .LTrim(c) and .RTrim(c) to trim whitespaces
+  from strings either from left+right, left or just right. By specifying
+  an optional character string "c" the stripable characters can be
+  specified.
+* added new .ToUpper() and .ToLower() method that allow to convert a
+  string variable to its uppercase or lowercase representation.
+* added new .ToUTF8() and .ToLatin() methods that allow to convert
+  a string variable to/from UTF8 from/to Latin (ISO-8859-15).
+* added new .UriEncode() and .UriDecode() methods that will encode and
+  decode a string variable to/from a URI conform way (%XX encoding).
+* fixed enum type list to output proper enum type names for all internally
+  known enum types.
+* fixed some incorrect naming of "CalendarDPs" enum type which was named
+  "ClendarDPs".
+* fixed inconsistent output of .EnumTypeName() use on unknown enum types.
+* fixed '+' operator to respect data type ordering when an addition
+  contained a string.
+* fixed a bug where saving a script program via WebUI could take
+  considerable time if the script program reached a certain amount.
+
+## BETA15-2017-07-11 - 2.29.18 (2017-07-11)
+
+* fixed a bug in the signal handler management which was potentially broken
+  and might resulted in unexpected terminations of ReGaHss.
+* fixed bug where object names were always trunctaed to 49 characters so
+  that GetObject() calls with the full object name didn't match.
+
+## BETA14-2017-06-03 (2017-06-03)
+
+* added some verbose error output to more easily identify incorrect uses
+  of foreach()/while() expressions.
+
+## BETA13-2017-05-30 (2017-05-30)
+
+* general code cleanup by having increased the compiler warning level.
+* reworked class constructors to initialize member variables in the correct
+  order so that no compiler warnings are generated anymore.
+
+## BETA12-2017-05-29 (2017-05-29)
+
+* slightly reworked internal script function management to manage function
+  in a more secure way.
+* output just filename and line number on each Error syslog output rather
+  the full path and line number in brackets where users thought this might
+  be the error id.
+* fixed bug where a dom.GetObject() with a string starting with a number
+  always returned the object with the number the string started. Thus,
+  dom.GetObject("2Test") always returned the root object instead of trying
+  to search for an object with that particular string.
+* fixed using LastTimestamp() and LastTimestampSeconds() on channel
+  objects like this had been possible.
+* using VarType() and Type() on an uninitialized 'idarray' doesn't end up
+  in a ScriptRuntimeError anymore and should return valid results now.
+
+## BETA11-2017-05-24 (2017-05-24)
+
+* fixed bug in syslog output function where in case an output contained
+  typeical format specifiers (e.g. '%s') could result in segmentation
+  faults.
+* fixed another regression bug where calling .Device() on a HSSDP resulted
+  in a ScriptRuntimeError.
+
+## BETA10-2017-05-22 (2017-05-22)
+
+* fixed a regression bug which caused that obj.HssType() was not working
+  properly anymore in a generic case. This resulted in incorrectly displaying
+  temperatures in the WebUI with wind directions.
+* fixed system.Exec() function to be able to be executed without any
+  parameters without interrupting a script execution.
+* fixed typo of "ID_GW_CHANNEL" constant
+* added a workaround for a commonly but incorrectly use of .AlDestMapDP() on
+  an AlTriggerDP() acquired object so that only a warning is issued without
+  stopping script execution. In future, however, we should and will remove
+  this workaround again.
+* fixed a regression bug with .Variable() not having worked anymore after
+  the recent opcode fixes.
+
+## BETA9-2017-05-18 (2017-05-18)
+
+* fixed all problems with function name clashes. E.g. the use of
+  o.ToInteger() and o.BuildLabel() on a valid object 'o' returned the
+  same 'string' result even though ToInteger() isn't a valid/accepted
+  function of an object. Something like this was possible at many
+  places resulting in unwanted side effects. Now a proper
+  ScriptRuntimeError is issued instead so that script authors can
+  correct these errors.
+* fixed a bug where Type() and VarType() was not available for all
+  possible variable types. Now 'var', 'idarray' and 'object' can also
+  be queried for their types. Note, however, that for actual objects
+  only VarType() will be unique since Type() will then return the
+  actual object type instead of the variable type name.
+* fixed a bug in while() and foreach() not raising any error if the
+  specified condition isn't valid.
+* increased maximum number of iterations for foreach()/while() to 50000
+  to facilitate our current hardware setup.
+* fixed /bin/hm_startup process to wait a certain amount of time for the
+  rega engine to start up. Otherwise errors might occur during startup.
+* added Type(), VarType() and ToString() to idarray vartype
+* fixed a regression bug which caused that session ids were not correctly
+  calculated on a CCU2
+* added missing optional 'long_press' parameter to xmlrpc.ActivateLinkParamset().
+* fixed all xmlrpc namespace calls to correctly check for mandatory and
+  optional parameters so that future calls to the rfd XMLRPC interface won't
+  end up in random crashes.
+* fixed bug where calling xmlrpc.ActivateLinkParamset() with only two
+  arguments resulted in a crashing rfd. Now ReGa will perform some parameter
+  checks before executing the XMLRPC call.
+
+## BETA8-2017-05-12 (2017-05-12)
+
+* fixed some false thread termination error output when terminating
+  ReGaHss
+* fixed bug in script parser where lines starting only with "!" resulted in
+  commenting out the whole next line as well.
+* modified script runtime error output to display the famous '11622' debug
+  messages as a 'info' log output instead and added a second normal 'error'
+  output which outputs the reason for the error in a more human readable
+  form with the complete code attached so that the buggy code can more easily
+  be identified.
+* implemented the following random number generator functions to be usable
+  within a rega script
+
+      system.Random(min, max) - outputs a random integer number between min<>max
+                                or a general random number without specifying
+                                min/max
+      system.Srandom(val)     - Allows to seed the random number generator to
+                                a specific value or without 'val' to a random
+                                value
+* added certain math constants to support math operations
+
+      M_E        - e          - 2.71828182845904523536
+      M_LOG2E    - log2(e)    - 1.44269504088896340736
+      M_LOG10E   - log10(e)   - 0.434294481903251827651
+      M_LN2      - ln(2)      - 0.693147180559945309417
+      M_LN10     - ln(10)     - 2.30258509299404568402
+      M_PI       - pi         - 3.14159265358979323846
+      M_PI_2     - pi/2       - 1.57079632679489661923
+      M_PI_4     - pi/4       - 0.785398163397448309616
+      M_1_PI     - 1/pi       - 0.318309886183790671538
+      M_2_PI     - 2/pi       - 0.636619772367581343076
+      M_2_SQRTPI - 2/sqrt(pi) - 1.12837916709551257390
+      M_SQRT2    - sqrt(2)    - 1.41421356237309504880
+      M_SQRT1_2  - 1/sqrt(2)  - 0.707106781186547524401
+* fixed ToInteger() to correctly truncate real values
+* fixed '+' operator to be also used for concatinating a string with
+  an integer or real value similar to how '#' is doing this
+* implemented some basic math functions which can now be used within a
+  rega script for integer and floating-point variables
+
+      Abs()    - compute the absolute value of an integer
+      Mod(y)   - floating-point remainder function
+      Min(y)   - determine minimum of two floating-point numbers
+      Max(y)   - determine maximum of two floating-point numbers
+      Exp()    - base-e exponential function
+      Exp2()   - base-2 exponential function
+      Exp10()  - base-10 exponential function
+      Expm1()  - exponential minus 1
+      Log()    - natural logarithmic function
+      Log2()   - base-2 logarithmic function
+      Log10()  - base-10 logarithmic function
+      Log1p()  - logarithm of 1 plus argument
+      Sqrt()   - square root function
+      Cbrt()   - cube root function
+      Pow(y)   - power function
+      Sin()    - sine function
+      Cos()    - cosine function
+      Tan()    - tangent function
+      Asin()   - arc sine function
+      Acos()   - arc cosine function
+      Atan()   - arc tangent function
+      Sinh()   - hyperbolic sine function
+      Cosh()   - hyperbolic cosine function
+      Tanh()   - hyperbolic tangent function
+      Asinh()  - inverse hyperbolic sine function
+      Acosh()  - inverse hyperbolic cosine function
+      Atanh()  - inverse hyperbolic tangent function
+      Ceil()   - ceiling function, smallest integral value not less than argument
+      Floor()  - largest integral value not greater than argument
+      Trunc(p) - round to integer, toward zero with precision p
+      Round(p) - round to nearest value, away from zero with precision p
+
+## BETA7-2017-04-26 (2017-04-26)
+
+* modified all uses of string operating functions to use their buffer
+  overflow/underflow safe variants instead. 
+* fixed incorrect deallocations of certain array-type variables.
+
+## BETA6-2017-04-24 (2017-04-24)
+
+* PONG events received will now be properly ignored without issuing an error.
+  This should fix [eq-3/occu#44](https://github.com/eq-3/occu/issues/44)
+* added "AutoSaveDomOnExit" rega.conf option to allow to force a DOM config
+  save upon termination (disabled per default).
+
+## BETA5-2017-04-09 (2017-04-09)
+
+* fixed a another timer related regession bug which caused that daily timers
+  resulted in bogus timer executions once a daily timer was executed.
+
+## BETA4-2017-04-07 (2017-04-07)
+
+* added "AutoSaveDOMCycle" and "CheckModifiedCycle" rega.conf config options
+  and restored the old default value of 12h and 10min.
+* added "SessionMaxCount" config option to rega.conf to allow to raise max.
+  HTTP session limit.
+* modified command-line usage output to display version and build date.
+* fixed another timer related bug which was caused because two threads were
+  fighting for the same data and suddenly overwrote data of the other thread.
+  Now a mutex protects use of some public methods, thus should synchronize
+  access properly.
+
+## BETA3-2017-04-05 (2017-04-05)
+
+* fixed a bug in the time_t conversion routines which didn't convert DST
+  vs. non-DST conversions correct and overly complicated.
+  This was the reason for certain DST/non-DST related issues and also
+  the reason for not formatting certain dates correctly in HM scripts
+  (see <https://homematic-forum.de/forum/viewtopic.php?f=34&t=34439>)
+* replaced all localtime() and gmtime() uses with their reentrant
+  versions localtime_r() and gmtime_r(). This should hopefully finally
+  fix all the strange timer related issues with short timers (< minutes)
+  which was caused by localtime/gmtime using internal buffers, thus old
+  struct tm values were used ending up in certain runtime problems.
+* modified config AutoSave to force a save of the configuration every 60
+  minutes instead of 12h. Also switched the modified config check to
+  check every 5 minutes if the config had been changed and then
+  immediately saving it. Furthermore, switched the autosave at
+  termination of ReGaHss to the modified check thread instead.
+* removed artifical max size for string variables. Now a string can have
+  an arbitrary length like c strings. This allowed to enlarge the size
+  of rega script programs to be edited which was previously limited to
+  100KiB. Now an arbitrary long script can be added as a HM script.
+* fixed a minor but severe bug in the Timer management which caused
+  that especially short timers (~ seconds) suddenly stopped because
+  the end of day information pointed to 1970-01-01 and thus cancelled
+  further timer executions. Further long term tests have to show,
+  however, if all timer related problems are really solved by this fix.
+* added missing data skipping upon termination to all relevant code
+  passages. This fixes the "invalid free()" segmentation faults upon
+  termination of ReGaHss which was caused because ReGaHss was trying to
+  free memory of static instance data. Now ReGaHss can be properly
+  terminated while freeing memory properly.
+* fixed bug where upon termination of ReGaHss the current DOM config were
+  not saved. Now the AutoSave thread will be properly signaled to close its
+  operation while saving the current config before shutting down.
+  This should fix issues where changed settings were lost if the system had
+  been reset immediately after the change.
+* fixed the limitation of 200 ReGa script variables per variable list by having
+  implemented a dynamic resize operation which in theory allows an
+  unlimited number of variables now.
+* fixed certain invalid memset() calls potentially caused unwanted crashed.
+* created top-level Makefile
+* restructuring project directory
+* initial commit
