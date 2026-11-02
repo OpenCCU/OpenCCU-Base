@@ -1,9 +1,9 @@
 # hs485d ChangeLog
 
-Changes of `hs485d`, the BidCos-Wired interface process, including the
-changes of the libraries it is built with (libXmlRpc, libhsscomm,
-libelvutils, libLanDeviceUtils, libUnifiedLanComm, libxmlparser). Newest
-version first.
+Changes of `hs485d`, the BidCos-Wired interface process. Newest version
+first. Up to 1.4.0 the entries include the changes of the libraries it is
+built with; since then these are in the changelogs of the libraries
+(`src/lib*/CHANGELOG.md`).
 
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and

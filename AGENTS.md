@@ -69,13 +69,17 @@ what you could and could not test.
   of the OpenCCU-Base libraries whose functions it calls, read from the loaded
   libraries (check with `nm -D --undefined-only`, not only the link line).
   A program links only the OpenCCU-Base libraries whose functions it calls.
-- **Daemon changelogs:** a pull request with a user-visible change to `rfd` or
-  `hs485d` (including changes of the libraries they are built with) adds an
-  entry to `src/<daemon>/CHANGELOG.md` under `## Unreleased` (create the
-  heading at the top if it is missing), in the style of the existing entries:
-  what was wrong or what is new, written for users, with links to the pull
-  request and the fixed issue. A version bump renames `## Unreleased` to
-  `## <version> (<date>)`.
+- **Component changelogs:** every component under `src/` (except `webui` and
+  the closed-source `ReGaHss`, whose `ChangeLog` comes with its binaries) has
+  a `CHANGELOG.md`. A pull request with a user-visible change adds an entry
+  under `## Unreleased` (create the heading at the top if it is missing) to
+  the changelog of every component it changes, in the style of the existing
+  entries: what was wrong or what is new, written for users, with links to
+  the pull request and the fixed issue. A change of a library goes into the
+  library's changelog, not into those of the programs using it. A version
+  bump renames `## Unreleased` to `## <version> (<date>)`; for `devicetypes`
+  and `hmipserver`, which have no version of their own, the OpenCCU-Base
+  release takes its place.
 - WebUI, Tcl and ReGa code must escape every user-controlled value.
 - Changes to the closed-source binaries come from eQ-3; do not patch them.
 

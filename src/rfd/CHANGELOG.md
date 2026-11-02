@@ -1,8 +1,9 @@
 # rfd ChangeLog
 
-Changes of `rfd`, the BidCos-RF interface process, including the changes of
-the libraries it is built with (libXmlRpc, libhsscomm, libelvutils,
-libLanDeviceUtils, libUnifiedLanComm, libxmlparser). Newest version first.
+Changes of `rfd`, the BidCos-RF interface process. Newest version first. Up
+to 2.6.8 the entries include the changes of the libraries it is built with;
+since then these are in the changelogs of the libraries
+(`src/lib*/CHANGELOG.md`).
 
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and
