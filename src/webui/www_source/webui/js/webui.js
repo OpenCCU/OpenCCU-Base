@@ -52,7 +52,6 @@ WebUI = Singleton.create({
     if(typeof dcTimeout == "undefined") {
       dcTimeout = window.setTimeout(function () {
         showDutyCycle();
-        showCarrierSense();
         delete dcTimeout;
       }, 10);
     }
@@ -287,7 +286,6 @@ WebUI = Singleton.create({
       // Check the dutyCycle and carrierSense periodically
       new PeriodicalExecuter(function () {
         showDutyCycle();
-        showCarrierSense();
       }, checkDutyCycleInterval);
 
       if (getProduct() >= 3) {

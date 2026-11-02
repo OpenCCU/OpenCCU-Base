@@ -57,8 +57,6 @@ ConfigData = Singleton.create({
       window.setTimeout(function() {jQuery("#PagePath").css('color',"white");},100);
       ConfigData.isPresent = true;
       if (ConfigData.showMessage) { this.hideMessage(); }
-      showDutyCycleHmIP(); // The DeviceList is now available for displaying the duty cycle and carrier sense of the HAP's
-      showCarrierSense();
       if (ConfigData.callback) { ConfigData.callback(); }
     });
   },
