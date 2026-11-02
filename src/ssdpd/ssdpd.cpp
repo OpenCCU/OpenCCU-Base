@@ -342,7 +342,7 @@ static std::string getSerialNum() {
 int main(int argc, char ** argv) {
 	char buffer[2048];
 
-	if(argc > 1 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
+	if(argc == 2 && (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)) {
 		printf("ssdpd %s (%s)\n", SSDPD_VERSION, __DATE__);
 		return 0;
 	}
