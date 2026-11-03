@@ -15,6 +15,15 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the system variable chooser of the program editor staying empty, and
+  the system variable lists losing a variable or failing to load, when the
+  name, description, value list, value names or unit of a system variable
+  contain an apostrophe (allowed in value lists and value names since
+  [OpenCCU/OpenCCU#4413](https://github.com/OpenCCU/OpenCCU/pull/4413)), a
+  backslash or `</script>`. These texts are now escaped wherever they are
+  passed to JavaScript.
+  ([#304](https://github.com/OpenCCU/OpenCCU-Base/pull/304); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
 * show the duty cycle and carrier sense of every gateway (CCU, LAN gateways,
   HmIP-HAP) as one row each on the start page. Rows of gateways that
   disappear are now hidden and disconnected gateways are shown as not
