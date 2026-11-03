@@ -806,17 +806,17 @@ ise.Devices.prototype = {
   // ### SetReadyConfig
   // [id]: id of device 
   setReadyConfig: function(id) {
-    // dazugehÃ¶rige Tabellenreihe ausblenden
+    // dazugehörige Tabellenreihe ausblenden
     //$("tr" + id).hide();
     var url = "/esp/devices.htm?sid="+SessionId;
     var pb = "integer devId = " + id + ";";
     pb += "string action= 'setReadyConfig';";
     new Ajax.Updater("dummy", url, {postBody: ReGa.encode(pb), evalScripts: true, onComplete: function(t){if(dbg){alert(t.responseText);}}});
     
-    // GerÃ¤t in GerÃ¤teliste Ã¼bernehmen
+    // Gerät in Geräteliste übernehmen
     //DeviceList.beginUpdateDevice(id);
 
-     // GerÃ¤t in GerÃ¤teliste Ã¼bernehmen
+     // Gerät in Geräteliste übernehmen
     DeviceList.beginUpdateDevice(id, function() {
      //DeviceList.devices[id].isOperateGroupOnly = this.deviceOperateGroupOnly;
       if (DeviceList.devices[id]) {
@@ -1723,7 +1723,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "Â°C" || unit == "&deg;C") && (value != min) && (value != max)) {
+    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
