@@ -806,17 +806,17 @@ ise.Devices.prototype = {
   // ### SetReadyConfig
   // [id]: id of device 
   setReadyConfig: function(id) {
-    // dazugehörige Tabellenreihe ausblenden
+    // dazugehÃ¶rige Tabellenreihe ausblenden
     //$("tr" + id).hide();
     var url = "/esp/devices.htm?sid="+SessionId;
     var pb = "integer devId = " + id + ";";
     pb += "string action= 'setReadyConfig';";
     new Ajax.Updater("dummy", url, {postBody: ReGa.encode(pb), evalScripts: true, onComplete: function(t){if(dbg){alert(t.responseText);}}});
     
-    // Gerät in Geräteliste übernehmen
+    // GerÃ¤t in GerÃ¤teliste Ã¼bernehmen
     //DeviceList.beginUpdateDevice(id);
 
-     // Gerät in Geräteliste übernehmen
+     // GerÃ¤t in GerÃ¤teliste Ã¼bernehmen
     DeviceList.beginUpdateDevice(id, function() {
      //DeviceList.devices[id].isOperateGroupOnly = this.deviceOperateGroupOnly;
       if (DeviceList.devices[id]) {
@@ -1214,6 +1214,7 @@ ise.Programs.prototype = {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "DeleteSingleDestination";';
+    pb += 'string rid = "'+rid+'";';
     pb += 'string did = "'+did+'";';
     pb += 'string sid = "'+sid+'";';
     var opts =
@@ -1222,7 +1223,18 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadRule(rid);
+        var result = t.responseText.strip();
+        if (result.indexOf("removedRule:") === 0)
+        {
+          var parentRid = result.substring("removedRule:".length);
+          var removedElement = $("rule"+rid);
+          if (removedElement) { removedElement.remove(); }
+          ReloadRule(parentRid);
+        }
+        else
+        {
+          ReloadRule(rid);
+        }
       }
     };
     new Ajax.Request(url,opts);
@@ -1711,7 +1723,7 @@ ise.SingleDestination.prototype =
       value = min;
     }
 
-    if ((unit == "°C" || unit == "&deg;C") && (value != min) && (value != max)) {
+    if ((unit == "Â°C" || unit == "&deg;C") && (value != min) && (value != max)) {
       value = roundValue05(value);
     }
 
