@@ -54,7 +54,7 @@ function ::WriteConditionText()
                   }
                   else
                   {
-                    sRet = sRet#" (nicht ausgewÃ¤hlt)";
+                    sRet = sRet#" (nicht ausgewählt)";
                   }
                 }
                 if( iLVT == ivtSystemId )
@@ -70,7 +70,7 @@ function ::WriteConditionText()
                   }
                   else
                   {
-                    sRet = sRet#" (nicht ausgewÃ¤hlt)";
+                    sRet = sRet#" (nicht ausgewählt)";
                   }
                 }
                 if( bOK )
@@ -221,7 +221,7 @@ function ::WriteConditionText()
                                   sValue = sValue.Replace(">", "&gt;");
                                   sRet = sRet#' '#sValue;
                                 }
-                                !Write( "<script>conInfo('- ist binÃ¤r und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
+                                !Write( "<script>conInfo('- ist binär und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
                               }
                               else
                               {
@@ -313,9 +313,9 @@ function ::WriteConditionText()
                       iRV2 = iRV2*100;
                     }
                     
-                    if( sValueUnit == "Â°C" )
+                    if( sValueUnit == "°C" )
                     {
-                      sValueUnit = "Â° C";
+                      sValueUnit = "° C";
                     }
                     else
                     {
@@ -341,11 +341,11 @@ function ::WriteConditionText()
                         sCT = "${ruleConditionLblRangeFrom} "#iRV1.ToString(2)#sValueUnit#" ${ruleConditionLblRangeGreaterThan} "#iRV2.ToString(2)#sValueUnit;
                       }
                     }
-                    !if( iCT1 == 8 ) { sCT = "grÃ¶ÃŸer als "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 8 ) { sCT = "größer als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 8 ) { sCT = "${ruleConditionLblGreaterThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 10 ) { sCT = "kleiner als "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 10 ) { sCT = "${ruleConditionLblLessThan} "#iRV1.ToString(2)#sValueUnit; }
-                    !if( iCT1 == 9 ) { sCT = "grÃ¶ÃŸer oder gleich "#iRV1.ToString(2)#sValueUnit; }
+                    !if( iCT1 == 9 ) { sCT = "größer oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
                     !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
                     if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
@@ -363,11 +363,11 @@ function ::WriteConditionText()
                     {
                       oSC.ConditionType2(4);
                     }
-                    !if( iCT2 == 13 ) {sCT = 'auslÃ¶sen auf Aktualisierung';}
+                    !if( iCT2 == 13 ) {sCT = 'auslösen auf Aktualisierung';}
                     if( iCT2 == 13 ) {sCT = '${ruleConditionSelectTriggerWhenUpdated}';}
-                    !if( iCT2 == 15 ) {sCT = 'nur prÃ¼fen';}
+                    !if( iCT2 == 15 ) {sCT = 'nur prüfen';}
                     if( iCT2 == 15 ) {sCT = '${ruleConditionSelectCheckOnly}';}
-                    !if( iCT2 == 4 ) {sCT = 'auslÃ¶sen auf Ã„nderung';}
+                    !if( iCT2 == 4 ) {sCT = 'auslösen auf Änderung';}
                     if( iCT2 == 4 ) {sCT = '${ruleConditionSelectWhenChanged}';}
                     sRet = sRet#' '#sCT;
                   }
@@ -421,9 +421,9 @@ function ::WriteConditionText()
                   {
                     oSC.ConditionType2(13);
                   }
-                  !if( iCT2 == 13 ) {sRet = sRet#' auslÃ¶sen zu Zeitpunkten';}
+                  !if( iCT2 == 13 ) {sRet = sRet#' auslösen zu Zeitpunkten';}
                   if( iCT2 == 13 ) {sRet = sRet#' ${ruleConditionSelectTriggerOnTime}';}
-                  !if( iCT2 == 15 ) {sRet = sRet#' nur prÃ¼fen';}
+                  !if( iCT2 == 15 ) {sRet = sRet#' nur prüfen';}
                   if( iCT2 == 15 ) {sRet = sRet#' ${ruleConditionSelectCheckOnly}';}
                 }
                 else
@@ -510,7 +510,7 @@ function ::WriteDestinationText()
             {
               if( iVPT == ivtDelay )
               {
-                !sRet = sRet#" verzÃ¶gert um " ;
+                !sRet = sRet#" verzögert um " ;
                 sRet = sRet#" ${ruleActivitySelectDelayed} " ;
                 integer iHours = iVP.ToString().Substr(11,2).ToInteger();
                 integer iMinutes = iVP.ToString().Substr(14,2).ToInteger();
@@ -535,7 +535,7 @@ function ::WriteDestinationText()
               ! ##############################################################################
               if( iP == ivtString )
               {
-                !sRet = sRet#" ausfÃ¼hren";
+                !sRet = sRet#" ausführen";
                 sRet = sRet#" ${ruleDescrPerform}";
               }
               if( iP == ivtObjectId )
@@ -802,7 +802,7 @@ function ::WriteDestinationText()
         }
         else
         {
-          !sRet = sRet#"Keine AktivitÃ¤ten";
+          !sRet = sRet#"Keine Aktivitäten";
           sRet = sRet#"${ruleDescrNoActivities}";
         }
       }
