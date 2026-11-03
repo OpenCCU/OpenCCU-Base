@@ -740,7 +740,9 @@ changes; other users of OpenCCU-Base get them for the first time.
 * patch 0128: fix the line break in the English "Update Access Points with
   incompatible FW" button label.
   ([#81](https://github.com/OpenCCU/OpenCCU-Base/pull/81))
-* patch 0133: add a button to show internal device channels (e.g.
+* patch 0133: add a button to show internal device channels (e.g. the
+  maintenance channel) in Status and control, and include enabled internal
+  channels in rooms, functions, alarms and favorites.
   ([#198](https://github.com/OpenCCU/OpenCCU-Base/pull/198); refs
   [OpenCCU/OpenCCU#1475](https://github.com/OpenCCU/OpenCCU/issues/1475),
   [OpenCCU/OpenCCU#1477](https://github.com/OpenCCU/OpenCCU/issues/1477),
@@ -772,8 +774,8 @@ changes; other users of OpenCCU-Base get them for the first time.
   [OpenCCU/OpenCCU#1495](https://github.com/OpenCCU/OpenCCU/issues/1495),
   [OpenCCU/OpenCCU#4541](https://github.com/OpenCCU/OpenCCU/issues/4541))
 * patch 0148: reboot and shut down in the background after answering the
-  request, so the WebUI can show the result (e.g.
-  ([#110](https://github.com/OpenCCU/OpenCCU-Base/pull/110); refs
+  request, so the WebUI can show the result (e.g. after installing an
+  add-on). ([#110](https://github.com/OpenCCU/OpenCCU-Base/pull/110); refs
   [OpenCCU/OpenCCU#1496](https://github.com/OpenCCU/OpenCCU/issues/1496))
 * patch 0152: add a button to show or hide internal system variables in the
   system variable chooser; all choosers now start with internal variables
@@ -784,10 +786,13 @@ changes; other users of OpenCCU-Base get them for the first time.
 * patch 0157: fix the SysVar JSON-RPC methods returning invalid JSON and
   resolving objects outside the system variables.
   ([#57](https://github.com/OpenCCU/OpenCCU-Base/pull/57))
-* patch 0159: fix several JSON-RPC methods (e.g.
+* patch 0159: fix several JSON-RPC methods (e.g. restarting ReGa or sshd,
+  SSH and sticky-unreach settings) returning an empty response, and encode
+  JSON-RPC requests and responses as UTF-8.
   ([#67](https://github.com/OpenCCU/OpenCCU-Base/pull/67); refs
   [OpenCCU/OpenCCU#1593](https://github.com/OpenCCU/OpenCCU/issues/1593))
 * patch 0162: fix EVENT_DELAY_UNIT of acceleration sensor channels (e.g.
+  HmIP-SAM) not being saved.
   ([#71](https://github.com/OpenCCU/OpenCCU-Base/pull/71); refs
   [OpenCCU/OpenCCU#1654](https://github.com/OpenCCU/OpenCCU/issues/1654),
   [OpenCCU/OpenCCU#1656](https://github.com/OpenCCU/OpenCCU/issues/1656))
@@ -808,7 +813,8 @@ changes; other users of OpenCCU-Base get them for the first time.
 * patch 0176: fix the valve state of several wall thermostat (BWTH) heating
   controls on one page updating the wrong control.
   ([#51](https://github.com/OpenCCU/OpenCCU-Base/pull/51))
-* patch 0177: fix empty text fields in device settings (e.g.
+* patch 0177: fix empty text fields in device settings (e.g. the HmIP-WKP
+  PIN) being filled with two quote characters ('').
   ([#52](https://github.com/OpenCCU/OpenCCU-Base/pull/52))
 * patch 0178: reject forbidden characters in the name and description when
   saving a system variable.
