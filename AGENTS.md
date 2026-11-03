@@ -70,8 +70,8 @@ what you could and could not test.
   of the OpenCCU-Base libraries whose functions it calls, read from the loaded
   libraries (check with `nm -D --undefined-only`, not only the link line).
   A program links only the OpenCCU-Base libraries whose functions it calls.
-- **Component changelogs:** every component under `src/` (except `webui`) has
-  a `CHANGELOG.md`. The one of the closed-source `ReGaHss` (`ChangeLog` up to
+- **Component changelogs:** every component under `src/` has a
+  `CHANGELOG.md`. The one of the closed-source `ReGaHss` (`ChangeLog` up to
   R1.00.0388.0267) comes with its binaries from the Release workflow of the
   ReGaHss repository and is not edited here. A pull request with a
   user-visible change adds an entry under `## Unreleased` (create the heading
@@ -80,8 +80,8 @@ what you could and could not test.
   new, written for users, with links to the pull request and the fixed
   issue. A change of a library goes into the library's changelog, not into
   those of the programs using it. A version bump renames `## Unreleased` to
-  `## <version> (<date>)`; for `devicetypes` and `hmipserver`, which have no
-  version of their own, the OpenCCU-Base release takes its place.
+  `## <version> (<date>)`; for `webui`, `devicetypes` and `hmipserver`, which
+  have no version of their own, the OpenCCU-Base release takes its place.
 - WebUI, Tcl and ReGa code must escape every user-controlled value.
 - Changes to the closed-source binaries come from eQ-3; do not patch them.
 
