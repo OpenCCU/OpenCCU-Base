@@ -28,6 +28,12 @@ or extended in it.
   units with quotes, can now also be saved in the program editor.
   ([#306](https://github.com/OpenCCU/OpenCCU-Base/pull/306); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
+* sort the entries of the main menu's submenus alphabetically and show an
+  icon before each entry. The programs menu gets a "Test script" entry, and
+  the overview pages of the main menu show their sections as flexible tiles
+  (OpenCCU patch 0061). The menu icons are Icons8 Material icons, see
+  `www/ise/img/menuicons/README.md`.
+  ([#308](https://github.com/OpenCCU/OpenCCU-Base/pull/308))
 * remove the unused Expect-based multipart reader from `cgi.tcl`; file uploads
   that still reach `cgi.tcl` always use the binary-safe Tcl reader, as before
   (OpenCCU patch 0203).

@@ -5,105 +5,61 @@
   setPath(translateKey("menuProgramsLinksPage"));
 </script>
 
-<table class="StdTable j_translate" cellspacing="20">
-<colgroup>
-  <col style="width:50%;" />
-  <col style="width:50%;" />
-</colgroup>
-<tr>
-  <td>
-    <div onclick="WebUI.enter(LinkListPage);" class="StdTableBtn">${btnDirectDeviceLinks}</div>
-    <table>
-      <tr>
-        <td>
-          <ul class='CLASS05400'>
-            <li>${lblDirectDeviceLinks1}</li>
-            <li>${lblDirectDeviceLinks2}</li>
-            <li>${lblDirectDeviceLinks3}</li>
-            <li>${lblDirectDeviceLinks4}</li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td>
-         <div class="CLASS05401">
-          <table>
-            <tr>
-              <td><b>${hintDirectDeviceLinks1}</b></td>
-            </tr>
-            <tr>
-              <td><b>${hintDirectDeviceLinks2}</b></td>
-            </tr>
-            <!--
-            <tr>
-              <td>${hintDirectDeviceLinks3}</td>
-            </tr>
-            -->
-           </table>
-          </div>
-          <!--
-           <table class="CLASS05402">
-            <tr>
-              <td class="CLASS05403">
-                <img id="Img1" src="/ise/img/proglink1_small.jpg" alt="" />    
-              </td>
-            </tr>
-          </table>
-          -->
-        </td>
-      </tr>
-    </table>
-  </td>
+<div id="subOffsetDiv"></div>
+
+<div id="tblProgramsLinks" class="StdTable CLASS05404 j_translate">
+
+  <div id="statusRow2" class="CLASS05405">
+
+    <div id="btnDirectDeviceLinks_container" class="sysConfigHeight">
+      <div class="StdTableBtn" onclick="WebUI.enter(LinkListPage);">${btnDirectDeviceLinks}</div>
+      <ul class='CLASS05400'>
+        <li>${lblDirectDeviceLinks1}</li>
+        <li>${lblDirectDeviceLinks2}</li>
+        <li>${lblDirectDeviceLinks3}</li>
+        <li>${lblDirectDeviceLinks4}</li>
+      </ul>
+      <div class="CLASS05401">
+        <span><b>${hintDirectDeviceLinks1}</b></span>
+        <span><b>${hintDirectDeviceLinks2}</b></span>
+        <!-- <span>${hintDirectDeviceLinks3}</span> -->
+      </div>
+      <!--
+      <div class="CLASS05402">
+        <div class="CLASS05403">
+          <img id="Img1" src="/ise/img/proglink1_small.jpg" alt="" />    
+        </div>
+      </div>
+         -->
+    </div>
   
-  <td>
-    <div onclick="WebUI.enter(ProgramListPage);" class="StdTableBtn">${btnCreateProgramsAndLinks}</div>
-    <table>
-      <tr style="vertical-align:top;">
-        <td>
-          <ul class='CLASS05400'>
-              <li>${lblCreateProgramsAndLinks1}</li>
-              <li>${lblCreateProgramsAndLinks2}</li>
-              <li>${lblCreateProgramsAndLinks3}</li>
-              <li>${lblCreateProgramsAndLinks4}</li>
-              <li>${lblCreateProgramsAndLinks5}</li>
-              <li>${lblCreateProgramsAndLinks6}</li>
-              <li>${lblCreateProgramsAndLinks7}</li>
-              <li>${lblCreateProgramsAndLinks8}</li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td>
-         <div class="CLASS05401">
-          <table>
-            <tr>
-              <td><b>${hintCreateProgramsAndLinks1}</b></td>
-            </tr>
-            <tr>
-              <td><b>${hintCreateProgramsAndLinks2}</b></td>
-            </tr>
-            <!--
-            <tr>
-              <td>${hintCreateProgramsAndLinks3}</td>
-            </tr>
-            -->
-          </table>
-          </div>
-          <!--
-           <table class="CLASS05402">
-            <tr>
-              <td class="CLASS05403">
-                <img id="pl2" src="/ise/img/proglink2_small.jpg" alt="" />
-              </td>
-            </tr>
-          </table>
-          -->
-        </td>
-      </tr>
-    </table>
-  </td>
-</tr>
-</table>
+    <div id="btnCreateProgramsAndLinks_container" class="sysConfigHeight">
+      <div onclick="WebUI.enter(ProgramListPage);" class="StdTableBtn">${btnCreateProgramsAndLinks}</div>
+      <ul class='CLASS05400'>
+        <li>${lblCreateProgramsAndLinks1}</li>
+        <li>${lblCreateProgramsAndLinks2}</li>
+        <li>${lblCreateProgramsAndLinks3}</li>
+        <li>${lblCreateProgramsAndLinks4}</li>
+        <li>${lblCreateProgramsAndLinks5}</li>
+        <li>${lblCreateProgramsAndLinks6}</li>
+        <li>${lblCreateProgramsAndLinks7}</li>
+        <li>${lblCreateProgramsAndLinks8}</li>
+      </ul>
+      <div class="CLASS05401">
+        <span><b>${hintCreateProgramsAndLinks1}</b></span>
+        <span><b>${hintCreateProgramsAndLinks2}</b></span>
+        <!-- <span>${hintCreateProgramsAndLinks3}</span> -->
+      </div>
+      <!--
+      <div class="CLASS05402">
+        <div class="CLASS05403">
+          <img id="pl2" src="/ise/img/proglink2_small.jpg" alt="" />
+        </div>
+      </div>
+         -->
+    </div>
+  </div>
+</div>
 
 <script type="text/javascript">
   //translateAndSetImage("#Img1", "proglink1_small.jpg");

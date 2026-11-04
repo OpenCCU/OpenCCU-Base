@@ -127,11 +127,12 @@ version and date with the next version bump (`version.sh` and
 * fix the decimal device address in the XML output.
 * wait with `poll()` instead of `select()` in the LAN gateway connection
   handling (libUnifiedLanComm).
-  ([#1](https://github.com/OpenCCU/OpenCCU-Base/pull/1))
+  ([homematicip/OpenCCU-Base#7](https://github.com/homematicip/OpenCCU-Base/pull/7))
 * update libxmlparser to version 1.13.
   ([#19](https://github.com/OpenCCU/OpenCCU-Base/pull/19))
 * improve the logging.
-* build with CMake. ([#3](https://github.com/OpenCCU/OpenCCU-Base/pull/3))
+* build with CMake.
+  ([homematicip/OpenCCU-Base#3](https://github.com/homematicip/OpenCCU-Base/pull/3))
 
 ## 1.1.0 (2025-06-24)
 
