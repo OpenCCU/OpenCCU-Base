@@ -23,7 +23,9 @@ or extended in it.
   HTML-escaped in the program editor, the program list, the system variable
   views of "Status and control", the alarm messages, the favorites and the
   system variables of a user, so markup like `<b>` is shown as text. Values
-  of string variables are still shown as HTML.
+  of string variables are still shown as HTML. Texts with quotes or
+  backslashes that a program sets or compares for string variables, and
+  units with quotes, can now also be saved in the program editor.
   ([#306](https://github.com/OpenCCU/OpenCCU-Base/pull/306); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
 * remove the unused Expect-based multipart reader from `cgi.tcl`; file uploads
