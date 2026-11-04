@@ -16,10 +16,10 @@ WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
 * fix the program chooser, the system protocol and the value input of
-  number variables in the program editor failing, and texts set by a program
-  for string variables being cut off in the program editor, when value
-  names, value list entries, units or descriptions of system variables
-  contain apostrophes, quotes or backslashes. These texts are now also
+  number variables in the program editor failing, and texts that a program
+  sets or compares for string variables being cut off in the program editor,
+  when value names, value list entries, units or descriptions of system
+  variables contain apostrophes, quotes or backslashes. These texts are now also
   HTML-escaped in the program editor, the program list, the system variable
   views of "Status and control", the alarm messages, the favorites and the
   system variables of a user, so markup like `<b>` is shown as text. Values

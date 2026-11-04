@@ -341,7 +341,7 @@
                   ! Some parameter shouldn´t be visible - this is the new way to hide certain parameters
                   Call("/esp/functions.fn::destinationIsParameterVisible()");
                   if (showChannelParam == true) {
-                    Write( '<option value="'#oDP.ID()#':0|'#oDP.Name()#'"'#sSelected#'>' );
+                    Write( '<option value="'#oDP.ID()#':0|'#oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'"'#sSelected#'>' );
                     string sValue = oDP.Name();
                     if( (!oDP.IsTypeOf(OT_VARDP)) && (!oDP.IsTypeOf(OT_ALARMDP)) )
                     {
