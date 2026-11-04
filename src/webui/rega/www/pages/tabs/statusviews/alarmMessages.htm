@@ -193,7 +193,7 @@ iseInitUpdateArrays();
             object oRoom = dom.GetObject( sRID );
             if( oRoom )
             {
-              sRooms = sRooms#"<br />"#oRoom.Name();
+              sRooms = sRooms#"<br />"#oRoom.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
               roomIDs = roomIDs#sRID# "\t";
             }
           }
@@ -260,7 +260,7 @@ iseInitUpdateArrays();
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sAlarmDescription#'</td>' );
         if (sLastTriggerName != "")
         {
-          sLastTriggerName = "<p class='CLASS02808'>"#sLastTriggerName#"</p>";
+          sLastTriggerName = "<p class='CLASS02808'>"#sLastTriggerName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</p>";
         }
         Write( '<td style="text-align:center; vertical-align: middle;"class="CLASS02806">'#sLastTriggerName#'<p>'#sAlarmMessage#'</p></td>' );
         Write( '<td style="text-align:center; vertical-align: middle;"class="CLASS02807">'#sRooms#'</td>' );
@@ -275,7 +275,7 @@ iseInitUpdateArrays();
       WriteLine( 'tmp["trid"] = "'#sTrId#'"; ' );
       WriteLine( 'tmp["first"] = "'#sFirstTimestamp#'"; ' );
       WriteLine( 'tmp["name"] = "'#oSV.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ' );
-      WriteLine( 'tmp["message"] = "'#sLastTriggerName#'"; ' );
+      WriteLine( 'tmp["message"] = "'#sLastTriggerName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ' );
       WriteLine( 'tmp["room"] = "'#sRoom#'"; ' );
       WriteLine( 'tmp["fltOpts"] = new Object();' );
       WriteLine( 'tmp["fltOpts"]["rooms"] = "'#roomIDs#'";' );
