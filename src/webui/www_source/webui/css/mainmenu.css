@@ -112,8 +112,8 @@
 
   background-color: $_(subMenuBackground);
   font-weight: bold;
-  padding-left: 5px;
-  padding-right: 5px; 
+  /* padding-left: 5px; */
+  padding: 2px 5px; 
   text-align:left;
   vertical-align:middle;
   color: $_(textColorB); /* black */
@@ -128,3 +128,9 @@
   /* border: 2px solid $_(subMenuHighlight); */
   /* line-height: 30px; */
 }
+
+.MainMenuSubItem > img {
+  vertical-align: middle;
+  width: 16px;
+}
+

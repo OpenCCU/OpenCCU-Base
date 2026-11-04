@@ -266,7 +266,7 @@ a img {
 
 /* Grundlegende Tabelle auf der Statusanzeige-Seite */
 #tblStatus {
-  width:1200px; 
+  /* width:1200px; */
   height:100%;
   table-layout: fixed;
 }
@@ -1483,7 +1483,7 @@ div.caption  { display: table-caption; }
 
 .sysConfigHeight
 {
-  height: 263px;
+  min-height: 263px;
 }
 
 .posPreBtn
