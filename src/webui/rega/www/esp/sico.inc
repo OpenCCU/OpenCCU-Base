@@ -357,7 +357,7 @@
           Write( '</select> ');
         }
         string sCT = "";
-        string sValueUnit = oLV.ValueUnit();
+        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         if( sValueUnit == "100%" )
         {
           sValueUnit = "%";

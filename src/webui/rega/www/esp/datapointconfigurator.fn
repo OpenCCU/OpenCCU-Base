@@ -1786,11 +1786,11 @@ function ::CreateUnknown()
                       {
                         if (oDP.Value())
                         {
-                          WriteLine(oDP.ValueName1());
+                          WriteLine(oDP.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                         }
                         else
                         {
-                          WriteLine(oDP.ValueName0());
+                          WriteLine(oDP.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
                         }
                       }
                     }

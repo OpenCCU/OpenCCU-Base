@@ -159,7 +159,7 @@ iseInitUpdateArrays();
         sAlarmName = "no name";
       }
       
-      string sAlarmDescription = oSV.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>');
+      string sAlarmDescription = oSV.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>');
       if( !sAlarmDescription.Length() )
       {
         sAlarmDescription = "no description";
@@ -210,9 +210,9 @@ iseInitUpdateArrays();
             ! sAlarmMessage = web.webKeyFromStringTable( sLongKey );
 
             if ((oSV.Value() == false) || (oSV.Value() == "")) {
-              sAlarmMessage = oSV.ValueName0();
+              sAlarmMessage = oSV.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             } else {
-              sAlarmMessage = oSV.ValueName1();
+              sAlarmMessage = oSV.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             }
 
             if( !sAlarmMessage.Length() )
@@ -243,10 +243,10 @@ iseInitUpdateArrays();
       if( (!sAlarmMessage.Length()) && oSV.IsTypeOf(OT_ALARMDP) )
       {
         if ((oSV.Value() == false) || (oSV.Value() == "")) {
-          sAlarmMessage = oSV.ValueName0();
+          sAlarmMessage = oSV.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         }
         else {
-          sAlarmMessage = oSV.ValueName1();
+          sAlarmMessage = oSV.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         }
       }
       
@@ -255,7 +255,7 @@ iseInitUpdateArrays();
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sFirstTimestamp#'</td>' );
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sLastTimestamp#'</td>' );
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">'#oSV.AlCounter()#'</td>' );
-        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">'#sAlarmName#'</td>' );
+        Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02807">${triggered}</td>' );
         Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02806">'#sAlarmDescription#'</td>' );
         if (sLastTriggerName != "")
@@ -274,7 +274,7 @@ iseInitUpdateArrays();
       WriteLine( 'tmp["id"] = '#oSV.ID()#'; ' );
       WriteLine( 'tmp["trid"] = "'#sTrId#'"; ' );
       WriteLine( 'tmp["first"] = "'#sFirstTimestamp#'"; ' );
-      WriteLine( 'tmp["name"] = "'#oSV.Name()#'"; ' );
+      WriteLine( 'tmp["name"] = "'#oSV.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ' );
       WriteLine( 'tmp["message"] = "'#sLastTriggerName#'"; ' );
       WriteLine( 'tmp["room"] = "'#sRoom#'"; ' );
       WriteLine( 'tmp["fltOpts"] = new Object();' );

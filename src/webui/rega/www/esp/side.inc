@@ -271,7 +271,7 @@
                         }
                       }
                       Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                      Write( sValue );
+                      Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                       Write( '</option>' );
                     }
                   }
@@ -304,7 +304,7 @@
                     }
                   }
                   Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                  Write( sValue );
+                  Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                   Write( '</option>' );
                   if( (oDP.ID() == iDP) && (iV == 0) ) { sSelected = " selected"; } else { sSelected = ""; }
                   Write( '<option value="'#oDP.ID()#':0"'#sSelected#'>' );
@@ -324,7 +324,7 @@
                     }
                   }
                   Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                  Write( sValue );
+                  Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                   Write( '</option>' );
                 }
               }
@@ -362,7 +362,7 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                    Write( sValue );
+                    Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                     Write( '</option>' );
                   }
                 }
@@ -383,7 +383,7 @@
             {
               sValue = sKey;
             }
-            Write( sValue );
+            Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
             Write( '</option>' );
           }
         }
@@ -944,7 +944,7 @@
                             }
                           }
                         }
-                        Write( sValue );
+                        Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                         Write( '</option>' );
                       }
                     }
@@ -981,28 +981,28 @@
           Write( ' <select class="SelectBox" onchange="SetSysVarDestValue('#oSD.ID()#',this.value);">' );
           if( iV == 1 ) { sSelected = "selected"; } else { sSelected = ""; }
           Write( '<option value="'#oDP.ID()#':1"'#sSelected#'>' );
-          Write( oDP.ValueName1() );
+          Write( oDP.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
           Write( '</option>' );
           if( iV == 0 ) { sSelected = "selected"; } else { sSelected = ""; }
           Write( '<option value="'#oDP.ID()#':0"'#sSelected#'>' );
-          Write( oDP.ValueName0() );
+          Write( oDP.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
           Write( '</option>' );
           Write( '</select> ' );
         }
         if (oDP.ValueSubType() == istChar8859)
         {
-          Write( ' <input type="text" class="SelectBox" size="32" value="'#oSD.DestinationValue().ToString()#'" onchange="SetSysVarDestStrValue('#oSD.ID()#',this.value);" /> ' );
-          Write( oDP.ValueUnit()#" " );
+          Write( ' <input type="text" class="SelectBox" size="32" value="'#oSD.DestinationValue().ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="SetSysVarDestStrValue('#oSD.ID()#',this.value);" /> ' );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
         }
         if( oDP.ValueSubType() == istGeneric )
         {
-          Write('<input id="dest'#oSD.ID()#'" type="hidden" class="SelectBox" size="6" value="'#oSD.DestinationValue().ToString(2)#'" onchange="SetSysVarDestValue('#oSD.ID()#' ,this.value,'#oDP.ValueMin()#' ,'#oDP.ValueMax()#', \''#oDP.ValueUnit()#'\', '#oDP.IsTypeOf( OT_VARDP )#');" /> ' );
+          Write('<input id="dest'#oSD.ID()#'" type="hidden" class="SelectBox" size="6" value="'#oSD.DestinationValue().ToString(2)#'" onchange="SetSysVarDestValue('#oSD.ID()#' ,this.value,'#oDP.ValueMin()#' ,'#oDP.ValueMax()#', \''#oDP.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\', '#oDP.IsTypeOf( OT_VARDP )#');" /> ' );
           real percVal = oSD.DestinationValue();
           if ((! oDP.IsTypeOf( OT_VARDP )) && (oDP.ValueUnit() == "%")) {
             percVal = oSD.DestinationValue() * 100;
           }
           Write( ' <input id="source'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#percVal.ToString(2)#'" onchange="ConvertValueToPercent('#oSD.ID()#');" /> ' );
-          Write( oDP.ValueUnit()#" " );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
           !Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
         }
         if( oDP.ValueSubType() == istEnum )
@@ -1019,7 +1019,7 @@
               string sSelected = "";
               if( iV == sVLKey.ToInteger() ) { sSelected = "selected"; } else { sSelected = ""; }
               Write( '<option value="'#oDP.ID()#':'#sVLKey#'"'#sSelected#'>' );
-              Write( sVLValue );
+              Write( sVLValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
               Write( '</option>' );
             }
           }

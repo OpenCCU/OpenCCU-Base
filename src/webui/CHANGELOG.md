@@ -15,6 +15,17 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the program chooser, the system protocol and the value input of
+  number variables in the program editor failing, and texts set by a program
+  for string variables being cut off in the program editor, when value
+  names, value list entries, units or descriptions of system variables
+  contain apostrophes, quotes or backslashes. These texts are now also
+  HTML-escaped in the program editor, the program list, the system variable
+  views of "Status and control", the alarm messages, the favorites and the
+  system variables of a user, so markup like `<b>` is shown as text. Values
+  of string variables are still shown as HTML.
+  ([#306](https://github.com/OpenCCU/OpenCCU-Base/pull/306); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
 * fix the system variable chooser of the program editor staying empty, and
   the system variable lists losing a variable or failing to load, when the
   name, description, value list, value names or unit of a system variable
