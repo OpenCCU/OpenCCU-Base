@@ -504,14 +504,14 @@
                   }
 
                   if (showGenericElem) {
-                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                    Write( sUnit );
+                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
+                    Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                     Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
                   }
 
                 } else {
-                  Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                  Write( sUnit );
+                  Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
+                  Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
 
                   ! Hide the notepad for e. g. HmIP-WSC
                   if ((oCH.HssType().Find(servoVirtualReceiver) == -1) || (oDP.HSSID().Find("RAMP_TIME") == -1)) {
