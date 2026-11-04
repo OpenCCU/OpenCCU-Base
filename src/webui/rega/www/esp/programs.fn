@@ -825,7 +825,21 @@ function ::SetBreakOnRestart()
       }
       else
       {
-        Write( oTmp.BreakOnRestart( false ) );
+        boolean bSet = oTmp.BreakOnRestart( false );
+        string sRemovedRuleParentID = "";
+        if( bSet )
+        {
+          integer iElseDestID = oTmp.ID();
+          Call("/esp/programs.fn::DeleteEmptyElseRule()");
+        }
+        if( sRemovedRuleParentID != "" )
+        {
+          Write( "removedRule:"#sRemovedRuleParentID );
+        }
+        else
+        {
+          Write( bSet );
+        }
       }
     }
   }
@@ -1244,31 +1258,65 @@ function ::DeleteSingleDestination()
     if( oTmp )
     {
       boolean bDeleted = oTmp.DestDelSingle( system.GetVar("sid") );
-      boolean bRuleRemoved = false;
-      if( bDeleted && (oTmp.DestSingleCount() == 0) && system.IsVar("rid") )
+      string sRemovedRuleParentID = "";
+      if( bDeleted )
       {
-        object oRule = dom.GetObject( system.GetVar("rid") );
-        if( oRule && (oRule.RuleDestination().ID() == oTmp.ID()) &&
-            !oRule.ElseIfFlag() && !oRule.RuleSubRule() &&
+        integer iElseDestID = oTmp.ID();
+        Call("/esp/programs.fn::DeleteEmptyElseRule()");
+      }
+      if( sRemovedRuleParentID != "" )
+      {
+        Write( "removedRule:"#sRemovedRuleParentID );
+      }
+      else
+      {
+        Write( bDeleted );
+      }
+    }
+  }
+}
+
+! Deletes the rule "rid" when it is the terminal ELSE rule of its parent
+! rule and its destination iElseDestID has no activities left. Such a rule
+! does nothing; the WebUI shows the ELSE placeholder instead and creates the
+! rule again when an activity is added. On success the ID of the parent rule
+! is returned in sRemovedRuleParentID, which the caller declares.
+! ReGa evaluates all operands of &&, so object checks are nested.
+function ::DeleteEmptyElseRule()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
+  {
+    object oRule = dom.GetObject( system.GetVar("rid") );
+    if( oRule )
+    {
+      object oDest = oRule.RuleDestination();
+      if( oDest )
+      {
+        if( (oDest.ID() == iElseDestID) && (oDest.DestSingleCount() == 0) &&
+            (!oRule.ElseIfFlag()) && (!oRule.RuleSubRule()) &&
             (oRule.RuleConditions().Count() == 0) )
         {
           object oParent = dom.GetObject( oRule.RuleParentID() );
-          if( oParent && oParent.IsTypeOf( OT_RULE ) )
+          if( oParent )
           {
-            object oSubRule = oParent.RuleSubRule();
-            if( oSubRule && (oSubRule.ID() == oRule.ID()) )
+            if( oParent.IsTypeOf( OT_RULE ) )
             {
-              integer iParentID = oParent.ID();
-              if( oParent.RuleDelSubRule() )
+              object oSubRule = oParent.RuleSubRule();
+              if( oSubRule )
               {
-                Write( "removedRule:"#iParentID );
-                bRuleRemoved = true;
+                if( oSubRule.ID() == oRule.ID() )
+                {
+                  if( oParent.RuleDelSubRule() )
+                  {
+                    sRemovedRuleParentID = oParent.ID().ToString();
+                  }
+                }
               }
             }
           }
         }
       }
-      if( !bRuleRemoved ) { Write( bDeleted ); }
     }
   }
 }
