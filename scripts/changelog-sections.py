@@ -26,11 +26,13 @@ DATE_RE = re.compile(r"\((\d{4}-\d{2}-\d{2})\)\s*$")
 
 
 def git(*args):
+    """Run git with the given arguments and return its standard output."""
     return subprocess.run(["git", *args], check=True, capture_output=True,
                           text=True).stdout
 
 
 def show(revision, path):
+    """Return the content of path at revision, or None if it does not exist."""
     try:
         return git("show", f"{revision}:{path}")
     except subprocess.CalledProcessError:
@@ -38,6 +40,7 @@ def show(revision, path):
 
 
 def changelogs(revision):
+    """Return the paths of the component changelogs at revision, by name."""
     paths = git("ls-tree", "-r", "--name-only", revision, "--", "src").split()
     return sorted((p for p in paths
                    if re.fullmatch(r"src/[^/]+/CHANGELOG\.md", p)),
@@ -79,6 +82,7 @@ def sections(text):
 
 
 def normalize(entry):
+    """Return entry with its whitespace collapsed, for comparisons."""
     return " ".join(entry.split())
 
 
@@ -107,12 +111,13 @@ def new_entries(old_text, new_text, cutoff):
 
 
 def main():
+    """Print the new component changelog entries between two revisions."""
     parser = argparse.ArgumentParser(
         description=__doc__.split("\n\n")[0],
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("old", help="old revision, e.g. the previous release tag")
     parser.add_argument("new", help="new revision, e.g. HEAD")
-    parser.add_argument("--limit", type=int, default=0,
+    parser.add_argument("--limit", type=int, default=None,
                         help="maximum length of the output in characters: "
                              "the largest components are replaced by a link "
                              "to their changelog until it fits")
@@ -142,7 +147,7 @@ def main():
                  f"See [{path}]({link}) for the changes.\n")
         blocks.append(["\n".join(out), short])
     header = "## Component changes\n\n"
-    if args.limit:
+    if args.limit is not None:
         for block in sorted(blocks, key=lambda b: len(b[0]), reverse=True):
             total = len(header) + sum(len(b[0]) + 1 for b in blocks)
             if total <= args.limit:
