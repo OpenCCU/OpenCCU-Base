@@ -15,7 +15,7 @@ version and date with the next version bump (`version.sh` and
   versions of the OpenCCU-Base libraries it uses (libXmlRpc, libxmlparser,
   libhsscomm, libelvutils, libLanDeviceUtils, libUnifiedLanComm), as reported
   by the loaded libraries. The libraries now have versions of their own.
-  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294))
+  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)) by @jens-maus
 
 ## 2.6.8 (2026-11-01)
 
@@ -28,6 +28,7 @@ version and date with the next version bump (`version.sh` and
   request waits for the first instead of failing.
   ([#282](https://github.com/OpenCCU/OpenCCU-Base/pull/282),
   fixes [#179](https://github.com/OpenCCU/OpenCCU-Base/issues/179))
+  by @jens-maus
 * fix a logic layer (e.g. ReGaHss) that registers after a device replacement
   getting `deleteDevices` for the old device instead of `replaceDevice`, so
   that it lost the names, rooms and programs of that device: the replacement
@@ -37,6 +38,7 @@ version and date with the next version bump (`version.sh` and
   once, and only the registering receiver gets `replaceDevice(old, new)`.
   ([#283](https://github.com/OpenCCU/OpenCCU-Base/pull/283),
   fixes [#169](https://github.com/OpenCCU/OpenCCU-Base/issues/169))
+  by @jens-maus
 * handle SIGTERM and SIGINT with a clean shutdown: rfd was killed by the
   default action when the init system or monit stopped it, so a device save
   still pending was lost and the radio module or LAN gateway was not closed.
@@ -47,14 +49,17 @@ version and date with the next version bump (`version.sh` and
   deadlock in `StopInterface()`.
   ([#255](https://github.com/OpenCCU/OpenCCU-Base/pull/255),
   fixes [#164](https://github.com/OpenCCU/OpenCCU-Base/issues/164))
+  by @hobbyquaker
 * fix the RPC server no longer answering, or rfd aborting, once one of its
   sockets got a file descriptor of 1024 or more: `select()` writes past its
   descriptor set for such descriptors. rfd (libXmlRpc, the serial port and
   socket wrappers and the HM-CFG-LAN discovery) now waits with `poll()`.
   ([#285](https://github.com/OpenCCU/OpenCCU-Base/pull/285),
   fixes [#178](https://github.com/OpenCCU/OpenCCU-Base/issues/178))
+  by @jens-maus
 * an interrupted `select()` (e.g. by the stop signal) is no longer logged as
   an error. ([#281](https://github.com/OpenCCU/OpenCCU-Base/pull/281))
+  by @jens-maus
 
 ## 2.6.7 (2026-10-31)
 
@@ -63,6 +68,7 @@ version and date with the next version bump (`version.sh` and
   status of the radio module is now read as a signed byte.
   ([#254](https://github.com/OpenCCU/OpenCCU-Base/pull/254),
   fixes [#185](https://github.com/OpenCCU/OpenCCU-Base/issues/185))
+  by @hobbyquaker
 * fix rfd using a full CPU core and still reporting the interface as
   connected when the serial device of the radio module hung up (end of file,
   e.g. an unplugged USB serial adapter): end of file is now handled like a
@@ -70,6 +76,7 @@ version and date with the next version bump (`version.sh` and
   succeeds again.
   ([#264](https://github.com/OpenCCU/OpenCCU-Base/pull/264),
   fixes [#162](https://github.com/OpenCCU/OpenCCU-Base/issues/162))
+  by @hobbyquaker
 * fix an RPC call with fewer arguments than the method expects (e.g.
   `setVolatileMetadata("x")`) reading freed memory and possibly crashing rfd.
   Methods whose arguments are all required (e.g. `getParamset`, `putParamset`,
@@ -77,9 +84,10 @@ version and date with the next version bump (`version.sh` and
   "Insufficient parameters.".
   ([#271](https://github.com/OpenCCU/OpenCCU-Base/pull/271),
   fixes [#167](https://github.com/OpenCCU/OpenCCU-Base/issues/167))
+  by @jens-maus
 * correct the list of log levels in the sample `rfd.conf` (default 3 =
   NOTICE). ([#277](https://github.com/OpenCCU/OpenCCU-Base/pull/277),
-  fixes [#8](https://github.com/OpenCCU/OpenCCU-Base/issues/8))
+  fixes [#8](https://github.com/OpenCCU/OpenCCU-Base/issues/8)) by @jens-maus
 
 ## 2.6.6 (2026-10-30)
 
@@ -89,16 +97,19 @@ version and date with the next version bump (`version.sh` and
   now answered with the fault -2 "Unknown interface" and changes nothing.
   ([#272](https://github.com/OpenCCU/OpenCCU-Base/pull/272),
   fixes [#174](https://github.com/OpenCCU/OpenCCU-Base/issues/174))
+  by @jens-maus
 * fix events (key presses, status reports, duty cycle) getting lost under
   load: the unread input of the serial device was discarded before every
   command to the radio module.
   ([#274](https://github.com/OpenCCU/OpenCCU-Base/pull/274),
   fixes [#173](https://github.com/OpenCCU/OpenCCU-Base/issues/173))
+  by @hobbyquaker
 * fix the event dispatcher thread of a receiver being joined twice when the
   receiver was removed, and the main loop hanging when a receiver was removed
   right after it was added (libelvutils).
   ([#269](https://github.com/OpenCCU/OpenCCU-Base/pull/269),
   fixes [#161](https://github.com/OpenCCU/OpenCCU-Base/issues/161))
+  by @jens-maus
 
 ## 2.6.5 (2026-10-30)
 
@@ -107,14 +118,17 @@ version and date with the next version bump (`version.sh` and
   events are unchanged.
   ([#266](https://github.com/OpenCCU/OpenCCU-Base/pull/266),
   fixes [#172](https://github.com/OpenCCU/OpenCCU-Base/issues/172))
+  by @jens-maus
 * fix rfd hanging at start at 100 % CPU when a line of `rfd.conf` or of the
   key and address files had 256 characters or more (libelvutils).
   ([#263](https://github.com/OpenCCU/OpenCCU-Base/pull/263),
   fixes [#177](https://github.com/OpenCCU/OpenCCU-Base/issues/177))
+  by @jens-maus
 * fix a wrong conversion of long strings to unsigned integers (used by the
   HM-OU-LED16 at channel set-up) in libhsscomm.
   ([#268](https://github.com/OpenCCU/OpenCCU-Base/pull/268),
   fixes [#168](https://github.com/OpenCCU/OpenCCU-Base/issues/168))
+  by @jens-maus
 
 ## 2.6.4 (2026-10-29)
 
@@ -124,6 +138,7 @@ version and date with the next version bump (`version.sh` and
   taken as an empty value.
   ([#260](https://github.com/OpenCCU/OpenCCU-Base/pull/260),
   fixes [#175](https://github.com/OpenCCU/OpenCCU-Base/issues/175))
+  by @jens-maus
 
 ## 2.6.3 (2026-10-28)
 
@@ -132,11 +147,13 @@ version and date with the next version bump (`version.sh` and
   port. It is only compiled in with `DEBUG_SHUTDOWN`.
   ([#258](https://github.com/OpenCCU/OpenCCU-Base/pull/258),
   fixes [#163](https://github.com/OpenCCU/OpenCCU-Base/issues/163))
+  by @jens-maus
 * fix the AES policy of the channels not being restored after a coprocessor
   re-init (a LAN gateway reconnect, a module restart), so that events of a
   remote with AES active were rejected until the next restart.
   ([#211](https://github.com/OpenCCU/OpenCCU-Base/pull/211),
   fixes [#165](https://github.com/OpenCCU/OpenCCU-Base/issues/165))
+  by @hobbyquaker
 * fix a logic layer that accepts a connection but never answers freezing rfd
   (init callbacks) or making it grow by a thread and a socket for every
   callback (asynchronous callbacks): these calls now time out after 30 s
@@ -145,36 +162,39 @@ version and date with the next version bump (`version.sh` and
   fixes [#170](https://github.com/OpenCCU/OpenCCU-Base/issues/170);
   [#208](https://github.com/OpenCCU/OpenCCU-Base/pull/208),
   fixes [#171](https://github.com/OpenCCU/OpenCCU-Base/issues/171))
+  by @hobbyquaker
 * fix crashes (SIGSEGV) of the RPC server on a nested `system.multicall`, on
   invalid length fields of a BIN-RPC request and on deeply nested values,
   each reachable with a single unauthenticated request (libXmlRpc). Nesting
   is now limited to 64 levels.
   ([#138](https://github.com/OpenCCU/OpenCCU-Base/pull/138),
   [#140](https://github.com/OpenCCU/OpenCCU-Base/pull/140),
-  [#189](https://github.com/OpenCCU/OpenCCU-Base/pull/189))
+  [#189](https://github.com/OpenCCU/OpenCCU-Base/pull/189)) by @jens-maus
 
 ## 2.6.2 (2026-10-03)
 
 * report a serial device with a persistent read error (e.g. a hung up
   `/dev/mmd_bidcos` after a restart of multimacd) as not connected in
   `listBidcosInterfaces()`.
-  ([#116](https://github.com/OpenCCU/OpenCCU-Base/pull/116))
+  ([#116](https://github.com/OpenCCU/OpenCCU-Base/pull/116)) by @jens-maus
 
 ## 2.6.1 (2026-10-03)
 
 * fix rfd crashing on every restart of multimacd: a failed `read()` of the
   serial device was taken as 4 GiB of data. A read error is now logged once
   and rfd keeps running. ([#115](https://github.com/OpenCCU/OpenCCU-Base/pull/115))
+  by @jens-maus
 * fix a crash of the RPC client when a reconnect to a logic layer failed
   (libXmlRpc). ([#27](https://github.com/OpenCCU/OpenCCU-Base/pull/27),
   fixes [OpenCCU/OpenCCU#4138](https://github.com/OpenCCU/OpenCCU/issues/4138))
+  by @jens-maus
 * fix unsafe array handling and missing read checks in libxmlparser.
-  ([#29](https://github.com/OpenCCU/OpenCCU-Base/pull/29))
+  ([#29](https://github.com/OpenCCU/OpenCCU-Base/pull/29)) by @jens-maus
 
 ## 2.6.0 (2026-09-06)
 
 * fix AES for BidCos devices.
-  ([#4](https://github.com/OpenCCU/OpenCCU-Base/pull/4))
+  ([#4](https://github.com/OpenCCU/OpenCCU-Base/pull/4)) by @jp112sdl
 * improve the reconnect of a LAN gateway (HM-LGW): recover from failed
   reconnects, synchronize the lifetime of the gateway controller during a
   reconnect, and match the gateway serial case-insensitively between
@@ -182,12 +202,14 @@ version and date with the next version bump (`version.sh` and
   ([#13](https://github.com/OpenCCU/OpenCCU-Base/pull/13),
   [#16](https://github.com/OpenCCU/OpenCCU-Base/pull/16),
   [#17](https://github.com/OpenCCU/OpenCCU-Base/pull/17))
+  by @virgin09 and @jens-maus
 * wait with `poll()` instead of `select()` in the LAN gateway connection
   handling (libUnifiedLanComm).
-  ([#1](https://github.com/OpenCCU/OpenCCU-Base/pull/1))
+  ([#1](https://github.com/OpenCCU/OpenCCU-Base/pull/1)) by @jens-maus
 * update libxmlparser to version 1.13.
-  ([#19](https://github.com/OpenCCU/OpenCCU-Base/pull/19))
+  ([#19](https://github.com/OpenCCU/OpenCCU-Base/pull/19)) by @jens-maus
 * build with CMake. ([#3](https://github.com/OpenCCU/OpenCCU-Base/pull/3))
+  by @jens-maus
 
 ## Older versions
 

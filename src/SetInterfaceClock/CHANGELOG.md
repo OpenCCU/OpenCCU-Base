@@ -12,6 +12,7 @@ version and date with the next version bump (`version.sh`).
   prints it together with the versions of libXmlRpc and libelvutils.
   SetInterfaceClock no longer links libhsscomm and libxmlparser, which it
   does not use. [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
+  by @jens-maus
 
 ## Older versions
 

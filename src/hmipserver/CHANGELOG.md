@@ -10,7 +10,7 @@ OpenCCU-Base release they are part of when it is published.
 
 * update `HMIPServer.jar` to the build of 2026-10-08 (build 5936, version
   1.5.1-SNAPSHOT) from eQ-3: avoid a security counter update with invalid
-  values.
+  values. by @cn-eq3
 
 ## Older versions
 

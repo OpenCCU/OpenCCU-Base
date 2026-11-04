@@ -10,7 +10,7 @@ version and date with the next version bump (`version.sh`).
 
 * first version with a version string (`version.sh`): `--version` prints it
   together with the version of libelvutils (`-v` stays "validate").
-  [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
+  [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294) by @jens-maus
 
 ## Older versions
 

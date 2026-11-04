@@ -10,9 +10,11 @@ version and date with the next version bump (`version.sh`).
 
 * first version with a version string (`version.sh`), returned by
   `eq3config_version()`. [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
+  by @jens-maus
 * fix the serial port wrapper failing once a descriptor was 1024 or more: it
   waits with `poll()` instead of `select()`.
   ([#285](https://github.com/OpenCCU/OpenCCU-Base/pull/285), fixes [#178](https://github.com/OpenCCU/OpenCCU-Base/issues/178))
+  by @jens-maus
 
 ## Older versions
 
