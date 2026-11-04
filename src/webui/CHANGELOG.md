@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* remove the unused Expect-based multipart reader from `cgi.tcl`; file uploads
+  that still reach `cgi.tcl` always use the binary-safe Tcl reader, as before
+  (OpenCCU patch 0203).
+  ([#307](https://github.com/OpenCCU/OpenCCU-Base/pull/307))
 * upload firmware, add-on, backup and certificate files through a small shell
   CGI that writes the file directly to `/usr/local/tmp` instead of the Tcl
   multipart parser of `cgi.tcl`, and update `cgi.tcl` to 1.10.0. Only the
