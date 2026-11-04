@@ -3253,11 +3253,12 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\admin\linkprog.htm */
 
 .CLASS05400 {
-	height:130px;
+	/* height:130px; */
 }
 
 .CLASS05401 {
 	height:160px;
+	margin-left: 10px;
 }
 
 .CLASS05402 {
@@ -3268,14 +3269,52 @@ color: $_(textColorA); /* white */
 	text-align:center ! important;
 }
 
+.CLASS05405 {
+	min-height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05405 > div {
+	margin: 10px;
+	padding: 1px;
+	flex: 0 1 calc(50% - 22px);
+	overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
+}
+
 /* rega\pages\tabs\admin\systemconfig.htm */
 
 .CLASS05500 {
-	height:50%;
+	/* height:50%; */
 }
 
 .CLASS05501 {
 	background-color:$_(background); /* #183473 */
+}
+
+.CLASS05502 {
+	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05502 > div {
+	margin: 10px;
+	padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+	overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 /* rega\pages\tabs\favorites.htm */
@@ -3357,11 +3396,26 @@ color: $_(textColorA); /* white */
 /* pages\tabs\statusview.htm */
 
 .CLASS05700 {
-	width:1257px ! important;
+	/* width:1257px ! important; */
 }
 
 .CLASS05701 {
 	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05701 > div {
+	margin: 10px;
+        padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+        overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 .CLASS05702 {
@@ -3496,11 +3550,30 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\user\systemConfigUser.htm */
 
 .CLASS06100 {
-	height:50%;
+	/* height:50%; */
 }
 
 .CLASS06101 {
 	background-color: $_(background) ! important; /* #183473 */
+}
+
+.CLASS06102 {
+	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS06102 > div {
+	margin: 10px;
+        padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+        overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 /* rega\pages\tabs\user\userAdministrationUser.htm */
