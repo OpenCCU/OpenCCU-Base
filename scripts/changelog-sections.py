@@ -8,7 +8,8 @@ Every src/<component>/CHANGELOG.md of <new> is compared with the same
 file of <old>. An entry (a "* " list item) that the old file does not
 contain is printed under its component and the heading of its section
 (e.g. "2.6.9 (2026-11-10)" or "Unreleased"), so a renamed section or a version
-bump does not repeat entries that were already part of <old>. A
+bump does not repeat entries that were already part of <old> (the
+authors at the end of an entry, "@login", are ignored for this). A
 changelog that does not exist in <old> contributes the sections dated
 on or after the commit date of <old>, and its "Unreleased" section.
 
@@ -23,6 +24,7 @@ import subprocess
 
 SKIPPED_SECTIONS = ("Older versions",)
 DATE_RE = re.compile(r"\((\d{4}-\d{2}-\d{2})\)\s*$")
+AUTHORS_RE = re.compile(r"(, | \()@[A-Za-z0-9-]+(?:, @[A-Za-z0-9-]+)*\)$")
 
 
 def git(*args):
@@ -82,8 +84,11 @@ def sections(text):
 
 
 def normalize(entry):
-    """Return entry with its whitespace collapsed, for comparisons."""
-    return " ".join(entry.split())
+    """Return entry with its whitespace collapsed and without its authors at
+    the end ("([#1](...), @a, @b)" or "(@a)"), for comparisons, so that adding
+    the authors to an entry later does not make it a new one."""
+    return AUTHORS_RE.sub(lambda m: ")" if m.group(1) == ", " else "",
+                          " ".join(entry.split()))
 
 
 def new_entries(old_text, new_text, cutoff):
