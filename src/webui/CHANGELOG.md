@@ -20,7 +20,7 @@ or extended in it.
   the overview pages of the main menu show their sections as flexible tiles
   (OpenCCU patch 0061). The menu icons are Icons8 Material icons, see
   `www/ise/img/menuicons/README.md`.
-  ([#308](https://github.com/OpenCCU/OpenCCU-Base/pull/308))
+  ([#308](https://github.com/OpenCCU/OpenCCU-Base/pull/308), @jens-maus)
 * remove the unused Expect-based multipart reader from `cgi.tcl`; file uploads
   that still reach `cgi.tcl` always use the binary-safe Tcl reader, as before
   (OpenCCU patch 0203).
