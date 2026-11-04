@@ -78,8 +78,14 @@ what you could and could not test.
   at the top if it is missing) to the changelog of every component it
   changes, in the style of the existing entries: what was wrong or what is
   new, written for users, with links to the pull request and the fixed
-  issue. A change of a library goes into the library's changelog, not into
-  those of the programs using it. A version bump renames `## Unreleased` to
+  issue, and the GitHub user names of its human authors at the end of that
+  parenthesis (`([#1](…), fixes [#2](…), @a, @b)`; `(@a)` for an entry
+  without links): the author of the pull request and the human co-authors
+  of its commits. Never name bots, AI
+  agents or language models (e.g. `Copilot`, `github-actions[bot]`); for a
+  pull request opened by one, name the human who requested it. A change of
+  a library goes into the library's changelog, not into those of the
+  programs using it. A version bump renames `## Unreleased` to
   `## <version> (<date>)`; for `webui`, `devicetypes` and `hmipserver`, which
   have no version of their own, the OpenCCU-Base release takes its place.
   The release workflow (`.github/workflows/release.yml`) builds the release

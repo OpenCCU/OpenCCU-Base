@@ -9,7 +9,8 @@ version and date with the next version bump (`version.sh`).
 ## 1.0.0 (2026-11-02)
 
 * first version with a version string (`version.sh`), returned by
-  `unifiedlancomm_version()`. [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
+  `unifiedlancomm_version()`.
+  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294), @jens-maus)
 
 ## Older versions
 

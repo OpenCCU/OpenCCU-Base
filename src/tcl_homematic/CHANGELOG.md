@@ -10,7 +10,8 @@ version and date with the next version bump (`package provide` in
 ## Unreleased
 
 * add `RemoveConfigPage`, so an add-on can remove its own configuration page
-  from `/etc/config/hm_addons.cfg`. [#48](https://github.com/OpenCCU/OpenCCU-Base/pull/48)
+  from `/etc/config/hm_addons.cfg`.
+  ([#48](https://github.com/OpenCCU/OpenCCU-Base/pull/48), @jens-maus)
 
 ## 1.0
 
