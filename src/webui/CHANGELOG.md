@@ -27,7 +27,8 @@ or extended in it.
   backslashes that a program sets or compares for string variables, and
   units with quotes, can now also be saved in the program editor.
   ([#306](https://github.com/OpenCCU/OpenCCU-Base/pull/306); refs
-  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
+  @jens-maus)
 * sort the entries of the main menu's submenus alphabetically and show an
   icon before each entry. The programs menu gets a "Test script" entry, and
   the overview pages of the main menu show their sections as flexible tiles
