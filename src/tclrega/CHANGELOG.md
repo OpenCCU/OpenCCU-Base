@@ -8,8 +8,8 @@ version and date with the next version bump (`TCLREGA_VERSION`).
 
 ## 1.4 (2026-09-06)
 
-* update to version 1.4. [#24](https://github.com/OpenCCU/OpenCCU-Base/pull/24)
-  by @jens-maus
+* update to version 1.4.
+  ([#24](https://github.com/OpenCCU/OpenCCU-Base/pull/24), @jens-maus)
 
 ## Older versions
 

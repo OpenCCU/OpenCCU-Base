@@ -10,12 +10,12 @@ version and date with the next version bump (`version.sh`).
 ## Unreleased
 
 * add the option `-v` / `--version`, which prints the version of multimacd and
-  of the libelvutils it uses. [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
-  by @jens-maus
+  of the libelvutils it uses.
+  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294), @jens-maus)
 
 ## 1.2.0 (2026-01-15)
 
-* first version with a version string (`version.sh`). by @cn-eq3
+* first version with a version string (`version.sh`). (@cn-eq3)
 
 ## Older versions
 
