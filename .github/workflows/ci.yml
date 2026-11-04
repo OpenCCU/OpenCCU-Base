@@ -224,4 +224,7 @@ jobs:
           persist-credentials: false
 
       - name: Run WebUI tests
-        run: node --test tests/webui/test-proofandsetvalue.js
+        run: >-
+          node --test
+          tests/webui/test-proofandsetvalue.js
+          tests/webui/test-programs-else-rule.js

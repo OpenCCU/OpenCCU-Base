@@ -996,6 +996,7 @@ ise.Programs.prototype = {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "SetBreakOnRestart";';
+    pb += 'string rid = "'+rid+'";';
     pb += 'string id = "'+id+'";';
     pb += 'string value = "'+value+'";';
     var opts =
@@ -1004,11 +1005,29 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadRule(rid);
+        isePrograms.ReloadRuleAfterChange(rid, t.responseText);
       }
     };
     new Ajax.Request(url,opts);    
     if(dbg)alert(pb);
+  },
+
+  // Reloads rule rid after a change. When the server answers
+  // "removedRule:<parent id>", the empty ELSE rule rid was removed:
+  // drop it from the page and reload its parent rule instead.
+  ReloadRuleAfterChange: function(rid, responseText)
+  {
+    var result = responseText.strip();
+    if (result.indexOf("removedRule:") === 0)
+    {
+      var removedElement = $("rule"+rid);
+      if (removedElement) { removedElement.remove(); }
+      ReloadRule(result.substring("removedRule:".length));
+    }
+    else
+    {
+      ReloadRule(rid);
+    }
   },
 
   SetActive: function( id, value )
@@ -1214,6 +1233,7 @@ ise.Programs.prototype = {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "DeleteSingleDestination";';
+    pb += 'string rid = "'+rid+'";';
     pb += 'string did = "'+did+'";';
     pb += 'string sid = "'+sid+'";';
     var opts =
@@ -1222,7 +1242,7 @@ ise.Programs.prototype = {
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadRule(rid);
+        isePrograms.ReloadRuleAfterChange(rid, t.responseText);
       }
     };
     new Ajax.Request(url,opts);

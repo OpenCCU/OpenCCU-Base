@@ -26,6 +26,7 @@ cmake --build --preset x86_64-linux-gnu --target rfd   # build one target (rfd, 
 make build-x86_64-linux-gnu                             # configure + build everything for one platform
 python3 tests/test-components.py                       # build/install selection tests
 node --test tests/webui/test-proofandsetvalue.js       # WebUI ProofAndSetValue() tests
+node --test tests/webui/test-programs-else-rule.js     # WebUI program editor ELSE rule tests
 ```
 
 Always pass `-DDEPLOY_TO_REPO=OFF` (or use the `Makefile`), otherwise the build
