@@ -26,6 +26,19 @@ or extended in it.
   of string variables are still shown as HTML.
   ([#306](https://github.com/OpenCCU/OpenCCU-Base/pull/306); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632))
+* remove the unused Expect-based multipart reader from `cgi.tcl`; file uploads
+  that still reach `cgi.tcl` always use the binary-safe Tcl reader, as before
+  (OpenCCU patch 0203).
+  ([#307](https://github.com/OpenCCU/OpenCCU-Base/pull/307))
+* upload firmware, add-on, backup and certificate files through a small shell
+  CGI that writes the file directly to `/usr/local/tmp` instead of the Tcl
+  multipart parser of `cgi.tcl`, and update `cgi.tcl` to 1.10.0. Only the
+  known upload targets and files written by this CGI are accepted, and a
+  certificate upload needs a readable certificate with its matching private
+  key (OpenCCU patch 0031).
+  ([#301](https://github.com/OpenCCU/OpenCCU-Base/pull/301); refs
+  [OpenCCU/OpenCCU#4633](https://github.com/OpenCCU/OpenCCU/issues/4633),
+  [OpenCCU/OpenCCU#4636](https://github.com/OpenCCU/OpenCCU/issues/4636))
 * fix the system variable chooser of the program editor staying empty, and
   the system variable lists losing a variable or failing to load, when the
   name, description, value list, value names or unit of a system variable

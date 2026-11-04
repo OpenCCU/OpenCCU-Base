@@ -82,6 +82,10 @@ what you could and could not test.
   those of the programs using it. A version bump renames `## Unreleased` to
   `## <version> (<date>)`; for `webui`, `devicetypes` and `hmipserver`, which
   have no version of their own, the OpenCCU-Base release takes its place.
+  The release workflow (`.github/workflows/release.yml`) builds the release
+  notes from these changelogs with `scripts/changelog-sections.py`, so keep
+  the `## <version> (<YYYY-MM-DD>)` / `## Unreleased` headings and `* ` list
+  entries.
 - WebUI, Tcl and ReGa code must escape every user-controlled value.
 - Changes to the closed-source binaries come from eQ-3; do not patch them.
 
