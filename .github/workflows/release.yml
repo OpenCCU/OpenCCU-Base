@@ -32,14 +32,39 @@ jobs:
         with:
           fetch-depth: 0
 
+      # The release action does not move an existing tag, and a published
+      # release (also a prerelease) must not be changed: only a new tag, a tag
+      # of the selected commit and a draft can be used.
+      - name: Check release tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          if TAG_COMMIT=$(git rev-parse --verify --quiet "refs/tags/${TAG}^{commit}"); then
+            if [[ "${TAG_COMMIT}" != "${GITHUB_SHA}" ]]; then
+              echo "::error::Tag ${TAG} points to ${TAG_COMMIT}, not to ${GITHUB_SHA}."
+              exit 1
+            fi
+          fi
+          PUBLISHED=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" \
+            | jq -r --arg tag "${TAG}" '.[] | select(.tag_name == $tag and .draft == false) | .id')
+          if [[ -n "${PUBLISHED}" ]]; then
+            echo "::error::Release ${TAG} is already published."
+            exit 1
+          fi
+
       - name: Determine previous release
         id: previous
         shell: bash
         env:
+          TAG: ${{ inputs.tag }}
           PREVIOUS_TAG: ${{ inputs.previous_tag }}
         run: |
           if [[ -z "${PREVIOUS_TAG}" ]]; then
-            PREVIOUS_TAG=$(git describe --tags --abbrev=0 --match '[0-9]*' HEAD)
+            # the new tag may already exist on the selected commit
+            PREVIOUS_TAG=$(git describe --tags --abbrev=0 --match '[0-9]*' \
+              --exclude "${TAG}" HEAD)
           fi
           git rev-parse --verify --quiet "${PREVIOUS_TAG}^{commit}" >/dev/null
           echo "tag=${PREVIOUS_TAG}" >> "${GITHUB_OUTPUT}"
@@ -58,26 +83,25 @@ jobs:
           PREVIOUS_TAG: ${{ steps.previous.outputs.tag }}
         run: |
           NOTES="${RUNNER_TEMP}/release-notes.md"
+          PULL_REQUESTS="${RUNNER_TEMP}/pull-requests.md"
           gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
             -f tag_name="${TAG}" -f target_commitish="${GITHUB_SHA}" \
-            -f previous_tag_name="${PREVIOUS_TAG}" --jq .body \
-            > "${RUNNER_TEMP}/pull-requests.md"
-          LIMIT=$((120000 - $(wc -c < "${RUNNER_TEMP}/pull-requests.md")))
-          if [[ ${LIMIT} -lt 0 ]]; then LIMIT=0; fi
+            -f previous_tag_name="${PREVIOUS_TAG}" --jq .body > "${PULL_REQUESTS}"
           # the tag only exists once the draft is published, so link the commit
-          python3 scripts/changelog-sections.py --limit "${LIMIT}" \
-            --link-base "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}" \
-            "${PREVIOUS_TAG}" HEAD > "${RUNNER_TEMP}/components.md"
-          {
-            cat "${RUNNER_TEMP}/components.md"
-            echo
-            cat "${RUNNER_TEMP}/pull-requests.md"
-          } > "${NOTES}"
-          if [[ $(wc -c < "${NOTES}") -gt 125000 ]]; then
+          components() {
+            python3 scripts/changelog-sections.py --limit "$1" \
+              --link-base "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}" \
+              "${PREVIOUS_TAG}" HEAD
+          }
+          LIMIT=$((120000 - $(wc -c < "${PULL_REQUESTS}")))
+          if [[ ${LIMIT} -ge 0 ]]; then
+            { components "${LIMIT}"; echo; cat "${PULL_REQUESTS}"; } > "${NOTES}"
+          fi
+          if [[ ${LIMIT} -lt 0 || $(wc -c < "${NOTES}") -gt 125000 ]]; then
             {
-              cat "${RUNNER_TEMP}/components.md"
+              components 120000
               echo
-              echo "**Full Changelog**: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${TAG}"
+              echo "**Full Changelog**: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${GITHUB_SHA}"
             } > "${NOTES}"
           fi
           echo "Release notes: $(wc -c < "${NOTES}") characters"
