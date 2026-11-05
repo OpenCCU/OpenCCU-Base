@@ -16,14 +16,14 @@ WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
 * change the value of a system variable directly: administrators can click
-  the value of a system variable in "Status and control", in a favorite on the
-  start page or in the system variables of the user on the start page to
-  change it in a small dialog, and the dialog for creating and editing a
-  system variable gets a field for its value. The channel assignment of the
-  dialog is now a checkbox. Text values and units are shown as text in the
-  dialog, so a text value with entities like `&amp;` is no longer changed on
-  saving and `</textarea>` in it no longer breaks the dialog (OpenCCU patch
-  0097).
+  the value of a system variable (except the presence variable) in "Status
+  and control", in a favorite on the start page or in the system variables of
+  the user on the start page to change it in a small dialog, and the dialog
+  for creating and editing a system variable gets a field for its value. The
+  channel assignment of the dialog is now a checkbox. Text values and units
+  are shown as text in the dialog, so a text value with entities like `&amp;`
+  is no longer changed on saving and `</textarea>` in it no longer breaks the
+  dialog (OpenCCU patch 0097).
   ([#313](https://github.com/OpenCCU/OpenCCU-Base/pull/313), @jens-maus)
 * fix the program chooser, the system protocol and the value input of
   number variables in the program editor failing, and texts that a program
