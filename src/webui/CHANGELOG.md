@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* show the value of the presence variable in "Status and control", in the
+  favorites and in the system variables of a user on the start page, where
+  it was empty. It is shown as the name of its value, like a logic value.
+  ([#314](https://github.com/OpenCCU/OpenCCU-Base/pull/314), @jens-maus)
 * fix the program chooser, the system protocol and the value input of
   number variables in the program editor failing, and texts that a program
   sets or compares for string variables being cut off in the program editor,
