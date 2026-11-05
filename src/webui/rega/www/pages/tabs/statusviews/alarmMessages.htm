@@ -101,7 +101,7 @@ iseInitUpdateArrays();
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS02814'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS02814'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS02814'><input type='checkbox' id='vf"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
