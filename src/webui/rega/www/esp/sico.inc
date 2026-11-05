@@ -91,7 +91,7 @@
         !Write("<i>bei</i>");
         !Write("<i>${ruleConditionLblWhen}</i>");
 !        Write("<input type='text' onblur='javascript:alert(\"blur\");' class='SelectBox' />");
-        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1 # "' class='SelectBox' />");
+        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&#39;") # "' class='SelectBox' />");
 
       }
 
@@ -357,7 +357,7 @@
           Write( '</select> ');
         }
         string sCT = "";
-        string sValueUnit = oLV.ValueUnit();
+        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         if( sValueUnit == "100%" )
         {
           sValueUnit = "%";

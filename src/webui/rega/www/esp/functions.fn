@@ -18,22 +18,22 @@ function ::WriteDPText()
         {
           if ( (sValue == "0") || (sValue == "") )
           {
-            sRet=sRet#to.ValueName0();
+            sRet=sRet#to.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
           else
           {
-            sRet=sRet#to.ValueName1();
+            sRet=sRet#to.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
         }
         if( btoList ) 
         { 
           if( sValue == "" )
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),0);
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),0).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
           else
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger());
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
         }
         if( btoNumber ) 
@@ -58,12 +58,10 @@ function ::WriteDPText()
           sRet = sRet.Replace("\r\n", "<br/>");
           sRet = sRet.Replace("\r", "<br/>");
           sRet = sRet.Replace("\n", "<br/>");
-          sRet = sRet.Replace("\\", "\\\\");
-          sRet = sRet.Replace("'", "\\'");
         }
         if( to.ValueUnit() != "" )
         {
-          sRet=sRet#" "#to.ValueUnit();
+          sRet=sRet#" "#to.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           if( btoNumber )
           {
             sRet = sRet # ")";

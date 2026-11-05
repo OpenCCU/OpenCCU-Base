@@ -648,9 +648,9 @@ arChSv = new Array();
             if( bNumber ) { sSysVarType = "Zahl"; }
             if( bAlarm ) { sSysVarType = "Alarm"; }
             if( bString ) { sSysVarType = "Zeichenkette"; }
-            Write('<td class="tCell" colspan="1">'#oEntry.Name()#'</td>' );
+            Write('<td class="tCell" colspan="1">'#oEntry.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
             Write('<td class="tCell" colspan="1">'#sSysVarType#'</td>' );
-            Write('<td class="tCell CLASS06319" colspan="5">'#oEntry.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#'</td>' );
+            Write('<td class="tCell CLASS06319" colspan="5">'#oEntry.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#'</td>' );
           }
           
           if( bProgram )
@@ -736,7 +736,7 @@ arChSv = new Array();
         Write('</tr>');
         Write("<script type='text/javascript'>");
         Write("var tmp = new Object();");
-        Write("tmp['name'] = '"#sName#"';");
+        Write("tmp['name'] = '"#sName.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("tmp['id'] = '"#sChSvId#"';");
         Write("tmp['trid'] = '"#sTrid#"';");
         Write("tmp['sn'] = '"#sSN#"';");

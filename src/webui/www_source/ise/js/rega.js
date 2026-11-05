@@ -28,5 +28,15 @@ ReGa = {
   encode: function(data) 
   {
     return "<prototypejs><![CDATA[" + escape(data) + "]]></prototypejs>";
+  },
+
+  /**
+   * Escapes a value for a double-quoted string literal of a ReGa script,
+   * e.g. pb += 'string value = "' + ReGa.escapeString(value) + '";';
+   * ReGa removes the escaping again when it parses the literal.
+   **/
+  escapeString: function(value)
+  {
+    return String(value).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/\r/g, "\\r").replace(/\n/g, "\\n");
   }
 };
