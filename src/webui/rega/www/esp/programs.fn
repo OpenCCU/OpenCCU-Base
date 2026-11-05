@@ -922,7 +922,7 @@ function ::LoadProgramListXML()
       object o = dom.GetObject( sPID );
       if( o )
       {
-        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name()#'" />' );
+        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" />' );
       }
     }
     WriteLine( '</programs>' );

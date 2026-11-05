@@ -30,7 +30,7 @@ if ( obj )
     {
       Write("tmp = new Object();");
       Write("tmp['id'] = '"#channel.ID()#"';");
-      Write("tmp['name'] = '"#channel.Name()#"';");
+      Write("tmp['name'] = '"#channel.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['type'] = '"#channel.Label()#"';");
       Write("tmp['desc'] = DEV_getDescription('"#channel.Label()#"');");
       Write("tmp['sn'] = '"#channel.Address()#"';");
@@ -47,7 +47,7 @@ if ( obj )
         functions = functions # objTmp.Name() # "\t";
         funcIDs = funcIDs # objTmp.ID() # "\t";
       }
-      Write("tmp['func'] = '"#functions#"';");
+      Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       string rooms = "";
       string roomTmp = "";
       string roomIDs = "";
@@ -69,7 +69,7 @@ if ( obj )
       }
       Write("tmp['devlbl'] = '"#sDevLbl#"';");
       Write("tmp['deviface'] = '"#sDevIface#"';");
-      Write("tmp['room'] = '"#rooms#"';");
+      Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['chnnr'] = "#channel.ChnNumber()#";");
       Write("tmp['trid'] = 'c"#channel.ID()#"';");
       

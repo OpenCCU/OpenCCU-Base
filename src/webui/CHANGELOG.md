@@ -15,6 +15,17 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the program list, the device, channel, room and function lists, the
+  inbox, the service messages and the user administration failing to load,
+  and deleting a program or choosing a user on the login page failing, when
+  the name of a device, channel, room, function, program or user, or the
+  description of a program, contains an apostrophe, a quote or a backslash,
+  as scripts or other tools can set them. These names are now escaped
+  wherever they are passed to JavaScript, and program names in the program
+  list XML.
+  ([#312](https://github.com/OpenCCU/OpenCCU-Base/pull/312); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
+  @jens-maus)
 * show the value of the presence variable in "Status and control", in the
   favorites and in the system variables of a user on the start page, where
   it was empty. It is shown as the name of its value, like a logic value.
