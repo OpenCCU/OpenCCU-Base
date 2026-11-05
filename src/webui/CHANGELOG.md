@@ -15,6 +15,16 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the program list, the device, channel, room and function lists, the
+  inbox, the service messages, the user administration and the login page
+  failing to load, or the deletion of a program failing, when the name of a
+  device, channel, room, function, program or user, or the description of
+  a program, contains an apostrophe, a quote or a backslash, as scripts or
+  other tools can set them. These names are now escaped wherever they are
+  passed to JavaScript, and program names in the program list XML.
+  ([#312](https://github.com/OpenCCU/OpenCCU-Base/pull/312); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
+  @jens-maus)
 * fix the program chooser, the system protocol and the value input of
   number variables in the program editor failing, and texts that a program
   sets or compares for string variables being cut off in the program editor,
