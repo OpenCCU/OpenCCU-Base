@@ -1571,6 +1571,19 @@ function ::getSysVarValAsString()
     }
   }
   
+  ! the presence variable shows the name of its value, like a logic value
+  if( (cObjTmp.ValueType() == ivtBinary) && (cObjTmp.ValueSubType() == istPresent) )
+  {
+    if ( (cObjTmp.Value() == 0) || (cObjTmp.Value() == "") )
+    {
+      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    }
+    else
+    {
+      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    }
+  }
+
   if ( bString )
   {
     sSysVarVal = cObjTmp.Value();
