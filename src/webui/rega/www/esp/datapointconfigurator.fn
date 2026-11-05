@@ -1,7 +1,7 @@
 function ::dcCreateTable()
 {
   object c2Obj = dom.GetObject( system.GetVar("cId") );
-  string sName = c2Obj.Name();
+  string sName = c2Obj.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
   WriteLine('<table cellpadding="0" cellspacing="0" class="CLASS02500">');
 
@@ -1620,12 +1620,12 @@ function ::CreateUnknown()
               }
               else
               {
-                sTitle = oDP.Name();
+                sTitle = oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
               }
             }
             else
             {
-              sTitle = oDP.Name();
+              sTitle = oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             }
 
             string sValueUnit = oDP.ValueUnit();
@@ -1892,7 +1892,7 @@ function ::CreateSysVars()
 !        if( !(i%2) ) { WriteLine( '<tr>' ); }
         WriteLine( '<td class="CLASS02540">' );
           WriteLine( '<div class="ControlBtnInfo CLASS02538" >' );
-            WriteLine( '<span class="CLASS02534">'#oSV.Name()#':</span>' );
+            WriteLine( '<span class="CLASS02534">'#oSV.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#':</span>' );
             
             string sSysVarVal = "";
             object cObjTmp = oSV;

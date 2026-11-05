@@ -334,7 +334,7 @@ function ::buildFuncOverlay() {
     foreach( tmp, rooms.EnumEnabledIDs() ) {
        object func = dom.GetObject(tmp);
        s = s# "<tr>";
-       s = s# "<td>"# func.Name() # "</td>";
+       s = s# "<td>"# func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "</td>";
        s = s#"<td><input id='chk"#func.ID()#"' type='checkbox' onclick='addFunc(id, "#tmp#")' /></td>";
        s = s# "</tr>";
     }

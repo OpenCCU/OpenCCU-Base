@@ -126,7 +126,7 @@
       object oCH = dom.GetObject( iCH );
       if( oCH )
       {
-      Write( ' <b class="CLASS02400" onclick="ShowDestinationChannelChooser2('#oSD.ID()#');">'#oCH.Name()#'</b> ' );
+      Write( ' <b class="CLASS02400" onclick="ShowDestinationChannelChooser2('#oSD.ID()#');">'#oCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</b> ' );
       }
       else
       {
@@ -139,7 +139,7 @@
       object oDP = dom.GetObject( iDP );
       if( oDP )
       {
-        Write( ' <b class="CLASS02400" onclick="ShowDestinationSysVarChooser('#oSD.ID()#');">'#oDP.Name()#'</b> ' );
+        Write( ' <b class="CLASS02400" onclick="ShowDestinationSysVarChooser('#oSD.ID()#');">'#oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</b> ' );
       }
       else
       {
@@ -899,7 +899,7 @@
               object oCH = dom.GetObject( oDPTmp.Channel() );
               if( oCH )
               {
-                Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#oCH.Name()#'</span> ' );
+                Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#oCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</span> ' );
                 Write( ' <select onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value);" class="SelectBox">' );
                 boolean bFound = false;
                 integer iFirstID = ID_ERROR;
@@ -961,7 +961,7 @@
             Write( ' <i>mit</i> ' );
             object oDPTmp = dom.GetObject( iV );
             string sNameTmp = "";
-            if( oDPTmp ) { sNameTmp = oDPTmp.Name(); }
+            if( oDPTmp ) { sNameTmp = oDPTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"); }
             Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#sNameTmp#'</span> ' );
             Write( ' <span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span> ' );
           }

@@ -41,7 +41,7 @@
       bOK = ( oCC && oLV );
       if( bOK )
       {
-        oCCName = oCC.Name();
+        oCCName = oCC.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         oCCName = oCCName.Replace("&", "&amp;");
         oCCName = oCCName.Replace("<", "&lt;");
         oCCName = oCCName.Replace(">", "&gt;");
@@ -58,7 +58,7 @@
       if( oLV ) { bOK = true; }
       if( bOK )
       {
-        oLVName = oLV.Name();
+        oLVName = oLV.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         oLVName = oLVName.Replace("&", "&amp;");
         oLVName = oLVName.Replace("<", "&lt;");
         oLVName = oLVName.Replace(">", "&gt;");

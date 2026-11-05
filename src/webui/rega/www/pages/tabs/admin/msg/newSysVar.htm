@@ -38,7 +38,7 @@
         svName =  sUniqueName;
       }
     %>
-      <input id="inpName" type="text" value="<%Write(svName)%>" onblur="stringRemoveNonPrintableChars(this);" />
+      <input id="inpName" type="text" value="<%Write(svName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;"))%>" onblur="stringRemoveNonPrintableChars(this);" />
     </td>
     <td id="tdDesc" class="CLASS05003" >
       <%
@@ -118,7 +118,7 @@
               else {
                 Write('<input id="chnId" type="hidden" value="0" />');
               }
-              Write('<div id="chnName">' #sChn # '</div>');
+              Write('<div id="chnName">' #sChn.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # '</div>');
             %>
           </td>
           <td>
