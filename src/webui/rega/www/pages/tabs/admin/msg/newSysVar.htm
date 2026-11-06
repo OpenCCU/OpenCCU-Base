@@ -133,7 +133,7 @@
           svDesc =  sv.DPInfo(); 
         } 
       %>
-      <input id="inpDesc" type="text" value="<%Write(svDesc)%>" onblur="stringRemoveNonPrintableChars(this);"/>
+      <input id="inpDesc" type="text" value="<%Write(svDesc.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;"))%>" onblur="stringRemoveNonPrintableChars(this);"/>
     </td>
       <td class="CLASS05004" <%Write(hidden)%> >
         <select id="selType" onchange="onTypeChange()" <% if (svUsed || ((system.GetVar("createNew") == 0) && (sv.ValueSubType() == istAlarm))) { Write("disabled"); } %> >
@@ -318,6 +318,18 @@
     return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
   };
 
+  // Value name of a logic or alarm variable to save: the given text when the
+  // field was not edited, so a value name like ${sysVarPresencePresent} is not
+  // replaced by its translation.
+  var svLogicNames = null;
+  svLogicName = function(isTrue) {
+    var value = $(isTrue ? "inpLTrue" : "inpLFalse").value;
+    if (svLogicNames && (value == (isTrue ? svLogicNames.shownTrue : svLogicNames.shownFalse))) {
+      return isTrue ? svLogicNames.sTrue : svLogicNames.sFalse;
+    }
+    return value;
+  };
+
   if (svExisting && !svEditValueOnly) {
     if (svAlarm) {
       showSvEditMessage("svEditTypeAlarm", true);
@@ -340,6 +352,16 @@
     var elem = jQuery(elem);
     elem.val(translateString(elem.val()));
   });
+
+  // Name and description as stored and as shown. saveSysVars() saves the
+  // stored text of a field that was not edited, so a name like
+  // ${sysVarPresence} is not replaced by its translation, and texts with
+  // characters the dialog does not allow (set by scripts or other tools) do
+  // not block saving, e.g. when only the value is changed.
+  var svStoredName = "<% Write(svName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")); %>";
+  var svStoredDesc = "<% Write(svDesc.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")); %>";
+  var svShownName = $("inpName").value;
+  var svShownDesc = $("inpDesc").value;
 
   jQuery("#messagebox .popupTable").show();
 
@@ -420,10 +442,16 @@
 
   saveSysVars = function()
   {
-    if (isTextAllowed($("inpDesc").value) === false || isTextAllowed($("inpName").value) === false) return;
-    var name = $("inpName").value;
-    name = name.replace(/[\r\n\t]/gi, "");
-    name = name.strip();
+    var nameChanged = ($("inpName").value != svShownName);
+    var descChanged = ($("inpDesc").value != svShownDesc);
+    if ((descChanged && isTextAllowed($("inpDesc").value) === false) || (nameChanged && isTextAllowed($("inpName").value) === false)) return;
+    var name = svStoredName;
+    var desc = descChanged ? $("inpDesc").value : svStoredDesc;
+    if (nameChanged) {
+      name = $("inpName").value;
+      name = name.replace(/[\r\n\t]/gi, "");
+      name = name.strip();
+    }
     conInfo( "saveSysVars[name='"+name+"']" );
     if( name.length > 0 )
     {
@@ -439,15 +467,15 @@
       var pb = "action = 'saveSysVar';";
       pb += "integer createNew = " + <% Write(system.GetVar("createNew")); %> + ";";
       pb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
-      pb += "string sName = '"+name+"';";
-      pb += "string sInfo = '"+$("inpDesc").value+"';";
+      pb += "string sName = '"+svEscapeRegaString(name)+"';";
+      pb += "string sInfo = '"+svEscapeRegaString(desc)+"';";
       var confirmHtml = null;
       var refMaps = null;
       switch(iSelIdx) {
         case 0:
           iSubType = SYSVAR_BOOL;
-          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
-          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+          pb += "string sTrue = '"+svEscapeRegaString(svLogicName(true))+"';";
+          pb += "string sFalse = '"+svEscapeRegaString(svLogicName(false))+"';";
           pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 1:
@@ -533,8 +561,8 @@
           break;
         case 3: 
           iSubType = SYSVAR_ALARM;
-          pb += "string sTrue = '"+svEscapeRegaString($("inpLTrue").value)+"';";
-          pb += "string sFalse = '"+svEscapeRegaString($("inpLFalse").value)+"';";
+          pb += "string sTrue = '"+svEscapeRegaString(svLogicName(true))+"';";
+          pb += "string sFalse = '"+svEscapeRegaString(svLogicName(false))+"';";
           pb += "string sValue = '"+$("selValue").value+"';";
           break;
         case 4:
@@ -671,6 +699,8 @@
 
   loadLogicEdit = function(sTrue, sFalse, sValue) 
   {
+    // Value names as given and as shown, see svLogicName().
+    svLogicNames = {sTrue: sTrue, sFalse: sFalse, shownTrue: translateString(sTrue), shownFalse: translateString(sFalse)};
     var s = "";
     s += "<table class='CLASS05010'>";
     s += "<tr><td colspan='2'>"+ translateKey("lblValueDescription") +":</td></tr>";

@@ -15,6 +15,15 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix saving a system variable in its dialog when its name or description
+  contains characters the dialog does not allow, as scripts or other tools
+  can set them: the dialog then refused to save, also when only the value
+  was changed. Name and description are now only checked when they were
+  edited, and are escaped for the ReGa script. Saving also no longer
+  replaces the name, the description and the value names of variables like
+  the presence variable (`${sysVarPresence}`) by their translation, and a
+  quote no longer cuts off the description.
+  ([#319](https://github.com/OpenCCU/OpenCCU-Base/pull/319), @jens-maus)
 * HTML-escape the names of devices, channels, rooms, functions, programs,
   system variables and favorites where the WebUI writes them into HTML, so
   markup like `<b>` that scripts or other tools put into a name is shown as
