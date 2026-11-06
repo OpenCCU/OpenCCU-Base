@@ -224,4 +224,4 @@ jobs:
           persist-credentials: false
 
       - name: Run WebUI tests
-        run: node --test tests/webui/test-proofandsetvalue.js tests/webui/test-rega-escapestring.js
+        run: node --test tests/webui/test-proofandsetvalue.js tests/webui/test-rega-escapestring.js tests/webui/test-translate.js

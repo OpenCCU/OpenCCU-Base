@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the translation of pages decoding %-escapes like `%3C` in names and
+  other texts next to a translation placeholder, so that they could be
+  rendered as HTML. Only the translations themselves are decoded now. Unknown
+  placeholders in translated strings are no longer decoded either, and `$&`
+  or `$1` in a translation is inserted literally.
+  ([#316](https://github.com/OpenCCU/OpenCCU-Base/pull/316); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
+  @jens-maus)
 * more countries, cities and time zones in the time settings: the location
   list has about 150 countries with their cities and IANA time zones, and the
   time zone selection also offers all zones of `zone.tab`. The UTC offsets

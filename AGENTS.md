@@ -27,6 +27,7 @@ make build-x86_64-linux-gnu                             # configure + build ever
 python3 tests/test-components.py                       # build/install selection tests
 node --test tests/webui/test-proofandsetvalue.js       # WebUI ProofAndSetValue() tests
 node --test tests/webui/test-rega-escapestring.js      # WebUI ReGa.escapeString() tests
+node --test tests/webui/test-translate.js               # WebUI translateString() tests
 ```
 
 Always pass `-DDEPLOY_TO_REPO=OFF` (or use the `Makefile`), otherwise the build
