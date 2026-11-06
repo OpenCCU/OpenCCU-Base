@@ -46,7 +46,7 @@ function ::WriteConditionText()
                   bOK = ( oCC && oLV );
                   if( bOK )
                   {
-                    string sCCName = oCC.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                    string sCCName = oCC.Name();
                     sCCName = sCCName.Replace("&", "&amp;");
                     sCCName = sCCName.Replace("<", "&lt;");
                     sCCName = sCCName.Replace(">", "&gt;");
@@ -62,7 +62,7 @@ function ::WriteConditionText()
                   if( oLV ) { bOK = true; }
                   if( bOK )
                   {
-                    string sLVName = oLV.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                    string sLVName = oLV.Name();
                     sLVName = sLVName.Replace("&", "&amp;");
                     sLVName = sLVName.Replace("<", "&lt;");
                     sLVName = sLVName.Replace(">", "&gt;");
@@ -482,7 +482,7 @@ function ::WriteDestinationText()
                 object oCH = dom.GetObject( iCH );
                 if( oCH )
                 {
-                  string sDestCHName = oCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                  string sDestCHName = oCH.Name();
                   sDestCHName = sDestCHName.Replace("&", "&amp;");
                   sDestCHName = sDestCHName.Replace("<", "&lt;");
                   sDestCHName = sDestCHName.Replace(">", "&gt;");
@@ -494,7 +494,7 @@ function ::WriteDestinationText()
                 object oDP = dom.GetObject( iDP );
                 if( oDP )
                 {
-                  string sDestDPName = oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                  string sDestDPName = oDP.Name();
                   sDestDPName = sDestDPName.Replace("&", "&amp;");
                   sDestDPName = sDestDPName.Replace("<", "&lt;");
                   sDestDPName = sDestDPName.Replace(">", "&gt;");
@@ -633,7 +633,7 @@ function ::WriteDestinationText()
                           object otmpCH = dom.GetObject( otmpDP.Channel() );
                           if( otmpCH )
                           {
-                            string sOtmpName = otmpCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                            string sOtmpName = otmpCH.Name();
                             sOtmpName = sOtmpName.Replace("&", "&amp;");
                             sOtmpName = sOtmpName.Replace("<", "&lt;");
                             sOtmpName = sOtmpName.Replace(">", "&gt;");
@@ -641,7 +641,7 @@ function ::WriteDestinationText()
                           }
                           else
                           {
-                            string sOtmpName = otmpDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                            string sOtmpName = otmpDP.Name();
                             sOtmpName = sOtmpName.Replace("&", "&amp;");
                             sOtmpName = sOtmpName.Replace("<", "&lt;");
                             sOtmpName = sOtmpName.Replace(">", "&gt;");
@@ -650,7 +650,7 @@ function ::WriteDestinationText()
                         }
                         if( iVT == ivtSystemId )
                         {
-                          string sOtmpName = otmpDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                          string sOtmpName = otmpDP.Name();
                           sOtmpName = sOtmpName.Replace("&", "&amp;");
                           sOtmpName = sOtmpName.Replace("<", "&lt;");
                           sOtmpName = sOtmpName.Replace(">", "&gt;");
