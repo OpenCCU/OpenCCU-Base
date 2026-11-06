@@ -48,11 +48,14 @@ function setTextContent(cont, callback) {
           var transKey = val.substring(val.search(/\$\{/) + 2 , val.search(/\}/)).replace(/\<br\/\>|\<br\>/gi,""), // remove possible line breaks
           translatedVal = langJSON[lang][transKey];
           if (translatedVal != undefined) {
-            value = value.replace(val, translatedVal);
+            // Only the translation is %-escaped. Decoding the whole HTML would
+            // also decode user texts like names, e.g. %3C into <.
+            translatedVal = unescape(translatedVal);
+            value = value.replace(val, function () { return translatedVal; });
           }
         });
         if (value != undefined) {
-          jElemParent.html(unescape(value));
+          jElemParent.html(value);
         }
       } catch(e) {}
     });
@@ -182,8 +185,14 @@ function translateString(stringToTranslate) {
   } else {
      jQuery.each(arrSearchStrings, function (index, val) {
       var transKey = val.substring(val.search(/\$\{/) + 2 , val.search(/\}/)),
-        tmpString = stringToTranslate.replace(val, translateKey(transKey));
-       stringToTranslate = tmpString;
+        translatedVal = translateKey(transKey),
+        dict = langJSON[getLang()];
+      // translateKey() returns an unknown key %-decoded. Keep the key as it is
+      // then, as the string can be a user text like a name.
+      if (!dict || dict[transKey] === undefined) {
+        translatedVal = transKey;
+      }
+      stringToTranslate = stringToTranslate.replace(val, function () { return translatedVal; });
     });
     return stringToTranslate;
   }
