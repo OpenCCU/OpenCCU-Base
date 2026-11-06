@@ -115,7 +115,17 @@
                   Write('<td class="CLASS01807">'#dom.GetObject(sid).Name()#'</td>');
                   Write('</tr>');
                   Write('<tr>');
-                  Write('<td id="dpc'#oEntry.ID()#'" class="CLASS01812">');
+                  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+                  boolean bEditValue = false;
+                  if( (oUser.UserLevel() == iulAdmin) && ( (oEntry.IsTypeOf( OT_VARDP )) || (oEntry.IsTypeOf( OT_ALARMDP )) ) ) {
+                    ! the value dialog has no editor for the presence variable
+                    if( oEntry.ValueSubType() != istPresent ) { bEditValue = true; }
+                  }
+                  if( bEditValue ) {
+                    WriteLine( '<td id="dpc'#oEntry.ID()#'" class="CLASS01812" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#oEntry.ID()#');" onmouseover="this.className=\'DeviceListRow_Highlight CLASS01812\';" onmouseout="this.className=\'CLASS01812\';">' );
+                  } else {
+                    WriteLine( '<td id="dpc'#oEntry.ID()#'" class="CLASS01812">' );
+                  }
                   integer cId = oEntry.ID();
                   integer iStatusOnly = 0;
                   boolean bInStatusList = false;
@@ -216,11 +226,17 @@
               
               if (oUser) {
                 string tmp;
+                boolean hasSV = false;
                 foreach ( tmp, oUser.UserSharedObjects().EnumIDs()) {
+                  if (hasSV == false) { Write("<tr><td colspan='2'><hr/></td></tr>"); hasSV = true;}
                   object oDP = dom.GetObject(tmp);
-                  Write("<tr>");
+                  Write("<tr class='UserSysVars'>");
                   Write("<td>"#oDP.Name()#":</td>");
-                  Write("<td colspan='3' id='SYSVAR_" # tmp # "' >");
+                  if( (oUser.UserLevel() == iulAdmin) && (oDP.ValueSubType() != istPresent) ) {
+                    Write( '<td colspan="3" id="SYSVAR_' # tmp # '" onclick="{ reloadSysVars = function() { PopupClose(); reloadPage(); } } CreatePopup(ID_EDIT_SYSVAR_VALUE, '#oDP.ID()#');" onmouseover="this.className=\'DeviceListRow_Highlight\';" onmouseout="this.className=\'\';">' );
+                  } else {
+                    Write( '<td colspan="3" id="SYSVAR_' # tmp # '" >' );
+                  }
                   string sSysVarVal = "";
                   object cObjTmp = oDP;
                   integer iVT = oDP.ValueType();
