@@ -76,7 +76,7 @@
         }
         if (prgUsed) {
           svUsed = true;
-          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C");
+          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n");
           svProgramRefs = svProgramRefs # "{name:\"" # prgName # "\",values:[" # prgValues # "]},";
         }
       }
@@ -123,7 +123,7 @@
         svName =  sUniqueName;
       }
     %>
-      <input id="inpName" type="text" value="<%Write(svName)%>" onblur="stringRemoveNonPrintableChars(this);" />
+      <input id="inpName" type="text" value="<%Write(svName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;"))%>" onblur="stringRemoveNonPrintableChars(this);" />
     </td>
     <td id="tdDesc" class="CLASS05003"<%Write(hidden)%> >
       <%
@@ -217,7 +217,7 @@
               else {
                 Write('<input id="chnId" type="hidden" value="0" />');
               }
-              Write('<div style="cursor: pointer;" id="chnName">' #sChn # '</div>');
+              Write('<div style="cursor: pointer;" id="chnName">' #sChn.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # '</div>');
             %>
           </td>
         <tr/>  

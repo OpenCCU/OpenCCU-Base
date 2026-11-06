@@ -15,6 +15,17 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* HTML-escape the names of devices, channels, rooms, functions, programs,
+  system variables and favorites where the WebUI writes them into HTML, so
+  markup like `<b>` that scripts or other tools put into a name is shown as
+  text, and a quote no longer cuts off the name in the edit dialog of a
+  system variable. This covers "Status and control", the device, room,
+  function and program lists, the favorites and their editor, the start
+  page, the service and alarm messages, the program editor and the channel
+  chooser. Room and function names that are updated after assigning a
+  channel, and the alarm and service entries of the event log, are also
+  escaped for JavaScript now, as they broke on an apostrophe or a quote.
+  ([#315](https://github.com/OpenCCU/OpenCCU-Base/pull/315); refs
 * fix the translation of pages decoding %-escapes like `%3C` in names and
   other texts next to a translation placeholder, so that they could be
   rendered as HTML. Only the translations themselves are decoded now. Unknown
