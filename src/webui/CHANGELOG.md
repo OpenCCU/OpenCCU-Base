@@ -28,6 +28,18 @@ or extended in it.
   ([#315](https://github.com/OpenCCU/OpenCCU-Base/pull/315); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
   @jens-maus)
+* advanced editing of a system variable: the type of a system variable
+  used in programs can no longer be changed, and the dialog names these
+  programs. An existing variable cannot become an alarm variable and an alarm
+  variable keeps its type. A changed value list shows the affected programs
+  and can move their references to the new positions of the entries, a
+  narrowed number range shows the programs that use values outside it. An
+  empty value list and a minimum above the maximum are rejected. Value names
+  and value lists are shown as text and escaped for the ReGa script, and the
+  value selection follows the edited value names and value list. Saving no
+  longer keeps the value names and value list of the previous type (OpenCCU
+  patch 0206).
+  ([#317](https://github.com/OpenCCU/OpenCCU-Base/pull/317), @jens-maus)
 * change the value of a system variable directly: administrators can click
   the value of a system variable (except the presence variable) in "Status
   and control", in a favorite on the start page or in the system variables of
