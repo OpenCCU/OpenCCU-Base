@@ -15,6 +15,11 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* fix the time settings reporting that the position was transferred to the
+  Homematic IP devices when reading the position data failed: the page now
+  says that the devices were not updated, and a newly added device keeps its
+  own position in this case instead of stopping with a script error.
+  ([#320](https://github.com/OpenCCU/OpenCCU-Base/pull/320), @jens-maus)
 * fix saving a system variable in its dialog when its name or description
   contains characters the dialog does not allow, as scripts or other tools
   can set them: the dialog then refused to save, also when only the value
