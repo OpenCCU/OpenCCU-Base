@@ -578,11 +578,11 @@ proc put_profile_body { PEERPART } {
 
   puts "<table class=\"SetProfLinkTbl_Buttons\" border=\"0\" cellspacing=\"0\">"
   puts "<colgroup>"
-  puts "<col style=\"width:10%;\"/>"
-  puts "<col style=\"width:26%;\"/>"
-  puts "<col style=\"width:28%;\"/>"
-  puts "<col style=\"width:26%;\"/>"
-  puts "<col style=\"width:10%;\"/>"
+  puts "<col style=\"width:200px;\" />"
+  puts "<col />"
+  puts "<col style=\"width:100px;\"/>"
+  puts "<col />"
+  puts "<col style=\"width:200px;\"/>"
   puts "</colgroup>"
   puts "<tbody>"
   puts "<tr>"
@@ -674,8 +674,8 @@ proc put_profile_head { PEERPART } {
       set linkdesc $sender_receiver_linkinfo(DESCRIPTION)
     }
 
-    set SENTRY(LINKNAME) "<input id=\"sender_linkname\"        name=\"sender_linkname\"        type=\"text\" size=\"30\" value=\"$linkname\"/>"
-    set SENTRY(LINKDESC) "<div><table><tr class=\"WhiteHeader\"><td style=\"border: 0px\"><input id=\"sender_linkdescription\" name=\"sender_linkdescription\" type=\"text\" size=\"30\" value=\"$linkdesc\" class=\"_CLASS20006\"/></td>"
+    set SENTRY(LINKNAME) "<input id=\"sender_linkname\"        name=\"sender_linkname\"        type=\"text\" style=\"width: -webkit-fill-available;\" value=\"$linkname\"/>"
+    set SENTRY(LINKDESC) "<div><table cellpadding=\"5\" style=\"width:100%;\"><tr class=\"WhiteHeader\"><td style=\"border: 0px\"><input id=\"sender_linkdescription\" name=\"sender_linkdescription\" type=\"text\" style=\"width: -webkit-fill-available;\" value=\"$linkdesc\" class=\"CLASS20006\"/></td>"
     append SENTRY(LINKDESC) "<td style=\"border: 0px\"><div onclick=\"EnterDescriptionTemplate('receiver');\" class=\"CLASS20009\" style=\"padding:0px;\">&lt;-</div></td></tr></table></div>"
 
 
@@ -697,8 +697,8 @@ proc put_profile_head { PEERPART } {
       set linkdesc $sendergroup_receiver_linkinfo(DESCRIPTION)
     }
 
-    set SENTRY(LINKNAME) "<input id=\"sendergroup_linkname\"        name=\"sender_linkname\"        type=\"text\" size=\"30\" value=\"$linkname\"/>"
-    set SENTRY(LINKDESC) "<div><table><tr class=\"WhiteHeader\"><td style=\"border: 0px\"><input id=\"sendergroup_linkdescription\" name=\"sender_linkdescription\" type=\"text\" size=\"30\" value=\"$linkdesc\" class=\"_CLASS20006\"/></td>"
+    set SENTRY(LINKNAME) "<input id=\"sendergroup_linkname\"        name=\"sender_linkname\"        type=\"text\" style=\"width: -webkit-fill-available;\" value=\"$linkname\"/>"
+    set SENTRY(LINKDESC) "<div><table cellpadding=\"5\" style=\"width:100%;\"><tr class=\"WhiteHeader\"><td style=\"border: 0px\"><input id=\"sendergroup_linkdescription\" name=\"sender_linkdescription\" type=\"text\" style=\"width: -webkit-fill-available;\" value=\"$linkdesc\" class=\"CLASS20006\"/></td>"
     append SENTRY(LINKDESC) "<td style=\"border: 0px\"><div onclick=\"EnterDescriptionTemplate('receivergroup');\" class=\"CLASS20009\" style=\"padding:0px;\">&lt;-</div></td></tr></table></div>"
   }
   
@@ -715,6 +715,17 @@ proc put_profile_head { PEERPART } {
   set SENTRY(RECEIVERACTION) "<div onclick=\"WebUI.enter(DeviceConfigPage, {'iface': '$iface', 'address': '$SENTRY(RECEIVERADDR)', 'redirect_url': 'IC_SETPROFILES'});\" class=\"CLASS20009\" >\${btnEdit}</div>"
 
   puts "<table class=\"SetProfLinkTbl CLASS20007\" cellspacing=\"0\" >"
+  puts "<colgroup>"
+  puts "<col />"
+  puts "<col />"
+  puts "<col style=\"width:100px;\"/>"
+  puts "<col />"
+  puts "<col />"
+  puts "<col style=\"width:100px;\"/>"
+  puts "<col />"
+  puts "<col />"
+  puts "<col style=\"width:100px;\"/>"
+  puts "</colgroup>"
   puts "<thead>"
 
   puts "<tr>"

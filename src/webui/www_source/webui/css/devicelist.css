@@ -1,33 +1,32 @@
 #DeviceListTable {
-  width:97%;
   height:auto;
-  margin:1%;
-  border:0 none;
-/*  border:1px black solid; */
+  margin:10px;
+  border:1px black solid;
   padding:0;
   empty-cells:show;
+  width:100%;
 }
 
 .DeviceListHead {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px solid $_(black); /* black */
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
 
 .DeviceListHead_Active {
-  height:60px;
+  height:40px;
   margin:0;
   border:1px black solid;
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -47,8 +46,7 @@
 }
 
 .DeviceListRow_Highlight {
-  /* background-color: $_(inactiveBackground); */
-  background-color: $_(deviceListRowHighlight);
+  background-color: $_(inactiveBackground);
   cursor:pointer;
 }
 
@@ -77,9 +75,8 @@
 
 .DeviceListThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
-  text-align:left;
-  height:80px;
+  text-align:center;
+  mix-blend-mode: multiply;
 }
 
 .DeviceListButton {

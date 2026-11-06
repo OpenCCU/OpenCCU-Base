@@ -15,6 +15,23 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* style fixes across the WebUI: the lists of "Status and control", the
+  device, room, function, program, system variable and user lists, the
+  service and alarm messages, the system protocol, the device parameters,
+  direct links and profiles, the firmware overview and the diagram and group
+  pages of the HMServer use the full width with fixed widths only for icon,
+  picture and action columns, have uniform header cells and buttons, and no
+  longer set their height in JavaScript. Entries of "Status and control" are
+  highlighted under the mouse pointer, and an administrator opens the
+  configuration of a device by clicking its picture there. Device pictures
+  are centered, the blind and light controls are aligned, the German tree
+  view buttons of the footer break into two lines, a horizontal rule uses the
+  separator color of the theme and checkboxes are aligned with their label.
+  The key and serial number of a Homematic IP device are entered in upper
+  case. The favorites viewer uses a table of its own, and the header of the
+  function column in the room list is closed with `</th>` (OpenCCU patch
+  0039).
+  ([#321](https://github.com/OpenCCU/OpenCCU-Base/pull/321), @jens-maus)
 * fix the time settings reporting that the position was transferred to the
   Homematic IP devices when reading the position data failed: the page now
   says that the devices were not updated, and a newly added device keeps its

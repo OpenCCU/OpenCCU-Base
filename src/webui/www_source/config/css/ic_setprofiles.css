@@ -1,7 +1,9 @@
+#ic_setprofiles {
+	width: 100%;
+}
+
 #ic_setprofiles .SetProfLinkTbl {
-	width: 99%;
-	margin-top: 0;
-	margin-bottom: 0;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -84,7 +86,7 @@
 #ic_setprofiles #body_wrapper
 {
 	background-color: $_(background); /* #183473 */
-	margin-top: 10px;
+	margin: 10px;
 }
 
 #ic_setprofiles  #id_sender_group_receiver_profiles_wrapper

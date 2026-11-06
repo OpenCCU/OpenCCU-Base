@@ -869,9 +869,9 @@ proc put_channel_parameters {} {
   puts "<table id=\"id_channel_parameters_table\" class=\"parameters_table\" cellspacing=\"0\">"
   
   puts "<colgroup>"
-  puts "  <col style=\"width:20%;\"/>"
-  puts "  <col style=\"width:5%;\" />"
-  puts "  <col style=\"width:75%;\"/>"
+  puts "  <col />"
+  puts "  <col />"
+  puts "  <col />"
   puts "</colgroup>"
 
   puts "<THEAD>"
@@ -1427,25 +1427,25 @@ proc put_Header {} {
 
   puts "<colgroup>"
   #Name
-  puts "  <col style=\"width:29%;\"/>"
+  puts "  <col />"
   #Typenbezeichnung
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
   #Bild
-  puts "  <col style=\"width:1%;\"/>"
+  puts "  <col style=\"width:55px;\"/>"
   #Bezeichnung
-  puts "  <col style=\"width:30%;\"/>"
+  puts "  <col />"
   #SN
-  puts "  <col style=\"width:5%;\"/>"
+  puts "  <col />"
   #Interface
-  puts "  <col style=\"width:5%;\"/>"
+  puts "  <col />"
   if {$SHOWRESTORE} {
     #Firmware
-    puts "  <col style=\"width:15%;\"/>"
+    puts "  <col />"
     #Restore Config
     puts "  <col />"
   } else {
     #Firmware
-    puts "  <col style=\"width:15%;\"/>"
+    puts "  <col />"
   }
   puts "</colgroup>"
   
