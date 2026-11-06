@@ -23,6 +23,16 @@ or extended in it.
   ([#316](https://github.com/OpenCCU/OpenCCU-Base/pull/316); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
   @jens-maus)
+* change the value of a system variable directly: administrators can click
+  the value of a system variable (except the presence variable) in "Status
+  and control", in a favorite on the start page or in the system variables of
+  the user on the start page to change it in a small dialog, and the dialog
+  for creating and editing a system variable gets a field for its value. The
+  channel assignment of the dialog is now a checkbox. Text values and units
+  are shown as text in the dialog, so a text value with entities like `&amp;`
+  is no longer changed on saving and `</textarea>` in it no longer breaks the
+  dialog (OpenCCU patch 0097).
+  ([#313](https://github.com/OpenCCU/OpenCCU-Base/pull/313), @jens-maus)
 * fix the program list, the device, channel, room and function lists, the
   inbox, the service messages and the user administration failing to load,
   and deleting a program or choosing a user on the login page failing, when
