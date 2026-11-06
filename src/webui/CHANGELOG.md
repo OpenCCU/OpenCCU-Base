@@ -23,6 +23,14 @@ or extended in it.
   ([#316](https://github.com/OpenCCU/OpenCCU-Base/pull/316); refs
   [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
   @jens-maus)
+* more countries, cities and time zones in the time settings: the location
+  list has about 150 countries with their cities and IANA time zones, and the
+  time zone selection also offers all zones of `zone.tab`. The UTC offsets
+  set on Homematic IP devices with a week profile are now taken from the
+  configured time zone of the system instead of a fixed table, also in the
+  southern hemisphere. A saved time zone with an old name (like
+  `Europe/Kiev`) is selected under its current name (OpenCCU patch 0054).
+  ([#318](https://github.com/OpenCCU/OpenCCU-Base/pull/318), @jens-maus)
 * advanced editing of a system variable: the type of a system variable
   used in programs can no longer be changed, and the dialog names these
   programs. An existing variable cannot become an alarm variable and an alarm
