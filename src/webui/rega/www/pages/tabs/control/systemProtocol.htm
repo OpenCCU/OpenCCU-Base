@@ -122,6 +122,16 @@ ResetGAC();
   new iseSubMenuControl("btnFilterTime", "btnFilterTimeSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
   new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);  
 
+  jQuery("#btnFilterDate").click(function(){
+    jQuery("#ftDate").focus();
+  });
+  jQuery("#btnFilterTime").click(function(){
+    jQuery("#ftTime").focus();
+  });
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
+
   var s = "";
   var historyBufferUrl = "/HistoryBuffer.csv?sid=@" + getSessionId() + "@";
 
