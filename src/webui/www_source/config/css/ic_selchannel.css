@@ -1,12 +1,23 @@
+
+#ic_selchannel {
+  display: initial;
+  width: 100%;
+  margin: 10px;
+}
+
+#ic_selchannel #body_wrapper {
+  display: inherit;
+}
+
 #ic_selchannel #previous_step_wrapper {
 	background-color: $_(background); /* #183473 */
-	margin: 20px;
+	margin-bottom: 10px;
 }
 	
 #ic_selchannel #createLinkStep1 {
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
-	width: 90%;
+	width: 100%;
 }
 
 #ic_selchannel #createLinkStep1 thead {
@@ -29,13 +40,14 @@
 	background-color: $_(white); /* white */
 }
 #ic_selchannel #createLinkStep1 .WhiteHeader input {
-	width: 99%;
-
+	width: -webkit-fill-available;
 }
 
 #ic_selchannel .ChnListTbl {
 	border: 1px solid $_(black); /* black */
 	background-color: $_(background); /* #183473 */
+	width: 100%;
+	margin: 0px;
 }
 
 #ic_selchannel .ChnListTbl tr td {
@@ -164,14 +176,7 @@
 {
 	visibility: hidden;
 }
-/*--------------------------------------------*/
 
-/*Tabellenkörper Virtuelle Tasten*/
-#ic_selchannel #body_wrapper
-{
-	background-color: $_(background); /* #183473 */
-	margin-top: 10px;
-}
 /*--------------------------------------------*/
 
 /*Tabellenkörper Virtuelle Tasten*/
@@ -190,7 +195,6 @@
 /*Tabellenkörper Bilderspalte*/
 #ic_selchannel .ChnListTbl .chnListTbl_dev_img 
 {
-	background-color: $_(white); /* white */
 	text-align: left;
 	height: 50px;  
 }

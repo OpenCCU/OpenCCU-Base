@@ -21,15 +21,10 @@
   <tr>
     <!-- Linke Spalte -->
     <td id="contentLeft" class="hidden">
-      <table class="filterTable CLASS04001 j_translate">
+      <table class="filterTable CLASS04001 j_translate" cellpadding="0" cellspacing="0">
         <tr>
           <td style="vertical-align: top; border: 0px">
-            <div id="divRL" class="CLASS04002">
-            <script type="text/javascript">
-              var contHeight = $("content").style.height;
-              contHeight = contHeight.replace(/px/, "");
-              $("divRL").style.height = Math.floor((contHeight * 0.98)) + "px";
-            </script>
+            <div id="divRL" class="CLASS04201">
             <table id="tblRoomNames" class="StatViewTbl CLASS04006 j_translate"  cellpadding="0" cellspacing="0" width="100%">
               <tr>
                 <th>${thRoom}</th>
@@ -61,7 +56,7 @@
                       }
                       string trId = "rooms"#room.ID();
                       Write("<tr id='"#trId#"'>");
-                        Write("<td id='"#room.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHR.clearFilters();updateTable();loadChannels("#room.ID()#")'>");
+                        Write("<td id='"#room.ID()#"name' class='ButtonStatusRooms CLASS04007' onclick='fltHR.clearFilters();updateTable();loadChannels("#room.ID()#")' onmouseover='this.addClassName(\"DeviceListRow_Highlight\")' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\")'>");
                           Write(room.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));     
                         Write("</td>");
                         Write("<script type='text/javascript'>");
@@ -93,12 +88,7 @@
      <!-- Rechte Spalte -->
      <td id="contentRight">
        <div id="divHTR" class="CLASS04002">
-        <script type="text/javascript">
-          var contHeight = $("content").style.height;
-          contHeight = contHeight.replace(/px/, "");
-          $("divHTR").style.height = Math.floor((contHeight * 0.98)) + "px";
-        </script>
-       <table id="tblRightContent" class="CLASS04003">
+       <table id="tblRightContent" class="CLASS04003" cellpadding="0" cellspacing="0">
         <tr class="CLASS04004">
           <td style="vertical-align: top;" id="chnList">
        

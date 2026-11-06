@@ -40,7 +40,7 @@
   height: 520px;
   background-color: $_(white); /* white */
   color: $_(textColorB); /* black */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelConfigDialogFooter {

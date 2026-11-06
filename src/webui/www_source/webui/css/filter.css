@@ -4,9 +4,10 @@
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
+  height:20px !important;
 }
 
 .FilterHeight20 {
@@ -19,7 +20,7 @@
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorB); /* black */
-  /* font-weight:bold; */
+  font-weight:normal;
   text-align:left;
   vertical-align:middle;  
 }
@@ -65,8 +66,7 @@
 }
 
 .FilterText {
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
 }
 
 .FilterButton {
@@ -76,8 +76,7 @@
   /*background-image: linear-gradient(to bottom, white 40%, gray );*/
   background-image: var(--btnGradient);
 
-  width:96%;
-  margin:3px 2% 3px 2%;
+  margin:2px;
   border:1px solid $_(black); /* black */
   color: $_(textColorB); /* white */
   font-weight:normal;
