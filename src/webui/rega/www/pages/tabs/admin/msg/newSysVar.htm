@@ -76,7 +76,7 @@
         }
         if (prgUsed) {
           svUsed = true;
-          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C");
+          prgName = prg.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n");
           svProgramRefs = svProgramRefs # "{name:\"" # prgName # "\",values:[" # prgValues # "]},";
         }
       }
