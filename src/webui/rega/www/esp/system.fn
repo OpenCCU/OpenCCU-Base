@@ -675,7 +675,7 @@ function ::getChnNameById()
     object obj = dom.GetObject( system.GetVar("id") );
     if (obj)
     {
-      Write(obj.Name());
+      Write(obj.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
     }
   }
   return;
