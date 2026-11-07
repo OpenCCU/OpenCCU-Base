@@ -1518,7 +1518,7 @@ function ::CreateUnknown()
   string showParam = true;
 
   WriteLine( '<td class="CLASS02519">' );
-    WriteLine( '<table cellspacing="10" style="margin: 10px 10px 10px -8px;">' );
+    WriteLine( '<table cellspacing="0">' );
     WriteLine( '<tr>');
     integer i = 0;
     string sEnum = "";

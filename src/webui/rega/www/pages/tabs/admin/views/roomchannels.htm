@@ -161,6 +161,7 @@ for (var i = 0; i < chnsTmp.length; i++) {
     iInsIdx++;
     iElemsAdded++;
     tr.id = chnsTmp[i]['trid'];
+    tr.className = 'CLASS04103';
     if (!fltSR.objPassFilter(chnsTmp[i]))
       tr.style.display = "none";
     else 
@@ -246,8 +247,9 @@ hideRow = function(rId, chnId) {
   arDelChns[arDelChns.length] = "" + rId + chnId;
 }
 
-// reset all SortSelected columns
-var ths = document.getElementById("tblRoomList").getElementsByTagName("th");
+// reset all SortSelected columns of the sort header row only; rewriting the
+// filter row would drop the click handlers of its filter buttons
+var ths = document.getElementById("rowhead").getElementsByTagName("th");
 for(th in ths)
 { 
   if(ths[th].innerHTML)

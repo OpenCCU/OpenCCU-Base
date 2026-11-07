@@ -1,5 +1,13 @@
 /*LinkList-Tabelle*/
 /*--------------------------------------------*/
+#ic_linkpeerlist {
+  display: contents;
+}
+
+#ic_linkpeerlist.j_translate {
+  display: none;
+}
+
 #ic_linkpeerlist #head_wrapper {
   border-bottom: 0;
   margin: 0;
@@ -15,17 +23,16 @@
 #ic_linkpeerlist #body_wrapper {
   margin: 0;
   padding: 0;
-  width: 100%;
-  background-color: $_(background); /* #183473 */
+  display: inherit;
 }
 
 #ic_linkpeerlist .LinkListTbl {
   empty-cells: show;
   padding:0;
-  margin: 20px 0 0 0;
-  width: 100%;
+  margin: 10px;
   height: auto;
   border: 1px solid $_(black); /* black */
+  width: 100%;
 }
 
 #ic_linkpeerlist .LinkListTbl td {
@@ -62,8 +69,6 @@
 
 #ic_linkpeerlist .LinkListTbl .LinkListTbl_img
 {
-	background-color: $_(white); /* white */
 	text-align: left;
-	height: 80px;  
 }
 /*--------------------------------------------*/
