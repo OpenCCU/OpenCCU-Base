@@ -54,12 +54,12 @@ puts {
     setFooter("");
   </script>
 
-  <table id="mainTable" cellspacing="20" style="display:none">
+  <table id="mainTable" cellspacing="0" cellpadding="0" style="display:none">
     <colgroup>
-      <col style="width:25%;"/>
-      <col style="width:25%;"/>
-      <col style="width:25%;"/>
-      <col style="width:20%;"/>
+      <col />
+      <col />
+      <col />
+      <col />
     </colgroup>
     <tr class="CLASS21700">
     

@@ -120,7 +120,7 @@ chns = new Array();
   {
     var tr = Builder.node("tr");
     
-    td = Builder.node('td', {className: 'GrayBkg'}, strCut(chns[i]['type'], true)); tr.appendChild(td);
+    td = Builder.node('td', {className: 'GrayBkg'}, chns[i]['type']); tr.appendChild(td);
     
     //td = Builder.node('td', {className: 'WhiteBkg'});
     td = Builder.node('td', {className: 'WhiteBkgPic'}, [
@@ -131,7 +131,7 @@ chns = new Array();
     tr.appendChild(td);
     
     td = Builder.node('td', {className: 'GrayBkg'}, chns[i]['desc']); tr.appendChild(td);
-    td = Builder.node('td', {className: 'GrayBkg'}, strCut(chns[i]['sn'])); tr.appendChild(td);
+    td = Builder.node('td', {className: 'GrayBkg'}, chns[i]['sn']); tr.appendChild(td);
     td = Builder.node('td', {className: 'GrayBkg'}, chns[i]['iface']); tr.appendChild(td);
     
     var s = "WhiteBkg";
@@ -152,10 +152,10 @@ chns = new Array();
     
     if (NAV_IE) {
       td = Builder.node('td', {className: 'WhiteBkg'}, 
-          [Builder.node('div', {id:'tdn' + chns[i]['id'], className: "CLASS04502 CLASS04503", onclick: 'textEdit(id, '+chns[i]['id']+', false, 0, CALL_STRCUT)'}, strCut(chns[i]['name'], true)) ]); tr.appendChild(td);
+          [Builder.node('div', {id:'tdn' + chns[i]['id'], className: "CLASS04502 CLASS04503", onclick: 'textEdit(id, '+chns[i]['id']+', false, 0)'}, chns[i]['name']) ]); tr.appendChild(td);
     }
     else {
-      td = Builder.node('td', {className: 'WhiteBkg CLASS04503', id:'tdn' + chns[i]['id'], onclick: 'textEdit(id, '+chns[i]['id']+', false, 0, CALL_STRCUT)'}, strCut(chns[i]['name'], true)); tr.appendChild(td);
+      td = Builder.node('td', {className: 'WhiteBkg CLASS04503', id:'tdn' + chns[i]['id'], onclick: 'textEdit(id, '+chns[i]['id']+', false, 0)'}, chns[i]['name']); tr.appendChild(td);
     }  
       
     if (NAV_IE) {

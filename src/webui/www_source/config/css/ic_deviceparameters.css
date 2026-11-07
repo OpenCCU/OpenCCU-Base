@@ -1,6 +1,16 @@
+
+#id_body
+{
+  display: inherit;
+}
+
+#ic_deviceparameters
+{
+  display: contents;
+}
+
 #ic_deviceparameters #id_body
 {
-	margin-top: 10px;
 	background-color: $_(background); /* #183473 */
 }
 
@@ -16,7 +26,7 @@
 
 #ic_deviceparameters #DeviceInformation
 {
-	width: 99%;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -40,7 +50,6 @@
 
 #ic_deviceparameters #DeviceInformation #DeviceImage
 {
-	background-color: $_(white); /* white */
 	width: 52px;
 	height: 56px;
 	margin: 0;
@@ -71,7 +80,7 @@
 
 #ic_deviceparameters .parameter_area .parameters_table 
 {
-	width: 99%;
+	width: 100%;
 	color: $_(textColorA); /* white */
 	border: 1px solid $_(black); /* black */
 }
@@ -80,6 +89,7 @@
 
 	background-color: $_(clickable);
 	text-align:center;
+	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table tbody {
@@ -90,7 +100,6 @@
 
 #ic_deviceparameters .parameter_area .parameters_table td {
 	border: 1px solid $_(black); /* black */
-	height: 50px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
@@ -98,6 +107,7 @@
 	border: 0;
 	height: auto;
 	background-color: $_(white); /* white */
+	border-spacing: 0px;
 }
 
 #ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
@@ -112,8 +122,6 @@
 {
 	border: 0;
 	background-color: $_(white); /* white */
-	padding: 2px;
-	height: auto;
 }
 
 #ic_deviceparameters #Timeouts_Area .TimeoutTable,

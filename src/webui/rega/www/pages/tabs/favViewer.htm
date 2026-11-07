@@ -68,17 +68,17 @@
     {
       WriteLine('<div class="CLASS05800">');
       WriteLine('<div id="loadingGif"><img style="margin: 30px;" src="/ise/img/loading.gif" /></div>');
-      WriteLine('<table id="tblfav" align="center" cellpadding="0" cellspacing="10" class="hidden">');
+      WriteLine('<table id="tblfavViewer" align="center" cellpadding="0" cellspacing="10" class="hidden">');
     }
     else
     {
       WriteLine('<div class="CLASS05801">');
       WriteLine('<div id="loadingGif"><img style="margin: 30px;" src="/ise/img/loading.gif" /></div>');
-      WriteLine('<table id="tblfav" cellpadding="0" cellspacing="10" class="hidden">');
+      WriteLine('<table id="tblfavViewer" cellpadding="0" cellspacing="10" class="hidden">');
     }
 
     WriteLine('<colgroup>');
-    WriteLine('<col colspan="' # iFavColumnCount # '" width="' # FAV_COLWIDTH # '" />');
+    WriteLine('<col colspan="' # iFavColumnCount # '" />');
     WriteLine('</colgroup>');  
     WriteLine('<tr>');  
 
@@ -272,6 +272,6 @@
   setFooter(s);
   translatePage();
   jQuery("#loadingGif").hide();
-  jQuery("#tblfav").show();
+  jQuery("#tblfavViewer").show();
 </script>
 

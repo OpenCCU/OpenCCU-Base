@@ -39,7 +39,7 @@
   width: 996px;
   height: 520px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #MultiChannelChooserFooter {
@@ -146,7 +146,6 @@
 
 .MultiChannelChooserThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
   text-align:left;
   height:80px;
 }
