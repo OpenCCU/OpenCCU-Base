@@ -29,8 +29,9 @@ or extended in it.
   separator color of the theme and checkboxes are aligned with their label.
   The key and serial number of a Homematic IP device are entered in upper
   case. The favorites viewer uses a table of its own, and the header of the
-  function column in the room list is closed with `</th>` (OpenCCU patch
-  0039).
+  function column in the room list is closed with `</th>`. Loading the
+  channels of a room or function in the room and function list resets only
+  the sort header, so the filter buttons keep working (OpenCCU patch 0039).
   ([#321](https://github.com/OpenCCU/OpenCCU-Base/pull/321), @jens-maus)
 * fix saving a system variable in its dialog when its name or description
   contains characters the dialog does not allow, as scripts or other tools
