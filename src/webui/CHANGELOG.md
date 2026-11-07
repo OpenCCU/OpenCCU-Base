@@ -17,9 +17,10 @@ or extended in it.
 
 * the error pages shown while the CCU is starting (HTTP 500 and 503) center
   the logo and the hint to wait in the middle of the window and no longer
-  show a separate heading. The content is shown as soon as it is translated
-  instead of waiting for the logo; without JavaScript it stays hidden as
-  before (OpenCCU patch 0149).
+  show a separate heading. The content is shown and the check for the
+  redirect starts as soon as the page is translated instead of waiting for
+  the logo; without JavaScript the content stays hidden as before (OpenCCU
+  patch 0149).
   ([#322](https://github.com/OpenCCU/OpenCCU-Base/pull/322), @jens-maus)
 * style fixes across the WebUI: the lists of "Status and control", the
   device, room, function, program, system variable and user lists, the
