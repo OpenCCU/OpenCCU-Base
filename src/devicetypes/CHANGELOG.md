@@ -8,6 +8,13 @@ OpenCCU-Base release they are part of when it is published.
 
 ## Unreleased
 
+* fix the error messages `Unknown paramset` / `GetAESMasterOperation()` of
+  rfd and ReGaHss when opening the device list or channel settings of an
+  HM-Sen-RD-O: its heating channel 2 had no `MASTER` paramset. It now has
+  an empty one; AES for this channel stays unavailable as before.
+  ([#335](https://github.com/OpenCCU/OpenCCU-Base/pull/335),
+  [discussion #4680](https://github.com/orgs/OpenCCU/discussions/4680),
+  @jens-maus)
 * fix the limits of `SET_TEMPERATURE` (4.5 to 30.5 °C instead of 5.0 to
   30.0 °C) of the HM-CC-RT-DN-BoM, as in the HM-CC-RT-DN, and of the virtual
   heating group HM-CC-VG-1: setting 30.5 °C (on) or 4.5 °C (off) caused
