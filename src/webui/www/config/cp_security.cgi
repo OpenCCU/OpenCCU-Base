@@ -1043,17 +1043,20 @@ proc action_put_page {} {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
                 form "/config/fileupload.ccc?sid=$sid&action=backup_upload&url=$env(SCRIPT_NAME)" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
-                  file_button backup_file size=20 maxlength=1000000
+                  file_button backup_file size=20 maxlength=1000000 accept='.sbk'
                 }
                 puts {<iframe name="config_upload_iframe" class="CLASS20820" style="display: none;"></iframe>}
               }
             }
             table_row {
               td {width="20"}  {}
-              td {style="text-align:left"} "\${dialogSettingsSecurityLblPerformRestore}"
-              table_data {align="right"} {
+              td {colspan="2"} {style="text-align:left"} "\${dialogSettingsSecurityLblPerformRestore}"
+            }
+            table_row {
+              td {width="20"}  {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20811"} {
-                  division {class="CLASS20818 colorGradient50px"} {onClick="OnBackupSubmit()"} {
+                  division {class="CLASS20818 colorGradient50px" style="width: 150px; margin-left: 20px;"} {onClick="OnBackupSubmit()"} {
                     puts "\${dialogSettingsSecurityBtnBackupUpload}"
                   }
                 }

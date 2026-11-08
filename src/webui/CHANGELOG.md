@@ -15,6 +15,17 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the file selection of the software update, the certificate upload, the
+  backup restore, the add-on installation and the device firmware upload
+  shows a "Choose file..." button and the name of the selected file instead
+  of the browser's file input. Except for the add-on installation, it only
+  offers files of the expected type, and the buttons of the software update,
+  certificate upload and backup restore are placed below their description.
+  Compared to the patch, the download button of the software update is
+  aligned with the other buttons again, other file inputs of the WebUI stay
+  visible and cancelling the file selection shows "No file selected." again
+  instead of failing (OpenCCU patch 0163).
+  ([#323](https://github.com/OpenCCU/OpenCCU-Base/pull/323), @jens-maus)
 * the error pages shown while the CCU is starting (HTTP 500 and 503) center
   the logo and the hint to wait in the middle of the window and no longer
   show a separate heading. The content is shown and the check for the
