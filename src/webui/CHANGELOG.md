@@ -15,6 +15,11 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the buttons of the control panel ("Settings" > "Control panel") are no
+  longer laid out in a fixed table of four columns but wrap according to the
+  width of the window, so they stay usable in narrow windows and on mobile
+  devices (OpenCCU patch 0150).
+  ([#324](https://github.com/OpenCCU/OpenCCU-Base/pull/324), @jens-maus)
 * the file selection of the software update, the certificate upload, the
   backup restore, the add-on installation and the device firmware upload
   shows a "Choose file..." button and the name of the selected file instead
