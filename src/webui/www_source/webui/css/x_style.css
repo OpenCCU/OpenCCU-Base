@@ -5460,3 +5460,40 @@ color: $_(textColorA); /* white */
   height:5px;
   border:solid 1px $_(black);
 }
+
+.file-button {
+  background-color: $_(clickable);
+  background-image: url(/ise/img/gradientButton25px.png);
+  background-image: var(--btnGradient);
+  color: $_(textColorB); /* black */
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+  border: solid 1px $_(black); /* black */
+  border-radius: 5px;
+  width: 150px;
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.file-name {
+  overflow-wrap: anywhere;
+  margin-left: 20px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.file-name + input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.file-label:has(~ input[type='file']:focus-visible) .file-button {
+  outline: 2px solid;
+  outline-offset: 2px;
+}
