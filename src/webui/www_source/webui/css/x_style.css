@@ -5003,6 +5003,16 @@ color: $_(textColorA); /* white */
   margin: 10px;
 }
 
+#configMainTable {
+  margin: 10px;
+}
+
+.cpCell {
+  width: 270px;
+  height: 70px;
+  float: left;  
+}
+
 .CLASS21700 {
 }
 
