@@ -17,9 +17,4 @@ IPage = Interface.create({
    **/
   leave: function() {},
   
-  /**
-   * Callback beim Verändern der Bildschirmgröße
-   **/
-  resize: function() {}
-  
 });

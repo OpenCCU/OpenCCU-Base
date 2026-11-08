@@ -23,8 +23,4 @@ DiagramListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

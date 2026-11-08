@@ -30,8 +30,4 @@ DeviceConfigPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

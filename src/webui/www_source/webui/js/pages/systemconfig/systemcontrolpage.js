@@ -12,8 +12,4 @@ SystemControlPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

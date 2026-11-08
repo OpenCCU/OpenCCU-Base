@@ -16,8 +16,4 @@ ControlPage = new function()
     }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

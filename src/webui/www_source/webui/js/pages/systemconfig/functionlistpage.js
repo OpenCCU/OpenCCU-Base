@@ -11,8 +11,4 @@ FunctionListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

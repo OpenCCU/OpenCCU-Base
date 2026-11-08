@@ -21,8 +21,4 @@ LinkListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

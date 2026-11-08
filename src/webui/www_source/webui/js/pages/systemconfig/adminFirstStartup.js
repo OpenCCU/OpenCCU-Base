@@ -10,8 +10,4 @@ adminFirstStartup = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

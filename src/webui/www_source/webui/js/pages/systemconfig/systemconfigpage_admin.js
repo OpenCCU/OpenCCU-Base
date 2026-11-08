@@ -12,8 +12,4 @@ SystemConfigPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();
