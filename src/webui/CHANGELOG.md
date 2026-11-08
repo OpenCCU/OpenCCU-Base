@@ -15,6 +15,19 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a system language (German or English) can be chosen under "Settings" >
+  "User management" ("Set system language"); the dialog also opens after
+  login as long as none is chosen. It renames the default rooms, functions
+  and system variables (name, description and value names) that still carry
+  their default name to the chosen language and remembers the untranslated
+  name as metadata, so a later change of the language renames them again;
+  names changed by the user are kept. The rain system variables created by
+  `hm_autoconf` get their name in the chosen language, and `hm_autoconf`
+  finds the default functions by their untranslated name. New JSON-RPC
+  methods `CCU.getSystemLanguage` and `CCU.setSystemLanguage` (admin only).
+  Compared to the patch, `CCU.setSystemLanguage` only accepts `de` and `en`
+  (OpenCCU patch 0109).
+  ([#336](https://github.com/OpenCCU/OpenCCU-Base/pull/336), @jens-maus)
 * the buttons of the control panel ("Settings" > "Control panel") are no
   longer laid out in a fixed table of four columns but wrap according to the
   width of the window, so they stay usable in narrow windows and on mobile
