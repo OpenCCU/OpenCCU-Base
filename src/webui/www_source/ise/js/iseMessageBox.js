@@ -198,7 +198,12 @@ iseMessageBox.prototype =
         this.setWidth(800);
         this.setFile( "/pages/msg/autoLoginConfig.htm" );
         break;
-       case ID_CHOOSE_LED:
+      case ID_SYSTEM_LANGUAGE_CONFIG:
+        this.setTitle( translateKey("dialogConfigSystemLanguage") /*"Systemsprache waehlen - Konfiguration" */);
+        this.setWidth(800);
+        this.setFile( "/pages/msg/systemLanguageConfig.htm" );
+        break;
+        case ID_CHOOSE_LED:
         this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
         this.addToPostBody( 'string type = "'+this.type+'";' );
         this.setWidth(800);
