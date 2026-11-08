@@ -667,12 +667,15 @@ proc session_putsessiontimedout {url} {
 	html {
 		head {
 			title "eQ-3 HomeMatic Konfiguration - Anmeldung"
+			puts {<meta name="viewport" content="width=device-width, initial-scale=1">}
     		puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">"
 		}
 		body {
+			puts {<main style="margin:2rem auto;padding:1.5rem;max-width:36rem;text-align:center;">}
 			h2 "Sitzung ung&uuml;ltig oder abgelaufen!"
 #        	h2 [url "Weiter" $url]
 			puts "<div class=\"CLASS10600\"><a href=\"#\" onclick=\"javascript:reloadPage();\">Weiter</a></div>"
+			puts {</main>}
 		}
 	}
 }
