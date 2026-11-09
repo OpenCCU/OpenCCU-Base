@@ -15,6 +15,11 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a number input of the device settings that is checked in place (for
+  example the power threshold of the power meters) no longer rewrites an
+  unchanged value with more decimal places when it loses the focus, so
+  saving no longer sends the unchanged value to the device again.
+  ([#346](https://github.com/OpenCCU/OpenCCU-Base/pull/346), @jens-maus)
 * the WebUI is branded as OpenCCU: the OpenCCU logos (installed to
   `www/ise/img/occu-logo*.png`) replace the Homematic logos in the header,
   on the login and logout pages, the help pages, the error pages and while
