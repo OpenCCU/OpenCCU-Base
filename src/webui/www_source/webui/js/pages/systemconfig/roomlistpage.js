@@ -12,8 +12,4 @@ RoomListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

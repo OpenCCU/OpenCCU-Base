@@ -24,11 +24,4 @@ Page = Class.create({
   {
   },
   
-  /**
-   * Callback. Wird beim Verändern des Bildschirms aufgerufen.
-   **/
-  resize: function()
-  {
-  }
-  
 });

@@ -24,7 +24,6 @@ function showSecurityDialog() {
          1 - user selected YES
          */
         if (action == 1) {
-          WebUI.resize();
           jQuery(".Layer0").show();
           homematic("CCU.setSecurityHint");
           if (getProduct() >= 3) {

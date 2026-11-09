@@ -12,8 +12,4 @@ UserAdminPageAdmin = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

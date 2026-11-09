@@ -15,6 +15,15 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the size of the WebUI follows the browser window with CSS instead of
+  JavaScript: the header, menu bar and footer have fixed heights, the
+  content area takes the remaining height and scrolls by itself, and the
+  room, function and device lists of "Status and control" as well as the
+  login and logout pages use the full window. The resize handlers of the
+  WebUI and its pages (`WebUI.resize()`, `resize()` of the pages,
+  `recalcDivs()` of the login and logout pages) are gone; the duty cycle on
+  the start page is shown when the page is loaded (OpenCCU patch 0154).
+  ([#338](https://github.com/OpenCCU/OpenCCU-Base/pull/338), @jens-maus)
 * a system language (German or English) can be chosen under "Settings" >
   "User management" ("Set system language"); the dialog also opens after
   login as long as none is chosen. It renames the default rooms, functions

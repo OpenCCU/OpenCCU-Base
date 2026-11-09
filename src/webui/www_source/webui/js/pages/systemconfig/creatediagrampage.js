@@ -35,8 +35,4 @@ CreateDiagramPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

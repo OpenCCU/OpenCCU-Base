@@ -12,8 +12,4 @@ ControlVariablesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

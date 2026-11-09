@@ -12,8 +12,4 @@ ProgramListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

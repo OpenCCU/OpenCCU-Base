@@ -12,8 +12,4 @@ ControlProtocolPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

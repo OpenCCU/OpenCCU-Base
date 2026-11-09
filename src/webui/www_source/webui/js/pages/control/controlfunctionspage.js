@@ -12,8 +12,4 @@ ControlFunctionsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

@@ -2494,6 +2494,16 @@ color: $_(textColorA); /* white */
 
 /* rega\pages\tabs\handling\devices.htm */
 
+#devicepage {
+  width: 100%
+}
+
+#devicepage #contentLeft {
+  width: 20%;
+  float: left;
+  overflow: auto;
+}
+
 .CLASS03900 {
 	height:100%;
 	overflow:hidden;
@@ -2502,6 +2512,7 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS03901 {
+  height: 100%;
 	width:100%;
 }
 
@@ -2562,12 +2573,25 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\handling\rooms.htm */
 /* rega\pages\tabs\handling\rooms.htm */
 
+#roompage,
+#functionpage {
+  width: 100%
+}
+
+#roompage #contentLeft,
+#functionpage #contentLeft {
+  width: 20%;
+  float: left;
+  overflow: auto;
+}
+
 .CLASS04000 {
 	height:100%;
 	overflow:hidden;
 }
 
 .CLASS04001 {
+  height: 100%;
 	width:100%;
 }
 

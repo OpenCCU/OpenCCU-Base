@@ -735,10 +735,6 @@ if (PLATFORM == "Central") {
   {
   };
 
-  this.resize = function()
-  {
-  };
-
  }();
 
 }
