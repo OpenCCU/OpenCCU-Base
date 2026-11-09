@@ -15,6 +15,33 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the WebUI is branded as OpenCCU: the OpenCCU logos (installed to
+  `www/ise/img/occu-logo*.png`) replace the Homematic logos in the header,
+  on the login and logout pages, the help pages, the error pages and while
+  the WebUI is loading, and the product name in the English and German texts
+  is "OpenCCU". The help page shows the OpenCCU version and platform, the
+  OpenCCU and eQ-3 copyright, links to the OpenCCU project and
+  documentation, the Icons8 attribution of the menu icons and tables with
+  information on the hardware, software, operating system and the
+  Homematic IP and BidCos radio modules. The available software version is
+  read from `https://openccu.de/LATEST-VERSION.js`; the download button opens
+  the latest OpenCCU release on GitHub, and the direct download stores the
+  release image of the own platform in `/usr/local/tmp/firmwareUpdateFile`.
+  The current software version shows the platform and is taken from
+  `WEBUI_VERSION` (filled in by the OpenCCU build) instead of the firmware
+  of the BidCos-RF interface. In containers (OCI, LXC) the maintenance page
+  explains that updates are done with the container platform instead of
+  showing the update steps; in OCI containers the network settings only
+  offer the host name, and in OCI and LXC containers the time cannot be set
+  manually and the NTP settings are hidden. Saving the location updates the
+  time zone of the system (`/bin/updateTZ.sh`) before the time zone offsets
+  are read. The UPnP device description (`upnp/basic_dev.cgi`) describes an
+  OpenCCU Basic:1 device without services and finds the IP address with
+  `ip`, the entry page of the WebUI (`index.htm`) redirects in its own
+  frame instead of the top window, so the WebUI also works inside a frame,
+  and "external USB storage" is called "external storage" (OpenCCU patch
+  0001).
+  ([#341](https://github.com/OpenCCU/OpenCCU-Base/pull/341), @jens-maus)
 * the date, time and name filters of the system protocol put the keyboard
   focus into their input field when they are opened, as the filters of the
   other lists already do.

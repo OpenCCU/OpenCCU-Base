@@ -1,8 +1,8 @@
 jQuery.extend(true,HMIdentifier , {
   "de" : {
-    "CCUFullNameHeader" : "Homematic CCU",
-    "CCUFullNameText" : "Homematic CCU",
-    "CCUShortName" : "CCU",
+    "CCUFullNameHeader" : "OpenCCU",
+    "CCUFullNameText" : "OpenCCU",
+    "CCUShortName" : "OpenCCU",
     "BidCosRF" : "Homematic Funk",
     "BidCosWired" : "Homematic Wired",
     "VirtualDevices" : "VirtualDevices",
@@ -501,6 +501,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsCMLblActualSoftwareVersion" : "Aktuelle Software-Version:",
     "dialogSettingsCMLblAvailableSoftwareVersion" : "Verf%FCgbare Software-Version:",
     "dialogSettingsCMLblPerformSoftwareUpdate" : "Software-Update durchf%FChren",
+    "dialogSettingsCMLblPerformSoftwareUpdateVirt" : "Wenn Sie ein Update der OpenCCU Version durchf%FChren wollen, so k%F6nnen Sie dies im Kontext ihrer eingesetzten Virtualisierungsl%F6sung (HomeAssistant, Docker, LXC, etc.) durchf%FChren. Bitte konsultieren Sie hierzu die entsprechende OpenCCU Dokumentation.",
     "dialogSettingsCMLblPerformSoftwareUpdateStep1" : "Schritt 1: Neue Software herunterladen",
     "dialogSettingsCMLblPerformSoftwareUpdateStep2" : "Schritt 2: Heruntergeladene Software ausw%E4hlen",
     "dialogSettingsCMLblPerformSoftwareUpdateStep3" : "Schritt 3: Software auf " + HMIdentifier.de.CCUShortName + " laden",
@@ -526,6 +527,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsCMHintSoftwareUpdate3" : "F%FChren Sie vor dem Update eine Datensicherung durch.",
     "dialogSettingsCMHintSoftwareUpdate4a" : "Der Ladezustand der Batterien betr%E4gt nur noch ",
     "dialogSettingsCMHintSoftwareUpdate4b" : "Um einem Datenverlust durch Ausfall der Stromversorgung vorzubeugen, empfehlen wir, die Batterien vor dem Update zu erneuern.",
+    "dialogSettingsCMHintSoftwareUpdateOpenCCU" : "OpenCCU ist ein freies, nicht kommerzielles und gemeinschaftlich entwickeltes OpenSource Projekt. Wenn Sie sich gerne an der Weiterentwicklung beteiligen oder es auf anderem Wege gerne unterst%FCtzen wollen so schauen Sie doch einmal auf unserer <a href='https://github.com/openccu'>Projekt Homepage</a> vorbei.",
     "dialogSettingsCMHintRestart" : "Zentrale neu starten. Ver%E4nderte Einstellungen werden vorher gespeichert.",
     "dialogSettingsCMHintShutdown" : "Zentrale herunterfahren. Ver%E4nderte Einstellungen werden vorher gespeichert.",
     "dialogSettingsCMHintRestartSafeMode" : "Homematic Zentrale einmalig im abgesicherten Modus starten. Im abgesicherten Modus wird die installierte Zusatzsoftware nicht gestartet. Ver%E4nderte Einstellungen werden vorher gespeichert.",

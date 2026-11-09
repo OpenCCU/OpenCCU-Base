@@ -396,20 +396,21 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
               }
-              table_data {
-                puts "$cur_version"
+              table_data {align="left"} {
+                puts "$cur_version&nbsp;([get_platform])"
               }
             }
             table_row {
               table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
               }
-              table_data {id="availableSWVersion"} {
+              table_data {align="left"} {id="availableSWVersion"} {
                 # This doesn�t work properly
                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
@@ -428,7 +429,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
-                        division {class="CLASS20905"}  "onClick=\"showCCULicense(true);\"" {puts "\${btnDirectFwUpload}"}
+                        division {class="CLASS20910"} {id="btnFwDirectDownload2"} "onClick=\"performDirectDownload();\"" {puts "\${btnDirectFwUpload}"}
                       }
                     }
                   }
@@ -452,7 +453,7 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
                   division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                 }
               }
             }
@@ -493,30 +494,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
+            }
           }
         }
-        table_data {align="left"} {class="CLASS20921"} {
-          puts "\${dialogSettingsCMHintSoftwareUpdate1}"
-          number_list {class="j_noForcedUpdate"} {
-            li {
-              ${dialogSettingsCMHintSoftwareUpdate2}            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3}
-            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3a}
-            }
-            set bat_level [get_bat_level]
-            if {$bat_level < 50} {
-              set msg " \${dialogSettingsCMHintSoftwareUpdate4a} $bat_level%. "
-              append msg  \${dialogSettingsCMHintSoftwareUpdate4b}
-              li $msg
-            }
-          }
-
-          division {class="j_forcedUpdate" style="padding:10px;"} {
-            puts "<br/>\${dialogSettingsCMHintSoftwareUpdate2}"
-          }
+        table_data {align="center"} {class="CLASS20921"} {
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {

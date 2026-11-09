@@ -2234,11 +2234,11 @@ StartFlashing = function()
       {
         if( $("headerLogo").src.indexOf("_red") >= 0 )
         {
-          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small.png";
         }
         else
         {
-          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
         }
       }
     },

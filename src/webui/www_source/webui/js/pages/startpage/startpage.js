@@ -79,16 +79,16 @@ StartPage = Singleton.create(Page, {
 
    // WebUI-Version
   showCurrentFirmware: function() {
-    //jQuery("#currentFirmware").text(WEBUI_VERSION);
+    jQuery("#currentFirmware").text(WEBUI_VERSION);
 
-    homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
-      if (result != null) {
-        WEBUI_VERSION = result.firmware;
-      } else {
-        WEBUI_VERSION = "0.0.0";
-      }
-      jQuery("#currentFirmware").text(WEBUI_VERSION);
-    });
+    //homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
+    //  if (result != null) {
+    //    WEBUI_VERSION = result.firmware;
+    //  } else {
+    //    WEBUI_VERSION = "0.0.0";
+    //  }
+    //  jQuery("#currentFirmware").text(WEBUI_VERSION);
+    //});
   },
 
   /*evalVersionAGreaterThanB: function(a, b) {
