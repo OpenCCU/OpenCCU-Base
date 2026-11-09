@@ -34,6 +34,14 @@ or extended in it.
   search, and Tab and Shift-Tab insert or remove spaces at the cursor
   instead of always indenting the whole line (OpenCCU patch 0046).
   ([#340](https://github.com/OpenCCU/OpenCCU-Base/pull/340), @jens-maus)
+* deleting the last action of the terminal "else" branch of a program no
+  longer leaves an empty "else" rule behind in the program. The same
+  applies when "stop all running delays" is ticked in the empty "else"
+  branch and cleared again. The program editor then shows the empty "else"
+  placeholder again.
+  ([#303](https://github.com/OpenCCU/OpenCCU-Base/pull/303), fixes
+  [OpenCCU/OpenCCU#2968](https://github.com/OpenCCU/OpenCCU/issues/2968),
+  @MichaelN0815)
 * `hm_startup` no longer tries to name an object it failed to create while
   creating the default rooms and functions of an empty CCU, which caused a
   script error in ReGa; it continues with the next object as before.
