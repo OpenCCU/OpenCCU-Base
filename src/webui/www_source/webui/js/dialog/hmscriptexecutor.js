@@ -147,7 +147,12 @@ HMScriptExecutor = Class.create({
       postBody: ReGa.encode(pb),
       onComplete: function(t)
       {
-        if( iseStripAll(t.responseText).length == 0 )
+        // only run the script that passed a completed syntax check
+        if( t.status < 200 || t.status >= 300 )
+        {
+          _this_.m_output.setValue(translateKey("lblError") + ": HTTP " + t.status);
+        }
+        else if( iseStripAll(t.responseText).length == 0 )
         {
           homematic("ReGa.runScript", {script: code}, function(response, error)
           {

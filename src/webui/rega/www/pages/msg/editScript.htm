@@ -138,28 +138,33 @@
       onComplete: function(t)
       {
         conInfo( "EditScript: CheckSyntax returned: ["+iseStripAll(t.responseText)+"]" );
-        if( iseStripAll(t.responseText).length == 0 )
+        // only run the script that passed a completed syntax check
+        if( t.status < 200 || t.status >= 300 )
         {
-          homematic("ReGa.runScript", {"script": editor_code.getValue()}, function(response, error)
-              {
-                if (error === null)
-                {
-                  editor_output.setValue(response);
-                }
-                else
-                {
-                  editor_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
-                }
-              });
+          editor_output.setValue(translateKey("lblError") + ": HTTP " + t.status);
+        }
+        else if( iseStripAll(t.responseText).length == 0 )
+        {
+          homematic("ReGa.runScript", {"script": code}, function(response, error)
+          {
+            if (error === null)
+            {
+              editor_output.setValue(response);
+            }
+            else
+            {
+              editor_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
+            }
+          });
         }
         else
         {
           editor_output.setValue(t.responseText);
+        }
       }
-    }
-  }
+    };
     new Ajax.Request(url,opt);
-}
+  }
   SaveScript = function()
   {
     dlgResult = editor_code.getValue();
@@ -183,7 +188,11 @@
       onComplete: function(t)
       {
         conInfo( "EditScript: CheckSyntax returned: ["+iseStripAll(t.responseText)+"]" );
-        if( iseStripAll(t.responseText).length == 0 )
+        if( t.status < 200 || t.status >= 300 )
+        {
+          editor_output.setValue(translateKey("lblError") + ": HTTP " + t.status);
+        }
+        else if( iseStripAll(t.responseText).length == 0 )
         {
           editor_output.setValue(translateKey("lblNoError"));
         }
