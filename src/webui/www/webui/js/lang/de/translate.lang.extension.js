@@ -1101,6 +1101,9 @@ jQuery.extend(true,langJSON, {
       "Bei einem Wechsel des Sensors werden die bisher erfassten Verbrauchswerte (heute, gestern usw.) zur%FCck auf 0 gesetzt.<br/><br/>" +
       "Sollten Sie die Sensorsuche ohne angeschlossenen Sensor gestartet haben, schlie%DFen Sie einen Sensor an und f%FChren Sie einen Werksreset des Energiemessger%E4ts durch.<br/><br/>" ,
 
+    "lblSysVarMoveUp" : "Nach oben verschieben",
+    "lblSysVarMoveDown" : "Nach unten verschieben",
+
     "theEnd" : ""
   }
 });

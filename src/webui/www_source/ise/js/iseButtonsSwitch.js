@@ -219,6 +219,10 @@ iseButtonProg.prototype = {
     // Add event handlers
     this.clickStart = this.onClickStart.bindAsEventListener(this);
     Event.observe(this.startBtn, 'mousedown', this.clickStart);
+    // Keyboard operation: Enter and Space press the button like the mouse
+    this.startBtn.setAttribute('role', 'button');
+    this.startBtn.setAttribute('tabindex', '0');
+    this.startBtn.setAttribute('data-keyevent', 'mousedown');
   },
   
   onClickStart: function() 

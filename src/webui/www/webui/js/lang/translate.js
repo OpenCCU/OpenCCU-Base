@@ -60,6 +60,11 @@ function setTextContent(cont, callback) {
       } catch(e) {}
     });
 
+  // Labels of elements without visible text (see applyAriaKeys in functions.js)
+  if (typeof applyAriaKeys == "function") {
+    try { applyAriaKeys(container); } catch(e) {}
+  }
+
   if (callback) {
     callback();
   }

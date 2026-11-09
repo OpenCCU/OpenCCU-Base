@@ -1384,14 +1384,14 @@ function ::writeProgCtrl()
   integer uid = system.GetSessionVar("sessionUserID");
   object oUser = dom.GetObject(uid);
   if(oUser.UserLevel() == iulAdmin) {
-    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' onclick='isePrograms.SetActive("#pid#",!" #objProg.Active() # ")'>");
+    Write("<table class='"#sClass#" CLASS02102' id='"#pid#"Act' role='button' tabindex='0' onclick='isePrograms.SetActive("#pid#",!" #objProg.Active() # ")'>");
   } else {
     Write("<table class='"#sClass#" CLASS02102' style='cursor: default; border-top: solid 1px black; border-right: solid 1px black;' id='"#pid#"Act' >");
   }
     Write("<tr>");
     Write("<td  class='CLASS02103'>");
         Write("<div align='center'>");
-          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' />");
+          Write("<img src='/ise/img/cogs3.png' width='80' height='75' style='mix-blend-mode:multiply;' alt='' />");
         Write("</div>");
       Write("</td>");
     Write("</tr>");
@@ -1529,8 +1529,8 @@ function ::BuildUserSvTable() {
           if (system.GetVar("userId") != 0) {
             !WriteLine("<table class='CLASS02108'>");                                                                                        
             WriteLine("<table>");                                                                                        
-              WriteLine("<tr><td class='tSysvarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
-              WriteLine("<tr><td class='tSysvarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
+              WriteLine("<tr><td class='tSysvarMoveUp' role='button' tabindex='0' data-aria-key='lblSysVarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
+              WriteLine("<tr><td class='tSysvarMoveDown' role='button' tabindex='0' data-aria-key='lblSysVarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
             WriteLine("</table>");
           }
         WriteLine("</td>");  
