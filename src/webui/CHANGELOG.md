@@ -15,6 +15,13 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the values of the system variables shown on the start page keep only
+  simple text formatting (`br`, `b`, `strong`, `i`, `em`, `u`, `s`,
+  `small`, `sub`, `sup`, and `span` and `font` with a color). Other markup,
+  attributes and event handlers are removed, both when the start page is
+  loaded and in its periodic updates, so a value set by one user can no
+  longer run scripts in the browser of another user
+  ([#348](https://github.com/OpenCCU/OpenCCU-Base/pull/348), @jens-maus)
 * the WebUI is branded as OpenCCU: the OpenCCU logos (installed to
   `www/ise/img/occu-logo*.png`) replace the Homematic logos in the header,
   on the login and logout pages, the help pages, the error pages and while
