@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* `hm_startup` no longer tries to name an object it failed to create while
+  creating the default rooms and functions of an empty CCU, which caused a
+  script error in ReGa; it continues with the next object as before.
+  ([#339](https://github.com/OpenCCU/OpenCCU-Base/pull/339), @jens-maus)
 * the size of the WebUI follows the browser window with CSS instead of
   JavaScript: the header, menu bar and footer have fixed heights, the
   content area takes the remaining height and scrolls by itself, and the

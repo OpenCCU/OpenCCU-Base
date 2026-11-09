@@ -109,6 +109,9 @@ proc create_objects {collection enum_type names} {
       set id $r(new_id)
       if { $id < 0 } {
         puts "Error creating object"
+        # do not name a missing object, continue with the next one
+        incr i
+        continue
       }
     }
 
