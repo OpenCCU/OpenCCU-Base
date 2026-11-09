@@ -50,14 +50,17 @@ proc execCmd {varName cmd} {
   }
 }
 
-# & is kept, as values such as the temperature carry HTML entities (&deg;)
 proc html_escape {s} {
-  return [string map {< &lt; > &gt; \" &quot; ' &#39;} $s]
+  return [string map {& &amp; < &lt; > &gt; \" &quot; ' &#39;} $s]
 }
 
-proc putsVar {name value} {
+# unit: HTML appended to a known value (e.g. "&nbsp;&deg;C")
+proc putsVar {name value {unit ""}} {
   set ename  [html_escape $name]
   set evalue [html_escape $value]
+  if {$value != "n/a"} {
+    append evalue $unit
+  }
   puts "<div style='display: table-row;'><div style='display:table-cell; width: 50%; text-align: right;'>$ename:</div><div style='display:table-cell; width: 50%; text-align: left;'>$evalue</div></div>"
 }
 
@@ -138,7 +141,7 @@ proc action_put_page {} {
   set TCLVER [info patchlevel]
   execCmd JAVAVER {exec 2>@stdout /opt/java/bin/java -version | head -1 | cut -d\" -f2}
   execCmd NODEVER {exec /usr/bin/node -v}
-  execCmd TEMP {exec awk {{ printf("%.1f &deg;C", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
+  execCmd TEMP {exec awk {{ printf("%.1f", $1/1000) }} /sys/class/thermal/thermal_zone0/temp}
 
   set STATUS ""
   foreach {label path} {
@@ -237,14 +240,14 @@ proc action_put_page {} {
         puts "<div style='display: table; width: 100%;'>"
           putsVar "OS Type (Kernel)" "$OSTYPE ($OSKERNEL)"
           putsVar "Uptime" $UPTIME
-          if {$CPUSCALMHZ != "" && $CPUSCALMHZ != "n/a"} {
+          if {$CPUMHZ != "0" && $CPUMHZ != "n/a" && $CPUSCALMHZ != "" && $CPUSCALMHZ != "n/a"} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz ($CPUSCALMHZ)"
           } elseif {$CPUMHZ != "0" && $CPUMHZ != "n/a"} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz"
           } else {
             putsVar "Load Average" "$LOADAVG"
           }
-          putsVar "System Temperature" $TEMP
+          putsVar "System Temperature" $TEMP "&nbsp;&deg;C"
           putsVar "Memory, Swap Utilization" "$MEMUSE, $SWAPUSE"
           putsVar "NTP Offset (Server)" "$NTPOFFSET ($NTPSERVER)"
           putsVar "rootfs Free Space" "$ROOTFSFREE / $ROOTFSTOTAL"

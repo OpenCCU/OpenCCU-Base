@@ -45,9 +45,9 @@ or extended in it.
   be determined, and the help page shows "n/a" for values missing from
   `/var/hm_mode`, `/VERSION` or `/etc/config/netconfig` instead of failing,
   and uses the board serial number when the Homematic IP radio module
-  reports none. The help page also escapes `<`, `>` and quotes in the shown
-  values correctly (the patch produced `<lt;`) and leaves out an unknown CPU
-  speed, the UPnP description no longer fails for a host name consisting
+  reports none. The help page also escapes `&`, `<`, `>` and quotes in the
+  shown values correctly (the patch produced `<lt;`) and leaves out an
+  unknown CPU speed, the UPnP description no longer fails for a host name consisting
   only of hexadecimal letters (for example `cafe`), which it ran as a Tcl
   command, and the direct download reads only the `PLATFORM=` line of
   `/VERSION`.
