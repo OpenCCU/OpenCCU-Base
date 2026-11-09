@@ -833,6 +833,7 @@ proc action_put_page {} {
                       puts "."
                       cgi_text year=$year {size="4"} {maxlength="4"} {id="text_year"}
                     }
+                    if {[get_platform] != "oci" && [get_platform] != "lxc"} {
                     table_data {align="left"} {
                       division {class="popupControls CLASS21506"} {
                         division {class="CLASS21507"} {onClick="apply_time()"} {
@@ -841,7 +842,9 @@ proc action_put_page {} {
                         }
                       }
                     }
+                    }
                   }
+                  if {[get_platform] != "oci" && [get_platform] != "lxc"} {
                   table_row {
                     table_data {colspan="2"} {}
                     table_data {align="left"} {class="CLASS21510"} {
@@ -853,12 +856,14 @@ proc action_put_page {} {
                       }
                     }
                   }
+                  }
                 }
               }
             }
           }
         }
       }
+      if {[get_platform] != "oci" && [get_platform] != "lxc"} {
       table_row {class="CLASS21502"} {
         table_data {class="CLASS21503"} {
           #puts "NTP-Server"
@@ -891,6 +896,7 @@ proc action_put_page {} {
             }
           }
         }
+      }
       }
       set country ""
       foreach location $LOCATIONS {
@@ -1328,6 +1334,8 @@ proc set_location_config {country city lat lon timezone} {
   puts $fd "$TIMEZONES($timezone)"
   close $fd
   
+  catch {exec /bin/updateTZ.sh}
+
   rega_script "var x=system.Longitude($lon);var y=system.Latitude($lat);var a=dom.ChangedTimeManually();"
   
   catch {exec /sbin/hwclock -wu}

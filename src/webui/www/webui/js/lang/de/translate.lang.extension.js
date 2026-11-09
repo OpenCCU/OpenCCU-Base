@@ -844,7 +844,7 @@ jQuery.extend(true,langJSON, {
     "btnGarageClose" : "Schlie%DFen",
     "btnGarageVent" : "L%FCften",
     "btnGarageStop" : "Stopp",
-    "dialogSettingsUSBStorageSettings" : "Externer USB-Speicher",
+    "dialogSettingsUSBStorageSettings" : "Externer Speicher",
     "dialogSettingsStorageHintUSBStorageP1" : "Die Sicherung der Daten umfasst nur die Diagramme.",
     "dialogSettingsSecurityTDAuth" : "Authentifizierung",
     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentifizierung aktiv: ",
