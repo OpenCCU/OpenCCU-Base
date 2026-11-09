@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* when the location is transferred to the Homematic IP devices (time and
+  position settings), a message now lists the devices whose update failed;
+  before, only a failed lookup of the position data was reported.
+  ([#345](https://github.com/OpenCCU/OpenCCU-Base/pull/345), @jens-maus)
 * the WebUI is branded as OpenCCU: the OpenCCU logos (installed to
   `www/ise/img/occu-logo*.png`) replace the Homematic logos in the header,
   on the login and logout pages, the help pages, the error pages and while

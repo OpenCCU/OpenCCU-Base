@@ -3919,6 +3919,9 @@ setPositionAllDevices = function() {
       utcOffset = posData[2].split(":")[1],
       utcOffsetDST = posData[3].split(":")[1];
 
+    // Collect the requests first, so the result can be reported once all of
+    // them have answered.
+    var requests = [];
     jQuery.each(DeviceList.devices, function (index, device) {
       var iFace = device.interfaceName;
       if ((iFace.toLowerCase() == "hmip-rf") && (device.typeName.toLowerCase() != "hmip-rcv-50") && (device.typeName.toLowerCase() != "hmip-dld") && (device.typeName.toLowerCase() != "hmip-dld-a") && (device.typeName.toLowerCase() != "hmip-dld-s") ) {
@@ -3927,38 +3930,60 @@ setPositionAllDevices = function() {
           if (channel.channelType.indexOf("_WEEK_PROFILE") != -1) {
             conInfo("Set utcOffsets+position of this device: " + channel.address.split(":")[0] + ":0 - lon: " + lon + " - lat: " + lat + " - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
 
-            homematic("Interface.putParamset", {
-              'interface': iFace,
-              'address': channel.address.split(":")[0] + ":0",
-              'paramsetKey': 'MASTER',
-              'set':
-                [
-                  {name: 'LONGITUDE', type: 'double', value: lon},
-                  {name: 'LATITUDE', type: 'double', value: lat},
-                  {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
-                  {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
-                ]
-            }, function (result) {
-              conInfo(result);
+            requests.push({
+              device: device,
+              params: {
+                'interface': iFace,
+                'address': channel.address.split(":")[0] + ":0",
+                'paramsetKey': 'MASTER',
+                'set':
+                  [
+                    {name: 'LONGITUDE', type: 'double', value: lon},
+                    {name: 'LATITUDE', type: 'double', value: lat},
+                    {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
+                    {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
+                  ]
+              }
             });
           } else if (channel.channelType == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
             conInfo("Set utcOffsets of this device: " + channel.address.split(":")[0] + ":0 - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
 
-            homematic("Interface.putParamset", {
-              'interface': iFace,
-              'address': channel.address.split(":")[0] + ":0",
-              'paramsetKey': 'MASTER',
-              'set':
-                [
-                  {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
-                  {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
-                ]
-            }, function (result) {
-              conInfo(result);
+            requests.push({
+              device: device,
+              params: {
+                'interface': iFace,
+                'address': channel.address.split(":")[0] + ":0",
+                'paramsetKey': 'MASTER',
+                'set':
+                  [
+                    {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
+                    {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
+                  ]
+              }
             });
           }
         });
       }
+    });
+
+    // Report the devices whose update failed, once every request answered.
+    var pending = requests.length;
+    var failedDevices = [];
+    jQuery.each(requests, function (index, request) {
+      homematic("Interface.putParamset", request.params, function (result, error) {
+        conInfo(result);
+        if (result !== true) {
+          var label = String(request.device.name) + " (" + request.params.address.split(":")[0] + ")";
+          if (jQuery.inArray(label, failedDevices) == -1) {
+            failedDevices.push(label);
+          }
+          conInfo("Interface.putParamset failed for " + request.params.address + ": " + ((error && error.message) || ""));
+        }
+        pending--;
+        if ((pending == 0) && (failedDevices.length > 0)) {
+          MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionSomeDevicesFailure") + "<br/><br/>" + jQuery.map(failedDevices, function (label) { return label.escapeHTML(); }).join("<br/>"));
+        }
+      });
     });
   });
   } else {

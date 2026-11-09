@@ -960,6 +960,8 @@ jQuery.extend(true,langJSON, {
          "Die Standortdaten der entsprechenden HmIP-Ger%E4te werden angepasst.",
      "dialogSettingsTimePositionMessageSetPositionDevicesFailure" :
        "Die Positionsangabe wurde gespeichert, konnte aber nicht auf die HmIP-Ger%E4te %FCbertragen werden: ",
+     "dialogSettingsTimePositionMessageSetPositionSomeDevicesFailure" :
+       "Die Positionsangabe wurde gespeichert, konnte aber nicht auf alle HmIP-Ger%E4te %FCbertragen werden. Betroffene Ger%E4te:",
      "PowerMeterProtocolModeModeOptionSML" : "SML-Protokoll",
      "btnChooseSongs"  : "Titelauswahl",
      "drapFwNotCompatWithCCUFW" : "Die Accesspoint-Firmware ist nicht kompatibel mit der CCU.\n\nBitte aktualisieren Sie Ihre CCU!",
