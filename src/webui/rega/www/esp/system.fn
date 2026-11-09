@@ -472,6 +472,9 @@ function ::UpdateUI()
       sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
       sSysVarVal = sSysVarVal.Replace("`", "\\`");
       sSysVarVal = sSysVarVal.Replace("${", "\\${");
+      ! the response is a script element, which a closing script tag in the
+      ! value would end early, so every less-than sign is written as \x3C
+      sSysVarVal = sSysVarVal.Replace("<", "\\x3C");
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
       ! use javascript string literal char (`) to ensure proper char escaping;
       ! the value may contain HTML, of which only simple text formatting is kept
