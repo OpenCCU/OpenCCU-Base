@@ -2,11 +2,6 @@
   --btnGradient: linear-gradient(to bottom, #ffffff, #a1a1a1);
 }
 
-* {
-	font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif ! important;
-	font-size: 12px ! important;
-}
-
 .j_translate, .j_startPage
 {
     display: none;
@@ -514,7 +509,6 @@ a img {
   border: solid 1px $_(black); /* black */
   cursor: pointer;
   border-radius: 5px;
-  font-size: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
 }

@@ -15,6 +15,25 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the script editor of programs and the "Execute script" dialog use
+  CodeMirror 6 with syntax highlighting of HomeMatic script, line numbers,
+  code folding, bracket matching, search and autocompletion; both dialogs
+  take 80% of the browser window. The script editor of programs got a button
+  to run the script, and both run a script only after its syntax check
+  passed and show the syntax errors otherwise. The global font rule
+  `* { font-size: 12px !important }` is replaced by rules for `body` and the
+  form elements, so the editor can use its own fonts. The CodeMirror bundle
+  is installed to `www/webui/js/extern/codemirror6`; it is built with
+  `scripts/update-codemirror.sh` from `scripts/codemirror6`, which the new
+  "Update CodeMirror" workflow runs weekly to propose updates. Compared to
+  the patch, both dialogs show the error of a failed script again, run
+  exactly the checked script and not one whose syntax check failed to
+  complete, the bundle is rebuilt from the current CodeMirror packages, the
+  editor has a single border, and the key bindings of the editor work: Esc
+  leaves the full screen mode (F11), Ctrl-Q folds a block, Alt-F opens the
+  search, and Tab and Shift-Tab insert or remove spaces at the cursor
+  instead of always indenting the whole line (OpenCCU patch 0046).
+  ([#340](https://github.com/OpenCCU/OpenCCU-Base/pull/340), @jens-maus)
 * deleting the last action of the terminal "else" branch of a program no
   longer leaves an empty "else" rule behind in the program. The same
   applies when "stop all running delays" is ticked in the empty "else"

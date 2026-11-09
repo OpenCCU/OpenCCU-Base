@@ -48,7 +48,13 @@ UI.Text = Class.create(UI.Component, {
     Element.setStyle(this.m_element, {"textAlign": alignment});
     return this;
   },
-  
+
+  setStyle: function(style)
+  {
+    Element.setStyle(this.m_element, style);
+    return this;
+  },
+
   /**
    * Setzt die Breite des Labels.
    * Neben numerischen Angaben ist auch der Wert "auto" erlaubt.
@@ -69,7 +75,13 @@ UI.Text = Class.create(UI.Component, {
     if (height != "auto") { height = parseInt(height) + "px"; }
     Element.setStyle(this.m_element, { height    : height });
     return this;
-  }
+  },
+
+  setClass: function(name)
+  {
+    this.m_element.className = name;
+    return this;
+  },
 });
  
 /**
