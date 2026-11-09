@@ -24,7 +24,7 @@ function ::CreateDisplay()
     object o1 = dom.GetObject( s1 );
     if( o1 )
     {
-      WriteLine( '<script>conInfo("GOT OBJECT ['#o1.Name()#']");</script>' );
+      WriteLine( '<script>conInfo("GOT OBJECT ['#o1.Name().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#']");</script>' );
     }
   }
   if( system.GetVar("iStatusOnly") == 1 )

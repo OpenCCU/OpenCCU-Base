@@ -56,7 +56,7 @@
                   }
                   integer iLength = 14;
                   Call("/esp/datapointconfigurator.fn::StringCut()");
-                  Write('<td class="CLASS05904"><div style="line-height:' # lineHeight # ';" class="CLASS05905" onclick="WebUI.enter(ControlFavoritePage, '#oFav.ID()#');">'#sName#'</div></td>');
+                  Write('<td class="CLASS05904"><div style="line-height:' # lineHeight # ';" class="CLASS05905" onclick="WebUI.enter(ControlFavoritePage, '#oFav.ID()#');">'#sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</div></td>');
                   Write('<td class="CLASS05906">'#sInfo#'</td>');
                 Write('</tr>');
                 Write('<tr>');

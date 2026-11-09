@@ -26,7 +26,7 @@
   if( obj )
   {
     string sName = obj.Name();
-    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName#']");' );
+    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#']");' );
   }
   
 
@@ -36,8 +36,7 @@
     WriteLine('conInfo("ID_FAVORITES ok");');
   }
   %>
-  //setPath("<span>Status und Bedienung</span> &gt; Favoriten &gt; <% Write(sName ); %>");
-  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName);%>');
+  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n"));%>');
   setPath(path);
 </script>
 
@@ -69,17 +68,17 @@
     {
       WriteLine('<div class="CLASS05800">');
       WriteLine('<div id="loadingGif"><img style="margin: 30px;" src="/ise/img/loading.gif" /></div>');
-      WriteLine('<table id="tblfav" align="center" cellpadding="0" cellspacing="10" class="hidden">');
+      WriteLine('<table id="tblfavViewer" align="center" cellpadding="0" cellspacing="10" class="hidden">');
     }
     else
     {
       WriteLine('<div class="CLASS05801">');
       WriteLine('<div id="loadingGif"><img style="margin: 30px;" src="/ise/img/loading.gif" /></div>');
-      WriteLine('<table id="tblfav" cellpadding="0" cellspacing="10" class="hidden">');
+      WriteLine('<table id="tblfavViewer" cellpadding="0" cellspacing="10" class="hidden">');
     }
 
     WriteLine('<colgroup>');
-    WriteLine('<col colspan="' # iFavColumnCount # '" width="' # FAV_COLWIDTH # '" />');
+    WriteLine('<col colspan="' # iFavColumnCount # '" />');
     WriteLine('</colgroup>');  
     WriteLine('<tr>');  
 
@@ -273,6 +272,6 @@
   setFooter(s);
   translatePage();
   jQuery("#loadingGif").hide();
-  jQuery("#tblfav").show();
+  jQuery("#tblfavViewer").show();
 </script>
 

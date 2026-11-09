@@ -21,42 +21,8 @@ WebUI = Singleton.create({
     this.currentPageOptions  = null;    // Argumente der aktuellen Seite
     this.previousPage        = null;    // Vorherige Seite
     this.previousPageOptions = null;    // Argumente der vorherigen Seite
-    this.onResizeHandler     = null;    // EventHandler: onResize
-
-    this.onResizeHandler = this.onResize.bindAsEventListener(this);
-    Event.observe(window, "resize", this.onResizeHandler);
   },  
   
-  /**
-   * Ereignis. Wird bei der Änderung der Fenstergröße aufgerufen.
-   * Passt die Steuerelemente entsprechend der Änderung an.
-   */
-  onResize: function()
-  {
-    var height       = WebUI.getHeight();
-    var width        = WebUI.getWidth();
-    var bodyOverflow = "hidden";
-
-    if (width  < this.MIN_WIDTH)  { width  = this.MIN_WIDTH;  bodyOverflow = "auto"; }
-    if (height < this.MIN_HEIGHT) { height = this.MIN_HEIGHT; bodyOverflow = "auto"; }
-    var contentHeight = height - this.STATIC_HEIGHT;
-
-    if ($("body"))    { Element.setStyle("body", {"overflow": bodyOverflow, "width": width  + "px", "height": height + "px"}); }
-    if ($("header"))  { Element.setStyle("header" , {"height": this.HEADER_HEIGHT  + "px", "width": width + "px"}); }
-    if ($("menubar")) { Element.setStyle("menubar", {"height": this.MENUBAR_HEIGHT + "px", "width": width + "px"}); }
-    if ($("content")) { Element.setStyle("content", {"height": contentHeight       + "px", "width": width + "px"}); }
-    if ($("footer"))  { Element.setStyle("footer" , {"height": this.FOOTER_HEIGHT  + "px", "width": width + "px"}); }
-
-    if (this.currentPage) { this.currentPage.resize(); }
-
-    if(typeof dcTimeout == "undefined") {
-      dcTimeout = window.setTimeout(function () {
-        showDutyCycle();
-        delete dcTimeout;
-      }, 10);
-    }
-  },
-
   /*########################*/
   /*# Öffentliche Elemente #*/
   /*########################*/
@@ -256,8 +222,6 @@ WebUI = Singleton.create({
 
 
     if (result) {
-      WebUI.resize();
-
       if (!isFF) {
         jQuery(".Layer0").show();
         WebUI.enter(StartPage);
@@ -388,6 +352,11 @@ WebUI = Singleton.create({
             new MessageBox.show(translateKey("dglUserNewFwSettingsTitle"), translateKey("dglUserNewFwSettingsContent"));
             homematic("CCU.setUserAckInstallWizard");
           }
+
+          // open the systemLanguage config dialog if no systemLanguage was selected yet
+          if (homematic('CCU.getSystemLanguage') === 'none') {
+            CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+          }
         }
       }
     } else {
@@ -463,13 +432,6 @@ WebUI = Singleton.create({
       throw new Error("content not defined");
     }
   },
-  /**
-   * Ruft das onResize-Ereignis auf.
-   **/
-  resize: function()
-  {
-    this.onResize();
-  },
   
   /**
    * Lädt eine Seite.
@@ -486,6 +448,7 @@ WebUI = Singleton.create({
     this.currentPageOptions  = options;
     
     this.currentPage.enter(options);
+    window.name = 'ccu-main-window';
     window.setTimeout(() => {
       if(jQuery(':focus').length === 0) {
         jQuery('#content')[0].focus();

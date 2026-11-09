@@ -10,7 +10,8 @@ version and date with the next version bump (`version.sh`).
 
 * first version with a version string (`version.sh`): `-v` / `--version`
   prints it together with the version of libelvutils. hs485dLoader no longer
-  links libxmlparser, which it does not use. [#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294)
+  links libxmlparser, which it does not use.
+  ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294), @jens-maus)
 
 ## Older versions
 

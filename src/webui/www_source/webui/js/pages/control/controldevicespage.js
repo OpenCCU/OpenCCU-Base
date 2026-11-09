@@ -12,8 +12,4 @@ ControlDevicesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

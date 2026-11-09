@@ -126,7 +126,7 @@
       object oCH = dom.GetObject( iCH );
       if( oCH )
       {
-      Write( ' <b class="CLASS02400" onclick="ShowDestinationChannelChooser2('#oSD.ID()#');">'#oCH.Name()#'</b> ' );
+      Write( ' <b class="CLASS02400" onclick="ShowDestinationChannelChooser2('#oSD.ID()#');">'#oCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</b> ' );
       }
       else
       {
@@ -139,7 +139,7 @@
       object oDP = dom.GetObject( iDP );
       if( oDP )
       {
-        Write( ' <b class="CLASS02400" onclick="ShowDestinationSysVarChooser('#oSD.ID()#');">'#oDP.Name()#'</b> ' );
+        Write( ' <b class="CLASS02400" onclick="ShowDestinationSysVarChooser('#oSD.ID()#');">'#oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</b> ' );
       }
       else
       {
@@ -271,7 +271,7 @@
                         }
                       }
                       Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                      Write( sValue );
+                      Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                       Write( '</option>' );
                     }
                   }
@@ -304,7 +304,7 @@
                     }
                   }
                   Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                  Write( sValue );
+                  Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                   Write( '</option>' );
                   if( (oDP.ID() == iDP) && (iV == 0) ) { sSelected = " selected"; } else { sSelected = ""; }
                   Write( '<option value="'#oDP.ID()#':0"'#sSelected#'>' );
@@ -324,7 +324,7 @@
                     }
                   }
                   Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                  Write( sValue );
+                  Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                   Write( '</option>' );
                 }
               }
@@ -341,7 +341,7 @@
                   ! Some parameter shouldn´t be visible - this is the new way to hide certain parameters
                   Call("/esp/functions.fn::destinationIsParameterVisible()");
                   if (showChannelParam == true) {
-                    Write( '<option value="'#oDP.ID()#':0|'#oDP.Name()#'"'#sSelected#'>' );
+                    Write( '<option value="'#oDP.ID()#':0|'#oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'"'#sSelected#'>' );
                     string sValue = oDP.Name();
                     if( (!oDP.IsTypeOf(OT_VARDP)) && (!oDP.IsTypeOf(OT_ALARMDP)) )
                     {
@@ -362,7 +362,7 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgDest()");
-                    Write( sValue );
+                    Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                     Write( '</option>' );
                   }
                 }
@@ -383,7 +383,7 @@
             {
               sValue = sKey;
             }
-            Write( sValue );
+            Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
             Write( '</option>' );
           }
         }
@@ -449,7 +449,7 @@
                 }
 
                 iV = iV.ToString(0);
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox alignCenter" size="10" value="'#iV#'" onfocus="Set_VIR_LG_WHITEController('#oSD.ID()#','#rMin#','#rMax#','#iV#');" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value);" /><span>'#sUnit#'</span>' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox alignCenter" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onfocus="Set_VIR_LG_WHITEController('#oSD.ID()#','#rMin#','#rMax#','#iV#');" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value);" /><span>'#sUnit#'</span>' );
                 Write( '<span id="setWhiteController'#oSD.ID()#'" class="CLASS02401" onclick="Set_VIR_LG_WHITEController('#oSD.ID()#','#rMin#','#rMax#','#iV#');"><img src="/ise/img/notepad.png" /></span>' );
             } else {
 
@@ -497,21 +497,21 @@
                   if ((oDP.HSSID().Find("CONTROL_MODE") != -1) || (oDP.HSSID().Find("SET_POINT_MODE") != -1)) {
                     ! The maximal valid value is 3, but 3 is reserved (AUTO,MANU,PARTY,RESERVED), so we restrict the maximal value to 2
                     ! Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox alignCenter" size="6" value="'#iV#'" onfocus="SetWTHControlMode('#oSD.ID()#',\''#oDP.HSSID()#'\');" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#',2);" />' );
-                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="CLASS02401 SelectBox alignCenter" size="6" value="'#iV#'" onfocus="SetWTHControlMode('#oSD.ID()#',\''#oDP.HSSID()#'\');" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');"/>' );
+                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="CLASS02401 SelectBox alignCenter" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onfocus="SetWTHControlMode('#oSD.ID()#',\''#oDP.HSSID()#'\');" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');"/>' );
                     Write('<span id="wthControlMode'#oSD.ID()#'" class="CLASS02401" onclick="SetWTHControlMode('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
 
                     showGenericElem = false;
                   }
 
                   if (showGenericElem) {
-                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                    Write( sUnit );
+                    Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
+                    Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                     Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
                   }
 
                 } else {
-                  Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#iV#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                  Write( sUnit );
+                  Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
+                  Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
 
                   ! Hide the notepad for e. g. HmIP-WSC
                   if ((oCH.HssType().Find(servoVirtualReceiver) == -1) || (oDP.HSSID().Find("RAMP_TIME") == -1)) {
@@ -590,7 +590,7 @@
                   ! This is the default string for 'all values not used'
                   iV = "0x02,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x03";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (statusDisplayEPaperDevice != -1) {
@@ -598,7 +598,7 @@
                   ! This is the default string for 'all values not used'
                   iV = "0x02,0x0A,0x0A,0x0A,0x0A,0x0A,0x14,0xC0,0x1C,0xD0,0x16,0x,0x1D,0xE0F0,0x03";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (ePaperAcousticDisplay != -1) {
@@ -606,7 +606,7 @@
                   ! This is the default string for 'all values not used'
                   iV = "{DDBC=WHITE,DDTC=BLACK,DDI=0,DDA=CENTER,DDS=Zeile 1,DDID=1},{DDBC=WHITE,DDTC=BLACK,DDI=0,DDA=CENTER,DDS=Zeile 2,DDID=2},{DDBC=WHITE,DDTC=BLACK,DDI=0,DDA=CENTER,DDS=Zeile 3,DDID=3},{DDBC=WHITE,DDTC=BLACK,DDI=0,DDA=CENTER,DDS=Zeile 4,DDID=4},{DDBC=WHITE,DDTC=BLACK,DDI=0,DDA=CENTER,DDS=Zeile 5,DDID=5}";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'ACOUSTIC_DIS-EP\');" type="text" class="SelectBox" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'ACOUSTIC_DIS-EP\');" type="text" class="SelectBox" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (rgbw_controller != -1) {
@@ -623,14 +623,14 @@
                     iV = "{'ACT_COLOR_PROGRAM_STORE':0,'ACT_BRIGHTNESS_STORE':200,'RAMP_TIME_STORE':0.5,'ON_TIME_STORE':0, 'ACT_MIN_BORDER_STORE':0, 'ACT_MAX_BORDER_STORE':199}";
                   }
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetRGBWController('#oSD.ID()#',\''#oDP.HSSID()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetRGBWController('#oSD.ID()#',\''#oDP.HSSID()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((jalousieActor != - 1) && (oDP.HSSID().Find("LEVEL_COMBINED") != -1)) {
                 if (iV == "0") {
                   iV = "0X00,0X00";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetJalousieActor('#oSD.ID()#',\''#oDP.HSSID()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetJalousieActor('#oSD.ID()#',\''#oDP.HSSID()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_vir_lg_rgb_dim != -1) && (oDP.HSSID().Find("RGB") != -1)) {
@@ -639,21 +639,21 @@
                   iV = "rgb(255, 255, 255)";
                 }
 
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="Set_VIR_LG_RGBWController('#oSD.ID()#',\'RGB\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="Set_VIR_LG_RGBWController('#oSD.ID()#',\'RGB\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (((i_vir_lg_rgbw_dim != -1) || ( i_vir_lg_group != -1)) && (oDP.HSSID().Find("RGBW") != -1)) {
                 if(iV.Find("rgb") == -1) {
                   iV = "rgb(255, 255, 255, 255)";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="Set_VIR_LG_RGBWController('#oSD.ID()#',\'RGBW\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="Set_VIR_LG_RGBWController('#oSD.ID()#',\'RGBW\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (((i_hmip_mp3p != -1) && (i_acousticSignalVirtualReceiver != -1)) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("SL=") == -1) {
                   iV = "L=100,DU=2,DV=31,RTU=0,RTV=0,R=0,SL=0";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setAcousticSignalController('#oSD.ID()#',\'COMBINED_PARAMETER\');;" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setAcousticSignalController('#oSD.ID()#',\'COMBINED_PARAMETER\');;" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_hmip_WeekProfile != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
@@ -666,7 +666,7 @@
                 if (iV.Find("WPTCL=") == -1) {
                   iV = " WPTCLS=0,WPTCL=2";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setHmIPWeeklyProgramController('#oSD.ID()#',\''#oCH.Address()#'\','#noExpertMode#');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setHmIPWeeklyProgramController('#oSD.ID()#',\''#oCH.Address()#'\','#noExpertMode#');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
 
               }
 
@@ -679,7 +679,7 @@
                     iV = "L=100,DV=31,DU=2,RTV=0, RTU=1,C=7";
                   }
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_universalLightReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
@@ -690,7 +690,7 @@
                   if (iV.Find("L=") == -1) {
                       iV = "L=100,OT=0,RT=0,H=0,SAT=100,RTTDV=0,RTTDU=0";
                   }
-                  Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setHmipRGBWController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="45" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                  Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setHmipRGBWController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="45" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
                 }
 
                 if (oMaintenance.MetaData("deviceMode") == 2) {
@@ -698,7 +698,7 @@
                       iV = "L=100,OT=0,RT=0,TC=4500,RTTDV=0,RTTDU=0";
                   }
                   ! Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setHmipRGBWTunableWhiteController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
-                  Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                  Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
 
                 }
               }
@@ -712,7 +712,7 @@
                     iV = "L=100,DV=31,DU=2,RTV=0, RTU=1,C=7";
                   }
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               ! HmIP-DRG-DALI
@@ -729,20 +729,20 @@
                    } else {iV = 0;}
                  }
 
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
              ! HmIP-LSC
              if ((oCH.Label().Find(hmip_lsc) != -1) && (i_universalLightReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                if (iV.Find("L=") == -1) {iV = "L=100,OT=0,RT=0,H=0,SAT=100";}
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDALI_CombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
              }
 
               if ((i_switchVirtualReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("S=") == -1) {
                   iV = "S=true";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setCombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\', \'switchState\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setCombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\', \'switchState\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
              if ((i_backLightingReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
@@ -760,35 +760,35 @@
                }
 
              !  Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setCombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\', \'switchState\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if (((i_blindVirtualReceiver != -1)) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("L=") == -1) {
                   iV = "L=100,L2=100";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setBlindLevelController('#oSD.ID()#',\'COMBINED_PARAMETER\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setBlindLevelController('#oSD.ID()#',\'COMBINED_PARAMETER\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_servoVirtualReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("L=") == -1) {
                   iV = "L=100,RT=0";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setDimmerLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="35" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_windowDriveReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("VL=") == -1) {
                   iV = "VL=1,OT=0";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWindowDriveReceiverLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWindowDriveReceiverLevelController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((i_weatherDisplayReceiver != -1) && (oDP.HSSID().Find("COMBINED_PARAMETER") != -1)) {
                 if (iV.Find("DDI=") == -1) {
                   iV = "DDI=0,DDS=Text";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWeatherDisplayReceiverController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setWeatherDisplayReceiverController('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\');" type="text" class="SelectBox CLASS00012" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               ! SPHM-767
@@ -802,11 +802,11 @@
                     iV = "IMKV=true,IMTL=1,IMDU=60";
                   }
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setCombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\', \'wiredDisplaySysKey\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="setCombinedParameter('#oSD.ID()#',\''#oCH.Label()#'\',\''#oCH.Address()#'\', \'wiredDisplaySysKey\');" type="text" class="SelectBox CLASS00012" size="20" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
             } else {
-              Write('<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox" size="10" value="'#iV#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" />' );
+              Write('<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" />' );
             }
 
             if((ouled16 == -1)
@@ -899,7 +899,7 @@
               object oCH = dom.GetObject( oDPTmp.Channel() );
               if( oCH )
               {
-                Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#oCH.Name()#'</span> ' );
+                Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#oCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</span> ' );
                 Write( ' <select onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value);" class="SelectBox">' );
                 boolean bFound = false;
                 integer iFirstID = ID_ERROR;
@@ -944,7 +944,7 @@
                             }
                           }
                         }
-                        Write( sValue );
+                        Write( sValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                         Write( '</option>' );
                       }
                     }
@@ -961,7 +961,7 @@
             Write( ' <i>mit</i> ' );
             object oDPTmp = dom.GetObject( iV );
             string sNameTmp = "";
-            if( oDPTmp ) { sNameTmp = oDPTmp.Name(); }
+            if( oDPTmp ) { sNameTmp = oDPTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"); }
             Write( ' <span class="CLASS02402" onclick="ChangeDestinationValue('#oSD.ID()#');">'#sNameTmp#'</span> ' );
             Write( ' <span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span> ' );
           }
@@ -981,28 +981,28 @@
           Write( ' <select class="SelectBox" onchange="SetSysVarDestValue('#oSD.ID()#',this.value);">' );
           if( iV == 1 ) { sSelected = "selected"; } else { sSelected = ""; }
           Write( '<option value="'#oDP.ID()#':1"'#sSelected#'>' );
-          Write( oDP.ValueName1() );
+          Write( oDP.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
           Write( '</option>' );
           if( iV == 0 ) { sSelected = "selected"; } else { sSelected = ""; }
           Write( '<option value="'#oDP.ID()#':0"'#sSelected#'>' );
-          Write( oDP.ValueName0() );
+          Write( oDP.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
           Write( '</option>' );
           Write( '</select> ' );
         }
         if (oDP.ValueSubType() == istChar8859)
         {
-          Write( ' <input type="text" class="SelectBox" size="32" value="'#oSD.DestinationValue().ToString()#'" onchange="SetSysVarDestStrValue('#oSD.ID()#',this.value);" /> ' );
-          Write( oDP.ValueUnit()#" " );
+          Write( ' <input type="text" class="SelectBox" size="32" value="'#oSD.DestinationValue().ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="SetSysVarDestStrValue('#oSD.ID()#',this.value);" /> ' );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
         }
         if( oDP.ValueSubType() == istGeneric )
         {
-          Write('<input id="dest'#oSD.ID()#'" type="hidden" class="SelectBox" size="6" value="'#oSD.DestinationValue().ToString(2)#'" onchange="SetSysVarDestValue('#oSD.ID()#' ,this.value,'#oDP.ValueMin()#' ,'#oDP.ValueMax()#', \''#oDP.ValueUnit()#'\', '#oDP.IsTypeOf( OT_VARDP )#');" /> ' );
+          Write('<input id="dest'#oSD.ID()#'" type="hidden" class="SelectBox" size="6" value="'#oSD.DestinationValue().ToString(2)#'" onchange="SetSysVarDestValue('#oSD.ID()#' ,this.value,'#oDP.ValueMin()#' ,'#oDP.ValueMax()#', \''#oDP.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\', '#oDP.IsTypeOf( OT_VARDP )#');" /> ' );
           real percVal = oSD.DestinationValue();
           if ((! oDP.IsTypeOf( OT_VARDP )) && (oDP.ValueUnit() == "%")) {
             percVal = oSD.DestinationValue() * 100;
           }
           Write( ' <input id="source'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#percVal.ToString(2)#'" onchange="ConvertValueToPercent('#oSD.ID()#');" /> ' );
-          Write( oDP.ValueUnit()#" " );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
           !Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
         }
         if( oDP.ValueSubType() == istEnum )
@@ -1019,7 +1019,7 @@
               string sSelected = "";
               if( iV == sVLKey.ToInteger() ) { sSelected = "selected"; } else { sSelected = ""; }
               Write( '<option value="'#oDP.ID()#':'#sVLKey#'"'#sSelected#'>' );
-              Write( sVLValue );
+              Write( sVLValue.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
               Write( '</option>' );
             }
           }

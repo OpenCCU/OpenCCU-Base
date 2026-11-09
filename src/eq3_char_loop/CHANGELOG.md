@@ -12,12 +12,13 @@ version and date with the next version bump (`MODULE_VERSION`).
   master) exits: they got attached to the next multimacd without it knowing,
   wrote into a buffer nobody read and could block for ever, even against
   SIGKILL. Such a connection now fails with `ENODEV`/`POLLHUP` until it is
-  opened again. [#112](https://github.com/OpenCCU/OpenCCU-Base/pull/112)
+  opened again.
+  ([#112](https://github.com/OpenCCU/OpenCCU-Base/pull/112), @jens-maus)
 
 ## 1.5 (2026-09-05)
 
 * update to version 1.5, including compatibility with Linux 6.
-  [#22](https://github.com/OpenCCU/OpenCCU-Base/pull/22)
+  ([#22](https://github.com/OpenCCU/OpenCCU-Base/pull/22), @jens-maus)
 
 ## Older versions
 

@@ -57,29 +57,29 @@
   
 </script>
 <div id="svOffset" style="display:none"></div>
-<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable filterTable" style="display:none">
+<table id="sysVars" cellspacing="0" cellpadding="0" class="tTable" style="display:none">
 <colgroup>
-  <col style="width:9%;"/>
-  <col style="width:18%;"/>
-  <col style="width:9%;"/>
-  <col style="width:18%;"/>
-  <col style="width:9%;"/>
-  <col style="width:9%;"/>
-  <col style="width:18%;"/>
-  <col style="width:10%;"/>
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:200px;" />
+  <col style="width:100px;" />
 </colgroup>
 <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th><div class="pt11 CLASS05200 <%Write(sCssName);%>" onclick="DivSort('name');">${thName}</div></th>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thName}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
-  <th><div class="pt11 CLASS05200 <%Write(sCssName);%>" onclick="DivSort('desc');">${thDescription}</div></th>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('desc');">${thDescription}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="type"){sCssName="SortSelected";} %>
-  <th><div class="pt11 CLASS05200 <%Write(sCssName);%>" onclick="DivSort('type');">${thTypeOfVariable}</div></th>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('type');">${thTypeOfVariable}</div></th>
   <th class="thCell">${thValues}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="unit"){sCssName="SortSelected";} %>
-  <th><div class="pt11 CLASS05200 <%Write(sCssName);%>" onclick="DivSort('unit');">${thUnit}</div></th>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('unit');">${thUnit}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="chn"){sCssName="SortSelected";} %>
-  <th><div class="pt11 CLASS05200 <%Write(sCssName);%>" onclick="DivSort('chn');">${thCannelMapping}</div></th>
+  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('chn');">${thCannelMapping}</div></th>
   <th class="thCell">${thAction}</th>
   <th class="thCell">${thLink}</th>
 </tr>
@@ -257,7 +257,7 @@
     
     Write("<td class='"#CellBkg#" CLASS05206' >");
       object svCH = dom.GetObject( sv.Channel() );
-      if( svCH ) { Write( svCH.Name() ); }
+      if( svCH ) { Write( svCH.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); }
     Write("</td>");
     
    
@@ -332,14 +332,14 @@
       Write("var tmp = new Object();");
       Write("tmp['trid'] = '"#sTrId#"';");
       Write("tmp['id'] = '"#sv.ID()#"';");
-      Write("tmp['unit'] = '"#sv.ValueUnit()#"';");
-      Write("tmp['name'] = '"#sv.Name()#"';");
-      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
+      Write("tmp['unit'] = '"#sv.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['name'] = '"#sv.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['desc'] = '"#sv.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C")#"';");
       Write("tmp['chn'] = '';");
       object obj = dom.GetObject( sv.Channel() );
       if( obj )
       {
-        Write("tmp['chn'] = '"#obj.Name()#"';");
+        Write("tmp['chn'] = '"#obj.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       }
       
       if (sv.ValueSubType() == istAlarm) { 

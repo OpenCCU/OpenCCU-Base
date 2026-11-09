@@ -10,6 +10,15 @@
 <body>-->
 <div id="GroupListBody" style="display: none">
 <table class="tTable"  border="0" cellpadding="0" cellspacing="0">
+    <colgroup>
+      <col />
+      <col />
+      <col />
+      <col />
+      <col />
+      <col />
+      <col style="width:100px;">
+    </colgroup>
     <thead>
     <tr data-bind="foreach: groupListHeaders">
         <td style="height: 40px" class="thCell CLASS04900 clickable" data-bind="click: $parent.sortGroupList, text: title, css: headerClass, attr: {colspan: colspan}"></td>

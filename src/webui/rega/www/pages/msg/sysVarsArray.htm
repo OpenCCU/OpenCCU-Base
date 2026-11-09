@@ -15,8 +15,8 @@
           Write("var tmp = new Object();");
           Write("tmp['id'] = '"#oSysVar.ID()#"';");
           Write("tmp['trid'] = 'svd"#oSysVar.ID()#"';");
-          Write("tmp['name'] = '"#oSysVar.Name()#"';");
-          Write("tmp['desc'] = '"#oSysVar.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
+          Write("tmp['name'] = '"#oSysVar.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+          Write("tmp['desc'] = '"#oSysVar.DPInfo().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C")#"';");
 
           ! "Set once when the system is starting for the first time by hm_autoconf - see create_sysvars
           ! The text of the description is then fix either german or english. Therefore we have to translate the value here
@@ -32,8 +32,8 @@
           {
             ! Set by hm_autoconf - create_sysvars
             ! Learn more above at the value tmp['desc']
-            Write("var vName0 = '"#oSysVar.ValueName0()#"';");
-            Write("var vName1 = '"#oSysVar.ValueName1()#"';");
+            Write("var vName0 = '"#oSysVar.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("var vName1 = '"#oSysVar.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
             Write("if(vName0 == 'nicht ausgelöst' || vName0 == 'not triggered') {vName0 = translateKey('lblNotTriggered');}");
             Write("if(vName1 == 'ausgelöst' || vName1 == 'triggered') {vName1 = translateKey('lblTriggered');}");
 
@@ -52,13 +52,13 @@
           { 
             Write("tmp['type'] = 'enum';");
             Write("tmp['typenames'] = translateKey('lblValueList');");
-            Write("tmp['values'] = '"#oSysVar.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ')#"';");
+            Write("tmp['values'] = '"#oSysVar.ValueList().Replace('\r\n', ' ').Replace('\r', ' ').Replace('\n', ' ').Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C")#"';");
           }
           if (iVST == istBool)
           { 
             Write("tmp['type'] = 'boolean';");
             Write("tmp['typenames'] = translateKey('lblLogicValue');");
-            Write("tmp['values'] = '"#oSysVar.ValueName0()#" / "#oSysVar.ValueName1()#"';");
+            Write("tmp['values'] = '"#oSysVar.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#" / "#oSysVar.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           }
           if (iVST == istChar8859)
           {
@@ -66,7 +66,7 @@
             Write("tmp['typenames'] = translateKey('lblString');");
             Write("tmp['values'] = '';");
           }
-          Write("tmp['unit'] = '"#oSysVar.ValueUnit()#"';");
+          Write("tmp['unit'] = '"#oSysVar.ValueUnit().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           Write("tmp['internal'] = '"#oSysVar.Internal()#"';");
           Write("arSysVars[arSysVars.length] = tmp;");
       }

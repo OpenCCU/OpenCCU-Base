@@ -10,8 +10,4 @@ userFirstStartup = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

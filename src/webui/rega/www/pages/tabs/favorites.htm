@@ -66,7 +66,7 @@
                   integer iLength = 14;
                   !Call("/esp/datapointconfigurator.fn::StringCut()");
                   !Write('<td class="CLASS05607"><div id="fav_'#oFav.ID()#'" class="CLASS05608" style="line-height:' # lineHeight # ';" onclick="WebUI.enter(ControlFavoritePage, '#oFav.ID()#');">'#sName#'</div></td>');
-                  Write('<td class="CLASS05607"><div id="fav_'#oFav.ID()#'" class="CLASS05608" onclick="WebUI.enter(ControlFavoritePage, '#oFav.ID()#');">'#sName#'</div></td>');
+                  Write('<td class="CLASS05607"><div id="fav_'#oFav.ID()#'" class="CLASS05608" onclick="WebUI.enter(ControlFavoritePage, '#oFav.ID()#');">'#sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</div></td>');
                   Write('<td class="CLASS05609">'#sInfo#'</td>');
                 Write('</tr>');
                 Write('<tr>');
@@ -88,8 +88,9 @@
             Write("var sName = translateString(jQuery('#'+elemID).text());");
             Write("if((sName.length > 20) && (sName.length <=28)) {lineHeight = 37;}");
             Write("if(sName.length > 28) {lineHeight = 26;}");
-            Write("sName = sName.replace(/(.{19})/g,'$1<br/>');");
-            Write("jQuery('#'+elemID).html(sName);");
+            ! Insert the name as text, with a line break after every 19 characters
+            Write("var oFavElem = jQuery('#'+elemID).empty();");
+            Write("for (var p = 0; p < sName.length; p += 19) { if (p) { oFavElem.append('<br/>'); } oFavElem.append(document.createTextNode(sName.substr(p, 19))); }");
             Write("jQuery('#'+elemID).css('line-height',lineHeight+'px');");
           Write("</script>");
         }

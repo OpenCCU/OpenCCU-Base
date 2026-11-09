@@ -12,8 +12,4 @@ SystemConfigPageUser = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

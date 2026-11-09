@@ -10,10 +10,10 @@ ControlPage = new function()
   
   this.leave = function()
   {
+    // open the systemLanguage config dialog if no systemLanguage was selected yet
+    if (homematic('CCU.getSystemLanguage') === 'none') {
+      CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+    }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

@@ -60,13 +60,11 @@ iseMessageBox.prototype =
       case ID_ROOMS:
         this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_FUNCTIONS: 
         this.setTitle( translateKey("dialogEditFunction") /*"Gewerk bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_TRANSFER_PARAMETERS:
@@ -96,14 +94,22 @@ iseMessageBox.prototype =
         this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
         this.addToPostBody( 'integer varid = 0;' );
         this.addToPostBody( 'integer createNew = 1;' );
-        this.setWidth(900);
+        this.setWidth(1100);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_EDIT_SYSVAR:
         this.setTitle( translateKey("dialogEditSysVar") /*"Systemvariable bearbeiten"*/ );
         this.addToPostBody( 'integer varid = '+this.type+';' );
         this.addToPostBody( 'integer createNew = 0;' );
-        this.setWidth(900);
+        this.setWidth(1100);
+        this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
+        break;
+      case ID_EDIT_SYSVAR_VALUE:
+        this.setTitle( translateKey("dialogEditSysVarValue") /*"Systemvariablenwert bearbeiten"*/ );
+        this.addToPostBody( 'integer varid = '+this.type+';' );
+        this.addToPostBody( 'integer createNew = 0;' );
+        this.addToPostBody( 'boolean editValueOnly = 1;' );
+        this.setWidth(240);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_CREATE_SCRIPT:
@@ -192,7 +198,12 @@ iseMessageBox.prototype =
         this.setWidth(800);
         this.setFile( "/pages/msg/autoLoginConfig.htm" );
         break;
-       case ID_CHOOSE_LED:
+      case ID_SYSTEM_LANGUAGE_CONFIG:
+        this.setTitle( translateKey("dialogConfigSystemLanguage") /*"Systemsprache waehlen - Konfiguration" */);
+        this.setWidth(800);
+        this.setFile( "/pages/msg/systemLanguageConfig.htm" );
+        break;
+        case ID_CHOOSE_LED:
         this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
         this.addToPostBody( 'string type = "'+this.type+'";' );
         this.setWidth(800);

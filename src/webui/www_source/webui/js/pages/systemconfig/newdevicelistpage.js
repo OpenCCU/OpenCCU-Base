@@ -20,8 +20,4 @@ NewDeviceListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

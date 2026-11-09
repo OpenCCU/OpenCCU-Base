@@ -23,8 +23,4 @@ DeviceFirmware = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

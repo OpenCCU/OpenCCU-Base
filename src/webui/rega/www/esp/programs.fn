@@ -783,12 +783,12 @@ function ::WriteDestinationText()
                       if (iV < 1 && oDP.ValueUnit() == "%") {
                         iV = iV * 100;
                       }
-                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit();
+                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
                     }
                     if (oDP.ValueSubType() == istChar8859)
                     {
-                     sRet = sRet # " " # iV.ToString(2);
+                     sRet = sRet # " " # iV.ToString(2).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
                     }
                   }
                 }
@@ -936,7 +936,7 @@ function ::LoadProgramListXML()
       object o = dom.GetObject( sPID );
       if( o )
       {
-        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name()#'" />' );
+        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" />' );
       }
     }
     WriteLine( '</programs>' );

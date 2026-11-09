@@ -14,12 +14,12 @@
         Write("var tmp = new Object();");
         Write("tmp['id'] = '"#oSysVar.ID()#"';");
         Write("tmp['trid'] = 'svd"#oSysVar.ID()#"';");
-        Write("tmp['name'] = '"#oSysVar.Name()#"';");
-        Write("tmp['prginfo'] = '"#oSysVar.PrgInfo()#"';");              
+        Write("tmp['name'] = '"#oSysVar.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+        Write("tmp['prginfo'] = '"#oSysVar.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");              
         string oPrgID = oSysVar.ID();
         string sRet = "";
         Call( "/esp/programs.fn::WriteDestinationText()" );
-        Write("tmp['active'] = '"#sRet#"';");            
+        Write("tmp['active'] = '"#sRet.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");            
         Write("arProgs[arProgs.length] = tmp;");
       }
     }

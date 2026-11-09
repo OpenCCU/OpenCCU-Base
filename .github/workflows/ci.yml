@@ -227,4 +227,9 @@ jobs:
         run: >-
           node --test
           tests/webui/test-proofandsetvalue.js
+          tests/webui/test-rega-escapestring.js
+          tests/webui/test-translate.js
           tests/webui/test-programs-else-rule.js
+
+      - name: Check ReGa scripts in bin/
+        run: python3 tests/test-hm-scripts.py -v

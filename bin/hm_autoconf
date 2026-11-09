@@ -231,14 +231,57 @@ if { [catch {
       # Erzeugt eine Systemvariable, bindet diese an einen Kanal und liefert ihre Id zurück
       ##
       proc _create_sv_ {name info channelId} {
+        # get selected systemLanguage from /etc/config/systemLanguage
+        set lang "none"
+        if {[catch {set fp [open /etc/config/systemLanguage r]}] == 0} {
+          if { $fp >= 0 } {
+            set lang [string trim [read $fp]]
+            close $fp
+          }
+        }
+
+        set trName ""
+        set trMsg ""
+        if { $name == "\${sysVarRainToday}" } {
+          set trName "sysVarRainToday"
+          set trMsg "sysVarRainTodayDescr"
+          if { $lang == "de" } {
+            set name "Regen heute"
+            set info "Regenmenge aktueller Tag"
+          } elseif { $lang == "en" } {
+            set name "Rain today"
+            set info "Rainfall current day"
+          } else {
+            set trName ""
+            set trMsg ""
+          }
+        } elseif { $name == "\${sysVarRainYesterday}" } {
+          set trName "sysVarRainYesterday"
+          set trMsg "sysVarRainYesterdayDescr"
+          if { $lang == "de" } {
+            set name "Regen gestern"
+            set info "Regenmenge vorheriger Tag"
+          } elseif { $lang == "en" } {
+            set name "Rain yesterday"
+            set info "Rainfall previous day"
+          } else {
+            set trName ""
+            set trMsg ""
+          }
+        }
+
         set    script "var name = \"$name\";\n"
         append script "var info = \"$info\";\n"
         append script "var channelId = \"$channelId\";\n"
+        append script "var trName = \"$trName\";\n"
+        append script "var trMsg = \"$trMsg\";\n"
         append script {
           var channel = dom.GetObject(channelId);
           var sv = dom.CreateObject(OT_VARDP, name);
           dom.GetObject(ID_SYSTEM_VARIABLES).Add(sv.ID());
+          if(trName != "") { sv.AddMetaData("trID", trName); }
           sv.DPInfo(info);
+          if(trMsg != "") { sv.AddMetaData("trIDMsg", trMsg); }
           sv.ValueUnit("mm");
           sv.ValueType( ivtFloat );
           sv.ValueSubType( istGeneric );
@@ -441,7 +484,13 @@ if { [catch {
         string func_id;
         string functions;
         foreach (func_id, dom.GetObject(ID_FUNCTIONS).EnumUsedIDs()){
-            functions = functions # " {" # dom.GetObject(func_id).Name() # "} " # func_id;
+            ! the system language selection renames the default functions and
+            ! keeps their untranslated name (e.g. funcLight) as trID metadata
+            object oFunc = dom.GetObject(func_id);
+            string func_name = oFunc.Name();
+            string func_trid = oFunc.MetaData("trID");
+            if(func_trid) { func_name = func_trid; }
+            functions = functions # " {" # func_name # "} " # func_id;
         }
     }]
     

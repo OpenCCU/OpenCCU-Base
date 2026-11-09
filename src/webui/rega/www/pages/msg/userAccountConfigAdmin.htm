@@ -519,7 +519,7 @@
       if (tmp != uid)
       {
         object o = dom.GetObject(tmp);
-        Write("arUserNames[arUserNames.length] = '"#o.Name()#"';");
+        Write("arUserNames[arUserNames.length] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       }
     }
     
@@ -531,7 +531,7 @@
         string sUserFullName = user.UserFirstName()#' '#user.UserLastName();
         if( sUserFullName == ' ' ){ sUserFullName = user.Name(); }
         ! sUserFullName        
-        Write("$('fullName').value = '"#sUserFullName#"';");
+        Write("$('fullName').value = '"#sUserFullName.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("$('txtPw').value = '"#user.UserBlankPwd()#"';");
         Write("$('txtPw2').value = '"#user.UserBlankPwd()#"';");
         Write("$('cbUserS').checked = "#user.UserShowLogin()#";");

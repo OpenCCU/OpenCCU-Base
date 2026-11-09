@@ -1,11 +1,10 @@
 #menubar {
   height: 34px;
-  width: 100%;
+  /* width: 100%; */
   border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
   background-color: $_(background); /* #183473 */
   z-index: 189;
-  padding: 2px;
-  margin-top: 2px;
+  padding-top: 2px;
 }
 
 .MainMenuItem_Left {
@@ -25,7 +24,7 @@
 }
 
 .MainMenuItem_Help {
-    margin-right: 18px;
+    margin-right: 10px;
 }
 
 .MainMenuItem_Highlight {
@@ -106,21 +105,21 @@
   background-color: $_(subMenuBackground);
   overflow:hidden;
   z-index:189;
+  margin-left: 5px;
 }
 
 .MainMenuSubItem {
 
   background-color: $_(subMenuBackground);
   font-weight: bold;
-  padding-left: 5px;
-  padding-right: 5px; 
+  /* padding-left: 5px; */
+  padding: 2px 5px; 
   text-align:left;
   vertical-align:middle;
   color: $_(textColorB); /* black */
   line-height:20px;
   cursor: pointer;
   white-space: nowrap;
-  border-top: 1px solid $_(black);
 }
 
 .MainMenuSubItem_Highlight {
@@ -128,3 +127,9 @@
   /* border: 2px solid $_(subMenuHighlight); */
   /* line-height: 30px; */
 }
+
+.MainMenuSubItem > img {
+  vertical-align: middle;
+  width: 16px;
+}
+

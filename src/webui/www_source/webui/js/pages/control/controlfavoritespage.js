@@ -13,8 +13,4 @@ ControlFavoritesPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

@@ -39,20 +39,20 @@
 
 <table cellpadding="0" cellspacing="0" id="userAdmin" class="tTable" style="display:none">
 <colgroup>
-<col style="width:6%;" width="6%" />
-<col style="width:6%;" />
-<col style="width:6%;"/>
-<!-- <col style="width:6%;" /> -->
-<col style="width:6%;"/>
-<col style="width:8%;"/>
-<col style="width:8%;"/>
-<col style="width:6%;" />
-<col style="width:6%;" />
+  <col />
+  <col />
+  <col />
+  <!-- <col /> -->
+  <col />
+  <col />
+  <col />
+  <col />
+  <col style="width:100px;" />
 </colgroup>
 
 <tr class="CLASS05300">
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th class="CLASS05301"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'name',true);">${thUserName}</div></th>
+  <th class="thCell CLASS05301"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arUserNames,'name',true);">${thUserName}</div></th>
   <th class="thCell">${thPassword}</th>
   <th class="thCell">${thBtnForLogin}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="level"){sCssName="SortSelected";} %>
@@ -174,6 +174,7 @@
     s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
     s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton' onclick='newUser();'>${footerBtnNew}</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05305' onclick='showAutoLogin()'>${footerBtnAutoLogin}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05305' onclick='showSystemLanguage()'>${footerBtnSystemLanguage}</div></td>";
   s += "</tr>";
   s += "</table>";
 
@@ -212,6 +213,10 @@
     CreatePopup(ID_AUTO_LOGIN_CONFIG);
   }
 
+  showSystemLanguage = function() {
+    CreatePopup(ID_SYSTEM_LANGUAGE_CONFIG);
+  }
+  
   translatePage("#userAdmin");
   jQuery("#userAdmin").show();
 
