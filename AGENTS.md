@@ -28,6 +28,7 @@ python3 tests/test-components.py                       # build/install selection
 node --test tests/webui/test-proofandsetvalue.js       # WebUI ProofAndSetValue() tests
 node --test tests/webui/test-rega-escapestring.js      # WebUI ReGa.escapeString() tests
 node --test tests/webui/test-translate.js               # WebUI translateString() tests
+node --test tests/webui/test-programs-else-rule.js     # WebUI program editor ELSE rule tests
 python3 tests/test-hm-scripts.py                       # bin/hm_* equal src/webui/rega/bin/hm_*
 ```
 
