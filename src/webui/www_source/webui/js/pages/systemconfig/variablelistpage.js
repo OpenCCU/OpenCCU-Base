@@ -12,8 +12,4 @@ VariableListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

@@ -13,8 +13,4 @@ ServiceMessagesPage = new function()
     if ($("msgServices")) { $("msgServices").removeClassName("Messages_Selected"); }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

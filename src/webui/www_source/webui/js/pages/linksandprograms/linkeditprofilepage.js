@@ -17,8 +17,4 @@ LinkEditProfilePage = new function()
   {
   };
   
-  this.resize = function()
-  {
-  };
-  
 };

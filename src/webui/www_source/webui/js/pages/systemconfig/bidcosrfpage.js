@@ -328,10 +328,6 @@ BidcosRfPage =
     InterfaceMonitor.start();
   },
   
-  resize: function()
-  {
-  },
-  
   onSourceChanged: function()
   {
  /*   if (this.m_hmcfgRadioButton.checked)

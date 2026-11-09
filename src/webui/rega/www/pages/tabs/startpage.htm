@@ -399,7 +399,6 @@
 
 <script type="text/javascript">
   var product = 0;
-  WebUI.resize();
   StartPage.showUpdate();
   if (forceUpdate) {
       StartPage.showCurrentFirmware();
@@ -411,6 +410,7 @@
       StartPage.showAddonUpdate();
       StartPage.showCurrentFirmware();
       StartPage.showAllDeviceFirmware();
+      StartPage.showDutyCycle();
       jQuery("#forceUpdate").remove();
   }
 

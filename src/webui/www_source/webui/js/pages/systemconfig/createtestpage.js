@@ -23,8 +23,4 @@ CreateTestPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

@@ -109,6 +109,8 @@ tr.UserSysVars:nth-child(odd) {
 
 html,body
 {
+  width: 100vw;
+  height: 100vh;
   margin:0;
   padding:0;
   color: $_(textColorB); /* black */
@@ -143,9 +145,30 @@ a img {
  * * *   Element IDs                     * * *
  * * * * * * * * * * * * * * * * * * * * * * */
 
+/* Login & Logout page */
+
+#maintable {
+  width: 100vw;
+  height: 100vh;
+  border-collapse: collapse;  
+}
+
+#maintable tbody > tr > td {
+  padding: 0;
+}
+
+#maintable #content {
+  height: 100%;
+  width: 100%;
+  display: inline-table;
+  background-repeat: no-repeat;
+  background-position: 480px center;
+}
+
 /* Navigation-Leiste */
 #navbar 
 {
+  height: 72px;
   margin: 0px;
   background-color: $_(background); /* #183473 */
   width:100%;
@@ -153,6 +176,11 @@ a img {
 }
  
 /* Haupt-Fenster */
+.Layer0 {
+  height: 100%;
+  width: -moz-available; /* otherwise firefox does not resize to max browser width */
+}
+
 #_content
 {
   height: 70%;
@@ -186,6 +214,8 @@ a img {
     align-items: flex-start;
     /* Prevent chrome from outlining this by focus */
     outline: none;
+    /* Stretch to max available space */
+    height: calc(100% - 168px); /* FIX: header + menubar + footer: 72px + 41px + 55px = 168px */
 }
 
 #prgcontent
@@ -210,7 +240,7 @@ a img {
 
 /* Kopfzeile */
 #header {
-  height: 15%;
+  height: 72px;
   background-color: $_(background);  /* #183473 */
   /* background-color: #dcdcdc; */
   color: $_(textColorB); /* black */
@@ -220,7 +250,7 @@ a img {
 
 /* Fusszeile */
 #footer {
-  height:15%;
+  height: 50px;
   background-color: $_(background); /* #183473 */
   /* background-color: #dcdcdc; */
   color: $_(textColorB); /* black */
@@ -268,15 +298,18 @@ a img {
 /* Linker Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
 #contentLeft 
 {
+  height: 100%;
   vertical-align: top;
 }
 
 /* Rechter Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
 #contentRight 
 { 
+  height: 100%;
   border-left: solid 5px $_(navBarSeparator); /* #ffffff */ /* Trennlinie zwischen Navigation und Hauptbereich */
   /* padding-top: 10px; */
   vertical-align: top;
+  overflow: auto;
 }
 
 #separator {
