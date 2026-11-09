@@ -17,4 +17,5 @@ src/eq3_char_loop/mxs_raw_auart.c | GPL-2.0+
 src/libxmlrpc | LGPL-2.1
 src/libxmlparser | LGPL-2.1
 src/webui | Apache 2.0 if not stated otherwise
+src/webui/www/webui/js/extern/codemirror6 | MIT (CodeMirror, see [codemirror-MIT.txt](codemirror-MIT.txt))
 webui | Apache 2.0 if not stated otherwise

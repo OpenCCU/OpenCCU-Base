@@ -15,6 +15,20 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the script editor of programs and the "Execute script" dialog use
+  CodeMirror 6 with syntax highlighting of HomeMatic script, line numbers,
+  code folding, bracket matching, search and autocompletion; both dialogs
+  take 80% of the browser window. The script editor of programs got a button
+  to run the script, and both run a script only after its syntax check
+  passed and show the syntax errors otherwise. The global font rule
+  `* { font-size: 12px !important }` is replaced by rules for `body` and the
+  form elements, so the editor can use its own fonts. The CodeMirror bundle
+  is installed to `www/webui/js/extern/codemirror6`; it is built with
+  `scripts/update-codemirror.sh` from `scripts/codemirror6`, which the new
+  "Update CodeMirror" workflow runs weekly to propose updates. Compared to
+  the patch, both dialogs show the error of a failed script again
+  (OpenCCU patch 0046).
+  ([#340](https://github.com/OpenCCU/OpenCCU-Base/pull/340), @jens-maus)
 * `hm_startup` no longer tries to name an object it failed to create while
   creating the default rooms and functions of an empty CCU, which caused a
   script error in ReGa; it continues with the next object as before.

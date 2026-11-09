@@ -1,0 +1,76 @@
+# Rebuilds the CodeMirror 6 bundle of the WebUI script editor
+# (src/webui/www/webui/js/extern/codemirror6) with scripts/update-codemirror.sh
+# when npm has a new codemirror release and opens a pull request with the
+# result.
+# yamllint disable rule:truthy
+---
+name: Update CodeMirror
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'  # weekly, Monday 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-codemirror
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update the CodeMirror bundle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Rebuild the bundle
+        run: ./scripts/update-codemirror.sh
+
+      - name: Open a pull request if the bundle changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dest=src/webui/www/webui/js/extern/codemirror6
+
+          if git diff --quiet -- "${dest}"; then
+            echo "The CodeMirror bundle is already up to date."
+            exit 0
+          fi
+
+          version=$(sed -nE 's/^CODEMIRROR6_VERSION = (.*)$/\1/p' "${dest}/VERSION" | head -n1)
+          if [[ -z "${version}" ]]; then
+            echo "::error::Failed to read the CodeMirror version from ${dest}/VERSION"
+            exit 1
+          fi
+
+          branch="ci/update-codemirror-${version}"
+          title="webui: bump codemirror to ${version}"
+
+          if [[ -n "$(gh pr list --state open --head "${branch}" --json number --jq '.[].number')" ]]; then
+            echo "A pull request for ${branch} is already open."
+            exit 0
+          fi
+
+          git config user.name "Jens Maus"
+          git config user.email "mail@jens-maus.de"
+
+          git switch -c "${branch}"
+          git add "${dest}"
+          git commit \
+            -m "${title}" \
+            -m "Rebuild the CodeMirror 6 bundle of the WebUI script editor with scripts/update-codemirror.sh for codemirror ${version}." \
+            -m "Produced by the \"Update CodeMirror\" workflow."
+          git push --force --set-upstream origin "${branch}"
+
+          gh pr create \
+            --base main \
+            --head "${branch}" \
+            --title "${title}" \
+            --body "Automated rebuild of the CodeMirror 6 bundle of the WebUI script editor (\`${dest}\`) with \`scripts/update-codemirror.sh\` for codemirror \`${version}\`. Triggered by workflow run \`${GITHUB_RUN_ID}\`. Before merging, test the script editor and add an entry to \`src/webui/CHANGELOG.md\`."

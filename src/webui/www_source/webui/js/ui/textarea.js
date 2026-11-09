@@ -28,6 +28,16 @@ UI.Textarea = Class.create(UI.InputComponent, {
     return this;
   },
   
+  setID : function(id) {
+    this.m_element.setAttribute("id",id);
+    return this;
+  },
+
+  setName : function(name) {
+    this.m_element.setAttribute("name",name);
+    return this;
+  },
+
   setWrap: function(isWrap)
   {
     if (isWrap) { Element.writeAttribute(this.m_element, "wrap", "soft"); }
