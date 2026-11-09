@@ -1,4 +1,4 @@
-import {EditorState} from "@codemirror/state";
+import {EditorState, Prec} from "@codemirror/state";
 import {EditorView, keymap} from "@codemirror/view";
 import {
   defaultKeymap,
@@ -6,7 +6,8 @@ import {
   historyKeymap,
   indentLess,
   indentMore,
-  indentWithTab
+  indentWithTab,
+  insertTab
 } from "@codemirror/commands";
 import {bracketMatching, foldCode, foldGutter, foldKeymap, foldService, indentUnit, syntaxHighlighting, defaultHighlightStyle, HighlightStyle} from "@codemirror/language";
 import {closeBrackets, closeBracketsKeymap, autocompletion, startCompletion, completeAnyWord} from "@codemirror/autocomplete";
@@ -155,19 +156,29 @@ const REGA_HIGHLIGHT_STYLE = HighlightStyle.define([
   {tag: tags.comment, color: "#a50"}
 ]);
 
-function foldReGaBraces(state, lineStart, lineEnd) {
-  const doc = state.doc;
+// Pairs of multi-line braces of a ReGa script, outside of comments and
+// strings, computed once per document (fold queries come for every line).
+const braceCache = new WeakMap();
+
+function bracePairs(doc) {
+  let pairs = braceCache.get(doc);
+  if (pairs) {
+    return pairs;
+  }
+
+  pairs = [];
+  const text = doc.toString();
   const stack = [];
   let stringDelimiter = null;
 
-  for (let pos = 0; pos < doc.length; ++pos) {
-    const ch = doc.sliceString(pos, pos + 1);
+  for (let pos = 0; pos < text.length; ++pos) {
+    const ch = text[pos];
 
     if (stringDelimiter) {
-      if (stringDelimiter === "\"\"\"" && doc.sliceString(pos, pos + 3) === stringDelimiter) {
+      if (stringDelimiter === "\"\"\"" && text.startsWith(stringDelimiter, pos)) {
         stringDelimiter = null;
         pos += 2;
-      } else if (stringDelimiter === "\"" && ch === "\\\\") {
+      } else if (stringDelimiter === "\"" && ch === "\\") {
         ++pos;
       } else if (stringDelimiter === "\"" && ch === stringDelimiter) {
         stringDelimiter = null;
@@ -175,12 +186,11 @@ function foldReGaBraces(state, lineStart, lineEnd) {
       continue;
     }
 
-    if (ch === "!" && doc.sliceString(pos + 1, pos + 2) === " ") {
-      const line = doc.lineAt(pos);
-      pos = line.to;
+    if (ch === "!" && text[pos + 1] === " ") {
+      pos = doc.lineAt(pos).to;
       continue;
     }
-    if (doc.sliceString(pos, pos + 3) === "\"\"\"") {
+    if (text.startsWith("\"\"\"", pos)) {
       stringDelimiter = "\"\"\"";
       pos += 2;
       continue;
@@ -198,16 +208,37 @@ function foldReGaBraces(state, lineStart, lineEnd) {
     }
 
     const open = stack.pop();
-    if (open >= lineStart && open < lineEnd && doc.lineAt(open).number !== doc.lineAt(pos).number) {
-      return {from: open + 1, to: pos};
+    if (doc.lineAt(open).number !== doc.lineAt(pos).number) {
+      pairs.push({open, close: pos});
     }
   }
 
-  return null;
+  pairs.sort((a, b) => a.open - b.open);
+  braceCache.set(doc, pairs);
+  return pairs;
 }
 
+function foldReGaBraces(state, lineStart, lineEnd) {
+  const pair = bracePairs(state.doc).find((entry) => entry.open >= lineStart && entry.open < lineEnd);
+  return pair ? {from: pair.open + 1, to: pair.close} : null;
+}
+
+// CodeMirror 5 key names that CodeMirror 6 spells differently.
+const KEY_NAMES = {Esc: "Escape"};
+
+// Translate a CodeMirror 5 key name ("Ctrl-Q", "Esc") to CodeMirror 6
+// ("Ctrl-q", "Escape"): CodeMirror 5 writes letters in upper case and names
+// Shift separately, while CodeMirror 6 matches the upper case letter only
+// together with Shift.
 function keyName(name) {
-  return name.replace(/-/g, "-");
+  const parts = name.split("-");
+  const last = parts.length - 1;
+  return parts.map((part, index) => {
+    if (index === last && /^[A-Z]$/.test(part)) {
+      return part.toLowerCase();
+    }
+    return KEY_NAMES[part] || part;
+  }).join("-");
 }
 
 function buildKeymap(extraKeys, getAdapter) {
@@ -243,8 +274,11 @@ function docFromTextarea(textarea) {
   return textarea.value || textarea.textContent || "";
 }
 
+// Like CodeMirror 5, clip a position to the document instead of failing or
+// spilling into the neighbouring line.
 function asOffset(doc, pos) {
-  return doc.line(pos.line + 1).from + pos.ch;
+  const line = doc.line(Math.min(Math.max(pos.line + 1, 1), doc.lines));
+  return line.from + Math.min(Math.max(pos.ch, 0), line.length);
 }
 
 function asPos(doc, offset) {
@@ -293,12 +327,9 @@ function fromTextArea(textarea, options = {}) {
   let adapter = null;
   const extraKeymap = buildKeymap(options.extraKeys, () => adapter);
   if (extraKeymap.length > 0) {
-    extensions.push(keymap.of(extraKeymap.map((entry) => ({
-      key: entry.key,
-      run(view) {
-        return entry.run(view, adapter);
-      }
-    }))));
+    // The bindings of the caller take precedence over the default keymaps
+    // (e.g. Tab and Shift-Tab over indentWithTab).
+    extensions.push(Prec.high(keymap.of(extraKeymap)));
   }
 
   const state = EditorState.create({
@@ -364,7 +395,7 @@ function fromTextArea(textarea, options = {}) {
         return indentLess(view);
       }
       if (command === "insertTab") {
-        return indentWithTab(view);
+        return insertTab(view);
       }
       if (command === "insertSoftTab") {
         const spaces = " ".repeat(this.options.tabSize);

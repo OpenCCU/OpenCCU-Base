@@ -26,7 +26,11 @@ or extended in it.
   is installed to `www/webui/js/extern/codemirror6`; it is built with
   `scripts/update-codemirror.sh` from `scripts/codemirror6`, which the new
   "Update CodeMirror" workflow runs weekly to propose updates. Compared to
-  the patch, both dialogs show the error of a failed script again
+  the patch, both dialogs show the error of a failed script again, the
+  bundle is rebuilt from the current CodeMirror packages, and the key
+  bindings of the editor work: Esc leaves the full screen mode (F11), Ctrl-Q
+  folds a block, Alt-F opens the search, and Tab and Shift-Tab insert or
+  remove spaces at the cursor instead of always indenting the whole line
   (OpenCCU patch 0046).
   ([#340](https://github.com/OpenCCU/OpenCCU-Base/pull/340), @jens-maus)
 * `hm_startup` no longer tries to name an object it failed to create while

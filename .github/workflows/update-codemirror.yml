@@ -1,7 +1,7 @@
 # Rebuilds the CodeMirror 6 bundle of the WebUI script editor
 # (src/webui/www/webui/js/extern/codemirror6) with scripts/update-codemirror.sh
-# when npm has a new codemirror release and opens a pull request with the
-# result.
+# when npm has new releases of the bundled packages and opens a pull request
+# with the result (or updates the open one).
 # yamllint disable rule:truthy
 ---
 name: Update CodeMirror
@@ -10,6 +10,11 @@ on:
   schedule:
     - cron: '17 3 * * 1'  # weekly, Monday 03:17 UTC
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'Rebuild even if no bundled package has a new version'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,11 +34,17 @@ jobs:
       - name: Checkout code
         # v7.0.1
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          # npm runs install scripts of the downloaded packages; keep the
+          # token out of the checkout until the pull request step.
+          persist-credentials: false
 
       - name: Rebuild the bundle
+        env:
+          FORCE: ${{ inputs.force && '1' || '0' }}
         run: ./scripts/update-codemirror.sh
 
-      - name: Open a pull request if the bundle changed
+      - name: Open or update the pull request if the bundle changed
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -50,14 +61,11 @@ jobs:
             exit 1
           fi
 
-          branch="ci/update-codemirror-${version}"
-          title="webui: bump codemirror to ${version}"
+          branch="ci/update-codemirror"
+          title="webui: update the CodeMirror bundle"
+          changes=$(git diff -U0 -- "${dest}/VERSION" | grep -E '^[-+]PACKAGE ' || true)
 
-          if [[ -n "$(gh pr list --state open --head "${branch}" --json number --jq '.[].number')" ]]; then
-            echo "A pull request for ${branch} is already open."
-            exit 0
-          fi
-
+          gh auth setup-git
           git config user.name "Jens Maus"
           git config user.email "mail@jens-maus.de"
 
@@ -65,12 +73,21 @@ jobs:
           git add "${dest}"
           git commit \
             -m "${title}" \
-            -m "Rebuild the CodeMirror 6 bundle of the WebUI script editor with scripts/update-codemirror.sh for codemirror ${version}." \
+            -m "Rebuild the CodeMirror 6 bundle of the WebUI script editor with scripts/update-codemirror.sh (codemirror ${version})." \
             -m "Produced by the \"Update CodeMirror\" workflow."
           git push --force --set-upstream origin "${branch}"
 
+          if [[ -n "$(gh pr list --state open --head "${branch}" --json number --jq '.[].number')" ]]; then
+            echo "Updated the open pull request for ${branch}."
+            exit 0
+          fi
+
+          body=$(printf '%s\n\n```diff\n%s\n```\n\n%s\n' \
+            "Automated rebuild of the CodeMirror 6 bundle of the WebUI script editor (\`${dest}\`) with \`scripts/update-codemirror.sh\` (codemirror \`${version}\`), triggered by workflow run \`${GITHUB_RUN_ID}\`. Changed packages:" \
+            "${changes:-(none, forced rebuild)}" \
+            "Before merging, test the script editor and add an entry to \`src/webui/CHANGELOG.md\`.")
           gh pr create \
             --base main \
             --head "${branch}" \
             --title "${title}" \
-            --body "Automated rebuild of the CodeMirror 6 bundle of the WebUI script editor (\`${dest}\`) with \`scripts/update-codemirror.sh\` for codemirror \`${version}\`. Triggered by workflow run \`${GITHUB_RUN_ID}\`. Before merging, test the script editor and add an entry to \`src/webui/CHANGELOG.md\`."
+            --body "${body}"
