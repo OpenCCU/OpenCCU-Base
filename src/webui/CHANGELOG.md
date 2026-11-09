@@ -15,6 +15,12 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the date, time and name filters of the system protocol put the keyboard
+  focus into their input field when they are opened, as the filters of the
+  other lists already do.
+  ([#298](https://github.com/OpenCCU/OpenCCU-Base/pull/298), fixes
+  [OpenCCU/OpenCCU#3150](https://github.com/OpenCCU/OpenCCU/issues/3150),
+  @MichaelN0815)
 * the script editor of programs and the "Execute script" dialog use
   CodeMirror 6 with syntax highlighting of HomeMatic script, line numbers,
   code folding, bracket matching, search and autocompletion; both dialogs
