@@ -293,6 +293,12 @@ function fromTextArea(textarea, options = {}) {
   textarea.parentNode.insertBefore(host, textarea.nextSibling);
 
   const extensions = [
+    // Keep the textarea in sync for code that still reads its value.
+    EditorView.updateListener.of((update) => {
+      if (update.docChanged) {
+        textarea.value = update.state.doc.toString();
+      }
+    }),
     history(),
     keymap.of([...defaultKeymap, ...historyKeymap, ...closeBracketsKeymap, ...searchKeymap, ...foldKeymap]),
     keymap.of([indentWithTab]),
@@ -351,7 +357,6 @@ function fromTextArea(textarea, options = {}) {
       view.dispatch({
         changes: {from: 0, to: view.state.doc.length, insert: value}
       });
-      textarea.value = value;
     },
     setSize(width, height) {
       if (width != null) {
@@ -385,7 +390,6 @@ function fromTextArea(textarea, options = {}) {
           insert: text
         }
       });
-      textarea.value = this.getValue();
     },
     execCommand(command) {
       if (command === "indentMore") {
@@ -424,11 +428,6 @@ function fromTextArea(textarea, options = {}) {
       return undefined;
     }
   };
-
-  view.dispatch = ((originalDispatch) => (transaction) => {
-    originalDispatch.call(view, transaction);
-    textarea.value = view.state.doc.toString();
-  })(view.dispatch);
 
   if (options.autofocus) {
     view.focus();

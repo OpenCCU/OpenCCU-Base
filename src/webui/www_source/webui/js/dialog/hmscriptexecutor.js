@@ -142,7 +142,7 @@ HMScriptExecutor = Class.create({
     pb += 'string val = "'+val+'";';
     pb += 'string ths = "'+ths+'";';
     pb += 'string src = "'+src+'";';
-    var opt = 
+    var opt =
     {
       postBody: ReGa.encode(pb),
       onComplete: function(t)
@@ -150,23 +150,23 @@ HMScriptExecutor = Class.create({
         if( iseStripAll(t.responseText).length == 0 )
         {
           homematic("ReGa.runScript", {script: code}, function(response, error)
-              {
-                if (error === null)
-                {
-                  _this_.m_output.setValue(response);
-                }
-                else
-                {
-                  _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
-                }
-                });
-              }
-          else
           {
-          	_this_.m_output.setValue(t.responseText);
+            if (error === null)
+            {
+              _this_.m_output.setValue(response);
+            }
+            else
+            {
+              _this_.m_output.setValue(translateKey("lblError") + ": " + Object.toJSON(error));
+            }
+          });
+        }
+        else
+        {
+          _this_.m_output.setValue(t.responseText);
+        }
       }
-    }
-  }
+    };
     new Ajax.Request(url,opt);
   },
   
