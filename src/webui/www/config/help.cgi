@@ -19,8 +19,12 @@ set IP_HELP_URL "$HOMEMATIC_IP_URL/service.html"
 set LANGUAGE "de"
 set CUR_YEAR [clock format [clock seconds] -format %Y]
 
-proc loadVarsFromShellFile {filename arrayName} {
+# keys: the keys the page shows; a key missing from the file reads "n/a"
+proc loadVarsFromShellFile {filename arrayName {keys {}}} {
     upvar 1 $arrayName array
+    foreach key $keys {
+        set array($key) "n/a"
+    }
     if {[catch {set f [open $filename r]} err]} {
         return
     }
@@ -64,17 +68,25 @@ proc action_put_page {} {
   global PRODUCT_NAME PRODUCT_ID HOMEMATIC_URL HOMEMATIC_IP_URL HM_HELP_URL IP_HELP_URL HM_INFO_URL IP_INFO_URL LANGUAGE CUR_YEAR env
 
   # get all variables from /var/hm_mode into $hm array
-  loadVarsFromShellFile /var/hm_mode hm
+  loadVarsFromShellFile /var/hm_mode hm {
+    HM_HOST HM_RTC
+    HM_HMIP_DEV HM_HMIP_VERSION HM_HMIP_DEVNODE HM_HMIP_DEVTYPE HM_HMIP_ADDRESS
+    HM_HMIP_ADDRESS_ACTIVE HM_HMIP_SGTIN HM_HMIP_SERIAL
+    HM_HMRF_DEV HM_HMRF_VERSION HM_HMRF_DEVNODE HM_HMRF_DEVTYPE HM_HMRF_ADDRESS
+    HM_HMRF_ADDRESS_ACTIVE HM_HMRF_SERIAL
+  }
 
   # get all variables from /VERSION into ver array
-  loadVarsFromShellFile /VERSION ver
+  loadVarsFromShellFile /VERSION ver {VERSION PLATFORM PRODUCT}
 
   # get all variables from /etc/config/netconfig into net array
-  loadVarsFromShellFile /etc/config/netconfig net
+  loadVarsFromShellFile /etc/config/netconfig net {
+    MODE CURRENT_IP CURRENT_NETMASK CURRENT_GATEWAY CURRENT_NAMESERVER1
+    CURRENT_NAMESERVER2
+  }
 
-  set SERIAL ""
-  catch {set SERIAL $hm(HM_HMIP_SERIAL)}
-  if {$SERIAL == ""} {
+  set SERIAL $hm(HM_HMIP_SERIAL)
+  if {$SERIAL == "" || $SERIAL == "n/a"} {
     if {[file exists /var/board_sgtin]} {
       set SERIAL [string trim [exec cat /var/board_sgtin]]
     } elseif {[file exists /var/board_serial]} {
@@ -123,6 +135,7 @@ proc action_put_page {} {
   execCmd NTPSERVER {exec /usr/bin/chronyc -n tracking | grep "Reference ID" | awk -F "\[\(\)\]" {{ print $2 }}}
   execCmd MAINETH {exec /sbin/ip -4 route get 1 | head -1 | awk {{ print $5 }}}
   execCmd MAINHOSTNAME {exec /bin/hostname}
+  set OSTYPE "n/a"
   catch {set OSTYPE [string trim [read_var /etc/os-release PRETTY_NAME] '"']}
   execCmd OSKERNEL {exec uname -s -r -m}
   set TCLVER [info patchlevel]

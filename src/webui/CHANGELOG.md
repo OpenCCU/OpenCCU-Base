@@ -40,7 +40,12 @@ or extended in it.
   `ip`, the entry page of the WebUI (`index.htm`) redirects in its own
   frame instead of the top window, so the WebUI also works inside a frame,
   and "external USB storage" is called "external storage" (OpenCCU patch
-  0001).
+  0001). Compared to the patch, the direct download reports a failure
+  instead of a script error when the latest version or the platform cannot
+  be determined, and the help page shows "n/a" for values missing from
+  `/var/hm_mode`, `/VERSION` or `/etc/config/netconfig` instead of failing,
+  and uses the board serial number when the Homematic IP radio module
+  reports none.
   ([#341](https://github.com/OpenCCU/OpenCCU-Base/pull/341), @jens-maus)
 * the date, time and name filters of the system protocol put the keyboard
   focus into their input field when they are opened, as the filters of the
