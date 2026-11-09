@@ -59,6 +59,8 @@ Runtime data has separate options: `BUILD_WEBUI`, `BUILD_DEVICETYPES`,
 `BUILD_TCL_HOMEMATIC`, `BUILD_HMSERVER`, `BUILD_HMIP_TOOLS`, `BUILD_FIRMWARE`,
 `BUILD_HM_SCRIPTS` and `BUILD_REGAHSS`. These also default to enabled. ReGaHss and
 Java programs are prebuilt assets, not applications compiled by this project.
+`BUILD_HM_SCRIPTS` installs `hm_autoconf`, `hm_deldev` and `hm_startup` from
+`src/webui/rega/bin`; `DEPLOY_TO_REPO` also copies them to `bin/`.
 WebUI selection also enables its device descriptions, Tcl helpers, Tcl extensions
 and ReGaHss. ReGaHss selection enables its Tcl extension.
 

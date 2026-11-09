@@ -88,6 +88,22 @@ class ComponentsTest(unittest.TestCase):
         files = self.build("-DBUILD_HMSERVER=ON", component="assets")
         self.assertIn("opt/HMServer/HMServer.jar", files)
 
+    def test_hm_scripts_from_source(self):
+        """ReGa scripts install from src/webui/rega/bin; deployment copies them to bin/."""
+        source = self.fixture()
+        names = ("hm_autoconf", "hm_deldev", "hm_startup")
+        # The fixture has no bin/, so the scripts can only come from their sources.
+        self.assertEqual(self.build("-DBUILD_HM_SCRIPTS=ON", component="assets", source=source),
+                         {f"bin/{name}" for name in names})
+        self.assertFalse((source / "bin").exists())
+        self.build("-DBUILD_HM_SCRIPTS=ON", "-DDEPLOY_TO_REPO=ON", component="assets",
+                   source=source)
+        for name in names:
+            copy = source / "bin" / name
+            self.assertEqual(copy.read_bytes(),
+                             (SOURCE / "src/webui/rega/bin" / name).read_bytes())
+            self.assertTrue(os.access(copy, os.X_OK))
+
     def test_runtime_alias(self):
         """Aliases are relative, relocatable and omitted when deselected."""
         source = self.fixture()
