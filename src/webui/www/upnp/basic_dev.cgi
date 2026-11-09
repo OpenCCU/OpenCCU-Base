@@ -141,11 +141,8 @@ if {[info exists env(HTTP_HOST)] && $env(HTTP_HOST) ne ""} {
     if {$_ip eq ""} { set _ip "127.0.0.1" }
     set host "${_ip}$MY_PORT"
 }
-# Normalize bracketless pure-IPv6 host (defensive; typical HTTP_HOST uses brackets already)
+# The check above only accepts IPv6 hosts in brackets, so the host is used as is
 set _root_host $host
-if {[regexp {^[0-9A-Fa-f:]+$} $_root_host]} {
-    set _root_host "[$_root_host]"
-}
 set RESOURCE(ROOT_URL) "http://$_root_host"
 set RESOURCE(BASE_URL) "$RESOURCE(ROOT_URL)/upnp/"
 set RESOURCE(PRESENTATION_URL) "$RESOURCE(ROOT_URL)/"

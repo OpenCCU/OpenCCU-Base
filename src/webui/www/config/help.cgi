@@ -50,12 +50,9 @@ proc execCmd {varName cmd} {
   }
 }
 
+# & is kept, as values such as the temperature carry HTML entities (&deg;)
 proc html_escape {s} {
-  regsub -all -- <  $s "&lt;"  s
-  regsub -all -- >  $s "&gt;"  s
-  regsub -all -- \" $s "&quot;" s
-  regsub -all -- '  $s "&#39;" s
-  return $s
+  return [string map {< &lt; > &gt; \" &quot; ' &#39;} $s]
 }
 
 proc putsVar {name value} {
@@ -240,9 +237,9 @@ proc action_put_page {} {
         puts "<div style='display: table; width: 100%;'>"
           putsVar "OS Type (Kernel)" "$OSTYPE ($OSKERNEL)"
           putsVar "Uptime" $UPTIME
-          if {$CPUSCALMHZ != ""} {
+          if {$CPUSCALMHZ != "" && $CPUSCALMHZ != "n/a"} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz ($CPUSCALMHZ)"
-          } elseif {$CPUMHZ != "0"} {
+          } elseif {$CPUMHZ != "0" && $CPUMHZ != "n/a"} {
             putsVar "Load Average @ CPU Speed" "$LOADAVG @ $CPUMHZ MHz"
           } else {
             putsVar "Load Average" "$LOADAVG"
