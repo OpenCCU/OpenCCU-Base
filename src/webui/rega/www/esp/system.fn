@@ -1528,7 +1528,7 @@ function ::BuildUserSvTable() {
         WriteLine("<td class='WhiteBkg CLASS02110'>");
           if (system.GetVar("userId") != 0) {
             !WriteLine("<table class='CLASS02108'>");                                                                                        
-            WriteLine("<table>");                                                                                        
+            WriteLine("<table role='presentation'>");
               WriteLine("<tr><td class='tSysvarMoveUp' role='button' tabindex='0' data-aria-key='lblSysVarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
               WriteLine("<tr><td class='tSysvarMoveDown' role='button' tabindex='0' data-aria-key='lblSysVarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
             WriteLine("</table>");

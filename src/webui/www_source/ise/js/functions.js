@@ -4167,11 +4167,15 @@ function hsvToRgb(h, s, v) {
 /**
  * Keyboard operation of elements that act as buttons (role="button" and
  * tabindex="0"). Elements without visible text name the translation key of
- * their label in data-aria-key.
+ * their label in data-aria-key; images also get it as their alt text.
  */
 applyAriaKeys = function(root) {
   jQuery(root || document).find("[data-aria-key]").addBack("[data-aria-key]").each(function() {
-    this.setAttribute("aria-label", translateKey(this.getAttribute("data-aria-key")));
+    var label = translateKey(this.getAttribute("data-aria-key"));
+    this.setAttribute("aria-label", label);
+    if (String(this.tagName).toUpperCase() === "IMG") {
+      this.setAttribute("alt", label);
+    }
   });
 };
 
@@ -4180,7 +4184,8 @@ jQuery(document).on("focusin", "[data-aria-key]", function() {
 });
 
 // Enter and Space press the button. Elements that react to mousedown instead
-// of click name that event in data-keyevent="mousedown".
+// of click name that event in data-keyevent="mousedown". A held key presses
+// the button only once.
 jQuery(document).on("keydown", "[role='button']", function(event) {
   var key = event.key,
     keyCode = event.keyCode || event.which,
@@ -4196,6 +4201,9 @@ jQuery(document).on("keydown", "[role='button']", function(event) {
     return;
   }
   event.preventDefault();
+  if (event.repeat || (event.originalEvent && event.originalEvent.repeat)) {
+    return;
+  }
 
   if (this.getAttribute("data-keyevent") === "mousedown") {
     for (eventType = "mousedown"; eventType; eventType = (eventType === "mousedown") ? "mouseup" : null) {

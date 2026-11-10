@@ -285,10 +285,10 @@ StartPage = Singleton.create(Page, {
                                    "<td style='text-align:left;vertical-align:top;' height='15px'>" +
                                      Typ +
                                    "</td>" +
-                                   "<td style='text-align:center;vertical-align:top;' class='UILink' role='button' tabindex='0' " +
-                                     "onClick='toggleSerialNumberDisplay()'>" +
+                                   "<td style='text-align:center;vertical-align:top;' class='UILink' " +
+                                     "onClick='toggleSerialNumberDisplay()'><span role='button' tabindex='0'>" +
                                      Obj.DevCnt +
-                                   "</td>" +
+                                   "</span></td>" +
                                    "<td style='text-align:left;vertical-align:top;display:none;'>" +
                                      Obj.Address.join('<br/>') +
                                    "</td>" +

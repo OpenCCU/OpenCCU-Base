@@ -154,7 +154,7 @@
           {
             boolean showExtDesc = false;
             if( oUser && oUser.UserLevel() == iulAdmin ) {
-              Write("<td class='GrayBkg CLASS04007' role='button' tabindex='0' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'>");
+              Write("<td class='GrayBkg CLASS04007' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'><span role='button' tabindex='0'>");
             } else {
               Write("<td class='GrayBkg'>");
             }
@@ -165,6 +165,9 @@
               Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("</span>");
+            }
             Write("</td>");
             Write("<td class='GrayBkg'>");
               string sPicDivId = "picDiv"#chn.ID();

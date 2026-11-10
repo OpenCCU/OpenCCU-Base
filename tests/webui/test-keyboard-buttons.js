@@ -148,6 +148,22 @@ test('keys from a child element or a native control are left alone', () => {
   }
 });
 
+test('a held key presses the button only once', () => {
+  const { handlers } = makeContext();
+  for (const init of [{ key: 'Enter', repeat: true },
+    { key: ' ', originalEvent: { repeat: true } }]) {
+    const elm = new Element('SPAN', { role: 'button' });
+    const event = press(handlers, elm, init);
+    assert.equal(elm.clicks, 0, JSON.stringify(init));
+    assert.equal(event.prevented, true, JSON.stringify(init));
+  }
+  const start = new Element('DIV', { role: 'button', 'data-keyevent': 'mousedown' });
+  press(handlers, start, { key: 'Enter' });
+  press(handlers, start, { key: 'Enter', repeat: true });
+  press(handlers, start, { key: 'Enter', repeat: true });
+  assert.deepEqual(start.dispatched, ['mousedown', 'mouseup']);
+});
+
 test('data-keyevent="mousedown" sends mousedown and mouseup instead of a click', () => {
   const { handlers } = makeContext();
   const elm = new Element('DIV', { role: 'button', 'data-keyevent': 'mousedown' });
@@ -169,8 +185,12 @@ test('applyAriaKeys sets the translated aria-label', () => {
   assert.equal(up.getAttribute('aria-label'), 'T(lblSysVarMoveUp)');
   assert.equal(plain.getAttribute('aria-label'), null);
 
-  // The element itself is included, e.g. on focus.
+  assert.equal(up.getAttribute('alt'), null);
+
+  // The element itself is included, e.g. on focus. Images also get the
+  // label as their alt text.
   const help = new Element('IMG', { 'data-aria-key': 'HelpTitle' });
   handlers['focusin [data-aria-key]'].call(help, {});
   assert.equal(help.getAttribute('aria-label'), 'T(HelpTitle)');
+  assert.equal(help.getAttribute('alt'), 'T(HelpTitle)');
 });
