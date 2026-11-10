@@ -44,8 +44,12 @@ class Input {
 // hidden element. With separate=false both ids name the same element, as in
 // the easymodes that call ProofAndSetValue(this.id, this.id, ...).
 function run(input, min, max, options = {}) {
-  const { factor = 1, convInt2Float, name = '', separate = true } = options;
+  const { factor = 1, convInt2Float, name = '', separate = true, defaultValue } = options;
   const src = new Input('src', input, name);
+  // The value the input was loaded with, as a DOM input keeps it.
+  if (defaultValue !== undefined) {
+    src.defaultValue = defaultValue;
+  }
   const dst = separate ? new Input('dst', '', name) : src;
   const elements = { src, dst };
   const context = {
@@ -116,6 +120,34 @@ test('the visible input shows the clamped value', () => {
 test('a shared input keeps the formatted value', () => {
   const { src } = run('15', '0.0', '30.0', { separate: false });
   assert.equal(src.value, '15.0');
+});
+
+test('an unchanged shared input keeps its text', () => {
+  // TX_THRESHOLD_POWER: value written with %.2f, range with three decimals
+  const { src } = run('12.50', '0.000', '3680.000',
+    { separate: false, defaultValue: '12.50' });
+  assert.equal(src.value, '12.50');
+  assert.equal(src.attributes.valvalid, 'true');
+});
+
+test('a changed shared input is still formatted', () => {
+  const { src } = run('12.5', '0.000', '3680.000',
+    { separate: false, defaultValue: '12.50' });
+  assert.equal(src.value, '12.500');
+});
+
+test('an unchanged shared input is still rounded and clamped', () => {
+  let { src } = run('12.5004', '0.000', '3680.000',
+    { separate: false, defaultValue: '12.5004' });
+  assert.equal(src.value, '12.500');
+  ({ src } = run('4000.00', '0.000', '3680.000',
+    { separate: false, defaultValue: '4000.00' }));
+  assert.equal(src.value, '3680.000');
+});
+
+test('separate inputs format an unchanged value', () => {
+  check('12.50', '0.000', '3680.000', '12.500', '12.5', true,
+    { defaultValue: '12.50' });
 });
 
 test('METER_CONSTANT_VOLUME keeps three decimal places', () => {
