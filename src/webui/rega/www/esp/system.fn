@@ -478,7 +478,7 @@ function ::UpdateUI()
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
       ! use javascript string literal char (`) to ensure proper char escaping;
       ! the value may contain HTML, of which only simple text formatting is kept
-      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = sanitizeSysVarHtml(translateString(`" # sSysVarVal # "`));");
+      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = sanitizeSysVarHtml(translateSysVarValue(`" # sSysVarVal # "`));");
       WriteLine("}");
     }    
   }

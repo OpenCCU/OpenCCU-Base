@@ -132,3 +132,37 @@ test('without a parser the value is shown as text', () => {
   assert.equal(context.sanitizeSysVarHtml('<b>x</b>'), '&lt;b&gt;x&lt;/b&gt;');
   assert.equal(context.sanitizeSysVarHtml(undefined), '');
 });
+
+// translateSysVarValue() with the real translateString() of translate.js.
+function loadTranslation() {
+  const read = (file) => fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'webui', file),
+    'latin1').replace(/\r\n/g, '\n');
+  const extract = (text, name) => {
+    const start = text.indexOf('\n' + name);
+    assert.notEqual(start, -1, name + ' not found');
+    const end = text.indexOf('\n}', start);
+    return text.slice(start + 1, end + 2) + (text[end + 2] === ';' ? ';' : '');
+  };
+  const translate = read('www/webui/js/lang/translate.js');
+  const functions = read('www_source/ise/js/functions.js');
+  const context = {
+    langJSON: { de: { date: 'Datum', time: 'Uhrzeit' } },
+    getLang: () => 'de',
+    translateKey: (key) => context.langJSON.de[key] || key,
+    conInfo: () => {},
+    jQuery: { each: (arr, fn) => arr.forEach((val, i) => fn(i, val)) },
+  };
+  vm.createContext(context);
+  vm.runInContext(extract(translate, 'function translateString') + '\n'
+    + extract(functions, 'translateSysVarValue = function'), context);
+  return context;
+}
+
+test('every placeholder of a value is translated', () => {
+  const context = loadTranslation();
+  // translateString() alone takes "${date}<br/>${time}" as one placeholder.
+  assert.equal(context.translateString('${date}<br/>${time}'), 'Datum');
+  assert.equal(context.translateSysVarValue('${date}<br/>${time}'), 'Datum<br/>Uhrzeit');
+  assert.equal(context.translateSysVarValue('A ${date}, B ${unknown} C'), 'A Datum, B unknown C');
+  assert.equal(context.translateSysVarValue('no placeholder <b>x</b>'), 'no placeholder <b>x</b>');
+});

@@ -4254,6 +4254,17 @@ sanitizeSysVarHtml = function(html) {
 };
 
 /**
+ * Translates the ${key} placeholders of a system variable value one by one.
+ * translateString() would take placeholders without whitespace in between,
+ * e.g. "${a}<br/>${b}", as one placeholder and drop the rest.
+ */
+translateSysVarValue = function(value) {
+  return String(value).replace(/\$\{\w+\}/g, function(placeholder) {
+    return translateString(placeholder);
+  });
+};
+
+/**
  * Shows the system variable values of the start page, which startpage.htm
  * writes HTML-escaped into data-sysvar-value, in their table cells.
  */
@@ -4261,7 +4272,7 @@ showSysVarValues = function(root) {
   jQuery(root || document).find("[data-sysvar-value]").each(function() {
     var cell = this.parentNode;
     if (cell) {
-      cell.innerHTML = sanitizeSysVarHtml(translateString(this.getAttribute("data-sysvar-value")));
+      cell.innerHTML = sanitizeSysVarHtml(translateSysVarValue(this.getAttribute("data-sysvar-value")));
     }
   });
 };
