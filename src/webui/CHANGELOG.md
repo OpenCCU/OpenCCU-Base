@@ -23,6 +23,17 @@ or extended in it.
   the rest of the text. Keys with characters such as `-` or `.` (device
   types) are still found.
   ([#349](https://github.com/OpenCCU/OpenCCU-Base/pull/349), @jens-maus)
+* controls that are only clickable texts or images can be used with the
+  keyboard: the header logo and save button, the alarm and service message
+  counters, the logout button and the user name, the device count of the
+  firmware overview on the start page, the time on the start page, the
+  arrows that sort the system variables of the start page in the user
+  account settings, the help icon, program names and
+  the activity switch on the programs page, the program start buttons and the
+  channel names in the device, room and function lists. They are reachable
+  with Tab and react to Enter and Space; icons without text get a translated
+  label for screen readers
+  ([#347](https://github.com/OpenCCU/OpenCCU-Base/pull/347), @jens-maus)
 * when the location is transferred to the Homematic IP devices (time and
   position settings), a message now lists the devices whose update failed;
   before, only a failed lookup of the position data was reported.
