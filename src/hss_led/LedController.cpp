@@ -6,7 +6,9 @@
 #include <atomic>
 #include <mutex>
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <fcntl.h>
 #include <fstream>
@@ -28,6 +30,10 @@ static std::string runtime = "/run/hss_led";
 static std::string sysfs = "/sys/class/leds";
 static std::string startup = "/var/status/startupFinished";
 static std::string disabled = "/etc/config/disableLED";
+// Brightness of the radio LED in percent, a setting like disableLED. The
+// client writes it (root), the controller reads it on its maintenance tick.
+static std::string brightnessFile = "/etc/config/hss_led_brightness";
+static unsigned brightnessPercent = 100;
 static const char* colors[] = {"off", "red", "green", "yellow", "blue", "magenta", "cyan", "white"};
 static std::atomic<bool> statusEnabled(false);
 static const unsigned maxDelay = 86400000;
@@ -67,16 +73,52 @@ static std::vector<std::string> words(const std::string& s) {
   while (in >> w) v.push_back(w);
   return v;
 }
-static unsigned color(const std::string& name) {
-  for (unsigned i = 0; i < 8; ++i) if (name == colors[i]) return i;
+// Radio colors are 24-bit RGB values (0xRRGGBB). The names are the full
+// values of their channels (index bit 0 red, bit 1 green, bit 2 blue). On the
+// wire and in the state file a name keeps its old number 0-7, so existing
+// requests and saved states stay valid; any other color is "#rrggbb".
+static uint32_t maskRgb(unsigned mask) {
+  return (mask & 1 ? 0xFF0000u : 0) | (mask & 2 ? 0x00FF00u : 0) | (mask & 4 ? 0x0000FFu : 0);
+}
+static unsigned channel(uint32_t rgb, unsigned i) { return (rgb >> (16 - 8 * i)) & 0xFF; }
+static std::string colorWire(uint32_t rgb) {
+  for (unsigned mask = 0; mask < 8; ++mask) if (maskRgb(mask) == rgb) return std::to_string(mask);
+  char text[8];
+  std::snprintf(text, sizeof(text), "#%06x", unsigned(rgb & 0xFFFFFF));
+  return text;
+}
+static bool hexColor(const std::string& s, uint32_t& rgb) {
+  if (s.size() != 7 || s[0] != '#') return false;
+  rgb = 0;
+  for (size_t i = 1; i < s.size(); ++i) {
+    char c = s[i];
+    unsigned digit;
+    if (c >= '0' && c <= '9') digit = unsigned(c - '0');
+    else if (c >= 'a' && c <= 'f') digit = unsigned(c - 'a' + 10);
+    else if (c >= 'A' && c <= 'F') digit = unsigned(c - 'A' + 10);
+    else return false;
+    rgb = rgb << 4 | digit;
+  }
+  return true;
+}
+static bool parseColor(const std::string& s, uint32_t& rgb) {
+  unsigned mask;
+  if (number(s, mask, 7)) { rgb = maskRgb(mask); return true; }
+  return hexColor(s, rgb);
+}
+static uint32_t color(const std::string& name) {
+  for (unsigned i = 0; i < 8; ++i) if (name == colors[i]) return maskRgb(i);
+  uint32_t rgb;
+  if (hexColor(name, rgb)) return rgb;
   throw std::runtime_error("unknown color");
 }
 struct Pattern {
-  unsigned a = 0, b = 0, da = 0, db = 0;
+  uint32_t a = 0, b = 0;
+  unsigned da = 0, db = 0;
   bool operator==(const Pattern& p) const { return a == p.a && b == p.b && da == p.da && db == p.db; }
   bool alternating() const { return da && a != b; }
   std::string wire() const {
-    return std::to_string(a) + " " + std::to_string(b) + " " + std::to_string(da) + " " + std::to_string(db);
+    return colorWire(a) + " " + colorWire(b) + " " + std::to_string(da) + " " + std::to_string(db);
   }
 };
 // Only the controller thread owns State and sysfs. Status calculation publishes
@@ -103,13 +145,13 @@ static ReportMailbox reports;
 void LedController::report(unsigned first, unsigned second, unsigned period) {
   if (first > 7 || second > 7 || period > maxDelay) return;
   Pattern p;
-  p.a = first; p.b = period ? second : first; p.da = p.db = period;
+  p.a = maskRgb(first); p.b = maskRgb(period ? second : first); p.da = p.db = period;
   reports.publish(p);
 }
 bool LedController::statusActive() { return statusEnabled.load(); }
 
 static bool parsePattern(const std::vector<std::string>& v, size_t offset, Pattern& p) {
-  return v.size() >= offset + 4 && number(v[offset], p.a, 7) && number(v[offset+1], p.b, 7) &&
+  return v.size() >= offset + 4 && parseColor(v[offset], p.a) && parseColor(v[offset+1], p.b) &&
       number(v[offset+2], p.da, maxDelay) && number(v[offset+3], p.db, maxDelay) &&
       ((!p.da && !p.db && p.a == p.b) || (p.da && p.db));
 }
@@ -122,6 +164,42 @@ static bool writeValue(const std::string& path, const std::string& value) {
   bool ok = n == static_cast<ssize_t>(line.size());
   if (close(fd)) ok = false;
   return ok;
+}
+
+// The brightness setting: 1-100 percent; a missing or invalid file is 100.
+static unsigned readBrightness() {
+  auto v = words(readText(brightnessFile));
+  unsigned percent;
+  return v.size() == 1 && number(v[0], percent, 100) && percent ? percent : 100;
+}
+// Re-read the setting only when its file changed (or appeared/disappeared).
+static bool loadBrightness() {
+  static std::string identity = "unread";
+  struct stat st = {};
+  std::string next = stat(brightnessFile.c_str(), &st) ? "missing" :
+      std::to_string(st.st_dev) + ":" + std::to_string(st.st_ino) + ":" + std::to_string(st.st_size) + ":" +
+      std::to_string(st.st_mtim.tv_sec) + "." + std::to_string(st.st_mtim.tv_nsec);
+  if (next == identity) return false;
+  identity = next;
+  unsigned percent = readBrightness();
+  if (percent == brightnessPercent) return false;
+  brightnessPercent = percent;
+  return true;
+}
+// Channel level for a value 0-255 of a color. On an on/off LED (maximum 1) a
+// channel lights at 128 or more, so the names come out as themselves and any
+// other color as the nearest name. With levels (the RPI-RF-MOD over software
+// PWM) value and brightness follow a gamma curve, as the eye is logarithmic:
+// a value of 128 is about 22 % duty and looks half as bright. A lit channel
+// keeps at least 3 % of the maximum; below that the PWM timer's jitter shows
+// as shimmer. Full values at 100 % give the maximum, as before.
+static const double ledGamma = 2.2;
+static unsigned level(unsigned value, unsigned percent, unsigned maximum) {
+  if (!value || !maximum) return 0;
+  if (maximum == 1) return value >= 128 ? 1 : 0;
+  double scale = std::pow(value / 255.0, ledGamma) * std::pow(std::min(percent, 100u) / 100.0, ledGamma);
+  unsigned lowest = std::max(1u, unsigned(std::lround(maximum * 0.03)));
+  return std::min(maximum, std::max(lowest, unsigned(std::lround(scale * maximum))));
 }
 
 // Explicit scalar LED targets use the kernel LED-class API. They are never
@@ -271,7 +349,7 @@ public:
 
 // Use elapsed monotonic time, not the number of timer events, so missed
 // intervals are skipped and unequal phase durations do not accumulate drift.
-static unsigned phaseAt(const Pattern& p, uint64_t elapsed, uint64_t& delay) {
+static uint32_t phaseAt(const Pattern& p, uint64_t elapsed, uint64_t& delay) {
   if (!p.alternating()) { delay = 0; return p.a; }
   uint64_t cycle = uint64_t(p.da) + p.db;
   uint64_t phase = elapsed % cycle;
@@ -332,10 +410,19 @@ public:
     return true;
   }
   bool kernelBlink(const Pattern& p) const { return name == "rgb" && timer && p.alternating() && p.a && !p.b; }
-  bool setColor(unsigned mask) {
+  // Only the multicolor group mixes and dims: its max_brightness is 1 over
+  // GPIO LEDs and adapters, and 255 over the header's software PWM. The
+  // legacy component LEDs of an adapter report 255 but light fully above 0.
+  bool dimmable() const { return name == "rgb" && maximum > 1; }
+  // Levels are written to multi_intensity with brightness at the maximum, so
+  // the kernel's blink keeps the mixed and dimmed color.
+  bool setColor(uint32_t color, unsigned percent) {
     if (name == "rgb") {
       std::string values;
-      for (unsigned i = 0; i < 3; ++i) values += (i ? " " : "") + std::to_string(mask & order[i] ? maximum : 0);
+      for (unsigned i = 0; i < 3; ++i) {
+        unsigned c = order[i] == 1 ? 0 : order[i] == 2 ? 1 : 2;
+        values += (i ? " " : "") + std::to_string(level(channel(color, c), percent, maximum));
+      }
       return writeValue(rgb + "/multi_intensity", values);
     }
     if (name != "legacy") return false;
@@ -343,14 +430,14 @@ public:
     // first, then enable new channels, using a single common phase clock.
     for (unsigned on = 0; on < 2; ++on)
       for (unsigned i = 0; i < 3; ++i)
-        if (!!(mask & (1U << i)) == !!on &&
+        if (!!level(channel(color, i), percent, 1) == !!on &&
             !writeValue(component(i) + "/brightness", std::to_string(on ? levels[i] : 0))) return false;
     return true;
   }
-  bool apply(const Pattern& p, unsigned mask) {
+  bool apply(const Pattern& p, uint32_t color, unsigned percent) {
     if (name == "rgb") {
       if (kernelBlink(p)) {
-        if (!setColor(p.a)) return false;
+        if (!setColor(p.a, percent)) return false;
         auto triggers = words(readText(rgb + "/trigger"));
         bool selected = std::find(triggers.begin(), triggers.end(), "[timer]") != triggers.end();
 #ifdef LED_TEST_BUILD
@@ -362,19 +449,20 @@ public:
                writeValue(rgb + "/delay_off", std::to_string(p.db));
       }
       if (!writeValue(rgb + "/trigger", "none") || !writeValue(rgb + "/brightness", "0") ||
-          !setColor(mask) || !writeValue(rgb + "/brightness", std::to_string(mask || p.alternating() ? maximum : 0))) return false;
+          !setColor(color, percent) ||
+          !writeValue(rgb + "/brightness", std::to_string(color || p.alternating() ? maximum : 0))) return false;
       return true;
     }
     if (name != "legacy") return false;
     for (unsigned i = 0; i < 3; ++i) if (!writeValue(component(i) + "/trigger", "none")) return false;
-    return setColor(mask);
+    return setColor(color, percent);
   }
 };
 
 struct State {
   bool automatic = false, overrideActive = false;
   Pattern system, report, manual;
-  State() { system.a = system.b = 3; report.a = report.b = 4; }
+  State() { system.a = system.b = maskRgb(3); report.a = report.b = maskRgb(4); }
   std::string wire() const {
     return "1 " + std::to_string(automatic) + " " + std::to_string(overrideActive) + " " +
         system.wire() + " " + report.wire() + " " + manual.wire();
@@ -419,7 +507,8 @@ static std::string dispatch(State& state, const std::string& message, uid_t uid,
   if (v[1] == "status" && v.size() == 2) {
     return "OK owner=" + std::string(state.overrideActive ? "override" : state.automatic ? "auto" : "system") +
         " backend=" + backend.name + " pending=" + std::to_string(dirty) +
-        " disabled=" + std::to_string(exists(disabled)) + " pattern=" + state.effective().wire();
+        " disabled=" + std::to_string(exists(disabled)) + " pattern=" + state.effective().wire() +
+        " brightness=" + std::to_string(brightnessPercent) + " dimmable=" + std::to_string(backend.dimmable());
   }
   if ((uid == administrator || uid == reporter) && v[1] == "report" && v.size() == 6) {
     valid = parsePattern(v, 2, changed.report);
@@ -482,7 +571,7 @@ static int serve(void (*startStatus)()) {
   BoardLeds board;
   Pattern active;
   bool first = true, dirty = true;
-  unsigned lastColor = 8;
+  uint32_t lastColor = UINT32_MAX;  // no color yet
   uint64_t epoch = nowMs(), maintenance = 0;
   std::vector<Connection> clients;
   // Signals are blocked before spawning the status thread. The controller
@@ -492,6 +581,7 @@ static int serve(void (*startStatus)()) {
     uint64_t now = nowMs();
     if (now >= maintenance) {
       if (backend.discover()) dirty = true;
+      if (loadBrightness()) dirty = true;
       board.tick(now);
       maintenance = now + 250;
     }
@@ -509,18 +599,18 @@ static int serve(void (*startStatus)()) {
       active = desired; epoch = now; first = false; dirty = true;
     }
     uint64_t next = maintenance;
-    unsigned mask = active.a;
+    uint32_t shown = active.a;
     if (active.alternating() && !backend.kernelBlink(active)) {
       uint64_t delay;
-      mask = phaseAt(active, now - epoch, delay);
+      shown = phaseAt(active, now - epoch, delay);
       next = std::min(next, now + delay);
     }
     if (dirty) {
-      dirty = !backend.apply(active, mask);
-      if (!dirty) lastColor = mask;
-    } else if (mask != lastColor && !backend.kernelBlink(active)) {
-      dirty = !backend.setColor(mask);
-      if (!dirty) lastColor = mask;
+      dirty = !backend.apply(active, shown, brightnessPercent);
+      if (!dirty) lastColor = shown;
+    } else if (shown != lastColor && !backend.kernelBlink(active)) {
+      dirty = !backend.setColor(shown, brightnessPercent);
+      if (!dirty) lastColor = shown;
     }
     itimerspec timer = {};
     next = std::max(next, now + 1);
@@ -577,6 +667,7 @@ static const char usage[] =
     "Usage: hss_ledctl --led rpi-rf-mod [system|override] COLOR [MS]\n"
     "       hss_ledctl --led rpi-rf-mod [system|override] alternate COLOR1 COLOR2 MS1 [MS2]\n"
     "       hss_ledctl --led rpi-rf-mod release|auto|off|stop|status\n"
+    "       hss_ledctl --led rpi-rf-mod brightness PERCENT\n"
     "       hss_ledctl --led NAME on|off|status\n"
     "       hss_ledctl --led NAME brightness LEVEL\n"
     "       hss_ledctl --led NAME blink ON_MS [OFF_MS]\n"
@@ -586,13 +677,18 @@ static const char usage[] =
     "Targets: --led NAME is required except for list/help/version.\n"
     "  rpi-rf-mod: the radio module's RGB or legacy LED group.\n"
     "  Other NAME: an individual LED-class device shown by list.\n\n"
-    "Radio colors: off, red, green, yellow, blue, magenta, cyan, white.\n"
+    "Radio colors: off, red, green, yellow, blue, magenta, cyan, white,\n"
+    "  or '#RRGGBB' (quote it: the shell starts a comment with #).\n"
+    "  An LED without levels shows the nearest named color.\n"
     "  COLOR [MS]: steady color, or color/off blinking when MS > 0.\n"
     "  alternate: switch between two colors; MS2 defaults to MS1.\n"
     "  override (default): manual pattern; release returns to system/auto.\n"
     "  system: set a boot/shutdown pattern and leave automatic mode.\n"
     "  auto: use CCU status and clear manual overrides.\n"
-    "  off/stop: turn the LED off; these do not stop the daemon.\n\n"
+    "  off/stop: turn the LED off; these do not stop the daemon.\n"
+    "  brightness: 1-100 % for all radio patterns, kept in\n"
+    "  /etc/config/hss_led_brightness; LEDs without levels ignore it\n"
+    "  (status: dimmable=0).\n\n"
     "Individual LEDs: on/off, brightness LEVEL, blink ON_MS [OFF_MS],\n"
     "  trigger NAME, status. Blink requires the kernel timer trigger.\n\n"
     "Every MS argument accepts milliseconds, slow (=500), or fast (=100).\n"
@@ -604,6 +700,8 @@ static const char usage[] =
     "Examples:\n"
     "  hss_ledctl --led rpi-rf-mod alternate blue red slow\n"
     "  hss_ledctl --led rpi-rf-mod magenta fast\n"
+    "  hss_ledctl --led rpi-rf-mod '#ff8000' slow\n"
+    "  hss_ledctl --led rpi-rf-mod brightness 30\n"
     "  hss_ledctl --led ACT blink fast slow\n";
 static std::string makeRequest(std::vector<std::string> v) {
   if (v.empty()) throw std::runtime_error(usage);
@@ -654,6 +752,24 @@ static std::string makeRequest(std::vector<std::string> v) {
   }
   return message;
 }
+// The brightness is a setting, not a pattern: write it atomically where the
+// controller reads it. Only root may change /etc/config.
+static void writeBrightness(const std::string& value) {
+  unsigned percent;
+  if (!number(value, percent, 100) || !percent) throw std::runtime_error("brightness must be 1-100 (percent)");
+  std::string temp = brightnessFile + ".tmp";
+  int fd = open(temp.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC | O_NOFOLLOW, 0644);
+  if (fd < 0) throw std::runtime_error("cannot write " + brightnessFile + ": " + std::strerror(errno));
+  std::string data = std::to_string(percent) + "\n";
+  ssize_t n;
+  do { n = write(fd, data.data(), data.size()); } while (n < 0 && errno == EINTR);
+  bool ok = n == static_cast<ssize_t>(data.size()) && !fchmod(fd, 0644) && !fsync(fd);
+  if (close(fd)) ok = false;
+  if (!ok || rename(temp.c_str(), brightnessFile.c_str())) {
+    unlink(temp.c_str());
+    throw std::runtime_error("cannot write " + brightnessFile);
+  }
+}
 static int client(int argc, char** argv) {
   if (argc == 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
     LedCli::version(std::cout, "hss_ledctl");
@@ -664,7 +780,12 @@ static int client(int argc, char** argv) {
     LedCli::version(std::cout, "hss_ledctl");
     return 0;
   }
-  std::string message = makeRequest(std::vector<std::string>(argv + 1, argv + argc));
+  std::vector<std::string> args(argv + 1, argv + argc);
+  if (args.size() == 4 && args[0] == "--led" && args[1] == "rpi-rf-mod" && args[2] == "brightness") {
+    writeBrightness(args[3]);
+    return 0;
+  }
+  std::string message = makeRequest(args);
   std::string reply;
   if (!LedProtocol::request(runtime + "/control", message, reply, 2000)) {
     std::cerr << (reply.empty() ? "LED service unavailable" : reply) << '\n';
@@ -682,6 +803,7 @@ void LedController::configureTestPaths() {
   if (const char* p = std::getenv("LED_TEST_SYSFS")) sysfs = p;
   if (const char* p = std::getenv("LED_TEST_STARTUP")) startup = p;
   if (const char* p = std::getenv("LED_TEST_DISABLED")) disabled = p;
+  if (const char* p = std::getenv("LED_TEST_BRIGHTNESS")) brightnessFile = p;
 #endif
 }
 int LedController::run(void (*startStatus)()) { return serve(startStatus); }
