@@ -980,6 +980,31 @@ function ::saveSysVar()
   return;
 }
 
+! [varid], [sValue]
+! Sets only the value of a system variable, for the value dialog. Name,
+! description, type, unit, value names, value list, range, channel and the
+! alarm settings stay as they are; saveSysVar() writes all of them.
+! sv.State() converts the text to the value type of the variable.
+function ::setSysVarValue()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( oUser )
+  {
+    if( oUser.UserLevel() == iulAdmin )
+    {
+      object sv = dom.GetObject( system.GetVar("varid") );
+      if( sv )
+      {
+        if( (sv.IsTypeOf( OT_VARDP )) || (sv.IsTypeOf( OT_ALARMDP )) )
+        {
+          sv.State( system.GetVar("sValue") );
+        }
+      }
+    }
+  }
+  return;
+}
+
 ! [id], [iProto]
 function ::saveDpProto() {
   object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
