@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* when the location is transferred to the Homematic IP devices (time and
+  position settings), a message now lists the devices whose update failed;
+  before, only a failed lookup of the position data was reported.
+  ([#345](https://github.com/OpenCCU/OpenCCU-Base/pull/345), @jens-maus)
 * the heating control of "Status and control" shows an actual temperature
   of 0 °C and a battery voltage of 0 V instead of hiding the row
   (OpenCCU patch 0042 checked them for a true value).
