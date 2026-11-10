@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a text with several translation placeholders without a space in between
+  is now translated completely, for example the functions of a channel in
+  the device inbox (`${funcLight};${funcHeating};`) or a system variable
+  value with a line break (`${a}<br/>${b}`). Before, `translateString()`
+  took them as one placeholder, translated only the first key and dropped
+  the rest of the text. Keys with characters such as `-` or `.` (device
+  types) are still found.
+  ([#349](https://github.com/OpenCCU/OpenCCU-Base/pull/349), @jens-maus)
 * the values of the system variables shown on the start page keep only
   simple text formatting (`br`, `b`, `strong`, `i`, `em`, `u`, `s`,
   `small`, `sub`, `sup`, and `span` and `font` with a color). Other markup,

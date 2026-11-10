@@ -160,8 +160,7 @@ function loadTranslation() {
 
 test('every placeholder of a value is translated', () => {
   const context = loadTranslation();
-  // translateString() alone takes "${date}<br/>${time}" as one placeholder.
-  assert.equal(context.translateString('${date}<br/>${time}'), 'Datum');
+  assert.equal(context.translateString('${date}<br/>${time}'), 'Datum<br/>Uhrzeit');
   assert.equal(context.translateSysVarValue('${date}<br/>${time}'), 'Datum<br/>Uhrzeit');
   assert.equal(context.translateSysVarValue('A ${date}, B ${unknown} C'), 'A Datum, B unknown C');
   assert.equal(context.translateSysVarValue('no placeholder <b>x</b>'), 'no placeholder <b>x</b>');

@@ -4254,14 +4254,10 @@ sanitizeSysVarHtml = function(html) {
 };
 
 /**
- * Translates the ${key} placeholders of a system variable value one by one.
- * translateString() would take placeholders without whitespace in between,
- * e.g. "${a}<br/>${b}", as one placeholder and drop the rest.
+ * Translates the ${key} placeholders of a system variable value.
  */
 translateSysVarValue = function(value) {
-  return String(value).replace(/\$\{\w+\}/g, function(placeholder) {
-    return translateString(placeholder);
-  });
+  return translateString(String(value));
 };
 
 /**
