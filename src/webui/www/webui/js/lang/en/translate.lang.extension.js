@@ -1099,6 +1099,9 @@ jQuery.extend(true, langJSON, {
       "If you change the sensor, the previously recorded consumption values (today, yesterday, etc.) will be reset to 0.<br/><br/>" +
       "If you have started the sensor detection without a sensor connected, connect a sensor and carry out a factory reset of the energy meter.<br/><br/>",
 
+    "lblSysVarMoveUp" : "Move up",
+    "lblSysVarMoveDown" : "Move down",
+
     "theEnd" : ""
   }
 });
