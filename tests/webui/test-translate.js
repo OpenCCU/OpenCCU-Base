@@ -22,7 +22,11 @@ function loadTranslate() {
     conInfo: () => {},
     loadTextResource: () => {},
     HMIdentifier: { de: { x: 1 } },
-    langJSON: { de: { lblX: 'Gr%FC%DFe', lblDollar: 'a $& b' } },
+    langJSON: { de: {
+      lblX: 'Gr%FC%DFe', lblDollar: 'a $& b', lblY: 'Y',
+      'HM-LC-Sw1-FM': 'Schaltaktor', 'OLIGO.smart.iq.HM': 'Dimmaktor',
+      lblNested: '%24%7BlblY%7D',
+    } },
     jQuery: { each: (arr, fn) => arr.forEach((v, i) => fn(i, v)) },
   };
   vm.runInNewContext(fs.readFileSync(SOURCE, 'utf8'), context);
@@ -52,4 +56,25 @@ test('inserts translations literally', () => {
 
 test('returns strings without placeholders unchanged', () => {
   assert.equal(T.translateString('O\'Brien <b>&amp;</b> 100%'), 'O\'Brien <b>&amp;</b> 100%');
+});
+
+test('translates placeholders without whitespace in between on their own', () => {
+  assert.equal(T.translateString('${lblX}<br/>${lblY}'), 'Grüße<br/>Y');
+  assert.equal(T.translateString('${lblX};${lblY};'), 'Grüße;Y;');
+  assert.equal(T.translateString('${lblY}${lblY}${lblX}'), 'YYGrüße');
+  assert.equal(T.translateString('${lblX}<br/>${unknownKey}<br/>${lblY}'),
+    'Grüße<br/>unknownKey<br/>Y');
+});
+
+test('translates keys with characters other than letters and digits', () => {
+  assert.equal(T.translateString('${HM-LC-Sw1-FM},${OLIGO.smart.iq.HM}'),
+    'Schaltaktor,Dimmaktor');
+});
+
+test('does not translate placeholders inside an inserted translation', () => {
+  assert.equal(T.translateString('${lblNested} ${lblY}'), '${lblY} Y');
+});
+
+test('leaves placeholders with whitespace unchanged', () => {
+  assert.equal(T.translateString('${lbl X}<br/>${lblY}'), '${lbl X}<br/>Y');
 });

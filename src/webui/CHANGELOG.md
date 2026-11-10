@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a text with several translation placeholders without a space in between
+  is now translated completely, for example the functions of a channel in
+  the device inbox (`${funcLight};${funcHeating};`) or a system variable
+  value with a line break (`${a}<br/>${b}`). Before, `translateString()`
+  took them as one placeholder, translated only the first key and dropped
+  the rest of the text. Keys with characters such as `-` or `.` (device
+  types) are still found.
+  (@jens-maus)
 * when the location is transferred to the Homematic IP devices (time and
   position settings), a message now lists the devices whose update failed;
   before, only a failed lookup of the position data was reported.

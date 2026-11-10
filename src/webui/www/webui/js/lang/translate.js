@@ -179,23 +179,20 @@ function translateString(stringToTranslate) {
     return;
   }
 
-  var arrSearchStrings = stringToTranslate.match(/\${\S+}/g);
-  if (arrSearchStrings == null) {
-    return stringToTranslate;
-  } else {
-     jQuery.each(arrSearchStrings, function (index, val) {
-      var transKey = val.substring(val.search(/\$\{/) + 2 , val.search(/\}/)),
-        translatedVal = translateKey(transKey),
-        dict = langJSON[getLang()];
-      // translateKey() returns an unknown key %-decoded. Keep the key as it is
-      // then, as the string can be a user text like a name.
-      if (!dict || dict[transKey] === undefined) {
-        translatedVal = transKey;
-      }
-      stringToTranslate = stringToTranslate.replace(val, function () { return translatedVal; });
-    });
-    return stringToTranslate;
-  }
+  // Each placeholder is matched on its own: a key ends at the first "}" and
+  // has no whitespace, but can contain other characters (e.g. "HM-LC-Sw1-FM"),
+  // so "${a}<br/>${b}" or "${a};${b}" are two placeholders. All placeholders
+  // are replaced in one pass, so an inserted translation is not searched again.
+  return stringToTranslate.replace(/\$\{([^\s}]+)\}/g, function (val, transKey) {
+    var translatedVal = translateKey(transKey),
+      dict = langJSON[getLang()];
+    // translateKey() returns an unknown key %-decoded. Keep the key as it is
+    // then, as the string can be a user text like a name.
+    if (!dict || dict[transKey] === undefined) {
+      translatedVal = transKey;
+    }
+    return translatedVal;
+  });
 }
 
 function translateFilter() {
