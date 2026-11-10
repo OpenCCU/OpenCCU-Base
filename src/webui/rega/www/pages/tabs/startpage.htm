@@ -247,7 +247,9 @@
                   boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
                   boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
                   Call( "/esp/system.fn::getSysVarValAsString()" );
-                  Write( sSysVarVal );
+                  ! The value may contain HTML. showSysVarValues() shows it with only
+                  ! simple text formatting, so it is passed HTML-escaped in an attribute.
+                  Write( '<span data-sysvar-value="' # sSysVarVal.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('"', "&quot;") # '"></span>' );
                   Write("</td>");
                   Write("</tr>");
                 }
@@ -425,6 +427,7 @@
     });
   }
 
+  showSysVarValues();
   translatePage();
   jQuery("#loadingGif").hide();
   jQuery("#tblStartpageInfo").show();
