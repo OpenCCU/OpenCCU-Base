@@ -58,7 +58,13 @@ int main() {
     check(makeRequest({"--led", "rpi-rf-mod", "off", "100"}) == "1 override 0 0 0 0");
     check(makeRequest({"--led", "rpi-rf-mod", "release"}) == "1 release");
     check(makeRequest({"--led", "rpi-rf-mod", "alternate", "green", "yellow", "000499"}) == "1 override 2 3 499 499");
-    for (auto args : std::vector<std::vector<std::string>>{{}, {"invalid"}, {"blue", "-1"},
+    check(makeRequest({"--led", "rpi-rf-mod", "#FF8000"}) == "1 override #ff8000 #ff8000 0 0");
+    check(makeRequest({"--led", "rpi-rf-mod", "#00ff00", "slow"}) == "1 override 2 0 500 500");
+    check(makeRequest({"--led", "rpi-rf-mod", "system", "alternate", "#102030", "red", "fast"}) ==
+          "1 system #102030 1 100 100");
+    check(makeRequest({"--led", "rpi-rf-mod", "#000000", "100"}) == "1 override 0 0 0 0");
+    for (auto args : std::vector<std::vector<std::string>>{{}, {"invalid"}, {"blue", "-1"}, {"#ff80"},
+         {"ff8000"}, {"#ff8000x"}, {"#gg8000"}, {"4"}, {"brightness", "50"},
          {"blue", "99999999999999999"}, {"alternate", "red", "blue", "0"},
          {"alternate", "red", "blue", "10", "0"}, {"blue", "10", "20"}, {"system"}}) {
       bool rejected = false;
@@ -95,25 +101,33 @@ int main() {
       return dispatch(state, msg, uid, 1234, backend, false);
     };
     check(command("1 report 4 4 0 0", 1234) == "OK accepted");
-    check(state.effective().a == 3);
+    check(state.effective().a == maskRgb(3));
     put(startup, "");
-    check(command("1 auto") == "OK accepted" && state.effective().a == 4);
-    check(command("1 override 2 3 250 750") == "OK accepted" && state.effective().a == 2);
-    check(command("1 report 1 1 0 0", 1234) == "OK accepted" && state.effective().a == 2);
+    check(command("1 auto") == "OK accepted" && state.effective().a == maskRgb(4));
+    check(command("1 override 2 3 250 750") == "OK accepted" && state.effective().a == maskRgb(2));
+    check(command("1 report 1 1 0 0", 1234) == "OK accepted" && state.effective().a == maskRgb(2));
     State restored;
     check(restored.load(readText(runtime + "/state")) && restored.wire() == state.wire());
-    check(command("1 release") == "OK accepted" && state.effective().a == 1);
+    check(command("1 release") == "OK accepted" && state.effective().a == maskRgb(1));
+    // Free colors: hex on the wire, a name's exact value keeps its number.
+    check(command("1 override #ff8000 #FF8000 0 0") == "OK accepted" && state.effective().a == 0xFF8000);
+    check(state.effective().wire() == "#ff8000 #ff8000 0 0");
+    check(restored.load(readText(runtime + "/state")) && restored.wire() == state.wire());
+    check(command("1 override #0000ff 0 500 500") == "OK accepted" && state.effective().wire() == "4 0 500 500");
     check(command("1 override 4 1 499 499") == "OK accepted");
     unlink(startup.c_str());
-    check(state.effective().a == 3);
+    check(state.effective().a == maskRgb(3));
     check(command("1 system 3 3 0 0") == "OK accepted" && !state.overrideActive && !state.automatic);
-    check(command("1 report 4 4 0 0", 1234) == "OK accepted" && state.effective().a == 3);
+    check(command("1 report 4 4 0 0", 1234) == "OK accepted" && state.effective().a == maskRgb(3));
     check(command("1 status").find(" disabled=0 ") != std::string::npos);
+    check(command("1 status").find(" brightness=100 dimmable=0") != std::string::npos);
     put(disabled, ""); check(state.effective().a == 0);
     check(command("1 status").find(" disabled=1 pattern=0 0 0 0") != std::string::npos);
     unlink(disabled.c_str());
     std::string before = state.wire();
-    for (const auto& msg : {"1 override 9 0 10 10", "1 report 1 2 0 0", "1 auto extra", "2 release", "1 system 1 2 0 1"})
+    for (const auto& msg : {"1 override 9 0 10 10", "1 report 1 2 0 0", "1 auto extra", "2 release", "1 system 1 2 0 1",
+                            "1 override #ff800 #ff800 0 0", "1 override #gg8000 0 10 10", "1 override ff8000 0 10 10",
+                            "1 override #ff80000 0 10 10", "1 override -1 0 10 10"})
       check(command(msg).compare(0, 3, "ERR") == 0 && state.wire() == before);
     check(command(std::string("1 auto\0", 7)).compare(0, 3, "ERR") == 0);
     check(command("1 override 1 1 0 0", 1234) == "ERR permission denied");
@@ -128,29 +142,72 @@ int main() {
     for (auto a : {"trigger", "brightness", "multi_intensity", "delay_on", "delay_off"}) put(rgb + "/" + a, "0");
     put(rgb + "/trigger", "[none] timer"); put(rgb + "/multi_index", "blue red green"); put(rgb + "/max_brightness", "255");
     check(backend.discover() && backend.name == "rgb");
+    check(backend.dimmable());
     for (unsigned mask = 0; mask < 8; ++mask) {
-      Pattern solid; solid.a = solid.b = mask;
-      check(backend.apply(solid, mask));
+      Pattern solid; solid.a = solid.b = maskRgb(mask);
+      check(backend.apply(solid, solid.a, 100));
       check(readText(rgb + "/multi_intensity") == std::to_string(mask & 4 ? 255 : 0) + " " +
           std::to_string(mask & 1 ? 255 : 0) + " " + std::to_string(mask & 2 ? 255 : 0) + "\n");
     }
-    Pattern blink; blink.a = 5; blink.da = blink.db = 100;
-    check(backend.kernelBlink(blink) && backend.apply(blink, 5));
+    Pattern blink; blink.a = maskRgb(5); blink.da = blink.db = 100;
+    check(backend.kernelBlink(blink) && backend.apply(blink, blink.a, 100));
     check(readText(rgb + "/trigger") == "timer\n" && readText(rgb + "/delay_on") == "100\n");
     // A timer attribute may not be writable until udev handles TRIGGER.
     // Retrying must preserve the active trigger and its current off phase.
     // The backend must use the configured on-color even with an off-phase mask.
     unlink((rgb + "/delay_on").c_str());
-    check(!backend.apply(blink, 0));
+    check(!backend.apply(blink, 0, 100));
     put(rgb + "/brightness", "0");
     put(rgb + "/delay_on", "0");
-    check(backend.apply(blink, 0));
+    check(backend.apply(blink, 0, 100));
     check(readText(rgb + "/multi_intensity") == "255 255 0\n");
     check(readText(rgb + "/trigger") == "timer\n");
     check(readText(rgb + "/brightness") == "0\n");
-    check(backend.apply(p, p.a) && backend.setColor(p.b));
+    Pattern q; q.a = maskRgb(4); q.b = maskRgb(1); q.da = 250; q.db = 750;
+    check(backend.apply(q, q.a, 100) && backend.setColor(q.b, 100));
     check(readText(rgb + "/multi_intensity") == "0 255 0\n");
     check(readText(rgb + "/brightness") == "255\n");
+    // Mixed and dimmed colors (order blue red green): gamma 2.2, 3 % floor.
+    check(level(255, 100, 255) == 255 && level(128, 100, 255) == 56 && level(1, 100, 255) == 8);
+    check(level(255, 50, 255) == 55 && level(255, 1, 255) == 8 && level(0, 100, 255) == 0);
+    check(level(127, 100, 1) == 0 && level(128, 100, 1) == 1 && level(255, 1, 1) == 1);
+    check(backend.setColor(0xFF8000, 100) && readText(rgb + "/multi_intensity") == "0 255 56\n");
+    check(backend.setColor(0xFF8000, 50) && readText(rgb + "/multi_intensity") == "0 55 12\n");
+    check(backend.setColor(0x000000, 50) && readText(rgb + "/multi_intensity") == "0 0 0\n");
+    // A group without levels (GPIO LEDs, adapters) shows the nearest name.
+    // A new device (inode) is rediscovered; max_brightness is read then.
+    auto replaceGroup = [&](const char* maximum) {
+      unlink((rgb + "/multi_index").c_str()); check(backend.discover() && backend.name == "missing");
+      put(rgb + "/multi_index", "blue red green"); put(rgb + "/max_brightness", maximum);
+    };
+    replaceGroup("1");
+    check(backend.discover() && backend.name == "rgb" && !backend.dimmable());
+    check(backend.setColor(0xFF8000, 30) && readText(rgb + "/multi_intensity") == "0 1 1\n");
+    check(backend.setColor(0x7F7FFF, 30) && readText(rgb + "/multi_intensity") == "1 0 0\n");
+    replaceGroup("255");
+    check(backend.discover() && backend.dimmable());
+    // The brightness setting: 1-100, anything else is 100.
+    brightnessFile = std::string(dir) + "/brightness";
+    check(!loadBrightness() && brightnessPercent == 100);
+    put(brightnessFile, "40");
+    check(loadBrightness() && brightnessPercent == 40 && !loadBrightness());
+    check(command("1 status").find(" brightness=40 dimmable=1") != std::string::npos);
+    for (auto invalid : {"0", "101", "abc", "40 50", ""}) {
+      put(brightnessFile, invalid);
+      (void)loadBrightness();
+      check(brightnessPercent == 100);
+      put(brightnessFile, "40"); check(loadBrightness() && brightnessPercent == 40);
+    }
+    unlink(brightnessFile.c_str());
+    check(loadBrightness() && brightnessPercent == 100);
+    writeBrightness("25");
+    check(readText(brightnessFile) == "25\n" && loadBrightness() && brightnessPercent == 25);
+    for (auto invalid : {"0", "101", "-1", "x"}) {
+      bool rejected = false;
+      try { writeBrightness(invalid); } catch (const std::runtime_error&) { rejected = true; }
+      check(rejected && readText(brightnessFile) == "25\n");
+    }
+    unlink(brightnessFile.c_str()); check(loadBrightness() && brightnessPercent == 100);
     for (auto a : {"trigger", "brightness", "multi_intensity", "delay_on", "delay_off", "multi_index", "max_brightness"})
       unlink((rgb + "/" + a).c_str());
     rmdir(rgb.c_str()); check(backend.discover() && backend.name == "missing");
@@ -158,13 +215,17 @@ int main() {
       std::string path = sysfs + "/rpi_rf_mod:" + c;
       directory(path); put(path + "/trigger", "none"); put(path + "/brightness", "0"); put(path + "/max_brightness", "1");
     }
-    check(backend.discover() && backend.name == "legacy");
-    check(backend.apply(p, 2)); check(backend.setColor(3));
+    check(backend.discover() && backend.name == "legacy" && !backend.dimmable());
+    check(backend.apply(q, maskRgb(2), 100)); check(backend.setColor(maskRgb(3), 100));
     check(readText(sysfs + "/rpi_rf_mod:red/brightness") == "1\n" &&
           readText(sysfs + "/rpi_rf_mod:green/brightness") == "1\n" &&
           readText(sysfs + "/rpi_rf_mod:blue/brightness") == "0\n");
+    check(backend.setColor(0x2080FF, 10));
+    check(readText(sysfs + "/rpi_rf_mod:red/brightness") == "0\n" &&
+          readText(sysfs + "/rpi_rf_mod:green/brightness") == "1\n" &&
+          readText(sysfs + "/rpi_rf_mod:blue/brightness") == "1\n");
     directory(rgb); put(rgb + "/multi_index", "red red blue"); put(rgb + "/max_brightness", "255");
-    check(backend.discover() && backend.name == "error" && !backend.apply(p, 7));
+    check(backend.discover() && backend.name == "error" && !backend.apply(q, maskRgb(7), 100));
     check(!restored.load("1 0 0 broken"));
     check(makeRequest({"--led", "rpi-rf-mod", "alternate", "blue", "red", "250"}) == "1 override 4 1 250 250");
     check(makeRequest({"--led", "ACT", "blink", "120"}) == "1 led ACT blink 120 120");
