@@ -810,13 +810,6 @@
     
   }
   
-  function decodeURIComponentSafe(s) {
-    if (!s) {
-        return s;
-    }
-    return decodeURIComponent(s.replace(/%(?![0-9][0-9a-fA-F]+)/g, '%25'));
-  }
-    
   loadChar8859Edit = function(sValue) 
   {
     var s = "";
@@ -824,8 +817,11 @@
     s += "<tr><td> <textarea id='txValue' rows='5'></textarea> </td></tr>";
     s += "</table>";
     $("tdValueEdit").innerHTML = s;
-    // set the value as text, so that HTML in it is neither interpreted nor changed
-    $("txValue").value = decodeURIComponentSafe(unescape(sValue));
+    // set the value as text, so that HTML in it is neither interpreted nor changed.
+    // sValue comes from UriEncode(), which writes every byte except 0-9, A-Z and
+    // a-z as %XX of the stored ISO-8859 text; unescape() reverses exactly that.
+    // Decode only once: a value like "A%41" or "%99" is text, not an encoding.
+    $("txValue").value = unescape(sValue);
     $("tdEdit").innerHTML = "";
   };
 

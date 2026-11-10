@@ -15,6 +15,12 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the system variable dialog shows the text of a string variable as it is
+  stored. It decoded the value a second time, so percent sequences in the
+  text changed: `A%41` was shown and saved as `AA`, and a text with `%99`
+  left the field empty, so saving the dialog erased the value
+  (OpenCCU patch 0097)
+  ([#351](https://github.com/OpenCCU/OpenCCU-Base/pull/351), @jens-maus)
 * a text with several translation placeholders without a space in between
   is now translated completely, for example the functions of a channel in
   the device inbox (`${funcLight};${funcHeating};`) or a system variable

@@ -232,6 +232,7 @@ jobs:
           tests/webui/test-programs-else-rule.js
           tests/webui/test-sysvar-html.js
           tests/webui/test-keyboard-buttons.js
+          tests/webui/test-sysvar-string-dialog.js
 
       - name: Check ReGa scripts in bin/
         run: python3 tests/test-hm-scripts.py -v
