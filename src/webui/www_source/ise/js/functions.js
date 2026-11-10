@@ -4165,6 +4165,118 @@ function hsvToRgb(h, s, v) {
   return { r: r * 255, g: g * 255, b: b * 255 };
 };
 /**
+ * Returns the value of a system variable as HTML that keeps only simple text
+ * formatting. The values of the system variables shown on the start page may
+ * contain HTML (line breaks become <br/>), but can be set by other users, so
+ * they must not run scripts or load content.
+ *
+ * Kept: br, b, strong, i, em, u, s, small, sub, sup, span and font. font keeps
+ * only its color attribute, span only a color in its style attribute. Other
+ * elements are removed but keep their text; the content of script, style and
+ * similar elements is removed as well. All other attributes are removed.
+ */
+sanitizeSysVarHtml = function(html) {
+  var allowed = {BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, SMALL: 1, SUB: 1, SUP: 1, SPAN: 1, FONT: 1},
+    dropWithContent = {SCRIPT: 1, STYLE: 1, IFRAME: 1, FRAME: 1, FRAMESET: 1, OBJECT: 1, EMBED: 1, APPLET: 1,
+      NOSCRIPT: 1, NOEMBED: 1, NOFRAMES: 1, TEMPLATE: 1, TEXTAREA: 1, TITLE: 1, SELECT: 1, XMP: 1,
+      SVG: 1, MATH: 1, HEAD: 1},
+    reColor = /^(#[0-9a-f]{3,8}|[a-z]+|rgba?\([0-9\s.,%]+\)|hsla?\([0-9\s.,%deg]+\))$/i,
+    doc = null;
+
+  var escapeText = function(text) {
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  };
+
+  var validColor = function(color) {
+    color = (color == null) ? "" : String(color).replace(/^\s+|\s+$/g, "");
+    return reColor.test(color) ? color : null;
+  };
+
+  var walk = function(node) {
+    var out = "", child, name, tag, attr, color, match;
+    for (child = node.firstChild; child; child = child.nextSibling) {
+      if (child.nodeType === 3) {
+        out += escapeText(child.nodeValue);
+        continue;
+      }
+      if (child.nodeType !== 1) {
+        continue;
+      }
+      name = String(child.nodeName).toUpperCase();
+      if (dropWithContent[name]) {
+        continue;
+      }
+      if (!allowed[name]) {
+        out += walk(child);
+        continue;
+      }
+      if (name === "BR") {
+        out += "<br/>";
+        continue;
+      }
+      attr = "";
+      if (name === "FONT") {
+        color = validColor(child.getAttribute("color"));
+        if (color) {
+          attr = ' color="' + escapeText(color) + '"';
+        }
+      } else if (name === "SPAN") {
+        match = /(?:^|;)\s*color\s*:\s*([^;]*)/i.exec(child.getAttribute("style") || "");
+        color = match ? validColor(match[1]) : null;
+        if (color) {
+          attr = ' style="color:' + escapeText(color) + '"';
+        }
+      }
+      tag = name.toLowerCase();
+      out += "<" + tag + attr + ">" + walk(child) + "</" + tag + ">";
+    }
+    return out;
+  };
+
+  html = (html == null) ? "" : String(html);
+  // Parse into a document without a window: it runs no scripts and loads
+  // nothing.
+  try {
+    if (typeof DOMParser != "undefined") {
+      doc = new DOMParser().parseFromString(html, "text/html");
+    }
+  } catch (e) {
+    doc = null;
+  }
+  if ((!doc || !doc.body) && document.implementation && document.implementation.createHTMLDocument) {
+    doc = document.implementation.createHTMLDocument("");
+    doc.body.innerHTML = html;
+  }
+  if (!doc || !doc.body) {
+    return escapeText(html);
+  }
+  return walk(doc.body);
+};
+
+/**
+ * Translates the ${key} placeholders of a system variable value one by one.
+ * translateString() would take placeholders without whitespace in between,
+ * e.g. "${a}<br/>${b}", as one placeholder and drop the rest.
+ */
+translateSysVarValue = function(value) {
+  return String(value).replace(/\$\{\w+\}/g, function(placeholder) {
+    return translateString(placeholder);
+  });
+};
+
+/**
+ * Shows the system variable values of the start page, which startpage.htm
+ * writes HTML-escaped into data-sysvar-value, in their table cells.
+ */
+showSysVarValues = function(root) {
+  jQuery(root || document).find("[data-sysvar-value]").each(function() {
+    var cell = this.parentNode;
+    if (cell) {
+      cell.innerHTML = sanitizeSysVarHtml(translateSysVarValue(this.getAttribute("data-sysvar-value")));
+    }
+  });
+};
+/**
  * Keyboard operation of elements that act as buttons (role="button" and
  * tabindex="0"). Elements without visible text name the translation key of
  * their label in data-aria-key; images also get it as their alt text.
