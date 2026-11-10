@@ -217,13 +217,13 @@ iseThermostat_2ndGen = Class.create(iseThermostat, {
     this.btnTempEco = $(this.id + "tempECO");
     this.chn = homematic("Device.get",{"id": this.id});
 
-    if (this.opts.stTemp) {
+    if (this.opts.stTemp !== undefined) {
       this.showActualTemp();
     }
     if (this.opts.stHum !== undefined) {
       this.showActualHumidity();                                      
     }
-    if (this.opts.stBat) {
+    if (this.opts.stBat !== undefined) {
       this.showActualBat();
     }
     if (this.opts.stValve !== undefined) {
