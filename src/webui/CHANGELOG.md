@@ -15,6 +15,10 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the heating control of "Status and control" shows an actual temperature
+  of 0 °C and a battery voltage of 0 V instead of hiding the row
+  (OpenCCU patch 0042 checked them for a true value).
+  ([#344](https://github.com/OpenCCU/OpenCCU-Base/pull/344), @jens-maus)
 * a number input of the device settings that is checked in place (for
   example the power threshold of the power meters) no longer rewrites an
   unchanged value with more decimal places when it loses the focus, so
