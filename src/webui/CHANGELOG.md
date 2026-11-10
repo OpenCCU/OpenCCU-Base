@@ -26,6 +26,11 @@ or extended in it.
   with Tab and react to Enter and Space; icons without text get a translated
   label for screen readers
   ([#347](https://github.com/OpenCCU/OpenCCU-Base/pull/347), @jens-maus)
+* the JSON API (`/api/homematic.cgi`) escapes all control characters
+  (U+0000 to U+001F) in strings as JSON requires; a name or value with
+  such a character, e.g. a vertical tab, made the whole response invalid
+  JSON before.
+  ([#343](https://github.com/OpenCCU/OpenCCU-Base/pull/343), @jens-maus)
 * the WebUI is branded as OpenCCU: the OpenCCU logos (installed to
   `www/ise/img/occu-logo*.png`) replace the Homematic logos in the header,
   on the login and logout pages, the help pages, the error pages and while
