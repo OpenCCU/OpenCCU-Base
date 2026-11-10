@@ -18,7 +18,8 @@ version and date with the next version bump (`version.sh`).
   provides on the GPIO header of the Raspberry Pi and Tinkerboard 2
   (`dimmable=1` in the status reply). On/off LEDs (HB-RF adapters, older
   device trees) show the nearest named color and ignore the brightness.
-  Existing requests and saved states keep working unchanged. (@jens-maus)
+  Existing requests and saved states keep working unchanged.
+  ([#350](https://github.com/OpenCCU/OpenCCU-Base/pull/350), @jens-maus)
 
 ## 2.3.0 (2026-11-02)
 
