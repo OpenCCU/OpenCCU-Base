@@ -1072,6 +1072,13 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
 
   var value = $F(srcid);
 
+  // An input that is both source and destination and still shows the value
+  // it was loaded with keeps its text when that is a valid number in the
+  // range: rewriting e.g. "12.50" as "12.500" would mark it as changed, so
+  // saving the settings would send the unchanged value again.
+  var keepUnchanged = (srcElm === dstElm) && (typeof srcElm.defaultValue == "string") &&
+    (srcElm.defaultValue !== "") && (value === srcElm.defaultValue);
+
   //replace , by .
   if (value.indexOf(',') >= 0)
   {
@@ -1140,8 +1147,11 @@ ProofAndSetValue = function(srcid, dstid, min, max, dstValueFactor, convInt2Floa
   if (ok)
   {
     srcElm.style.backgroundColor = "#fffffe";
-    dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
-    srcElm.value = parsedValue.toFixed(digits);
+    if (!(keepUnchanged && (Number(srcElm.defaultValue) === parsedValue)))
+    {
+      dstElm.value = parseFloat((parsedValue.toFixed(digits) * dstValueFactor).toPrecision(12));
+      srcElm.value = parsedValue.toFixed(digits);
+    }
     srcElm.setAttribute("valvalid", "true");
   }
   else
