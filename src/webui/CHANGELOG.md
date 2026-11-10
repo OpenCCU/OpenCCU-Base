@@ -19,6 +19,11 @@ or extended in it.
   of 0 °C and a battery voltage of 0 V instead of hiding the row
   (OpenCCU patch 0042 checked them for a true value).
   ([#344](https://github.com/OpenCCU/OpenCCU-Base/pull/344), @jens-maus)
+* a number input of the device settings that is checked in place (for
+  example the power threshold of the power meters) no longer rewrites an
+  unchanged value with more decimal places when it loses the focus, so
+  saving no longer sends the unchanged value to the device again.
+  ([#346](https://github.com/OpenCCU/OpenCCU-Base/pull/346), @jens-maus)
 * the JSON API (`/api/homematic.cgi`) escapes all control characters
   (U+0000 to U+001F) in strings as JSON requires; a name or value with
   such a character, e.g. a vertical tab, made the whole response invalid
