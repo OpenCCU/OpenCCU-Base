@@ -295,9 +295,95 @@ LoadingHTML = function()
 
 
 
+// The page of the WebUI menu that is shown (WebUI.enter() sets it before it
+// calls updateContent()), null before the WebUI is set up.
+updateContentCurrentPage = function()
+{
+  return ((typeof WebUI != "undefined") && WebUI) ? WebUI.currentPage : null;
+};
+
+// Called when a page requested by updateContent() is loaded. Prototype
+// runs the scripts of the page right after this (deferred), and the WebUI
+// fires ContentLoaded 100 ms later. A call remembered meanwhile is carried
+// out after that, so it does not replace the page before its scripts ran.
+// It is dropped if another page of the menu was opened since, which then
+// shows its own content. Only the load that kept bUpdateContentRunning set
+// carries it out: after a load without a remembered call, the next page
+// load can start before the timer below runs, and a call remembered during
+// that load is carried out when that load is complete.
+updateContentLoaded = function()
+{
+  iseRefr(true);
+  var keepsLock = (updateContentPending !== null);
+  if( !keepsLock )
+  {
+    bUpdateContentRunning=false;
+  }
+  setTimeout(function() {
+    try
+    {
+      eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
+    }
+    finally
+    {
+      // also after an error of a ContentLoaded handler, so the page load is
+      // not blocked
+      var pending = updateContentPending;
+      if( keepsLock && (pending !== null) )
+      {
+        updateContentPending = null;
+        bUpdateContentRunning=false;
+        if( pending.page === updateContentCurrentPage() )
+        {
+          doClearTempView = pending.clearTempView;
+          updateContent(pending.file, pending.argsForUrl, pending.codeToExec, pending.bDontSaveUrl);
+        }
+        else
+        {
+          conInfo("updateContent: another page was opened, dropping ["+pending.file+"].");
+        }
+      }
+    }
+  }, 100);
+};
+
+// A call of updateContent() while a page is loading is not dropped any more:
+// the last such call is remembered and carried out once the loading page is
+// complete (after its scripts ran and ContentLoaded was fired). So a reload
+// requested meanwhile, e.g. by a second save of the system variable list,
+// still shows the saved state. Until then bUpdateContentRunning stays true,
+// so further calls replace the remembered one and the order is kept.
+updateContentPending = null;
+
 updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
 {
-  if( !bUpdateContentRunning )
+  if( bUpdateContentRunning )
+  {
+    // A reload of the loading page, as reloadPage() and reloadSortedPage()
+    // make it: same file and arguments, no code to run. A call with other
+    // arguments (e.g. another channel) or code is a new navigation.
+    var isReloadOfLoadingPage = (file == sActPage) && (argsForUrl == sActPageArgs) && !codeToExec;
+    if( (updateContentPending !== null) && isReloadOfLoadingPage && (updateContentPending.file != file) )
+    {
+      // Another page is to be opened after the loading one (e.g. from the
+      // menu), so a reload of the loading page, e.g. by reloadPage() from a
+      // save of that page, is not needed and must not replace it.
+      conInfo("updateContent: page load running, keeping ["+updateContentPending.file+"] instead of reloading ["+file+"].");
+      return;
+    }
+    conInfo("updateContent: page load running, carrying out ["+file+"] afterwards.");
+    // doClearTempView is read when the page is requested, so keep the value
+    // reloadPage() and reloadSortedPage() set for this call.
+    updateContentPending = {
+      file: file,
+      argsForUrl: argsForUrl,
+      codeToExec: codeToExec,
+      bDontSaveUrl: bDontSaveUrl,
+      clearTempView: doClearTempView,
+      page: updateContentCurrentPage()
+    };
+  }
+  else
   {
     bUpdateContentRunning=true;
     iseRefr(false);
@@ -344,13 +430,7 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
       opts = {
         evalScripts: true,
         method: 'get',
-        onComplete:function(){
-          iseRefr(true);
-          bUpdateContentRunning=false;
-          setTimeout(function() {
-            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
-          }, 100);
-        }
+        onComplete: updateContentLoaded
       };
     }
     else
@@ -358,13 +438,7 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
       opts = {
         postBody: ReGa.encode(pb),
         evalScripts: true,
-        onComplete:function(){
-          iseRefr(true);
-          bUpdateContentRunning=false;
-          setTimeout(function() {
-            eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
-          }, 100);
-        }
+        onComplete: updateContentLoaded
       };
     }
     /* ELV --> */
