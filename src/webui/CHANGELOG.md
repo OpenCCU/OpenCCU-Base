@@ -16,9 +16,11 @@ WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
 * the teach-in dialog shows below the teach-in counter of HmIP-RF and
-  HmIP-Wired whether the eQ-3 key server (`secgtw.homematic.com`, port
-  8443), which the teach-in of Homematic IP devices needs, can be reached
-  from the CCU
+  HmIP-Wired whether the eQ-3 key server, which the teach-in of Homematic
+  IP devices needs, can be reached from the CCU. It checks the server set
+  in `KeyServer.Gateway.URL` and `KeyServer.Gateway.Port` of
+  `/etc/config/crRFD.conf` (by default `secgtw.homematic.com`, port 8443),
+  and only if a Homematic IP interface is present
   ([#297](https://github.com/OpenCCU/OpenCCU-Base/pull/297),
   refs [OpenCCU#3405](https://github.com/OpenCCU/OpenCCU/issues/3405),
   @MichaelN0815, @jens-maus)

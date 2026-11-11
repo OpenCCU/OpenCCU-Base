@@ -20,6 +20,7 @@ if { [info exists EQ3_SERVICE_HS485D_PORT] } {
 }
 set HS485D_URL "bin://127.0.0.1:$portnumber"
 
+set KEYSERVER_CONF "/etc/config/crRFD.conf"
 set KEYSERVER_HOST "secgtw.homematic.com"
 set KEYSERVER_PORT 8443
 
@@ -45,11 +46,25 @@ proc getButtonWired {class onclick title} {
 proc initJavascript {} {
   cgi_javascript {
     puts {
+      keyserverCheck = {shown: false, ready: false, started: false};
+      startKeyserverCheck = function() {
+        if (keyserverCheck.shown && keyserverCheck.ready && !keyserverCheck.started) {
+          keyserverCheck.started = true;
+          checkKeyserver();
+        }
+      };
+      sectionShown = function(section) {
+        if (section == "HmIP-RF" || section == "HmIP-Wired") {
+          keyserverCheck.shown = true;
+          startKeyserverCheck();
+        }
+      };
       showSection = function(section){
         var thisSection = jQuery("body").data(section);
         if(thisSection) {
           jQuery('#section'+section).show();
           jQuery('#sectionUNAVAIL').hide();
+          sectionShown(section);
         } else {
           if (typeof thisSection == "undefined") {
             homematic('Interface.isPresent', {"interface": section}, function(result, error) {
@@ -58,6 +73,7 @@ proc initJavascript {} {
                 jQuery("body").data(section, true);
                 jQuery('#section'+section).show();
                 jQuery('#sectionUNAVAIL').hide();
+                sectionShown(section);
                 dlgPopup.readaptSize();
               }
             });
@@ -206,7 +222,7 @@ proc putSectionHMIP {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-RF")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -308,7 +324,7 @@ proc putSectionHMIPWired {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-Wired")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -399,7 +415,7 @@ proc action_put_page {} {
 
 puts "<div class='CLASS21200 j_translate'>"
 
-  puts "<style>.keyserver-status.keyserver-reachable { color: green; } .keyserver-status.keyserver-unreachable { color: red; }</style>"
+  puts "<style>.CLASS21206 .keyserver-status { display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none; } .keyserver-status.keyserver-reachable { color: green; } .keyserver-status.keyserver-unreachable { color: red; }</style>"
 
   initJavascript
 
@@ -463,24 +479,25 @@ puts "</div>"
     puts {
       checkKeyserver = function() {
         var statusElements = jQuery(".keyserver-status");
+        var states = {
+          "reachable": ["dialogNewDevicesKeyserverReachable", "keyserver-reachable"],
+          "unreachable": ["dialogNewDevicesKeyserverUnreachable", "keyserver-unreachable"]
+        };
+        var showStatus = function(result) {
+          var state = states.hasOwnProperty(result) ? states[result] : ["dialogNewDevicesKeyserverCheckFailed", ""];
+          statusElements
+            .removeClass("keyserver-reachable keyserver-unreachable")
+            .addClass(state[1])
+            .text(translateKey(state[0]));
+        };
         new Ajax.Request(url, {
           method: "post",
           postBody: "action=check_keyserver",
           onSuccess: function(transport) {
-            var result = transport.responseText.trim();
-            var key = result === "reachable" ? "dialogNewDevicesKeyserverReachable" :
-                      result === "unreachable" ? "dialogNewDevicesKeyserverUnreachable" :
-                      "dialogNewDevicesKeyserverCheckFailed";
-            statusElements
-              .removeClass("keyserver-reachable keyserver-unreachable")
-              .addClass(result === "reachable" ? "keyserver-reachable" :
-                        result === "unreachable" ? "keyserver-unreachable" : "")
-              .text(translateKey(key) || key);
+            showStatus(transport.responseText.trim());
           },
           onFailure: function() {
-            statusElements
-              .removeClass("keyserver-reachable keyserver-unreachable")
-              .text(translateKey("dialogNewDevicesKeyserverCheckFailed") || "dialogNewDevicesKeyserverCheckFailed");
+            showStatus("");
           }
         });
       };
@@ -793,7 +810,8 @@ puts "</div>"
     }
 
     puts "translatePage('#messagebox');"
-    puts "checkKeyserver();"
+    puts "keyserverCheck.ready = true;"
+    puts "startKeyserverCheck();"
     puts "dlgPopup.readaptSize();"
 
   }
@@ -1011,10 +1029,38 @@ proc action_get_new_device_count {} {
   puts [get_new_device_count]
 }
 
+# Host and port of the key server the HmIP server uses (KeyServer.Gateway.URL
+# and KeyServer.Gateway.Port of crRFD.conf), else the eQ-3 default.
+proc get_keyserver_address {} {
+  global KEYSERVER_CONF KEYSERVER_HOST KEYSERVER_PORT
+  set host $KEYSERVER_HOST
+  set port $KEYSERVER_PORT
+  if {![catch {open $KEYSERVER_CONF r} fd]} {
+    while {[gets $fd line] >= 0} {
+      if {[regexp {^[ \t]*KeyServer\.Gateway\.URL[ \t]*=[ \t]*([^ \t\r]+)} $line dummy value]} {
+        regsub {^[A-Za-z]+://} $value {} value
+        regsub {[:/].*$} $value {} value
+        if {[regexp {^[A-Za-z0-9.-]+$} $value]} { set host $value }
+      } elseif {[regexp {^[ \t]*KeyServer\.Gateway\.Port[ \t]*=[ \t]*([0-9]+)[ \t\r]*$} $line dummy value]} {
+        scan $value %d value
+        if {$value > 0 && $value < 65536} { set port $value }
+      }
+    }
+    close $fd
+  }
+  return [list $host $port]
+}
+
+# Prints "reachable" or "unreachable", or "failed" if nc could not be run.
 proc action_check_keyserver {} {
-  global KEYSERVER_HOST KEYSERVER_PORT
-  if {[catch {exec nc -z -w 3 $KEYSERVER_HOST $KEYSERVER_PORT}]} {
-    puts "unreachable"
+  global errorCode
+  set address [get_keyserver_address]
+  if {[catch {exec nc -z -w 3 [lindex $address 0] [lindex $address 1] 2>/dev/null}]} {
+    if {[lindex $errorCode 0] == "CHILDSTATUS"} {
+      puts "unreachable"
+    } else {
+      puts "failed"
+    }
   } else {
     puts "reachable"
   }
