@@ -243,3 +243,25 @@ test('a remembered reload is dropped when another page was opened meanwhile', ()
   ui.context.updateContent('/pages/c.htm');
   assert.equal(ui.requests.length, 2);
 });
+
+test('the timer of a load without a remembered call does not start a call of a later load', () => {
+  const ui = makeWebUI();
+  ui.context.updateContent('/pages/a.htm');
+  ui.complete(0, 'A');
+  // A released the lock; B starts before the timer of A runs, and C is
+  // remembered while B is loading
+  ui.advance(50);
+  ui.context.updateContent('/pages/b.htm');
+  ui.context.updateContent('/pages/c.htm');
+  ui.advance(50);
+  assert.deepEqual(ui.events, ['ContentLoaded']);
+  assert.deepEqual(ui.requests.map((r) => r.url), ['/pages/a.htm?sid=SID', '/pages/b.htm?sid=SID'],
+    'C must wait for B');
+  assert.equal(ui.context.bUpdateContentRunning, true);
+  ui.complete(1, 'B');
+  ui.advance(100);
+  assert.deepEqual(ui.requests.map((r) => r.url), ['/pages/a.htm?sid=SID', '/pages/b.htm?sid=SID', '/pages/c.htm?sid=SID']);
+  assert.ok(ui.log.includes('scripts of B see B'), ui.log.join('\n'));
+  ui.complete(2, 'C');
+  assert.equal(ui.content.innerHTML, 'C');
+});

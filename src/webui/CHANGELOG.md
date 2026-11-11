@@ -21,7 +21,9 @@ or extended in it.
   the "internal" checkbox in the system variable list show the saved state
   of both. Only the last such request is carried out, and none if another
   page of the menu was opened meanwhile
-  ([#353](https://github.com/OpenCCU/OpenCCU-Base/pull/353), @jens-maus)
+  ([#353](https://github.com/OpenCCU/OpenCCU-Base/pull/353); refs
+  [OpenCCU/OpenCCU#4361](https://github.com/OpenCCU/OpenCCU/issues/4361),
+  @jens-maus)
 * the value dialog of a system variable (a click on its value in "Status and
   control" or on the start page) sets only the value. It saved the whole
   variable before, so it also rewrote its name, description, unit, value

@@ -307,11 +307,15 @@ updateContentCurrentPage = function()
 // fires ContentLoaded 100 ms later. A call remembered meanwhile is carried
 // out after that, so it does not replace the page before its scripts ran.
 // It is dropped if another page of the menu was opened since, which then
-// shows its own content.
+// shows its own content. Only the load that kept bUpdateContentRunning set
+// carries it out: after a load without a remembered call, the next page
+// load can start before the timer below runs, and a call remembered during
+// that load is carried out when that load is complete.
 updateContentLoaded = function()
 {
   iseRefr(true);
-  if( updateContentPending === null )
+  var keepsLock = (updateContentPending !== null);
+  if( !keepsLock )
   {
     bUpdateContentRunning=false;
   }
@@ -325,7 +329,7 @@ updateContentLoaded = function()
       // also after an error of a ContentLoaded handler, so the page load is
       // not blocked
       var pending = updateContentPending;
-      if( pending !== null )
+      if( keepsLock && (pending !== null) )
       {
         updateContentPending = null;
         bUpdateContentRunning=false;
