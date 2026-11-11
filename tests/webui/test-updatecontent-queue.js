@@ -297,3 +297,32 @@ test('opening the loading page again from the menu keeps it', () => {
   assert.equal(ui.content.innerHTML, 'A');
   assert.equal(ui.context.bUpdateContentRunning, false);
 });
+
+test('the loading page with other arguments opened from the menu is carried out', () => {
+  const ui = makeWebUI();
+  // the link list of channel 1 is loading
+  ui.context.WebUI.currentPage = 'LinkListPage';
+  ui.context.updateContent('/config/ic_linkpeerlist.cgi', '&channel=1');
+  ui.context.WebUI.currentPage = 'PageB';
+  ui.context.updateContent('/pages/b.htm');
+  // the menu opens the link list of channel 2
+  ui.context.WebUI.currentPage = 'LinkListPage';
+  ui.context.updateContent('/config/ic_linkpeerlist.cgi', '&channel=2');
+  ui.complete(0, 'channel 1');
+  ui.advance(100);
+  assert.deepEqual(ui.requests.map((r) => r.url),
+    ['/config/ic_linkpeerlist.cgi?sid=SID&channel=1', '/config/ic_linkpeerlist.cgi?sid=SID&channel=2']);
+});
+
+test('the loading page with code to run is carried out after a remembered page', () => {
+  const ui = makeWebUI();
+  ui.context.WebUI.currentPage = 'NewDevices';
+  ui.context.updateContent('/pages/newdevices.htm');
+  ui.context.updateContent('/pages/b.htm');
+  // e.g. a new sort order of the loading list
+  ui.context.updateContent('/pages/newdevices.htm', null, 'system.SetSessionVar("sessionLS", "NAME");');
+  ui.complete(0, 'list');
+  ui.advance(100);
+  assert.equal(ui.requests.length, 2);
+  assert.match(ui.requests[1].opts.postBody, /sessionLS/);
+});

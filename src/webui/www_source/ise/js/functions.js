@@ -359,7 +359,11 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
 {
   if( bUpdateContentRunning )
   {
-    if( (updateContentPending !== null) && (file == sActPage) && (updateContentPending.file != file) )
+    // A reload of the loading page, as reloadPage() and reloadSortedPage()
+    // make it: same file and arguments, no code to run. A call with other
+    // arguments (e.g. another channel) or code is a new navigation.
+    var isReloadOfLoadingPage = (file == sActPage) && (argsForUrl == sActPageArgs) && !codeToExec;
+    if( (updateContentPending !== null) && isReloadOfLoadingPage && (updateContentPending.file != file) )
     {
       // Another page is to be opened after the loading one (e.g. from the
       // menu), so a reload of the loading page, e.g. by reloadPage() from a
