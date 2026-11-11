@@ -12,8 +12,4 @@ LinksAndProgramsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

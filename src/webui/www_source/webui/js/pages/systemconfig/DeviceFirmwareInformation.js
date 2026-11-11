@@ -47,8 +47,4 @@ DeviceFirmwareInformation = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-
 }();

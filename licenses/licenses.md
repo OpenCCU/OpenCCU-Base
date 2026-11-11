@@ -17,4 +17,6 @@ src/eq3_char_loop/mxs_raw_auart.c | GPL-2.0+
 src/libxmlrpc | LGPL-2.1
 src/libxmlparser | LGPL-2.1
 src/webui | Apache 2.0 if not stated otherwise
+src/webui/www/webui/js/extern/codemirror6 | MIT (CodeMirror, see [codemirror-MIT.txt](codemirror-MIT.txt))
+src/webui/www/ise/img/occu-logo*.png, src/webui/www/ise/img/rssi-icon.png | Copyright of the OpenCCU team, no reuse in own distributions or forks (see [openccu-images.md](openccu-images.md))
 webui | Apache 2.0 if not stated otherwise

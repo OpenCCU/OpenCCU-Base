@@ -12,8 +12,4 @@ FavoriteListPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

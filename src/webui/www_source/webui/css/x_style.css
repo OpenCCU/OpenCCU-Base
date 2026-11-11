@@ -1,8 +1,3 @@
-* {
-  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
-  font-size: 12px;
-}
-
 /* rega\pages\msg\editScript.htm */
 
 .CLASS00001 {
@@ -25,7 +20,6 @@
 
 .CLASS00004 {
 	width:75%;
-	height:120px;
 	background-color: $_(activeBackground); /* #dcdcdc */
 	text-align:left;
 }
@@ -64,7 +58,6 @@
 
 .CLASS00011 {
 	width:25%;
-	height:120px;
 	background-color: $_(white); /* white */
 }
 
@@ -177,7 +170,6 @@
 }
 
 .CLASS00203 {
-	border: solid 1px $_(black); /* black */
 }
 
 .CLASS00204 {
@@ -230,10 +222,10 @@
 /* rega\pages\msg\sysVarsSelection.htm */
 
 .CLASS00300 {
-	overflow: scroll;
-	width: 100%;
+	overflow: auto;
 	height:520px;
 	background-color:$_(white); /* white */
+	border:solid 1px $_(black); /* black */
 }
 
 .CLASS00301 {
@@ -244,6 +236,7 @@
 	text-align:center;
 	background-color:$_(clickable);
 	height: 40px;
+	font-weight: normal;
 }
 
 .CLASS00303 {
@@ -296,7 +289,6 @@
 
 .CLASS00314 {
 	line-height:15px;
-	font-size:smaller;
 	text-align:center
 }
 
@@ -486,7 +478,6 @@
 	text-align:left;
 	color: $_(textColorA) ! important; /* white */
 	font-weight:bold;
-	font-size:10pt;
 }
 
 .CLASS00716 {
@@ -497,7 +488,7 @@
 
 .CLASS00717 {
 	height:200px;
-	overflow:scroll;
+	overflow: auto;
 	background-color:$_(white); /* white */
 }
 
@@ -892,7 +883,6 @@
 	font-weight:bold;
 	color: $_(textColorB); /* black */
 	cursor:pointer;
-	font-size:12px;
 }
 
 .CLASS01217 {
@@ -911,7 +901,7 @@
 /* rega\pages\msg\programChooser.htm */
 
 .CLASS01300 {
-	overflow: scroll;
+	overflow: auto;
 	width: 100%;
 	height: 400px;
 	background-color:$_(white); /* white */
@@ -1149,13 +1139,13 @@
 }
 
 .CLASS01805 {
-	margin-top:20px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS01806 {
-	margin-left: 10px;
-    margin-right: 10px;
 	border:solid 1px $_(black); /* black */
+	width: 100%;
 }
 
 .CLASS01807 {
@@ -1174,9 +1164,7 @@
 }
 
 .CLASS01809 {
-	float:left;
 	top:0px;
-	width:49%;
 	height:100%;
 	overflow:hidden;
 }
@@ -1185,9 +1173,13 @@
 	height:50%;
 }
 
+#partingLine1 {
+  display: table-row;
+}
+
 .CLASS01811 {
-	padding-top: 5px;
     color: $_(textColorB); /* black */
+	border-collapse: collapse;
 }
 
 .CLASS01812 {
@@ -1297,7 +1289,6 @@
 /* rega\esp\rule.inc */
 
 .CLASS02300 {
-	font-size: 14px;
 	font-weight: bold;
 }
 
@@ -1331,7 +1322,6 @@
 
 .CLASS02501 {
 	background-color:$_(clickable);
-	font-size:12px;
 	padding:4px;
 	border:solid 1px $_(black); /* black */
 	text-align:center;
@@ -1370,7 +1360,6 @@
 
 .CLASS02507 {
 	background-color:$_(activeBackground);
-	font-size:12px;
 	padding:4px;
 	color: $_(textColorB); /* black */
 	height:30px;
@@ -1398,6 +1387,7 @@
 	color: $_(textColorB); /* black */
 	width:100%;
 	border:none;
+	background-color:inherit;
 }
 
 .CLASS02511 {
@@ -1419,6 +1409,7 @@
 	border:1px Solid $_(black); /* black */
 	height:96px;
 	width:96px;
+	cursor:initial;
 }
 
 .CLASS02515 {
@@ -1461,7 +1452,6 @@
 
 .CLASS02520 {
 	color: $_(textColorB); /* black */
-	width:100%;
 	border:none;
 	background-color:$_(activeBackground);
 }
@@ -1551,25 +1541,22 @@
 }
 
 .CLASS02532 {
-	font-size: 10px;
 	width:220px;
 	/*height:25px;*/
 	height:auto;
-	min-height: 32px;
+	min-height: 50px;
 	clear: both;
 	display: inline-block;
   /* line-height:25px; problem with controls with a long parameter name */
 }
 
 .CLASS02532a {
-	font-size: 10px;
 	width:220px;
 	height:25px;
   color: $_(white) ! important;
 }
 
 .CLASS02532b {
-	font-size: 10px;
 	width:220px;
 	height:30px;
   color: $_(white) ! important;
@@ -1602,12 +1589,11 @@
 }
 
 .CLASS02535 {
-	float: right;
 	text-align: right;
-	width: 98%;
-	word-wrap: break-word;
-	max-width: 480px;
+	width: 100%;
+	word-wrap: anywhere;
 	display: inline-block;
+	padding: 2px;
 	white-space: break-spaces;
 }
 
@@ -1624,6 +1610,7 @@
 	word-wrap: break-word;
 	max-width: 480px;
 	display: inline-block;
+  padding-right: 5px;
 }
 
 .CLASS02536 {
@@ -1632,20 +1619,13 @@
 
 .CLASS02537 {
 	text-align: center;
-	padding: 5px;
 	width: 100%;
-	background-color: $_(activeBackground) ! important;
 }
 
 .CLASS02538 {
-	/*width:220px;
-	height:25px;*/
-	width:98%;
 	height:100%;
 	min-height:1em;
-	max-width: 480px;
 	clear: both;
-	display: inline-block;
 }
 
 .CLASS02539 {
@@ -1670,18 +1650,17 @@
 
 .CLASS02542 {
 	border:solid 1px $_(black); /* black */
-	font-size:20px;
 	text-align:right;
 }
 
 .CLASS02542b {
 	border:solid 1px $_(black); /* black */
-	font-size:18px;
 	text-align:right;
 }
 
 .CLASS02543 {
 	border:1px solid $_(black); /* black */
+	cursor:pointer;
 }
 
 .CLASS02544 {
@@ -1780,6 +1759,7 @@
 
 .CLASS02552 {
 	border:solid 1px $_(black); /* black */
+	mix-blend-mode:multiply;
 }
 
 .CLASS02553 {
@@ -1841,12 +1821,10 @@
 
 .CLASS02601 {
 	text-align:center;
-	margin-left:20px;
-	width:97%;
 }
 
 .CLASS02602 {
-	height:44px;
+	height: auto;
 }
 
 .CLASS02603 {
@@ -1858,6 +1836,7 @@ color: $_(textColorA) ! important; /* white */
 
 .CLASS02604 {
 	height: 58px;
+	background-color: $_(activeBackground);
 }
 
 .CLASS02605 {
@@ -1865,76 +1844,52 @@ color: $_(textColorA) ! important; /* white */
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 	text-align: left;
 }
 
 .CLASS02606 {
-	width: 240px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
-}
-
-.CLASS02607 {
-	width:55px;
-	background-color: $_(activeBackground);
-	border: solid 1px $_(black); /* black */
-	color: $_(textColorB); /* black */
-	padding: 4px;
-}
-
-.CLASS02608 {
-	position:relative;
-	text-align:left;
-	width:50px;
-	height:50px;
+	padding: 2px;
 }
 
 .CLASS02609 {
-	width: 140px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02610 {
-	width: 100px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02611 {
-	width: 200px;
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02612 {
 	background-color: $_(activeBackground);
 	border: solid 1px $_(black); /* black */
 	color: $_(textColorB); /* black */
-	padding: 4px;
+	padding: 2px;
 }
 
 .CLASS02613 {
-	background-color: $_(clickable);
-color: $_(textColorA); /* white */
-	font-weight: bold;
-	border: solid 1px $_(black); /* black */
+	width: 90px;
 }
 
 .CLASS02614 {
-	background-color: $_(inactiveButton); /* #dddddd */
-color: $_(textColorA); /* white */
-	font-weight: bold;
-	border: solid 1px $_(gray); /* silver */
+	color: $_(gray);
+	width: 90px;
 }
 
 .CLASS02615 {
@@ -2028,10 +1983,12 @@ color: $_(textColorA); /* white */
 	vertical-align:middle;
 	border:solid 1px $_(black); /* #000000 */
 	font-weight:bold;
+  height: auto;
 }
 
 .CLASS02803 {
-	font-weight:bold;
+	font-weight:normal;
+  height: auto;
 }
 
 .CLASS02804 {
@@ -2097,7 +2054,6 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS02815 {
-	height:100%;
 }
 
 /* rega\pages\tabs\statusviews\svroomchannels.htm */
@@ -2282,18 +2238,13 @@ color: $_(textColorA) ! important; /* white */
 }
 
 .CLASS03301 {
-	width:75%;
-	margin-left:20px;
-	margin-top:20px;
 	empty-cells:show;
 }
 
 .CLASS03302 {
-	font-weight:bold;
-	height:40px;
 	text-align:center;
-	line-height:40px;
 	border:solid 1px $_(black); /* black */
+	padding:0px;
 }
 
 .CLASS03303 {
@@ -2316,7 +2267,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03306 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS03307 {
@@ -2372,8 +2322,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03500 {
 	border:solid 1px $_(black); /* black */
-	margin-left:10px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03501 {
@@ -2406,8 +2355,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03600 {
 	border:solid 1px $_(black); /* black */
-	margin-left:50px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03601 {
@@ -2454,7 +2402,6 @@ color: $_(textColorA); /* white */
 
 .CLASS03703 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS03704 {
@@ -2496,8 +2443,7 @@ color: $_(textColorA); /* white */
 
 .CLASS03800 {
 	border:solid 1px $_(black); /* black */
-	margin-left:50px;
-	margin-top:27px;
+	width:100%;
 }
 
 .CLASS03801 {
@@ -2528,6 +2474,16 @@ color: $_(textColorA); /* white */
 
 /* rega\pages\tabs\handling\devices.htm */
 
+#devicepage {
+  width: 100%
+}
+
+#devicepage #contentLeft {
+  width: 20%;
+  float: left;
+  overflow: auto;
+}
+
 .CLASS03900 {
 	height:100%;
 	overflow:hidden;
@@ -2536,19 +2492,20 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS03901 {
+  height: 100%;
 	width:100%;
 }
 
 .CLASS03902 {
-	width:100%;
 	overflow:auto;
-	margin:0;
-	padding:0;
+	margin-left:10px;
+	margin-right:2px;
 }
 
 .CLASS03903 {
 	border:solid 1px $_(black); /* black */
-	margin-top:27px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS03904 {
@@ -2563,7 +2520,6 @@ color: $_(textColorA); /* white */
 .CLASS03906 {
 	vertical-align:middle;
 	text-align:left;
-	background-color:$_(white); /* white */
 }
 
 .CLASS03907 {
@@ -2573,13 +2529,15 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS03908 {
-	width:100%;
 	overflow:auto;
+	margin-right:10px;
+	margin-left:2px;
 }
 
 .CLASS03909 {
-	width: 80%;
-	height: 96%;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS03910 {
@@ -2589,11 +2547,22 @@ color: $_(textColorA); /* white */
 
 .CLASS03911 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 /* rega\pages\tabs\handling\rooms.htm */
 /* rega\pages\tabs\handling\rooms.htm */
+
+#roompage,
+#functionpage {
+  width: 100%
+}
+
+#roompage #contentLeft,
+#functionpage #contentLeft {
+  width: 20%;
+  float: left;
+  overflow: auto;
+}
 
 .CLASS04000 {
 	height:100%;
@@ -2601,17 +2570,20 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04001 {
+  height: 100%;
 	width:100%;
 }
 
 .CLASS04002 {
-	width:100%;
 	overflow:auto;
+	margin-right:10px;
+	margin-left:2px;
 }
 
 .CLASS04003 {
-	width: 80%;
-	height: 96%;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .CLASS04004 {
@@ -2621,12 +2593,12 @@ color: $_(textColorA); /* white */
 
 .CLASS04005 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04006 {
 	border:solid 1px $_(black); /* black */
-	margin-top:27px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 .CLASS04007 {
@@ -2637,7 +2609,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04100 {
 	text-align:center;
-	width:95%;
 	empty-cells:show;
 }
 
@@ -2648,17 +2619,18 @@ color: $_(textColorA); /* white */
 .CLASS04102 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
-	font-size:10pt ! important;
 	height:44px ! important;
 }
 
 .CLASS04103 {
 	height:auto;
+	background-color: $_(background); /* #183473 */
 }
 
 .CLASS04104 {
 	background-color:$_(clickable);
   height:20px;
+  border: solid 1px $_(black); /* black */
 }
 
 .CLASS04105 {
@@ -2671,7 +2643,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04107 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04108 {
@@ -2681,6 +2652,7 @@ color: $_(textColorA); /* white */
 .CLASS04109 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
   height:20px;
 }
 
@@ -2704,8 +2676,13 @@ color: $_(textColorA); /* white */
 
 .CLASS04200 {
 	text-align:center;
-	width:95%;
 	empty-cells:show;
+}
+
+.CLASS04201 {
+	overflow:auto;
+	margin-left:10px;
+	margin-right:2px;
 }
 
 .CLASS04202 {
@@ -2713,20 +2690,20 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04203 {
-	font-size:10pt;
 	height:100%;
 }
 
 .CLASS04204 {
-	font-size:10pt;
 }
 
 .CLASS04205 {
 	height:auto;
+	background-color: $_(background); /* #183473 */
 }
 
 .CLASS04206 {
 	background-color:$_(clickable);
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04207 {
@@ -2739,7 +2716,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04209 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04210 {
@@ -2749,6 +2725,7 @@ color: $_(textColorA); /* white */
 .CLASS04211 {
 	background-color:$_(clickable);
 	color: $_(textColorA) ! important; /* white */
+	border: solid 1px $_(black); /* black */
 }
 
 .CLASS04212 {
@@ -2779,7 +2756,8 @@ color: $_(textColorA); /* white */
 .CLASS04301 {
 	width:100%;
 	height:100%;
-	overflow-y:scroll;
+	overflow-y:auto;
+	display:contents;
 }
 
 .CLASS04302 {
@@ -2791,7 +2769,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS04304 {
-	font-size:10pt;
 	height:40px;
 }
 
@@ -2832,7 +2809,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04312 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS04313 {
@@ -2933,7 +2909,6 @@ color: $_(textColorA); /* white */
 
 .CLASS04800 {
 	line-height:14px;
-	font-size:smaller;
 	width:200px;
 }
 
@@ -2967,7 +2942,7 @@ color: $_(textColorA); /* white */
 
 .CLASS04900 {
 	color: $_(textColorA); /* white */
-	font-weight:bold;
+	font-weight:normal;
 }
 
 .CLASS04901 {
@@ -2985,13 +2960,11 @@ color: $_(textColorA); /* white */
 
 .CLASS04904 {
 	color: $_(textColorB); /* black */
-	font-size:12px;
 }
 
 .CLASS04905 {
 	line-height:15px;
-	font-size:smaller;
-	width:220px;
+	width:180px;
 }
 
 .CLASS04906 {
@@ -3045,7 +3018,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05007 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
 }
 
 .CLASS05008 {
@@ -3068,7 +3040,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05010 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
 	width:100%;
 }
 
@@ -3078,7 +3049,7 @@ color: $_(textColorA); /* white */
 
 .CLASS05012 {
 	color: $_(textColorB); /* black */
-	font-size:9pt;
+	width:100%;
 }
 
 /* rega\pages\tabs\admin\msg\timemodule.htm */
@@ -3115,6 +3086,10 @@ color: $_(textColorA); /* white */
 	text-align: left;
 	background-color: $_(white); /* white */
 	color: $_(textColorB); /* black */
+}
+
+.CLASS05104 tbody {
+	border-width: 0;
 }
 
 .CLASS05105 {
@@ -3155,7 +3130,6 @@ color: $_(textColorA); /* white */
 .CLASS05200 {
 	text-align:center;
 	vertical-align:middle;
-	font-weight:bold;
 	height: auto;
 }
 
@@ -3190,7 +3164,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05207 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 .CLASS05208 {
@@ -3223,10 +3196,10 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS05301 {
-	height:38px;
 	border: solid 1px $_(black); /* black */
 	background-color:$_(clickable);
 	text-align:center;
+	padding:0px;
 }
 
 .CLASS05302 {
@@ -3243,17 +3216,17 @@ color: $_(textColorA); /* white */
 
 .CLASS05305 {
 	line-height:15px;
-	font-size:smaller;
 }
 
 /* rega\pages\tabs\admin\linkprog.htm */
 
 .CLASS05400 {
-	height:130px;
+	/* height:130px; */
 }
 
 .CLASS05401 {
 	height:160px;
+	margin-left: 10px;
 }
 
 .CLASS05402 {
@@ -3264,14 +3237,52 @@ color: $_(textColorA); /* white */
 	text-align:center ! important;
 }
 
+.CLASS05405 {
+	min-height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05405 > div {
+	margin: 10px;
+	padding: 1px;
+	flex: 0 1 calc(50% - 22px);
+	overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
+}
+
 /* rega\pages\tabs\admin\systemconfig.htm */
 
 .CLASS05500 {
-	height:50%;
+	/* height:50%; */
 }
 
 .CLASS05501 {
 	background-color:$_(background); /* #183473 */
+}
+
+.CLASS05502 {
+	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05502 > div {
+	margin: 10px;
+	padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+	overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 /* rega\pages\tabs\favorites.htm */
@@ -3353,11 +3364,26 @@ color: $_(textColorA); /* white */
 /* pages\tabs\statusview.htm */
 
 .CLASS05700 {
-	width:1257px ! important;
+	/* width:1257px ! important; */
 }
 
 .CLASS05701 {
 	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS05701 > div {
+	margin: 10px;
+        padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+        overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 .CLASS05702 {
@@ -3381,7 +3407,6 @@ color: $_(textColorA); /* white */
 
 .CLASS05705 {
 	width:572px;
-	font-size:9pt;
 }
 
 .CLASS05706 {
@@ -3394,10 +3419,13 @@ color: $_(textColorA); /* white */
 
 .CLASS05707 {
 	width:570px;
-	font-size:9pt;
 }
 
 /* rega\pages\tabs\favViewer.htm  */
+
+#tblfavViewer {
+  width: 100%;
+}
 
 .CLASS05800 {
 	width:100%;
@@ -3492,11 +3520,30 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\user\systemConfigUser.htm */
 
 .CLASS06100 {
-	height:50%;
+	/* height:50%; */
 }
 
 .CLASS06101 {
 	background-color: $_(background) ! important; /* #183473 */
+}
+
+.CLASS06102 {
+	height:50%;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 10px;
+}
+
+.CLASS06102 > div {
+	margin: 10px;
+        padding: 1px;
+	flex: 0 1 calc(25% - 22px);
+        overflow: hidden;
+	/* copied from .StdTable td */
+	background-color: $_(inactiveBackground);
+	text-align:left;
+	vertical-align: top;
+	color: $_(textColorB); /* black */
 }
 
 /* rega\pages\tabs\user\userAdministrationUser.htm */
@@ -3527,11 +3574,13 @@ color: $_(textColorA); /* white */
 /* rega\pages\tabs\user\newFav.htm */
 
 .CLASS06300 {
-	margin:20px;
+	margin:10px;
+  width:100%;
 }
 
 .CLASS06301 {
-	color: $_(textColorA); /* white */
+	color: $_(textColorB); /* black */
+	font-weight: bold;
 }
 
 .CLASS06302 {
@@ -3819,7 +3868,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS06409 {
-  margin:5px;
 }
 
 .CLASS06410 {
@@ -3839,7 +3887,6 @@ color: $_(textColorA); /* white */
 
 .CLASS06413 {
   line-height:15px;
-  font-size:smaller;
 }
 
 .CLASS06414 {
@@ -3982,7 +4029,7 @@ color: $_(textColorA); /* white */
 
 .CLASS10902 {
   border:1px solid $_(gray); /* #999999 */
-  color: $_(activeBackground); /* rgb(224,224,224); */
+  color:$_(gray);
   background-color:$_(inactiveButton); /* rgb(192,192,192) */
   cursor:default;
 }
@@ -4097,7 +4144,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS11105 {
-  padding-right: 8px;
   padding-top: 7px;
 }
 
@@ -4124,7 +4170,6 @@ color: $_(textColorA); /* white */
 /* config/ic_setprofiles */
 
 .CLASS20001 {
-	padding:4px;
 }
 
 .CLASS20002 {
@@ -4146,7 +4191,7 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20006 {
-	width:85% !	important;
+	width:100%;
 }
 
 .CLASS20007 {
@@ -4182,7 +4227,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20010 {
-	width:150px;
 }
 
 /* config\easymodes\DIMMER\MOTION_DETECTOR.tcl */
@@ -4254,7 +4298,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20801 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -4275,7 +4318,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20805 {
-  font-size: 8pt;
 }
 
 .CLASS20806 {
@@ -4286,7 +4328,6 @@ color: $_(textColorA); /* white */
   background-color:$_(clickable);
  color: $_(textColorA); /* white */
   vertical-align: middle;
-  font-size: 10pt;
 }
 
 .CLASS20808 {
@@ -4302,7 +4343,6 @@ color: $_(textColorA); /* white */
 .CLASS20810 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS20811 {
@@ -4337,7 +4377,6 @@ color: $_(textColorA); /* white */
 .CLASS20817 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS20818 {
@@ -4363,7 +4402,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20901 {
-  font-size: 8pt;
 }
 
 .CLASS20902 {
@@ -4405,7 +4443,6 @@ color: $_(textColorA); /* white */
   color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
   width: 100%;
-  font-size: 8pt;
 }
 
 .CLASS20910 {
@@ -4425,7 +4462,6 @@ color: $_(textColorA); /* white */
 .CLASS20913 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
   width: 100%;
 }
 
@@ -4438,7 +4474,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS20916 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -4483,6 +4518,7 @@ color: $_(textColorA); /* white */
 
   padding: 3px;
   text-align:center;
+  font-weight: bold;
   vertical-align:middle;
   margin:2px;
   cursor: pointer;
@@ -4500,7 +4536,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21101 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -4522,13 +4557,11 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21105 {
-  font-size: 8pt;
 }
 
 .CLASS21106 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
   width: 100%;
 }
 
@@ -4560,7 +4593,6 @@ color: $_(textColorA); /* white */
 .CLASS21111 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21112 {
@@ -4615,7 +4647,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21201 {
-  font-size: 8pt;
 }
 
 .CLASS21202 {
@@ -4629,7 +4660,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21204 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -4711,7 +4741,9 @@ color: $_(textColorA); /* white */
 /* config\help.cgi */
 
 .CLASS21300 {
-  height:56%;
+  height: 100%;
+  width: 100%;
+  padding: 10px;
 }
 
 .CLASS21301 {
@@ -4726,7 +4758,6 @@ color: $_(textColorA); /* white */
 
 .CLASS21302 {
  	color: $_(textColorB); /* black */
-  font-size: 20px;
   text-align:center;
   margin: 5px;
 }
@@ -4766,7 +4797,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21401 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
 }
@@ -4788,7 +4818,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21405 {
-  font-size: 8pt;
 }
 
 .CLASS21406 {
@@ -4817,7 +4846,6 @@ color: $_(textColorA); /* white */
 .CLASS21410 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21411 {
@@ -4844,7 +4872,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21501 {
-  font-size: 8pt;
 }
 
 .CLASS21502 {
@@ -4866,7 +4893,6 @@ color: $_(textColorA); /* white */
 .CLASS21505 {
  	color: $_(textColorB); /* black */
   background-color: $_(white); /* white */
-  font-size: 8pt;
 }
 
 .CLASS21506 {
@@ -4902,7 +4928,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21601 {
-  font-size: 8pt;
 }
 
 .CLASS21602 {
@@ -4916,7 +4941,6 @@ color: $_(textColorA); /* white */
 }
 
 .CLASS21604 {
-  font-size: 8pt;
  	color: $_(textColorB); /* black */
 }
 
@@ -4937,8 +4961,21 @@ color: $_(textColorA); /* white */
 
 /* config\control_panel.cgi */
 
+#mainTable {
+  margin: 10px;
+}
+
+#configMainTable {
+  margin: 10px;
+}
+
+.cpCell {
+  width: 270px;
+  height: 70px;
+  float: left;  
+}
+
 .CLASS21700 {
-  height:50%;
 }
 
 .CLASS21701 {
@@ -4966,7 +5003,6 @@ color: $_(textColorA); /* white */
 .CLASS21800 {
   width: 100%;
   font-weight: bold;
-  font-size: 12px;
   cursor: pointer;
 }
 
@@ -5009,12 +5045,12 @@ color: $_(textColorA); /* white */
 /* config\ic_selchannel.cgi */
 
 .CLASS21900 {
-  padding: 4px;
+  padding: 0px;
+  display: inherit;
 }
 
 .CLASS21901 {
   line-height:15px;
-  font-size:smaller;
 }
 
 .CLASS21902 {
@@ -5034,9 +5070,11 @@ color: $_(textColorA); /* white */
 
   color: $_(textColorB); /* black */
   border: 1px solid $_(black); /* black */
-  border-radius: 2px;
+  border-radius: 5px;
 
   cursor: pointer;
+  font-weight: bold;
+  padding: 2px;
 }
 
 .CLASS21905 {
@@ -5045,7 +5083,7 @@ color: $_(textColorA); /* white */
 
 .CLASS21906 {
   color: $_(red);
-  font-size: large;
+  font-size: larger;
   font-weight: bold;
 }
 
@@ -5059,7 +5097,6 @@ color: $_(textColorA); /* white */
 
 .CLASS21908 {
   overflow: auto;
-  background-color: $_(background); /* #183473 */
   width:100%;
 }
 
@@ -5116,13 +5153,17 @@ color: $_(textColorA); /* white */
 /* config\ic_deviceparameters.cgi */
 
 .CLASS22000 {
-  margin: 4px;
-  width: 99%;
+  margin: 10px;
+  width: 100%;
 }
 
 .CLASS22001 {
   text-align: center;
   background-color: $_(activeBackground);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .CLASS22002 {
@@ -5132,11 +5173,17 @@ color: $_(textColorA); /* white */
 
 .CLASS22003 {
   background-color: $_(white);
+  height: 50px;
 }
 
 .CLASS22004 {
   background-color: $_(activeBackground);
   text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .CLASS22005 {
@@ -5190,11 +5237,11 @@ color: $_(textColorA); /* white */
 
 .CLASS22100 {
   line-height:14px;
-  font-size:smaller;
 }
 
 .CLASS22101 {
-  padding:4px;
+  padding:0px;
+  display:inherit;
 }
 
 .CLASS22102 {
@@ -5216,9 +5263,8 @@ color: $_(textColorA); /* white */
 .CLASS22104 {
   left:0px;
   top:0px;
-  margin: 0;
+  margin:auto;
   padding: 0;
-  background-color: $_(white); /* white */
   position:relative;
   width:50px;
   height:50px;
@@ -5228,10 +5274,12 @@ color: $_(textColorA); /* white */
   position:relative;
   width:50px;
   height:50px;
+  margin:auto;
 }
 
 .CLASS22106 {
   text-align: center;
+  padding: 2px;
 }
 
 .CLASS22107 {
@@ -5380,4 +5428,59 @@ color: $_(textColorA); /* white */
   width:580px;
   height:5px;
   border:solid 1px $_(black);
+}
+
+.CodeMirror {
+  box-sizing: border-box;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  text-align: left;
+  font-family: monospace;
+}
+
+.cm-editor {
+  text-align: left;
+  font-family: monospace;
+}
+
+.CodeMirror-gutter-wrapper,
+.cm-gutters {
+  font-family: monospace;
+}
+
+.file-button {
+  background-color: $_(clickable);
+  background-image: url(/ise/img/gradientButton25px.png);
+  background-image: var(--btnGradient);
+  color: $_(textColorB); /* black */
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+  border: solid 1px $_(black); /* black */
+  border-radius: 5px;
+  width: 150px;
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.file-name {
+  overflow-wrap: anywhere;
+  margin-left: 20px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.file-name + input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.file-label:has(~ input[type='file']:focus-visible) .file-button {
+  outline: 2px solid;
+  outline-offset: 2px;
 }

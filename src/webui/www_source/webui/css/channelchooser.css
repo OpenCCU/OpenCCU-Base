@@ -37,9 +37,9 @@
   top: 24px;
   left: 2px;
   width: 996px;
-  height: 520px;
+  height: 522px;
   background-color: $_(white); /* white */
-  overflow: scroll;  
+  overflow: auto;
 }
 
 #ChannelChooserFooter {
@@ -85,7 +85,6 @@
   width:100%;
   height:auto;
   margin:0;
-  border:1px solid $_(black); /* black */
   padding:0;
   empty-cells:show;
 }
@@ -97,7 +96,7 @@
   padding:0;
   background-color:$_(clickable);
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -109,7 +108,7 @@
   padding:0;
   background-color:$_(active); /* #565657 */
   color: $_(textColorA); /* white */
-  font-weight:bold;
+  font-weight:normal;
   text-align:center;
   vertical-align:middle;
 }
@@ -133,7 +132,6 @@
 
 .ChannelChooserThumbnail {
   border: 1px solid $_(black); /* black */
-  background-color:$_(white); /* white */
   text-align:left;
   height:80px;
 }

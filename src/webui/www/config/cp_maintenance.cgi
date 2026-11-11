@@ -70,10 +70,14 @@ proc action_acceptEula {} {
       puts "conInfo(\"EULA found\");"
       puts "jQuery('#fwUpload').hide();"
       puts "var dlg = new EulaDialog(translateKey('dialogEulaTitle'), data, function(result) {"
+        puts "var dlgPopup = parent.top.dlgPopup;"
+        puts "if (dlgPopup === undefined) {"
+          puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+        puts "}"
         puts "if (result == 1) {"
-          puts "parent.top.dlgPopup.hide();"
-          puts "parent.top.dlgPopup.setWidth(450);"
-          puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+          puts "dlgPopup.hide();"
+          puts "dlgPopup.setWidth(450);"
+          puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
         puts "} else {"
           puts "jQuery('#fwUpload').hide();"
           puts "dlgPopup.hide();"
@@ -86,16 +90,19 @@ proc action_acceptEula {} {
 
     puts "req.fail(function(data) {"
       puts "conInfo(\"EULA not available\");"
-      puts "parent.top.dlgPopup.hide();"
-      puts "parent.top.dlgPopup.setWidth(450);"
-      puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+      puts "var dlgPopup = parent.top.dlgPopup;"
+      puts "if (dlgPopup === undefined) {"
+        puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+      puts "}"
+      puts "dlgPopup.hide();"
+      puts "dlgPopup.setWidth(450);"
+      puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
     puts "});"
   }
 }
 
 proc action_firmware_update_confirm {} {
   global env
-   cgi_debug -on
   http_head
   division {class="popupTitle"} {
     #puts "Softwareupdate - Best&auml;tigung"
@@ -264,7 +271,7 @@ proc action_firmware_update_go {} {
 }
 
 proc action_firmware_update_cancel {} {
-  global env
+  global env filename
 
   if {[getProduct] < 3} {
     catch {exec rm /var/new_firmware.tar.gz}
@@ -389,20 +396,21 @@ proc action_put_page {} {
               table_data {align="left"} {colspan="2" id="actualSWVersion"} {
                 puts "\${dialogSettingsCMLblActualSoftwareVersion}"
               }
-              table_data {
-                puts "$cur_version"
+              table_data {align="left"} {
+                puts "$cur_version&nbsp;([get_platform])"
               }
             }
             table_row {
               table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblAvailableSoftwareVersion}"
               }
-              table_data {id="availableSWVersion"} {
+              table_data {align="left"} {id="availableSWVersion"} {
                 # This doesn�t work properly
                 # puts [iframe "$REMOTE_FIRMWARE_SCRIPT?cmd=check_version&version=$cur_version&serial=$serial&lang=de&product=HM-CCU2" marginheight=0 marginwidth=0 frameborder=0 width=100 height=20 {scrolling="no"} ]
                 # The available version will be set further down with "jQuery('#availableSWVersion').html(homematic.com.getLatestVersion());"
               }
             }
+            if {[get_platform] != "oci" && [get_platform] != "lxc"} {
             table_row {
               table_data {align="left"} {colspan="3"} {
                 #puts "[bold "Software-Update durchf�hren"]"
@@ -421,7 +429,7 @@ proc action_put_page {} {
                     table_row {
                       table_data {
                         division {class="CLASS20905" style="display: none"} {id="btnFwDirectDownload"} {} "onClick=\"performDirectDownload();\"" {}
-                        division {class="CLASS20905"}  "onClick=\"showCCULicense(true);\"" {puts "\${btnDirectFwUpload}"}
+                        division {class="CLASS20910"} {id="btnFwDirectDownload2"} "onClick=\"performDirectDownload();\"" {puts "\${btnDirectFwUpload}"}
                       }
                     }
                   }
@@ -436,19 +444,16 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep1}"
               }
-              table_data {
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20908" style="display: none"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
-                        division {class="CLASS20908"}  "onClick=\"showCCULicense(false);\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
-                      }
-                    }
-                  }
+                  division {class="CLASS20908" style="display: none;"} {id="btnFwDownload"} {} "onClick=\"window.location.href='$REMOTE_FIRMWARE_SCRIPT?cmd=download&version=$cur_version&serial=$serial&lang=de&product=HM-CCU[getProduct]';\"" {}
+                  division {class="CLASS20908" style="width: 150px; margin-left: 20px;"} "onClick=\"window.open('https://github.com/openccu/openccu/releases/latest','_blank');\"" {puts "\${dialogSettingsCMBtnPerformSoftwareUpdateDownload}"}
                 }
               }
             }
@@ -460,30 +465,25 @@ proc action_put_page {} {
             }
             table_row {
               td {width="20"} {}
-              table_data {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=firmware_form {target=firmware_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=firmware_upload
-                  export downloadOnly=$downloadOnly
-                  file_button firmware_file size=30 maxlength=1000000
+              table_data {align="left"} {colspan="2"} {
+                form "/config/fileupload.ccc?sid=$sid&action=firmware_upload&downloadOnly=$downloadOnly&url=$env(SCRIPT_NAME)" {target=firmware_upload_iframe} name=firmware_form enctype=multipart/form-data method=post {
+                  file_button firmware_file size=30 maxlength=1000000 accept='.zip,.tgz,.tar,.img,.ext4,.vfat,application/zip,application/gzip,application/x-tar'
                 }
                 puts {<iframe name="firmware_upload_iframe" style="display: none;"></iframe>}
               }
             }
             table_row {
               td {width="20"} {}
-              table_data {align="left"} {
+              table_data {align="left"} {colspan="2"} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep3}"
               }
-              table_data {
+            }
+            table_row {
+              td {width="20"} {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20905"} {
-                  table {
-                    table_row {
-                      table_data {
-                        division {class="CLASS20919"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {
-                          puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
-                        }
-                      }
-                    }
+                  division {class="CLASS20919" style="width: 150px; margin-left: 20px;"} {onClick="stopHmIPServer();document.firmware_form.submit();showUserHint();"} {id="btnSoftwareUpdateUpload"} {
+                    puts "\${dialogSettingsCMBtnPerformSoftwareUpdateUpload}"
                   }
                 }
               }
@@ -494,30 +494,18 @@ proc action_put_page {} {
                 puts "\${dialogSettingsCMLblPerformSoftwareUpdateStep4}"
               }
             }
+            } else {
+              table_row {
+                table_data {align="left"} {colspan="3"} {
+                  puts "<br/>\${dialogSettingsCMLblPerformSoftwareUpdateVirt}"
+                }
+              }
+            }
           }
         }
-        table_data {align="left"} {class="CLASS20921"} {
-          puts "\${dialogSettingsCMHintSoftwareUpdate1}"
-          number_list {class="j_noForcedUpdate"} {
-            li {
-              ${dialogSettingsCMHintSoftwareUpdate2}            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3}
-            }
-            li {
-               ${dialogSettingsCMHintSoftwareUpdate3a}
-            }
-            set bat_level [get_bat_level]
-            if {$bat_level < 50} {
-              set msg " \${dialogSettingsCMHintSoftwareUpdate4a} $bat_level%. "
-              append msg  \${dialogSettingsCMHintSoftwareUpdate4b}
-              li $msg
-            }
-          }
-
-          division {class="j_forcedUpdate" style="padding:10px;"} {
-            puts "<br/>\${dialogSettingsCMHintSoftwareUpdate2}"
-          }
+        table_data {align="center"} {class="CLASS20921"} {
+          puts "<img src='/ise/img/occu-logo_small_gray.png' alt='OpenCCU'><br/>"
+          puts "\${dialogSettingsCMHintSoftwareUpdateOpenCCU}"
         }
       }
       table_row {class="CLASS20902 j_noForcedUpdate j_fwUpdateOnly"} {
@@ -1031,7 +1019,7 @@ proc action_createBackup {} {
 
 proc action_firmware_upload {} {
 
-  global env sid downloadOnly
+  global env sid downloadOnly filename
 
   if { [catch { import directDownload } error] } {
     set directDownload false
@@ -1040,10 +1028,7 @@ proc action_firmware_upload {} {
   http_head
   
   if { $directDownload } {
-    set filename "/tmp/fup.tgz"
-  } else {
-    import_file -client firmware_file
-    set filename [lindex $firmware_file 0]
+    set filename "/usr/local/tmp/firmwareUpdateFile"
   }
 
   if {[getProduct] < 3} {
@@ -1059,7 +1044,7 @@ proc action_firmware_upload {} {
       file rename -force -- $filename "/var/new_firmware.tar.gz"
       set action "askCreateBackup"
     } else {
-      file delete -force -- [lindex $firmware_file 0]
+      file delete -force -- $filename
       cgi_javascript {
         puts {
           startHmIPServer();
@@ -1158,10 +1143,14 @@ proc action_firmware_upload {} {
 
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
-    puts "parent.top.dlgPopup.hide();"
-    puts "parent.top.dlgPopup.setWidth(450);"
-    puts "parent.top.dlgPopup.downloadOnly = $downloadOnly;"
-    puts "parent.top.dlgPopup.LoadFromFile(url, \"action=$action\");"
+    puts "var dlgPopup = parent.top.dlgPopup;"
+    puts "if (dlgPopup === undefined) {"
+      puts "dlgPopup = window.open('', 'ccu-main-window').dlgPopup;"
+    puts "}"
+    puts "dlgPopup.hide();"
+    puts "dlgPopup.setWidth(450);"
+    puts "dlgPopup.downloadOnly = $downloadOnly;"
+    puts "dlgPopup.LoadFromFile(url, \"action=$action\");"
   }
 }
 
@@ -1465,10 +1454,10 @@ proc action_download_logfile {} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
   set downloadOnly 0
@@ -1476,6 +1465,10 @@ cgi_eval {
   catch {import action}
   catch {import downloadOnly}
   catch {import filename}
+  # accept only a regular file that /config/fileupload.ccc has written
+  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
+    set filename ""
+  }
 
   if {[session_requestisvalid 8] > 0} then action_$action
 }

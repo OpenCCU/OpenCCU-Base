@@ -844,7 +844,7 @@ jQuery.extend(true,langJSON, {
     "btnGarageClose" : "Schlie%DFen",
     "btnGarageVent" : "L%FCften",
     "btnGarageStop" : "Stopp",
-    "dialogSettingsUSBStorageSettings" : "Externer USB-Speicher",
+    "dialogSettingsUSBStorageSettings" : "Externer Speicher",
     "dialogSettingsStorageHintUSBStorageP1" : "Die Sicherung der Daten umfasst nur die Diagramme.",
     "dialogSettingsSecurityTDAuth" : "Authentifizierung",
     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentifizierung aktiv: ",
@@ -958,6 +958,10 @@ jQuery.extend(true,langJSON, {
      "dialogSettingsTimePositionMessageSetPositionSucceedIncludingAllDevices" :
        "Positionsangabe wurde gespeichert.<br/><br/>" +
          "Die Standortdaten der entsprechenden HmIP-Ger%E4te werden angepasst.",
+     "dialogSettingsTimePositionMessageSetPositionDevicesFailure" :
+       "Die Positionsangabe wurde gespeichert, konnte aber nicht auf die HmIP-Ger%E4te %FCbertragen werden: ",
+     "dialogSettingsTimePositionMessageSetPositionSomeDevicesFailure" :
+       "Die Positionsangabe wurde gespeichert, konnte aber nicht auf alle HmIP-Ger%E4te %FCbertragen werden. Betroffene Ger%E4te:",
      "PowerMeterProtocolModeModeOptionSML" : "SML-Protokoll",
      "btnChooseSongs"  : "Titelauswahl",
      "drapFwNotCompatWithCCUFW" : "Die Accesspoint-Firmware ist nicht kompatibel mit der CCU.\n\nBitte aktualisieren Sie Ihre CCU!",
@@ -1098,6 +1102,9 @@ jQuery.extend(true,langJSON, {
       "<u>Achtung:</u><br/>" +
       "Bei einem Wechsel des Sensors werden die bisher erfassten Verbrauchswerte (heute, gestern usw.) zur%FCck auf 0 gesetzt.<br/><br/>" +
       "Sollten Sie die Sensorsuche ohne angeschlossenen Sensor gestartet haben, schlie%DFen Sie einen Sensor an und f%FChren Sie einen Werksreset des Energiemessger%E4ts durch.<br/><br/>" ,
+
+    "lblSysVarMoveUp" : "Nach oben verschieben",
+    "lblSysVarMoveDown" : "Nach unten verschieben",
 
     "theEnd" : ""
   }

@@ -54,6 +54,13 @@
 </table>
 
 <table id="${TableId}" class="tTable"  border="0" cellpadding="0" cellspacing="0">
+  <colgroup>
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+  </colgroup>
   <thead>
     <tr>
       <td class="thCell CLASS04900" >${"$"}{thDiagramName}</td>

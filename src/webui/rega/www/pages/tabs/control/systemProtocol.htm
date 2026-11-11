@@ -43,10 +43,10 @@ ResetGAC();
 
 <table class="tTable filterTable" id="SysProtoList" cellspacing="0" cellpadding="0" style="display:none">
   <colgroup>
-    <col style="width:12%;"/>
-    <col style="width:12%;"/>
-    <col style="width:16%;"/>
-    <col style="width:60%;"/>
+    <col />
+    <col />
+    <col />
+    <col />
   </colgroup>
   <thead id="histlistheader">
       <tr>
@@ -121,6 +121,16 @@ ResetGAC();
   new iseSubMenuControl("btnFilterDate", "btnFilterDateSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
   new iseSubMenuControl("btnFilterTime", "btnFilterTimeSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);
   new iseSubMenuControl("btnFilterName", "btnFilterNameSub", "SysProtoList", {d:11, r:12}, mouseOpts, false, true);  
+
+  jQuery("#btnFilterDate").click(function(){
+    jQuery("#ftDate").focus();
+  });
+  jQuery("#btnFilterTime").click(function(){
+    jQuery("#ftTime").focus();
+  });
+  jQuery("#btnFilterName").click(function(){
+    jQuery("#ftName").focus();
+  });
 
   var s = "";
   var historyBufferUrl = "/HistoryBuffer.csv?sid=@" + getSessionId() + "@";

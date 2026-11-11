@@ -8,8 +8,8 @@
 <tr>
   <!-- Logo -->
   <td class="CLASS11100">
-    <img id="headerLogo" src="/ise/img/homematic_logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" />
-    <img id="headerLogoRed" src="/ise/img/homematic_logo_small_red.png" onclick="LogoClick();" class="SmallLogo hidden" alt="" />
+    <img id="headerLogo" src="/ise/img/occu-logo_small.png" onclick="LogoClick();" class="SmallLogo" role="button" tabindex="0" data-aria-key="regasave" />
+    <img id="headerLogoRed" src="/ise/img/occu-logo_small_red.png" onclick="LogoClick();" class="SmallLogo hidden" role="button" tabindex="0" data-aria-key="regasave" />
   </td>
   <!-- Username und Pfad-->
   <td class="CLASS11101">
@@ -60,22 +60,22 @@
       <tr id="AlarmMsg">
         <td class="CLASS11106"><img id="imgAlarms" src="/ise/img/dot/grey.png" alt="" /></td>
          <!-- Alarmmeldungen -->
-        <td class="CLASS11107"><div id="msgAlarms" class="CLASS11108 Messages" onclick="WebUI.enter(AlarmMessagesPage);">&nbsp;</div></td>
+        <td class="CLASS11107"><div id="msgAlarms" class="CLASS11108 Messages" role="button" tabindex="0" onclick="WebUI.enter(AlarmMessagesPage);">&nbsp;</div></td>
           <!-- Abmelden -->
-        <td id="btnLogOut" class="CLASS11109"><div class="NavButton" onclick="logout();">&nbsp;</div></td>
+        <td id="btnLogOut" class="CLASS11109"><div class="NavButton" role="button" tabindex="0" onclick="logout();">&nbsp;</div></td>
       </tr>
 
       <tr id="ServiceMsg">
           <!-- Servicemeldungen -->
         <td class="CLASS11106"><img id="imgServices" src="/ise/img/dot/grey.png" alt="" /></td>
-        <td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages " onclick="WebUI.enter(ServiceMessagesPage);" >&nbsp;</div></td>
-        <td class="CLASS11109"><div id="btnReGaSave" class="NavButton" onclick="LogoClick();">&nbsp;</div></td>
+        <td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages " role="button" tabindex="0" onclick="WebUI.enter(ServiceMessagesPage);" >&nbsp;</div></td>
+        <td class="CLASS11109"><div id="btnReGaSave" class="NavButton" role="button" tabindex="0" onclick="LogoClick();">&nbsp;</div></td>
       </tr>
     </table>
   </td>
 
   <!-- Abmelden Gast -->
-  <td id="btnLogOutGuest" class="CLASS11109 hidden"><div class="NavButton" onclick="logout();">&nbsp;</div></td>
+  <td id="btnLogOutGuest" class="CLASS11109 hidden"><div class="NavButton" role="button" tabindex="0" onclick="logout();">&nbsp;</div></td>
 
 </tr>
 </table>
@@ -88,6 +88,8 @@
     if (getUPL() != UPL_GUEST) {
       $("UserName").setAttribute('onClick', userLink);
       $("UserName").setAttribute('style','cursor: pointer;');
+      $("UserName").setAttribute('role', 'button');
+      $("UserName").setAttribute('tabindex', '0');
     }
   }
 

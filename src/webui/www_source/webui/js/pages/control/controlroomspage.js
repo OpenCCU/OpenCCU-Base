@@ -12,8 +12,4 @@ ControlRoomsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

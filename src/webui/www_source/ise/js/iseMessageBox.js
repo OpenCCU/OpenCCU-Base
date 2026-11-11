@@ -55,18 +55,19 @@ iseMessageBox.prototype =
   },
   initPopup: function(id)
   {
+    var screenWidth  = WebUI.getWidth();
+    var screenHeight = WebUI.getHeight();
+
     switch(this.id)
     {
       case ID_ROOMS:
         this.setTitle( translateKey("dialogEditRoom") /*"Raum bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_FUNCTIONS: 
         this.setTitle( translateKey("dialogEditFunction") /*"Gewerk bearbeiten"*/ );
         this.setWidth75Perc();
-        this.setHeight(700);
         this.setFile( "/pages/msg/popupPropEditor.htm" );
         break;
       case ID_TRANSFER_PARAMETERS:
@@ -96,14 +97,22 @@ iseMessageBox.prototype =
         this.setTitle( translateKey("dialogCreateNewSysVar") /*"Systemvariable neu anlegen"*/ );
         this.addToPostBody( 'integer varid = 0;' );
         this.addToPostBody( 'integer createNew = 1;' );
-        this.setWidth(900);
+        this.setWidth(1100);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_EDIT_SYSVAR:
         this.setTitle( translateKey("dialogEditSysVar") /*"Systemvariable bearbeiten"*/ );
         this.addToPostBody( 'integer varid = '+this.type+';' );
         this.addToPostBody( 'integer createNew = 0;' );
-        this.setWidth(900);
+        this.setWidth(1100);
+        this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
+        break;
+      case ID_EDIT_SYSVAR_VALUE:
+        this.setTitle( translateKey("dialogEditSysVarValue") /*"Systemvariablenwert bearbeiten"*/ );
+        this.addToPostBody( 'integer varid = '+this.type+';' );
+        this.addToPostBody( 'integer createNew = 0;' );
+        this.addToPostBody( 'boolean editValueOnly = 1;' );
+        this.setWidth(240);
         this.setFile( "/pages/tabs/admin/msg/newSysVar.htm" );
         break;
       case ID_CREATE_SCRIPT:
@@ -114,9 +123,10 @@ iseMessageBox.prototype =
         break;
       case ID_EDIT_SCRIPT:
         this.setTitle( translateKey("dialogEditScript") /*"Skript bearbeiten"*/ );
+        this.setWidth(parseInt(screenWidth * 0.8));
+        this.setHeight(parseInt(screenHeight * 0.8));
         this.addToPostBody( 'string sdid = "'+this.type+'";' );
-        //this.setWidth(800);
-        this.setWidth('auto');
+        this.addToPostBody( 'string frameHeight = "'+this.height+'";' );
         this.setFile( "/pages/msg/editScript.htm" );
         break;
       case ID_CONTROL_TEST:
@@ -192,7 +202,12 @@ iseMessageBox.prototype =
         this.setWidth(800);
         this.setFile( "/pages/msg/autoLoginConfig.htm" );
         break;
-       case ID_CHOOSE_LED:
+      case ID_SYSTEM_LANGUAGE_CONFIG:
+        this.setTitle( translateKey("dialogConfigSystemLanguage") /*"Systemsprache waehlen - Konfiguration" */);
+        this.setWidth(800);
+        this.setFile( "/pages/msg/systemLanguageConfig.htm" );
+        break;
+        case ID_CHOOSE_LED:
         this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
         this.addToPostBody( 'string type = "'+this.type+'";' );
         this.setWidth(800);
@@ -224,7 +239,9 @@ iseMessageBox.prototype =
     }
 
     if (this.draggable) {
-      jQuery("#messagebox").draggable();
+      jQuery("#messagebox").draggable({
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+      });
     }
 
   },
@@ -384,7 +401,12 @@ iseMessageBox.prototype =
       onComplete: function(trans)
       {
         //$("messagebox").style.width = t.width + "px";
-        jQuery("#messagebox").width(t.width + "px");
+        if(typeof t.width !== "undefined") {
+          jQuery("#messagebox").width(t.width + "px");
+        }
+        if(typeof t.height !== "undefined") {
+          jQuery("#messagebox").height(t.height + "px");
+        }
         jQuery("#tableContainer").css("max-height",(parseInt(jQuery(window).height() * 0.75)) + "px");
         centerMessageBox();
         iseRefr(true);

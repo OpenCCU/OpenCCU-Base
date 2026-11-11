@@ -15,6 +15,8 @@ iseDOM_BuildLabel = "R1.00.0381.0100";
 dbg = false;
 rfr = true;
 
+ID_EDIT_SYSVAR_VALUE   = 9921;
+
 ID_ROOMS     = 101;  // Rooms collection ID.
 ID_FUNCTIONS = 151;  // Functions collection ID.
 ID_FAVORITES = 201;  // Favorites collection ID.
@@ -42,6 +44,7 @@ ID_CHOOSE_LED            = 1022;
 ID_SET_OUCFM_MODE        = 1023;
 ID_SET_STATUS_DISPLAY    = 1024;
 ID_BIDCOS_INTERFACE = 1025;
+ID_SYSTEM_LANGUAGE_CONFIG = 2001;
 
 nUA = navigator.userAgent;
 NAV_IE = false;
@@ -708,7 +711,7 @@ buildPropTable= function(id) {
   var opts = {
     evalScripts: true,
     onComplete: function(trans) {
-      window.setTimeout(centerMessageBox, 200);
+      centerMessageBox();
     }
   };
   var url = "/esp/system.htm?sid=" + SessionId + "&action=buildPropTable&id="+id;
@@ -2231,11 +2234,11 @@ StartFlashing = function()
       {
         if( $("headerLogo").src.indexOf("_red") >= 0 )
         {
-          $("headerLogo").src = "/ise/img/homematic_logo_small.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small.png";
         }
         else
         {
-          $("headerLogo").src = "/ise/img/homematic_logo_small_red.png";
+          $("headerLogo").src = "/ise/img/occu-logo_small_red.png";
         }
       }
     },
@@ -2569,79 +2572,121 @@ changeRoomOrSubsection = function(id)
 };
 
 
+var dutyCycleRequestId = 0;
+
 showDutyCycle = function() {
   if (jQuery("#PagePathSpan").text().endsWith(translateKey("startPage"))) {
     var ifaceBidCosRF = "BidCos-RF",
       ifaceHmIPRF = "HmIP-RF",
       arInterfaceDutyCycle = {},
+      arInterfaceCarrierSense = {},
       showPartingLine = false,
       dcUnit = "%",
       dcNotAvailable = -1,
-      dcAlarm = 89;  // Attention when dc >= 90%
+      csNotAvailable = -1,
+      dcWarn  = 69,  // Warning when dc >= 70%
+      dcAlarm = 89,  // Attention when dc >= 90%
+      csWarn  = 10,  // Warning when cs >= 11%
+      csAlarm = 19;  // Attention when cs >= 20%
 
-    homematic("Interface.listBidcosInterfaces", {"interface": ifaceBidCosRF}, function (BidCosIFaces) {
-      if (BidCosIFaces) {
-        var linkElem = jQuery("#iFaceShowAll");
-        if ((BidCosIFaces.length > 1) && (!linkElem.hasClass("UILink"))) {
-          linkElem
-            .addClass("UILink")
-            .on("click", function () {
-              showDutyCycle(); // actualize the dc value of the start page
-              showDCAllInterfaces();
-            });
-        }
+    var requestId = ++dutyCycleRequestId;
+    homematic("Interface.getDutyCycle", {}, function(dcArray) {
+      // ignore the response of a request that a newer one has superseded
+      if (requestId !== dutyCycleRequestId) { return; }
+      if(jQuery.isArray(dcArray)) {
+        jQuery.each(dcArray, function(index, iface) {
+          var dutyCycleValElm = jQuery("#dutyCycleVal"+index),
+            dutyCycleAddrElm = jQuery("#dutyCycleAddr"+index),
+            trDutyCycle = jQuery("[name='trDutyCycle"+index+"']"),
+            dutyCycleBar = jQuery("[name='dutyCycleBar"+index+"']"),
+            carrierSenseValElm = jQuery("#carrierSenseVal"+index),
+            carrierSenseBar = jQuery("[name='carrierSenseBar"+index+"']"),
+            carrierSenseCol = jQuery("[name='carrierSenseCol"+index+"']"),
+            trPartingLineElm = jQuery("#partingLine0, #partingLine1"),
+            csVal,
+            dcVal;
 
-        jQuery.each(BidCosIFaces, function (index, iFace) {
-          if (iFace.type == "CCU2") {
-            var dutyCycleProgressElem = jQuery("#dutyCycleProgress"),
-              dutyCycleProgressBarElm = jQuery("#dutyCycleProgressBar"),
-              dutyCycleValElm = jQuery("#dutyCycleVal"),
-              trDutyCycle = jQuery("[name='trDutyCycle']"),
-              trPartingLineElm = jQuery("#partingLine1"),
-              dcVal,
-              width, value;
+          if (typeof iface.dutyCycle !== "undefined") {
+            dcVal = Math.floor(iface.dutyCycle);
+            csVal = Math.floor(iface.carrierSense);
+            conInfo("dutyCycle - " + ifaceBidCosRF + ": " + dcVal + " " + dcUnit);
+            conInfo("carrierSense - " + ifaceBidCosRF + ": " + csVal + " " + dcUnit);
+            arInterfaceDutyCycle[ifaceBidCosRF] = ((dcVal >= 0) && (dcVal <= 100)) ? dcVal : dcNotAvailable;
+            arInterfaceCarrierSense[ifaceBidCosRF] = ((csVal >= 0) && (csVal <= 100)) ? csVal : csNotAvailable;
+          } else {
+            conInfo("No gateway status for the interface " + ifaceBidCosRF + " available!");
+            arInterfaceDutyCycle[ifaceBidCosRF] = dcNotAvailable;
+          }
 
-            if (typeof iFace.dutyCycle != "undefined") {
-              dcVal = parseInt(iFace.dutyCycle);
-              conInfo("dutyCycle - " + ifaceBidCosRF + ": " + dcVal + dcUnit);
-              arInterfaceDutyCycle[ifaceBidCosRF] = ((dcVal >= 0) && (dcVal <= 100)) ? dcVal : dcNotAvailable;
-            } else {
-              conInfo("No gateway status for the interface " + ifaceBidCosRF + " available!");
-              arInterfaceDutyCycle[ifaceBidCosRF] = dcNotAvailable;
-            }
-
-            if (arInterfaceDutyCycle[ifaceBidCosRF] != dcNotAvailable) {
-              dutyCycleValElm.text(arInterfaceDutyCycle[ifaceBidCosRF] + dcUnit);
-
-              width = parseInt(dutyCycleProgressElem.css("width"));
-              value = width - (width / 100 * arInterfaceDutyCycle[ifaceBidCosRF]);
-
-              window.setTimeout(function () {
-                //dutyCycleProgressBarElm.css("width", value + "px");
-                dutyCycleProgressBarElm.css("margin-left", (width - parseInt(value)) + "px");
-
-              }, 25);
-
-              if (arInterfaceDutyCycle[ifaceBidCosRF] > dcAlarm) {
-                trDutyCycle.addClass("attention");
+          if (arInterfaceDutyCycle[ifaceBidCosRF] != dcNotAvailable) {
+            dutyCycleValElm.text(arInterfaceDutyCycle[ifaceBidCosRF] + " " + dcUnit);
+            if (iface.type === "CCU2") {
+              dutyCycleAddrElm.text("CCU:");
+            } else if(iface.type === "HMIP-HAP") {
+              if(iface.name !== "") {
+                dutyCycleAddrElm.text("HAP ("+iface.name+"):");
               } else {
-                trDutyCycle.removeClass("attention");
+                dutyCycleAddrElm.text("HAP ("+iface.address+"):");
               }
-              trPartingLineElm.show();
-              showPartingLine = true;
-              trDutyCycle.css("visibility", "visible");
+            } else if(iface.name !== "") {
+              dutyCycleAddrElm.text("LGW ("+iface.name+"):");
             } else {
-              trDutyCycle.css("visibility", "hidden");
+              dutyCycleAddrElm.text("LGW ("+iface.address+"):");
             }
 
-            if (!showPartingLine) {
-              trPartingLineElm.hide();
+            dutyCycleBar.css("width", arInterfaceDutyCycle[ifaceBidCosRF]+"%").attr('aria-valuenow', arInterfaceDutyCycle[ifaceBidCosRF]);
+            dutyCycleBar.removeClass("bg-success");
+            dutyCycleBar.removeClass("bg-warning");
+            dutyCycleBar.removeClass("bg-danger");
+
+            if (arInterfaceDutyCycle[ifaceBidCosRF] > dcAlarm) {
+              dutyCycleBar.addClass("bg-danger");
+            } else if (arInterfaceDutyCycle[ifaceBidCosRF] > dcWarn) {
+              dutyCycleBar.addClass("bg-warning");
+            } else {
+              dutyCycleBar.addClass("bg-success");
             }
-            return false; // Leave each loop
+
+            if (arInterfaceCarrierSense[ifaceBidCosRF] != csNotAvailable) {
+              carrierSenseValElm.text(arInterfaceCarrierSense[ifaceBidCosRF] + " " + dcUnit);
+              carrierSenseBar.css("width", arInterfaceCarrierSense[ifaceBidCosRF]+"%").attr('aria-valuenow', arInterfaceCarrierSense[ifaceBidCosRF]);
+              carrierSenseBar.removeClass("bg-info");
+              carrierSenseBar.removeClass("bg-warning");
+              carrierSenseBar.removeClass("bg-danger");
+
+              if (arInterfaceCarrierSense[ifaceBidCosRF] > csAlarm) {
+                carrierSenseBar.addClass("bg-danger");
+              } else if (arInterfaceCarrierSense[ifaceBidCosRF] > csWarn) {
+                carrierSenseBar.addClass("bg-warning");
+              } else {
+                carrierSenseBar.addClass("bg-info");
+              }
+            } else {
+              carrierSenseValElm.text("n/a");
+              carrierSenseBar.css("width", "0%").removeAttr("aria-valuenow");
+            }
+            trPartingLineElm.show();
+            showPartingLine = true;
+            trDutyCycle.css("display", "table-row");
+          } else {
+            trDutyCycle.css("display", "none");
+          }
+
+          if (!showPartingLine) {
+            trPartingLineElm.hide();
           }
         });
+
+        // hide the rows of interfaces that are missing in this response
+        jQuery("[name^='trDutyCycle']").each(function() {
+          if (parseInt(jQuery(this).attr("name").substr(11), 10) >= dcArray.length) {
+            jQuery(this).css("display", "none");
+          }
+        });
+        if (!showPartingLine) {
+          jQuery("#partingLine0, #partingLine1").hide();
+        }
       }
-      showDutyCycleHmIP();
     });
   }
 };
@@ -3859,99 +3904,94 @@ getDualWhiteControllerDiagramURLs = function() {
   }
 };
 
-getTimeZoneDefinition = function(timeZone) {
-  var tz = [];
-  tz["ACST"] = [9.5, 9.5];
-  tz["ACST/ACDT"] = [9.5, 10.5];
-  tz["AEST"] = [10, 10];
-  tz["AEST/AEDT"] = [10, 11];
-  tz["AKST/AKDT"] = [-9, -8];
-  tz["AST/ADT"] = [-4, -3];
-  tz["AWST/AWDT"] = [8, 9];
-  tz["BRST/BRDT"] = [-3, -2];
-  tz["CET/CEST"] = [1, 2];
-  tz["CST"] = [-6, -6];
-  tz["CST/CDT"] = [-6, -5];
-  tz["EET/EEST"] = [2, 3];
-  tz["EST/EDT"] = [-5, -4];
-  tz["GMT/BST"] = [0, 1];
-  tz["GMT/IST"] = [0, 1];
-  tz["HAW"] = [-10, -10];
-  tz["HKT"] = [8, 8];
-  tz["MSK/MSD"] = [3, 4];
-  tz["RMST/RMDT"] = [3, 4];
-  tz["MST"] = [-7, -7];
-  tz["MST/MDT"] = [-7, -6];
-  tz["NST/NDT"] = [-3.5, -2.5];
-  tz["NZST/NZDT"] = [12, 13];
-  tz["PST/PDT"] = [-8, -7];
-  tz["SGT"] = [8, 8];
-  tz["ULAT/ULAST"] = [8, 9];
-  tz["WET/WEST"] = [0, 1];
-  tz["WIB"] = [7, 7];
-  return tz[timeZone];
-};
-
-getUTCOffset = function(tz) {
-  return getTimeZoneDefinition(tz);
-};
-
-setPositionAllDevices = function(lon, lat, timeZone) {
+setPositionAllDevices = function() {
   if (ConfigData.isPresent) {
 
-    var arUtcOffset = [];
-    arUtcOffset = getUTCOffset(timeZone);
+  homematic("system.getPositionData", {}, function(posData, error) {
+    // The position is saved already, only the devices could not be updated.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the devices were not updated");
+      MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionDevicesFailure") + String((error && error.message) || "").escapeHTML());
+      return;
+    }
+    var lon = posData[0].split(":")[1],
+      lat = posData[1].split(":")[1],
+      utcOffset = posData[2].split(":")[1],
+      utcOffsetDST = posData[3].split(":")[1];
 
-    var utcOffset = arUtcOffset[0] * 60,
-      utcOffsetDST = arUtcOffset[1] * 60;
-
+    // Collect the requests first, so the result can be reported once all of
+    // them have answered.
+    var requests = [];
     jQuery.each(DeviceList.devices, function (index, device) {
       var iFace = device.interfaceName;
       if ((iFace.toLowerCase() == "hmip-rf") && (device.typeName.toLowerCase() != "hmip-rcv-50") && (device.typeName.toLowerCase() != "hmip-dld") && (device.typeName.toLowerCase() != "hmip-dld-a") && (device.typeName.toLowerCase() != "hmip-dld-s") ) {
         // Check if the device has the channel *_WEEK_PROFILE
         jQuery.each(device.channels, function (index, channel) {
           if (channel.channelType.indexOf("_WEEK_PROFILE") != -1) {
-            conInfo("Set the position of this device: " + channel.address.split(":")[0] + ":0 - lon: " + lon + " - lat: " + lat + " - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
+            conInfo("Set utcOffsets+position of this device: " + channel.address.split(":")[0] + ":0 - lon: " + lon + " - lat: " + lat + " - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
 
-            homematic("Interface.putParamset", {
-              'interface': iFace,
-              'address': channel.address.split(":")[0] + ":0",
-              'paramsetKey': 'MASTER',
-              'set':
-                [
-                  {name: 'LONGITUDE', type: 'double', value: lon},
-                  {name: 'LATITUDE', type: 'double', value: lat},
-                  {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
-                  {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
-                ]
-            }, function (result) {
-              conInfo(result);
+            requests.push({
+              device: device,
+              params: {
+                'interface': iFace,
+                'address': channel.address.split(":")[0] + ":0",
+                'paramsetKey': 'MASTER',
+                'set':
+                  [
+                    {name: 'LONGITUDE', type: 'double', value: lon},
+                    {name: 'LATITUDE', type: 'double', value: lat},
+                    {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
+                    {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
+                  ]
+              }
             });
           } else if (channel.channelType == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
-            conInfo("Set the position of this device: " + channel.address.split(":")[0] + ":0 - lon: " + lon + " - lat: " + lat + " - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
+            conInfo("Set utcOffsets of this device: " + channel.address.split(":")[0] + ":0 - utcOffset: " + utcOffset + " - utcOffsetDST: " + utcOffsetDST );
 
-            homematic("Interface.putParamset", {
-              'interface': iFace,
-              'address': channel.address.split(":")[0] + ":0",
-              'paramsetKey': 'MASTER',
-              'set':
-                [
-                  {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
-                  {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
-                ]
-            }, function (result) {
-              conInfo(result);
+            requests.push({
+              device: device,
+              params: {
+                'interface': iFace,
+                'address': channel.address.split(":")[0] + ":0",
+                'paramsetKey': 'MASTER',
+                'set':
+                  [
+                    {name: 'UTC_OFFSET', type: 'double', value: utcOffset},
+                    {name: 'UTC_DST_OFFSET', type: 'double', value: utcOffsetDST}
+                  ]
+              }
             });
           }
         });
       }
     });
+
+    // Report the devices whose update failed, once every request answered.
+    var pending = requests.length;
+    var failedDevices = [];
+    jQuery.each(requests, function (index, request) {
+      homematic("Interface.putParamset", request.params, function (result, error) {
+        conInfo(result);
+        if (result !== true) {
+          var label = String(request.device.name) + " (" + request.params.address.split(":")[0] + ")";
+          if (jQuery.inArray(label, failedDevices) == -1) {
+            failedDevices.push(label);
+          }
+          conInfo("Interface.putParamset failed for " + request.params.address + ": " + ((error && error.message) || ""));
+        }
+        pending--;
+        if ((pending == 0) && (failedDevices.length > 0)) {
+          MessageBox.show(translateKey("Info"), translateKey("dialogSettingsTimePositionMessageSetPositionSomeDevicesFailure") + "<br/><br/>" + jQuery.map(failedDevices, function (label) { return label.escapeHTML(); }).join("<br/>"));
+        }
+      });
+    });
+  });
   } else {
     window.setTimeout(function() {
       conInfo("ConfigData.isPresent: " + ConfigData.isPresent);
       counterSetPosition++;
       if (counterSetPosition < 30) {
-        setPositionAllDevices(lon, lat, timeZone);
+        setPositionAllDevices();
       }
     }, 2500);
   }
@@ -3959,11 +3999,15 @@ setPositionAllDevices = function(lon, lat, timeZone) {
 
 setNewDevicePos2SystemPos = function(oDevice) {
   homematic("system.getPositionData", {}, function(posData) {
+    // Without position data the device keeps its own position.
+    if (!posData || (posData.length < 4)) {
+      conInfo("system.getPositionData failed, the position of " + oDevice.sn + " was not set");
+      return;
+    }
     var lon = posData[0].split(":")[1],
       lat = posData[1].split(":")[1],
-      arUtcOffset = getUTCOffset(posData[2].split(":")[1]),
-      utcOffset = arUtcOffset[0] * 60,
-      utcOffsetDST = arUtcOffset[1] * 60;
+      utcOffset = posData[2].split(":")[1],
+      utcOffsetDST = posData[3].split(":")[1];
 
     var iFace = oDevice.iface;
     if (iFace.toLowerCase() == "hmip-rf" && (oDevice.type.toLowerCase() != "hmip-rcv-50") && (oDevice.type.toLowerCase() != "hmip-dld") && (oDevice.type.toLowerCase() != "hmip-dld-a") && (oDevice.type.toLowerCase() != "hmip-dld-s")) {
@@ -4120,3 +4164,168 @@ function hsvToRgb(h, s, v) {
 
   return { r: r * 255, g: g * 255, b: b * 255 };
 };
+/**
+ * Returns the value of a system variable as HTML that keeps only simple text
+ * formatting. The values of the system variables shown on the start page may
+ * contain HTML (line breaks become <br/>), but can be set by other users, so
+ * they must not run scripts or load content.
+ *
+ * Kept: br, b, strong, i, em, u, s, small, sub, sup, span and font. font keeps
+ * only its color attribute, span only a color in its style attribute. Other
+ * elements are removed but keep their text; the content of script, style and
+ * similar elements is removed as well. All other attributes are removed.
+ */
+sanitizeSysVarHtml = function(html) {
+  var allowed = {BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, SMALL: 1, SUB: 1, SUP: 1, SPAN: 1, FONT: 1},
+    dropWithContent = {SCRIPT: 1, STYLE: 1, IFRAME: 1, FRAME: 1, FRAMESET: 1, OBJECT: 1, EMBED: 1, APPLET: 1,
+      NOSCRIPT: 1, NOEMBED: 1, NOFRAMES: 1, TEMPLATE: 1, TEXTAREA: 1, TITLE: 1, SELECT: 1, XMP: 1,
+      SVG: 1, MATH: 1, HEAD: 1},
+    reColor = /^(#[0-9a-f]{3,8}|[a-z]+|rgba?\([0-9\s.,%]+\)|hsla?\([0-9\s.,%deg]+\))$/i,
+    doc = null;
+
+  var escapeText = function(text) {
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  };
+
+  var validColor = function(color) {
+    color = (color == null) ? "" : String(color).replace(/^\s+|\s+$/g, "");
+    return reColor.test(color) ? color : null;
+  };
+
+  var walk = function(node) {
+    var out = "", child, name, tag, attr, color, match;
+    for (child = node.firstChild; child; child = child.nextSibling) {
+      if (child.nodeType === 3) {
+        out += escapeText(child.nodeValue);
+        continue;
+      }
+      if (child.nodeType !== 1) {
+        continue;
+      }
+      name = String(child.nodeName).toUpperCase();
+      if (dropWithContent[name]) {
+        continue;
+      }
+      if (!allowed[name]) {
+        out += walk(child);
+        continue;
+      }
+      if (name === "BR") {
+        out += "<br/>";
+        continue;
+      }
+      attr = "";
+      if (name === "FONT") {
+        color = validColor(child.getAttribute("color"));
+        if (color) {
+          attr = ' color="' + escapeText(color) + '"';
+        }
+      } else if (name === "SPAN") {
+        match = /(?:^|;)\s*color\s*:\s*([^;]*)/i.exec(child.getAttribute("style") || "");
+        color = match ? validColor(match[1]) : null;
+        if (color) {
+          attr = ' style="color:' + escapeText(color) + '"';
+        }
+      }
+      tag = name.toLowerCase();
+      out += "<" + tag + attr + ">" + walk(child) + "</" + tag + ">";
+    }
+    return out;
+  };
+
+  html = (html == null) ? "" : String(html);
+  // Parse into a document without a window: it runs no scripts and loads
+  // nothing.
+  try {
+    if (typeof DOMParser != "undefined") {
+      doc = new DOMParser().parseFromString(html, "text/html");
+    }
+  } catch (e) {
+    doc = null;
+  }
+  if ((!doc || !doc.body) && document.implementation && document.implementation.createHTMLDocument) {
+    doc = document.implementation.createHTMLDocument("");
+    doc.body.innerHTML = html;
+  }
+  if (!doc || !doc.body) {
+    return escapeText(html);
+  }
+  return walk(doc.body);
+};
+
+/**
+ * Translates the ${key} placeholders of a system variable value.
+ */
+translateSysVarValue = function(value) {
+  return translateString(String(value));
+};
+
+/**
+ * Shows the system variable values of the start page, which startpage.htm
+ * writes HTML-escaped into data-sysvar-value, in their table cells.
+ */
+showSysVarValues = function(root) {
+  jQuery(root || document).find("[data-sysvar-value]").each(function() {
+    var cell = this.parentNode;
+    if (cell) {
+      cell.innerHTML = sanitizeSysVarHtml(translateSysVarValue(this.getAttribute("data-sysvar-value")));
+    }
+  });
+};
+/**
+ * Keyboard operation of elements that act as buttons (role="button" and
+ * tabindex="0"). Elements without visible text name the translation key of
+ * their label in data-aria-key; images also get it as their alt text.
+ */
+applyAriaKeys = function(root) {
+  jQuery(root || document).find("[data-aria-key]").addBack("[data-aria-key]").each(function() {
+    var label = translateKey(this.getAttribute("data-aria-key"));
+    this.setAttribute("aria-label", label);
+    if (String(this.tagName).toUpperCase() === "IMG") {
+      this.setAttribute("alt", label);
+    }
+  });
+};
+
+jQuery(document).on("focusin", "[data-aria-key]", function() {
+  applyAriaKeys(this);
+});
+
+// Enter and Space press the button. Elements that react to mousedown instead
+// of click name that event in data-keyevent="mousedown". A held key presses
+// the button only once.
+jQuery(document).on("keydown", "[role='button']", function(event) {
+  var key = event.key,
+    keyCode = event.keyCode || event.which,
+    eventType, mouseEvent;
+
+  if (event.target !== this || /^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test(this.tagName)) {
+    return;
+  }
+  if (!(key === "Enter" || key === " " || key === "Spacebar" || keyCode === 13 || keyCode === 32)) {
+    return;
+  }
+  if (event.altKey || event.ctrlKey || event.metaKey) {
+    return;
+  }
+  event.preventDefault();
+  if (event.repeat || (event.originalEvent && event.originalEvent.repeat)) {
+    return;
+  }
+
+  if (this.getAttribute("data-keyevent") === "mousedown") {
+    for (eventType = "mousedown"; eventType; eventType = (eventType === "mousedown") ? "mouseup" : null) {
+      if (typeof MouseEvent === "function") {
+        mouseEvent = new MouseEvent(eventType, {bubbles: true, cancelable: true, view: window, button: 0});
+      } else {
+        mouseEvent = document.createEvent("MouseEvents");
+        mouseEvent.initMouseEvent(eventType, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      }
+      this.dispatchEvent(mouseEvent);
+    }
+  } else if (typeof this.click === "function") {
+    this.click();
+  } else {
+    jQuery(this).trigger("click");
+  }
+});

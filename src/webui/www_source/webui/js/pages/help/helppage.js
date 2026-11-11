@@ -13,8 +13,4 @@ HelpPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

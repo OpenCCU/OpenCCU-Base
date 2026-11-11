@@ -36,7 +36,7 @@ if ( oChns )
             sIface = dom.GetObject(iface).Name();
           }
           Write("var tmp = new Object();");
-          Write("tmp['name'] = '"#chn.Name()#"';");
+          Write("tmp['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           Write("tmp['id'] = "#chn.ID()#";");
           Write("tmp['type'] = '"#chn.Label()#"';");
           Write("tmp['desc'] = DEV_getDescription('"#dev.Label()#"');");     
@@ -53,7 +53,7 @@ if ( oChns )
             object objTmp = dom.GetObject(funcTmp);
             functions = functions#objTmp.Name()#" ";
           }
-          Write("tmp['func'] = '"#functions#"';");
+          Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           string rooms = "";
           string roomTmp = "";
           foreach(roomTmp, chn.ChnRoom())
@@ -61,7 +61,7 @@ if ( oChns )
             object objTmp = dom.GetObject(roomTmp);
             rooms = rooms#objTmp.Name()#" ";
           }
-          Write("tmp['room'] = '"#rooms#"';");
+          Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
           Write("tmpChns[tmpChns.length] = tmp;");
         }
       }

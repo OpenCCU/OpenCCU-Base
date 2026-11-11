@@ -147,7 +147,7 @@ function ::CreateJalousieActuator()
 
   WriteLine("<td>");
     WriteLine("<table>");
-     WriteLine("<tr><td colspan='5'><div style='text-align:'center'; background-color:#89989b; color:black'>${stringTableBlindLevel}</div></td></tr>");
+     WriteLine("<tr><td colspan='5'><div style='text-align:center; background-color:#89989b; color:black'>${stringTableBlindLevel}</div></td></tr>");
 
       WriteLine("<tr>");
           WriteLine("<td colspan='2' id='shutter"#chnId#"' class='CLASS02549' >&nbsp;</td>");
@@ -231,12 +231,12 @@ function ::CreateJalousieActuator()
           WriteLine("<table>");
             WriteLine("<tr>");
               WriteLine("<td colspan='2' class='CLASS02546'>");
-                WriteLine("<div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>");
+                WriteLine("<div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>");
                   WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>%</b>");
                 WriteLine("</div>");
               WriteLine("</td>");
-              WriteLine("<td>");
-                WriteLine("<div id='slider"#chnId#"' class='ControlBtnInfo' style='width:220px;min-height:unset'></div>");
+              WriteLine("<td style='padding-left: 10px'>");
+                WriteLine("<div id='slider"#chnId#"' style='width:220px;min-height:unset'></div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -438,12 +438,12 @@ function ::CreateBlindVirtualReceiver()
           WriteLine("<table>");
             WriteLine("<tr>");
               WriteLine("<td colspan='2' class='CLASS02546'>");
-                WriteLine("<div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>");
+                WriteLine("<div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>");
                   WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>%</b>");
                 WriteLine("</div>");
               WriteLine("</td>");
-              WriteLine("<td>");
-                WriteLine("<div id='slider"#chnId#"' class='ControlBtnInfo' style='width:220px;;min-height:unset'></div>");
+              WriteLine("<td style='padding-left: 10px'>");
+                WriteLine("<div id='slider"#chnId#"' style='width:220px;;min-height:unset'></div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");

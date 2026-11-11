@@ -12,8 +12,4 @@ ControlProgramsPage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

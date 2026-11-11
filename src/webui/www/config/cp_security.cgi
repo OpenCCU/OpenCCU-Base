@@ -940,8 +940,6 @@ proc action_set_session_timeout {} {
 proc action_put_page {} {
   global env sid
 
-  cgi_debug -on
-
   http_head
   division {class="popupTitle j_translate"} {
     puts "\${dialogSettingsSecurityTitle}"
@@ -1044,19 +1042,21 @@ proc action_put_page {} {
             table_row {
               td {width="20"} {}
               table_data {align="left"} {colspan="2"} {
-                form "$env(SCRIPT_NAME)?sid=$sid" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
-                  export action=backup_upload
-                  file_button backup_file size=20 maxlength=1000000
+                form "/config/fileupload.ccc?sid=$sid&action=backup_upload&url=$env(SCRIPT_NAME)" name=backup_form {target=config_upload_iframe} enctype=multipart/form-data method=post {
+                  file_button backup_file size=20 maxlength=1000000 accept='.sbk'
                 }
                 puts {<iframe name="config_upload_iframe" class="CLASS20820" style="display: none;"></iframe>}
               }
             }
             table_row {
               td {width="20"}  {}
-              td {style="text-align:left"} "\${dialogSettingsSecurityLblPerformRestore}"
-              table_data {align="right"} {
+              td {colspan="2"} {style="text-align:left"} "\${dialogSettingsSecurityLblPerformRestore}"
+            }
+            table_row {
+              td {width="20"}  {}
+              table_data {align="left"} {colspan="2"} {
                 division {class="popupControls CLASS20811"} {
-                  division {class="CLASS20818 colorGradient50px"} {onClick="OnBackupSubmit()"} {
+                  division {class="CLASS20818 colorGradient50px" style="width: 150px; margin-left: 20px;"} {onClick="OnBackupSubmit()"} {
                     puts "\${dialogSettingsSecurityBtnBackupUpload}"
                   }
                 }
@@ -1530,19 +1530,21 @@ proc action_create_backup {} {
 }
 
 proc action_backup_upload {} {
-  global env sid
-  cd /tmp/
+  global env sid filename
+  cd /usr/local/tmp/
 
+  file rename -force -- $filename "/usr/local/tmp/new_config.tar"
   http_head
-  import_file -client backup_file
-  file rename -force -- [lindex $backup_file 0] "/tmp/new_config.tar"
   cgi_javascript {
     puts "var url = \"$env(SCRIPT_NAME)?sid=$sid\";"
     puts {
-      //parent.top.ProgressBar.IncCounter("Backup wurde �bertragen.");
-      parent.top.dlgPopup.hide();
-      parent.top.dlgPopup.setWidth(400);
-      parent.top.dlgPopup.LoadFromFile(url, "action=backup_restore_check");
+      var dlgPopup = parent.top.dlgPopup;
+      if (dlgPopup === undefined) {
+        dlgPopup = window.open('', 'ccu-main-window').dlgPopup;
+      }
+      dlgPopup.hide();
+      dlgPopup.setWidth(400);
+      dlgPopup.LoadFromFile(url, "action=backup_restore_check");
     }
   }
 }
@@ -1612,14 +1614,20 @@ proc version_compare {v1 v2} {
 cgi_eval {
   #cgi_debug -on
   cgi_input
-  catch {
-    import debug
-    cgi_debug -on
-  }
+  #catch {
+  #  import debug
+  #  cgi_debug -on
+  #}
 
   set action "put_page"
+  set filename ""
 
   catch { import action }
+  catch { import filename }
+  # accept only a regular file that /config/fileupload.ccc has written
+  if {![regexp {^/usr/local/tmp/tmp\.[A-Za-z0-9]+$} $filename] || [catch {file type $filename} fileType] || $fileType ne "file"} {
+    set filename ""
+  }
 
   if {[session_requestisvalid 8] > 0} then action_$action
 }

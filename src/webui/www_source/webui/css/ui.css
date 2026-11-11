@@ -1,8 +1,16 @@
+
 html, body {
   border: 0 none;
   margin: 0;
   padding: 0;
-  font:10pt Verdana;
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+input, textarea, select, button, h1 {
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
 }
 
 application {

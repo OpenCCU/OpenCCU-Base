@@ -158,22 +158,36 @@ endif()
 if(BUILD_TCL_HOMEMATIC)
   install(DIRECTORY "${ROOTFS_DIR}/usr/" DESTINATION usr COMPONENT assets)
 endif()
+# The ReGa scripts are edited in src/webui/rega/bin. bin/ holds a copy for
+# OpenCCU, which tests/test-hm-scripts.py keeps equal to the source.
+set(hm_scripts hm_autoconf hm_deldev hm_startup)
 set(scripts)
 if(BUILD_HM_SCRIPTS)
-  list(APPEND scripts hm_autoconf hm_deldev hm_startup)
+  foreach(name IN LISTS hm_scripts)
+    list(APPEND scripts "src/webui/rega/bin/${name}")
+  endforeach()
 endif()
 if(BUILD_REGAHSS)
-  list(APPEND scripts ${TARGET_PLATFORM}/ReGaHss)
+  list(APPEND scripts "bin/${TARGET_PLATFORM}/ReGaHss")
 endif()
 foreach(script IN LISTS scripts)
   get_filename_component(name "${script}" NAME)
   add_custom_command(TARGET core POST_BUILD
     COMMAND "${CMAKE_COMMAND}" -E make_directory "${ROOTFS_DIR}/bin"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/bin/${script}" "${ROOTFS_DIR}/bin/${name}"
+            "${CMAKE_SOURCE_DIR}/${script}" "${ROOTFS_DIR}/bin/${name}"
     VERBATIM)
-  install(PROGRAMS "${CMAKE_SOURCE_DIR}/bin/${script}" DESTINATION bin COMPONENT assets)
+  install(PROGRAMS "${CMAKE_SOURCE_DIR}/${script}" DESTINATION bin COMPONENT assets)
 endforeach()
+if(BUILD_HM_SCRIPTS AND DEPLOY_TO_REPO)
+  foreach(name IN LISTS hm_scripts)
+    add_custom_command(TARGET core POST_BUILD
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DEPLOY_ROOT}/bin"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+              "${CMAKE_SOURCE_DIR}/src/webui/rega/bin/${name}" "${DEPLOY_ROOT}/bin/${name}"
+      VERBATIM)
+  endforeach()
+endif()
 
 if(BUILD_CRYPTTOOL)
   install(FILES src/crypttool/config.txt DESTINATION etc/config_templates

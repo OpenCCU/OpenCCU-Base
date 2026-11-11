@@ -23,19 +23,6 @@ StartPage = Singleton.create(Page, {
   initialize: function ()
   {
     this.deviceList = [];
-
-    switch (getUPL())
-    {
-      case UPL_ADMIN:
-      case UPL_USER:
-        this.resize = this.resizeUser;
-        break;
-      case UPL_GUEST:
-        this.rezise = this.resizeGuest;
-        break;
-      default:
-        break;
-    }
   },
 
   /**
@@ -46,7 +33,6 @@ StartPage = Singleton.create(Page, {
     iseInitUpdateArrays();
     setPath("");
     setFooter("");
-    WebUI.resize();
   
     switch (getUPL())
     {
@@ -77,35 +63,6 @@ StartPage = Singleton.create(Page, {
     this.prevDownloadURL = this.downloadURL;
     conInfo("Device Fw. downloadURL: " + this.downloadURL);
   },
-  
-  /**
-   * Berechnet die Größe der normalen Startseite (Admin und Benutzer)
-   **/
-  resizeUser: function()
-  {
-    var contentHeight     = $("content").getHeight();
-    var contentWidth      = $("content").getWidth();
-    var width = parseInt(contentWidth / 2);
-    
-    if ($("contentLeft"))
-    {
-      //Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": width + "px"});
-      Element.setStyle("contentLeft", {"height": contentHeight + "px", "width": "55%"});
-    }
-    if ($("contentLeft"))
-    {
-      //Element.setStyle("contentRight", {"height": contentHeight + "px", "width": (width - 10) + "px"});
-      Element.setStyle("contentRight", {"height": contentHeight + "px", "width": "44%"});
-    }
-    
-    if ($("favSelector"))
-    {   
-      var FavSelectorHeight = $("favSelector").getHeight();
-      var FAV_MARGIN_HEIGHT = 8;          
-      var favViewHeight = (contentHeight - FavSelectorHeight - FAV_MARGIN_HEIGHT) * 0.95;
-      $("favView").setStyle({"height": favViewHeight});
-    }
-  },
 
   getPageMeasurement: function() {
     var pageElements = ["body","#header", "#menubar", "#favSelector", "#favView", "#footer"],
@@ -122,16 +79,16 @@ StartPage = Singleton.create(Page, {
 
    // WebUI-Version
   showCurrentFirmware: function() {
-    //jQuery("#currentFirmware").text(WEBUI_VERSION);
+    jQuery("#currentFirmware").text(WEBUI_VERSION);
 
-    homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
-      if (result != null) {
-        WEBUI_VERSION = result.firmware;
-      } else {
-        WEBUI_VERSION = "0.0.0";
-      }
-      jQuery("#currentFirmware").text(WEBUI_VERSION);
-    });
+    //homematic("Interface.getDeviceDescription", {"interface": "BidCos-RF", "address": "BidCoS-RF"}, function(result) {
+    //  if (result != null) {
+    //    WEBUI_VERSION = result.firmware;
+    //  } else {
+    //    WEBUI_VERSION = "0.0.0";
+    //  }
+    //  jQuery("#currentFirmware").text(WEBUI_VERSION);
+    //});
   },
 
   /*evalVersionAGreaterThanB: function(a, b) {
@@ -329,9 +286,9 @@ StartPage = Singleton.create(Page, {
                                      Typ +
                                    "</td>" +
                                    "<td style='text-align:center;vertical-align:top;' class='UILink' " +
-                                     "onClick='toggleSerialNumberDisplay()'>" +
+                                     "onClick='toggleSerialNumberDisplay()'><span role='button' tabindex='0'>" +
                                      Obj.DevCnt +
-                                   "</td>" +
+                                   "</span></td>" +
                                    "<td style='text-align:left;vertical-align:top;display:none;'>" +
                                      Obj.Address.join('<br/>') +
                                    "</td>" +
@@ -478,10 +435,8 @@ StartPage = Singleton.create(Page, {
     }
   },
   
-  /**
-   * Berechnet die Größe der Startseite für den Gast
-   **/
-  resizeGuest: function() { }   
-  
+  showDutyCycle: function() {
+    showDutyCycle();
+  }
   
 });

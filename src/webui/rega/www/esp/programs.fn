@@ -783,12 +783,12 @@ function ::WriteDestinationText()
                       if (iV < 1 && oDP.ValueUnit() == "%") {
                         iV = iV * 100;
                       }
-                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit();
+                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 
                     }
                     if (oDP.ValueSubType() == istChar8859)
                     {
-                     sRet = sRet # " " # iV.ToString(2);
+                     sRet = sRet # " " # iV.ToString(2).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
                     }
                   }
                 }
@@ -825,7 +825,21 @@ function ::SetBreakOnRestart()
       }
       else
       {
-        Write( oTmp.BreakOnRestart( false ) );
+        boolean bSet = oTmp.BreakOnRestart( false );
+        string sRemovedRuleParentID = "";
+        if( bSet )
+        {
+          integer iElseDestID = oTmp.ID();
+          Call("/esp/programs.fn::DeleteEmptyElseRule()");
+        }
+        if( sRemovedRuleParentID != "" )
+        {
+          Write( "removedRule:"#sRemovedRuleParentID );
+        }
+        else
+        {
+          Write( bSet );
+        }
       }
     }
   }
@@ -922,7 +936,7 @@ function ::LoadProgramListXML()
       object o = dom.GetObject( sPID );
       if( o )
       {
-        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name()#'" />' );
+        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" />' );
       }
     }
     WriteLine( '</programs>' );
@@ -1243,7 +1257,66 @@ function ::DeleteSingleDestination()
     object oTmp = dom.GetObject( system.GetVar("did") );
     if( oTmp )
     {
-      Write( oTmp.DestDelSingle( system.GetVar("sid") ) );
+      boolean bDeleted = oTmp.DestDelSingle( system.GetVar("sid") );
+      string sRemovedRuleParentID = "";
+      if( bDeleted )
+      {
+        integer iElseDestID = oTmp.ID();
+        Call("/esp/programs.fn::DeleteEmptyElseRule()");
+      }
+      if( sRemovedRuleParentID != "" )
+      {
+        Write( "removedRule:"#sRemovedRuleParentID );
+      }
+      else
+      {
+        Write( bDeleted );
+      }
+    }
+  }
+}
+
+! Deletes the rule "rid" when it is the terminal ELSE rule of its parent
+! rule and its destination iElseDestID has no activities left. Such a rule
+! does nothing; the WebUI shows the ELSE placeholder instead and creates the
+! rule again when an activity is added. On success the ID of the parent rule
+! is returned in sRemovedRuleParentID, which the caller declares.
+! ReGa evaluates all operands of &&, so object checks are nested.
+function ::DeleteEmptyElseRule()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rid")) )
+  {
+    object oRule = dom.GetObject( system.GetVar("rid") );
+    if( oRule )
+    {
+      object oDest = oRule.RuleDestination();
+      if( oDest )
+      {
+        if( (oDest.ID() == iElseDestID) && (oDest.DestSingleCount() == 0) &&
+            (!oRule.ElseIfFlag()) && (!oRule.RuleSubRule()) &&
+            (oRule.RuleConditions().Count() == 0) )
+        {
+          object oParent = dom.GetObject( oRule.RuleParentID() );
+          if( oParent )
+          {
+            if( oParent.IsTypeOf( OT_RULE ) )
+            {
+              object oSubRule = oParent.RuleSubRule();
+              if( oSubRule )
+              {
+                if( oSubRule.ID() == oRule.ID() )
+                {
+                  if( oParent.RuleDelSubRule() )
+                  {
+                    sRemovedRuleParentID = oParent.ID().ToString();
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

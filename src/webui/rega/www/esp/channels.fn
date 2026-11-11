@@ -398,11 +398,11 @@ function ::chnToRoom() {
   string sGroupRoomIds = "";
   foreach(roomTmp, chn.ChnRoom()) {
     object objTmp = dom.GetObject(roomTmp);
-    sRooms = sRooms # objTmp.Name() # "<br />";
+    sRooms = sRooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
     sGroupRoomIds = sGroupRoomIds # roomTmp # "\t";
   }
   Write("<script type='text/javascript'>");
-  Write("$('roomsDiv"#chn.ID()#"').innerHTML = '"#sRooms#"';");
+  Write("$('roomsDiv"#chn.ID()#"').innerHTML = '"#sRooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
   
   !Update group table cell
   
@@ -426,9 +426,9 @@ function ::chnToRoom() {
       string sGroupRooms = "";
       foreach (tmp, sGroupRoomIds) {
         object oGroupRoom = dom.GetObject(tmp);
-        sGroupRooms = sGroupRooms # oGroupRoom.Name() # "<br />";
+        sGroupRooms = sGroupRooms # oGroupRoom.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
       }
-      Write("updateGroupCell('rooms', "#chn.ID()#", "#oGrPartner.ID()#", '"#sGroupRooms#"');");
+      Write("updateGroupCell('rooms', "#chn.ID()#", "#oGrPartner.ID()#", '"#sGroupRooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
     }
   }
   
@@ -460,10 +460,10 @@ function ::chnToRoom() {
     string sDevRooms = "";
     foreach (tmp, sDevRoomsIds) {
       object oRoomTmp = dom.GetObject(tmp);
-      sDevRooms = sDevRooms # oRoomTmp.Name() # "<br />";
+      sDevRooms = sDevRooms # oRoomTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
     }
     Write("if($('rooms"#oDev.ID()#"'))");
-    Write("$('rooms"#oDev.ID()#"').innerHTML = '"#sDevRooms#"';");
+    Write("$('rooms"#oDev.ID()#"').innerHTML = '"#sDevRooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
   }
   Write("translatePage('#content')");
   Write("</script>");
@@ -494,11 +494,11 @@ function ::chnToFunc() {
   string sGroupFuncIds = "";
   foreach(funcTmp, chn.ChnFunction()) {
     object objTmp = dom.GetObject(funcTmp);
-    sFuncs = sFuncs # objTmp.Name() # "<br />";
+    sFuncs = sFuncs # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
     sGroupFuncIds = sGroupFuncIds # funcTmp # "\t";
   }
   Write("<script type='text/javascript'>");
-  Write("$('funcsDiv"#chn.ID()#"').innerHTML = '"#sFuncs#"';");
+  Write("$('funcsDiv"#chn.ID()#"').innerHTML = '"#sFuncs.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
 
   !Update group table cell
   
@@ -522,9 +522,9 @@ function ::chnToFunc() {
       string sGroupFuncs = "";
       foreach (tmp, sGroupFuncIds) {
         object oGroupFunc = dom.GetObject(tmp);
-        sGroupFuncs = sGroupFuncs # oGroupFunc.Name() # "<br />";
+        sGroupFuncs = sGroupFuncs # oGroupFunc.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
       }
-      Write("updateGroupCell('funcs', "#chn.ID()#", "#oGrPartner.ID()#", '"#sGroupFuncs#"');");
+      Write("updateGroupCell('funcs', "#chn.ID()#", "#oGrPartner.ID()#", '"#sGroupFuncs.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"');");
     }
   }
   
@@ -556,10 +556,10 @@ function ::chnToFunc() {
     string sDevFuncs = "";
     foreach (tmp, sDevFuncsIds) {
       object oFuncTmp = dom.GetObject(tmp);
-      sDevFuncs = sDevFuncs # oFuncTmp.Name() # "<br />";
+      sDevFuncs = sDevFuncs # oFuncTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
     }
     Write("if($('funcs"#oDev.ID()#"'))");
-    Write("$('funcs"#oDev.ID()#"').innerHTML = '"#sDevFuncs#"';");
+    Write("$('funcs"#oDev.ID()#"').innerHTML = '"#sDevFuncs.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
   }
   Write("translatePage('#content')");
   Write("</script>");

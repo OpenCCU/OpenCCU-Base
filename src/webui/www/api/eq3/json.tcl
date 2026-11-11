@@ -199,17 +199,26 @@ proc json_parseUnicodeChar { p_text } {
 
 ##
 # Codiert eine JSON-Zeichenkette
+#
+# JSON does not allow raw control characters (U+0000 to U+001F) in strings:
+# besides the short escapes, they are written as \u00XX. The escape table is
+# built once per request.
 ##
 proc json_toString { str } {
-  set map {
-    "\"" "\\\""
-    "\\" "\\\\"
-    "/"  "\\/" 
-    "\b"  "\\b" 
-    "\f"  "\\f" 
-    "\n"  "\\n" 
-    "\r"  "\\r" 
-    "\t"  "\\t" 
+  if { ![info exists ::json_string_map] } then {
+    set map [list "\"" "\\\"" "\\" "\\\\" "/" "\\/"]
+    for { set i 0 } { $i < 32 } { incr i } {
+      switch -- $i {
+        8       { set escape "\\b" }
+        9       { set escape "\\t" }
+        10      { set escape "\\n" }
+        12      { set escape "\\f" }
+        13      { set escape "\\r" }
+        default { set escape [format "\\u%04x" $i] }
+      }
+      lappend map [format %c $i] $escape
+    }
+    set ::json_string_map $map
   }
-  return "\"[string map $map $str]\""
+  return "\"[string map $::json_string_map $str]\""
 }

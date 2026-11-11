@@ -187,7 +187,7 @@ arChSv = new Array();
           <th class="CLASS06329">${thAction}</th>
         </tr>
         <tr>
-          <td id="idName" class="CLASS06330" onclick="textEdit('idName', <% Write( oFav.ID() ); %>, false)"><% Write( oFav.Name() ); %></td>
+          <td id="idName" class="CLASS06330" onclick="textEdit('idName', <% Write( oFav.ID() ); %>, false)"><% Write( oFav.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); %></td>
           <td id="idDescription" class="CLASS06330" onclick="textEditInfo('idDescription', <% Write( oFav.ID() ); %>, true)"><% if( !oFav.EnumInfo().Length() ) { Write('&nbsp;'); } Write( oFav.EnumInfo() ); %></td>
           <td class="CLASS06330">
             <% string sSelected = ""; iFavColCount = oFav.FavColumnCount(); %>
@@ -420,7 +420,7 @@ arChSv = new Array();
                     if (elem) {
                       string divId = "rdiv"#tmp;
                         Write("<tr>");
-                          Write("<td  class='CLASS06310'>"#elem.Name()#"</td>");
+                          Write("<td  class='CLASS06310'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                           Write("<td  class='CLASS06310'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
                         Write("</tr>");
                     }
@@ -445,7 +445,7 @@ arChSv = new Array();
                     if (elem) {
                       string divId = "rdiv"#tmp;
                         Write("<tr>");
-                          Write("<td  class='CLASS06310'>"#elem.Name()#"</td>");
+                          Write("<td  class='CLASS06310'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                           Write("<td  class='CLASS06310'><input type='checkbox' id='fr"#elem.ID()#"'/></td>");
                         Write("</tr>");
                     }
@@ -599,7 +599,7 @@ arChSv = new Array();
             sSN = oEntry.Address();
             sJS = sJS#oEntry.ID()#"\t";
             Write( '<td class="tCell">' );
-              Write( oEntry.Name() );
+              Write( oEntry.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
             Write( '</td>' );
             Write( '<td class="tCell">' );
               Write( oEntry.HssParentType() );
@@ -624,7 +624,7 @@ arChSv = new Array();
               string s;
               foreach(s, oEntry.ChnFunction())
               {
-                Write( dom.GetObject(s).Name() );
+                Write( dom.GetObject(s).Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                 Write( '<br />' );
                 funcIDs = funcIDs # s # "\t";
               }
@@ -633,7 +633,7 @@ arChSv = new Array();
               string s;
               foreach(s, oEntry.ChnRoom())
               {
-                Write( dom.GetObject(s).Name() );
+                Write( dom.GetObject(s).Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
                 Write( '<br />' );
                 roomIDs = roomIDs # s # "\t";
               }
@@ -648,14 +648,14 @@ arChSv = new Array();
             if( bNumber ) { sSysVarType = "Zahl"; }
             if( bAlarm ) { sSysVarType = "Alarm"; }
             if( bString ) { sSysVarType = "Zeichenkette"; }
-            Write('<td class="tCell" colspan="1">'#oEntry.Name()#'</td>' );
+            Write('<td class="tCell" colspan="1">'#oEntry.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
             Write('<td class="tCell" colspan="1">'#sSysVarType#'</td>' );
-            Write('<td class="tCell CLASS06319" colspan="5">'#oEntry.DPInfo().Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#'</td>' );
+            Write('<td class="tCell CLASS06319" colspan="5">'#oEntry.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#'</td>' );
           }
           
           if( bProgram )
           {
-            Write('<td class="tCell" colspan="1">'#oEntry.Name()#'</td>' );
+            Write('<td class="tCell" colspan="1">'#oEntry.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
             Write('<td class="tCell" colspan="1">'#oEntry.PrgInfo()#'</td>' );
             Write('<td class="tCell" colspan="5">&nbsp;</td>' );
           }
@@ -736,7 +736,7 @@ arChSv = new Array();
         Write('</tr>');
         Write("<script type='text/javascript'>");
         Write("var tmp = new Object();");
-        Write("tmp['name'] = '"#sName#"';");
+        Write("tmp['name'] = '"#sName.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("tmp['id'] = '"#sChSvId#"';");
         Write("tmp['trid'] = '"#sTrid#"';");
         Write("tmp['sn'] = '"#sSN#"';");

@@ -15,8 +15,8 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsInitialisingMessageTitle" : "Die microSD Karte wird zurzeit initialisiert",
     "lblSysConfStorage" : "Speicherverwaltung",
 
-    "dialogSettingsExternalStorageStateInitialised" : "externer USB-Speicher vorhanden.",
-    "dialogSettingsExternalStorageStateNotPresent" : "Es wurde kein externer USB-Speicher gefunden."
+    "dialogSettingsExternalStorageStateInitialised" : "externer Speicher vorhanden.",
+    "dialogSettingsExternalStorageStateNotPresent" : "Es wurde kein externer Speicher gefunden."
   }
 });
 

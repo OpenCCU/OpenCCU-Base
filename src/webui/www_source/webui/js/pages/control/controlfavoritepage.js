@@ -12,8 +12,4 @@ ControlFavoritePage = new function()
   {
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

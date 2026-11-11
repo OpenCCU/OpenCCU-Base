@@ -17,9 +17,8 @@ homematic.com =
   {
     this.m_ccuProduct = getProduct();
     this.preURL = (this.m_ccuProduct < 3) ? "" : "ccu3-";
-    this.m_product ="HM-CCU" + this.m_ccuProduct;
+    this.m_product = "HM-RASPBERRYMATIC";
     this.m_URLServer = "https://"+this.preURL+"update.homematic.com";
-    this.m_fieldTestURLServer = "https://fieldtest-ccu3-update.homematic.com";
 
     this.serial = homematic("CCU.getSerial");
     this.serial = ((this.serial != "") && (typeof this.serial != "undefined") && (this.serial != null)) ? this.serial : "0";
@@ -28,7 +27,7 @@ homematic.com =
     var script = document.createElement("script");
     script.id = "homematic_com_script";
     script.type = "text/javascript";
-    script.src = this.m_URLServer + "/firmware/download?cmd=js_check_version&version="+WEBUI_VERSION+"&product="+this.m_product+"&serial=" + this.serial;
+    script.src = "https://openccu.de/LATEST-VERSION.js?v=" + WEBUI_VERSION + "&p=" + PRODUCT;
     $("body").appendChild(script);
   },
 

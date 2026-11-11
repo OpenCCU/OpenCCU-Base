@@ -222,6 +222,10 @@
         <subset ref="switch_paramset"/>
       </paramset>
       -->
+      <!-- empty MASTER paramset: ReGaHss reads the AES state of this channel from
+           the MASTER description; without it rfd answers "Unknown paramset".
+           AES_ACTIVE (switch_paramset) stays disabled as above. -->
+      <paramset type="MASTER" id="rd_heat_ch_master"/>
       <paramset type="VALUES" id="switch_ch_values">
         <subset ref="switch_valueset"/>
       </paramset>

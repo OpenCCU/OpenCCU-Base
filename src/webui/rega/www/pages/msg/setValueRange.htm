@@ -183,7 +183,7 @@
   ct = <% Write(iCT); %>;
   var go = -1;
 
-  vu = "<% Write(oLV.ValueUnit()); %>";
+  vu = "<% Write(oLV.ValueUnit().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")); %>";
   min ="<% Write(oLV.ValueMin()); %>";
   max ="<% Write(oLV.ValueMax()); %>";
 

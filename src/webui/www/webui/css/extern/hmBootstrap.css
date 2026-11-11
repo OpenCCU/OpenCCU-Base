@@ -53,3 +53,19 @@ h1, .h1 {
   border-style: inherit;
   border-width: inherit;
 }
+
+#hmBootstrap .progress {
+  position: relative; /* inserted */
+  height: 14px; /* 20px */
+  /* margin-bottom: 20px; /* removed */
+}
+#hmBootstrap .progress span {
+    position: absolute;
+    display: block;
+    width: 100%;
+    color: black;
+}
+#hmBootstrap .progress-bar {
+  font-size: 11px; /* 12px */
+  line-height: 14px; /* 20px */
+}

@@ -841,7 +841,7 @@ jQuery.extend(true, langJSON, {
     "btnGarageClose" : "Closing",
     "btnGarageVent" : "Ventilation",
     "btnGarageStop" : "Stop",
-    "dialogSettingsUSBStorageSettings" : "External USB memory",
+    "dialogSettingsUSBStorageSettings" : "External storage",
     "dialogSettingsStorageHintUSBStorageP1" : "Storage of data only includes the diagrams.",
     "dialogSettingsSecurityTDAuth" : "Authentication",
     "dialogSettingsSecurityLblActivateAuthRemoteXML" : "Authentication active: ",
@@ -956,6 +956,10 @@ jQuery.extend(true, langJSON, {
     "dialogSettingsTimePositionMessageSetPositionSucceedIncludingAllDevices" :
       "Position information was saved.<br/><br/>" +
         "The location data of the corresponding HmIP devices will be adjusted.",
+    "dialogSettingsTimePositionMessageSetPositionDevicesFailure" :
+      "Position information was saved, but could not be transferred to the HmIP devices: ",
+    "dialogSettingsTimePositionMessageSetPositionSomeDevicesFailure" :
+      "Position information was saved, but could not be transferred to all HmIP devices. Affected devices:",
     "PowerMeterProtocolModeModeOptionSML" : "SML protocol",
     "btnChooseSongs"  : "Title selection",
     "drapFwNotCompatWithCCUFW" : "The Access Point firmware is not compatible to the CCU.\n\nPlease update your CCU!",
@@ -1094,6 +1098,9 @@ jQuery.extend(true, langJSON, {
       "<u>Note:</u><br/>" +
       "If you change the sensor, the previously recorded consumption values (today, yesterday, etc.) will be reset to 0.<br/><br/>" +
       "If you have started the sensor detection without a sensor connected, connect a sensor and carry out a factory reset of the energy meter.<br/><br/>",
+
+    "lblSysVarMoveUp" : "Move up",
+    "lblSysVarMoveDown" : "Move down",
 
     "theEnd" : ""
   }

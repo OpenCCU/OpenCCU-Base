@@ -13,8 +13,4 @@ AlarmMessagesPage = new function()
     if ($("msgAlarms")) { $("msgAlarms").removeClassName("Messages_Selected"); }
   };
 
-  this.resize = function()
-  {
-  };
-  
 }();

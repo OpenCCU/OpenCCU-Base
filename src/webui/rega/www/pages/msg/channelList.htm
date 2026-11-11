@@ -128,7 +128,7 @@
           if (elem) {
             string divId = "rdiv"#tmp;
               Write("<tr>");
-                Write("<td class='CLASS01011'>"#elem.Name()#"</td>");
+                Write("<td class='CLASS01011'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                 Write("<td class='CLASS01011'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
               Write("</tr>");
           }
@@ -153,7 +153,7 @@
           if (elem) {
             string divId = "rdiv"#tmp;
               Write("<tr>");
-                Write("<td class='CLASS01011'>"#elem.Name()#"</td>");
+                Write("<td class='CLASS01011'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                 Write("<td class='CLASS01011'><input type='checkbox' id='fr"#elem.ID()#"'/></td>");
               Write("</tr>");
           }

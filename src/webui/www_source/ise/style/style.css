@@ -2,11 +2,6 @@
   --btnGradient: linear-gradient(to bottom, #ffffff, #a1a1a1);
 }
 
-* {
-	font-family:Verdana,Tahoma,Arial,Helvetica,sans-serif ! important;
-	font-size: 12px ! important;
-}
-
 .j_translate, .j_startPage
 {
     display: none;
@@ -19,6 +14,10 @@
 .attention {
     color: $_(attention);
     font-weight: bold;
+}
+
+hr {
+  border: solid 1px $_(navBarSeparator);
 }
 
 .height20px {
@@ -51,6 +50,10 @@
 
 .minWidth230px {
   min-width: 230px;
+}
+
+input[type=checkbox], input[type=radio] {
+  vertical-align: -2px;
 }
 
 .conditionEven
@@ -101,6 +104,8 @@ tr.UserSysVars:nth-child(odd) {
 
 html,body
 {
+  width: 100vw;
+  height: 100vh;
   margin:0;
   padding:0;
   color: $_(textColorB); /* black */
@@ -135,9 +140,30 @@ a img {
  * * *   Element IDs                     * * *
  * * * * * * * * * * * * * * * * * * * * * * */
 
+/* Login & Logout page */
+
+#maintable {
+  width: 100vw;
+  height: 100vh;
+  border-collapse: collapse;  
+}
+
+#maintable tbody > tr > td {
+  padding: 0;
+}
+
+#maintable #content {
+  height: 100%;
+  width: 100%;
+  display: inline-table;
+  background-repeat: no-repeat;
+  background-position: 480px center;
+}
+
 /* Navigation-Leiste */
 #navbar 
 {
+  height: 72px;
   margin: 0px;
   background-color: $_(background); /* #183473 */
   width:100%;
@@ -145,6 +171,11 @@ a img {
 }
  
 /* Haupt-Fenster */
+.Layer0 {
+  height: 100%;
+  width: -moz-available; /* otherwise firefox does not resize to max browser width */
+}
+
 #_content
 {
   height: 70%;
@@ -174,13 +205,37 @@ a img {
 {
     background-color: $_(contentBackground);
     overflow: auto;
+    display: flex;
+    align-items: flex-start;
     /* Prevent chrome from outlining this by focus */
     outline: none;
+    /* Stretch to max available space */
+    height: calc(100% - 168px); /* FIX: header + menubar + footer: 72px + 41px + 55px = 168px */
+}
+
+#prgcontent
+{
+  display: contents;
+}
+
+#prgcontent.j_translate
+{
+  display: none;
+}
+
+#GroupListBody
+{
+  display: contents;
+}
+
+#divDL, #divRTD, #divFL, #divHTF, #divRL, #divHTR
+{
+  height: 100%;
 }
 
 /* Kopfzeile */
 #header {
-  height: 15%;
+  height: 72px;
   background-color: $_(background);  /* #183473 */
   /* background-color: #dcdcdc; */
   color: $_(textColorB); /* black */
@@ -190,7 +245,7 @@ a img {
 
 /* Fusszeile */
 #footer {
-  height:15%;
+  height: 50px;
   background-color: $_(background); /* #183473 */
   /* background-color: #dcdcdc; */
   color: $_(textColorB); /* black */
@@ -238,15 +293,18 @@ a img {
 /* Linker Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
 #contentLeft 
 {
+  height: 100%;
   vertical-align: top;
 }
 
 /* Rechter Bereich der Hauptansicht (falls in zwei Spalten getrennt) */
 #contentRight 
 { 
+  height: 100%;
   border-left: solid 5px $_(navBarSeparator); /* #ffffff */ /* Trennlinie zwischen Navigation und Hauptbereich */
   /* padding-top: 10px; */
   vertical-align: top;
+  overflow: auto;
 }
 
 #separator {
@@ -266,7 +324,7 @@ a img {
 
 /* Grundlegende Tabelle auf der Statusanzeige-Seite */
 #tblStatus {
-  width:1200px; 
+  /* width:1200px; */
   height:100%;
   table-layout: fixed;
 }
@@ -320,7 +378,7 @@ a img {
 {
   /*position: absolute;*/
   margin-left: 0px;
-  margin-top: 6px;
+  margin-top: 0px;
   padding-left: 10px;
 }
 
@@ -406,7 +464,9 @@ a img {
   text-align:center;
   border:solid 1px $_(black); /* black */
   background-color:$_(clickable);
-  height: 20px;
+  height:50px;
+  font-weight:normal;
+  color: $_(textColorA); /* white */
 }
 
 .filterTable td
@@ -414,7 +474,6 @@ a img {
   text-align:center;
   border:solid 1px $_(black); /* black */
   color: $_(textColorB); /* black */
-  height: 40px;
 }
 
 .filterTable .leftAlign {
@@ -450,7 +509,6 @@ a img {
   border: solid 1px $_(black); /* black */
   cursor: pointer;
   border-radius: 5px;
-  font-size: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -609,37 +667,39 @@ a img {
 
 /* Tabelle zur Listendarstellung von Elementen (z.B. Raumübersicht) */
 .tblList {
-  margin-top: 20px;
-  width: 100%;
+  margin: 10px;
   empty-cells: show;
+  border: solid 1px $_(black); /* black */
+  width: 100%;
 }
 
 .tblList th {
   color: $_(textColorA); /* white */
   font-weight: normal;
-  background-color: $_(clickable);
 }
 
 .Sort
 {
   cursor: pointer;
-  text-align: center;
-  vertical-align: middle;
-  height: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .SortSelected
 {
   cursor: pointer;
   background-color: $_(active); /* #565657 */
-  text-align: center;
-  vertical-align: middle;
-  height: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .pt11
 {
-  padding-top: 11px;
+  
 }
 
 .tblList td {
@@ -652,7 +712,6 @@ a img {
 /* Kopfzeile eines Popup-Fenster */
 .popupTitle {
   color: $_(textColorB); /* black */
-  width: 99.4%;
   background-color: $_(white); /* white */
   border: solid 1px $_(black); /* black */
   padding-left: 4px;
@@ -681,12 +740,12 @@ a img {
 .popupTableScript
 {
   width: 100%;
-  border: solid 1px $_(black); /* black */
   empty-cells: show;
   color: $_(textColorA); /* white */
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
+  border-spacing: 2px;
 }
 
 .popupTableRow
@@ -721,7 +780,6 @@ a img {
 
 .popupControls {
   background-color: $_(white); /* white */
-  width: 100%;
   border: solid 1px $_(black); /* black */
 }
 
@@ -750,8 +808,8 @@ a img {
 
 /* KanalListe */
 .ChnListTbl {
-  width: 100%;
   background-color: $_(black); /* black */
+  margin: 10px;
 }
 
 .ChnListTbl td {
@@ -965,7 +1023,6 @@ a img {
     border:1px solid $_(black); /* black */
     /* width:95%; */
     text-align:center;
-    height:20px;
     line-height:20px;
     vertical-align:middle;
     color: $_(textColorB); /* black */
@@ -1004,7 +1061,7 @@ a img {
   background-image:url(/ise/img/gradientButton25px.png);
   /*background-image: linear-gradient(to bottom, white 40%, gray);*/
   background-image: var(--btnGradient);
-  color: $_(textColorA); /* #ffffff */
+  color: $_(gray);
   border: solid 1px $_(gray); /* silver */
   border-radius: 5px;
   margin:2%;
@@ -1132,6 +1189,7 @@ a img {
 
 .StatViewTbl td{
   border: solid 1px $_(black); /* black */
+  height: 50px;
 }
 
 
@@ -1303,13 +1361,10 @@ a img {
 .tTable
 {
   text-align:center;
-  margin-left:10px;
-  margin-top:10px;
-  margin-right:10px;
+  margin:10px;
   empty-cells: show;
-  width:97%;
-  /*width:1200px;*/
   border:solid 1px $_(black); /* black */
+  width: 100%;
 }
 /*
 .tTable th
@@ -1366,8 +1421,8 @@ div.caption  { display: table-caption; }
 .tMain
 {
   border:solid 1px $_(black); /* black */
-  margin-left:20px;
-  margin-top:20px;
+  margin:10px;
+  width:100%;
 }
 
 .tHeader
@@ -1405,7 +1460,6 @@ div.caption  { display: table-caption; }
 
 .bcWhitePic
 {
-  background-color: $_(white); /* #ffffff */
 }
 
 .bcWhite
@@ -1473,17 +1527,13 @@ div.caption  { display: table-caption; }
 
 .oLine
 {
-  background-color: $_(background); /* #183473 */
-  width: 90%;
+  width: 100%;
   height: 6px;
-  border-bottom-width: 5px;
-  border-bottom-style: solid;
-  border-bottom-color: $_(white); /* #ffffff */
 }
 
 .sysConfigHeight
 {
-  height: 263px;
+  min-height: 263px;
 }
 
 .posPreBtn
@@ -1525,7 +1575,7 @@ div.caption  { display: table-caption; }
   border:solid 1px $_(black); /* black */
   height:40px;
   text-align:center;
-  padding: 2px;
+  font-weight:normal;
 }
 
 .tdCellFilter
@@ -1539,7 +1589,7 @@ div.caption  { display: table-caption; }
 
 /* Weisser Zellenhintergrund für Bilder (Geräteübersicht u.ä.) */
 .WhiteBkgPic {
-  background-color: $_(white); /* #ffffff */
+  background-color: $_(activeBackground); /* #f0f0f0 */
   color: $_(textColorB); /* black */
 }
 
