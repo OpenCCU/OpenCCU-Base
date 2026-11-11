@@ -18,7 +18,7 @@ or extended in it.
 * the hints and errors below the system variable dialog (e.g. that the type
   of an existing alarm variable cannot be changed) are shown as plain text
   again. They looked like a button before (OpenCCU patch 0206)
-  (@jens-maus)
+  ([#354](https://github.com/OpenCCU/OpenCCU-Base/pull/354), @jens-maus)
 * the value dialog of a system variable (a click on its value in "Status and
   control" or on the start page) sets only the value. It saved the whole
   variable before, so it also rewrote its name, description, unit, value
