@@ -265,3 +265,35 @@ test('the timer of a load without a remembered call does not start a call of a l
   ui.complete(2, 'C');
   assert.equal(ui.content.innerHTML, 'C');
 });
+
+test('a reload of the loading page does not replace a page opened from the menu', () => {
+  const ui = makeWebUI();
+  ui.context.WebUI.currentPage = 'PageA';
+  ui.context.updateContent('/pages/a.htm');
+  // the menu opens page B while A is loading
+  ui.context.WebUI.currentPage = 'PageB';
+  ui.context.updateContent('/pages/b.htm');
+  // a delayed callback of page A reloads it (sActPage is still A)
+  ui.context.reloadPage();
+  ui.complete(0, 'A');
+  ui.advance(100);
+  assert.deepEqual(ui.requests.map((r) => r.url), ['/pages/a.htm?sid=SID', '/pages/b.htm?sid=SID']);
+  ui.complete(1, 'B');
+  assert.equal(ui.content.innerHTML, 'B');
+});
+
+test('opening the loading page again from the menu keeps it', () => {
+  const ui = makeWebUI();
+  ui.context.WebUI.currentPage = 'PageA';
+  ui.context.updateContent('/pages/a.htm');
+  ui.context.WebUI.currentPage = 'PageB';
+  ui.context.updateContent('/pages/b.htm');
+  // the menu opens page A again: B is not carried out any more
+  ui.context.WebUI.currentPage = 'PageA';
+  ui.context.updateContent('/pages/a.htm');
+  ui.complete(0, 'A');
+  ui.advance(100);
+  assert.deepEqual(ui.requests.map((r) => r.url), ['/pages/a.htm?sid=SID']);
+  assert.equal(ui.content.innerHTML, 'A');
+  assert.equal(ui.context.bUpdateContentRunning, false);
+});

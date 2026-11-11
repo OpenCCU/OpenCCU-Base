@@ -359,6 +359,14 @@ updateContent = function(file, argsForUrl, codeToExec, bDontSaveUrl)
 {
   if( bUpdateContentRunning )
   {
+    if( (updateContentPending !== null) && (file == sActPage) && (updateContentPending.file != file) )
+    {
+      // Another page is to be opened after the loading one (e.g. from the
+      // menu), so a reload of the loading page, e.g. by reloadPage() from a
+      // save of that page, is not needed and must not replace it.
+      conInfo("updateContent: page load running, keeping ["+updateContentPending.file+"] instead of reloading ["+file+"].");
+      return;
+    }
     conInfo("updateContent: page load running, carrying out ["+file+"] afterwards.");
     // doClearTempView is read when the page is requested, so keep the value
     // reloadPage() and reloadSortedPage() set for this call.
