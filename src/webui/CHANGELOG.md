@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the value dialog of a system variable (a click on its value in "Status and
+  control" or on the start page) sets only the value. It saved the whole
+  variable before, so it also rewrote its name, description, unit, value
+  names, value list, range and channel assignment, and armed an alarm
+  variable again. The dialog is now also offered for the presence variable,
+  which the whole save would have turned into a logic variable
+  (OpenCCU patch 0097)
+  ([#352](https://github.com/OpenCCU/OpenCCU-Base/pull/352), @jens-maus)
 * the system variable dialog shows the text of a string variable as it is
   stored. It decoded the value a second time, so percent sequences in the
   text changed: `A%41` was shown and saved as `AA`, and a text with `%99`

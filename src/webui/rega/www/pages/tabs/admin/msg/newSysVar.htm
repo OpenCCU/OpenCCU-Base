@@ -318,6 +318,31 @@
     return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
   };
 
+  // Value of the value editor as text for sv.State(), null if it is invalid.
+  // A number is limited to the range of the variable.
+  svEditedValue = function() {
+    if ($("selValue")) { return $("selValue").value; }
+    if ($("selEnum")) {
+      var index = parseInt($("selEnum").value, 10);
+      return String((isNaN(index) || (index < 0)) ? 0 : index);
+    }
+    if ($("inpValue")) {
+      var input = $("inpValue").value;
+      if ((input.strip() == "") || isNaN(input)) {
+        alert(translateKey("alertValOutOfRange"));
+        return null;
+      }
+      var value = parseFloat(input);
+      var min = parseFloat($("inpMin").value);
+      var max = parseFloat($("inpMax").value);
+      if (!isNaN(max) && (value > max)) { value = max; }
+      if (!isNaN(min) && (value < min)) { value = min; }
+      return String(value);
+    }
+    if ($("txValue")) { return $("txValue").value; }
+    return null;
+  };
+
   // Value name of a logic or alarm variable to save: the given text when the
   // field was not edited, so a value name like ${sysVarPresencePresent} is not
   // replaced by its translation.
@@ -442,6 +467,25 @@
 
   saveSysVars = function()
   {
+    // The value dialog sets only the value and keeps everything else.
+    if (svEditValueOnly)
+    {
+      var newValue = svEditedValue();
+      if (newValue === null) return;
+      var valueChannelId = $("chnId").value;
+      var valuePb = "action = 'setSysVarValue';";
+      valuePb += "integer varid = " + <% Write(system.GetVar("varid")); %> + ";";
+      valuePb += "string sValue = '" + svEscapeRegaString(newValue) + "';";
+      new Ajax.Request("/esp/system.htm?sid=" + SessionId, {
+        postBody: ReGa.encode(valuePb),
+        onComplete: function() {
+          reloadSysVars();
+          var channel = DeviceList.getChannel(valueChannelId);
+          if (channel) { DeviceList.beginUpdateDevice(channel.deviceId); }
+        }
+      });
+      return;
+    }
     var nameChanged = ($("inpName").value != svShownName);
     var descChanged = ($("inpDesc").value != svShownDesc);
     if ((descChanged && isTextAllowed($("inpDesc").value) === false) || (nameChanged && isTextAllowed($("inpName").value) === false)) return;
@@ -841,7 +885,9 @@
         Write("$('ckAssignedChn').checked = false;");
         Write("$('chnNameRow').hidden = true;");
       }
-      if (sv.ValueSubType() == istPresent) {
+      if ((sv.ValueSubType() == istPresent) && svEditValueOnly) {
+        ! Only the value dialog: saving the whole variable would make it a logic variable.
+        Write("loadLogicEdit('"#sv.ValueName1().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"', '"#sv.ValueName0().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"', '"#sv.Value()#"');");
       }
       if (sv.ValueSubType() == istChar8859) {
         string sval = sv.Value();
