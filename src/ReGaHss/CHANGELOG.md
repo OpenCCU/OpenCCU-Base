@@ -11,6 +11,18 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0269 (2026-11-11)
+
+* fix the setters BreakOnRestart(value) of a rule destination and
+  system.LogLevel(value) / system.SyslogIPAddress(value) leaving an extra
+  value on the internal stack of the script interpreter when their return
+  value was used, e.g. in an assignment like `b = oDest.BreakOnRestart(x);`
+  or in an expression: a surrounding while loop ended after the current
+  iteration although its condition was still true, and an expression
+  around the call got a wrong result (e.g. `"A" # oDest.BreakOnRestart(x)`
+  returned "ARuleDestinationtrue" instead of "Atrue").
+  (cf. [OpenCCU/OpenCCU#4722](https://github.com/OpenCCU/OpenCCU/issues/4722))
+
 ## R1.00.0388.0268 (2026-11-02)
 
 * add the option `-v` / `--version`, which prints the version of ReGaHss and
