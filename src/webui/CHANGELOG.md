@@ -21,14 +21,15 @@ or extended in it.
   in `KeyServer.Gateway.URL` and `KeyServer.Gateway.Port` of
   `/etc/config/crRFD.conf` (by default `secgtw.homematic.com`, port 8443),
   and only if a Homematic IP interface is present
-  ([#297](https://github.com/OpenCCU/OpenCCU-Base/pull/297),
-  refs [OpenCCU#3405](https://github.com/OpenCCU/OpenCCU/issues/3405),
+  ([#355](https://github.com/OpenCCU/OpenCCU-Base/pull/355); refs
+  [OpenCCU/OpenCCU#3405](https://github.com/OpenCCU/OpenCCU/issues/3405),
   @MichaelN0815, @jens-maus)
 * "Inbox" in the teach-in dialog now also stops the BidCos-RF and HmIP-RF
   teach-in mode when the interface was only found by the dialog's own
   check and not yet by the interface monitor of the WebUI. Before, the
   teach-in mode stayed active (OpenCCU patch 0039)
-  ([#297](https://github.com/OpenCCU/OpenCCU-Base/pull/297), @jens-maus)
+  ([#355](https://github.com/OpenCCU/OpenCCU-Base/pull/355), @MichaelN0815,
+  @jens-maus)
 * a page that is opened or reloaded while another page is still loading is
   now loaded afterwards; before, the WebUI ignored it. A click in the menu
   during a page load now opens the clicked page, and two quick changes of
