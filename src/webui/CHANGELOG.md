@@ -15,6 +15,15 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a page that is opened or reloaded while another page is still loading is
+  now loaded afterwards; before, the WebUI ignored it. A click in the menu
+  during a page load now opens the clicked page, and two quick changes of
+  the "internal" checkbox in the system variable list show the saved state
+  of both. Only the last such request is carried out, and none if another
+  page of the menu was opened meanwhile
+  ([#353](https://github.com/OpenCCU/OpenCCU-Base/pull/353); refs
+  [OpenCCU/OpenCCU#4361](https://github.com/OpenCCU/OpenCCU/issues/4361),
+  @jens-maus)
 * the hints and errors below the system variable dialog (e.g. that the type
   of an existing alarm variable cannot be changed) are shown as plain text
   again. They looked like a button before (OpenCCU patch 0206)
