@@ -20,6 +20,9 @@ if { [info exists EQ3_SERVICE_HS485D_PORT] } {
 }
 set HS485D_URL "bin://127.0.0.1:$portnumber"
 
+set KEYSERVER_HOST "secgtw.homematic.com"
+set KEYSERVER_PORT 8443
+
 
 proc getButton {class onclick title} {
   set html ""
@@ -52,6 +55,7 @@ proc initJavascript {} {
             homematic('Interface.isPresent', {"interface": section}, function(result, error) {
               if (result == true)
               {
+                jQuery("body").data(section, true);
                 jQuery('#section'+section).show();
                 jQuery('#sectionUNAVAIL').hide();
                 dlgPopup.readaptSize();
@@ -202,7 +206,7 @@ proc putSectionHMIP {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-RF")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -304,7 +308,7 @@ proc putSectionHMIPWired {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status' style='display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none;'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-Wired")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -395,6 +399,8 @@ proc action_put_page {} {
 
 puts "<div class='CLASS21200 j_translate'>"
 
+  puts "<style>.keyserver-status.keyserver-reachable { color: green; } .keyserver-status.keyserver-unreachable { color: red; }</style>"
+
   initJavascript
 
   puts "<table class='popupTable' border='1' style='table-layout:fixed; width:100%;'>"
@@ -455,6 +461,29 @@ puts "</div>"
     puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
     puts "var installTimerHmIP = 0;"
     puts {
+      checkKeyserver = function() {
+        var statusElements = jQuery(".keyserver-status");
+        new Ajax.Request(url, {
+          method: "post",
+          postBody: "action=check_keyserver",
+          onSuccess: function(transport) {
+            var result = transport.responseText.trim();
+            var key = result === "reachable" ? "dialogNewDevicesKeyserverReachable" :
+                      result === "unreachable" ? "dialogNewDevicesKeyserverUnreachable" :
+                      "dialogNewDevicesKeyserverCheckFailed";
+            statusElements
+              .removeClass("keyserver-reachable keyserver-unreachable")
+              .addClass(result === "reachable" ? "keyserver-reachable" :
+                        result === "unreachable" ? "keyserver-unreachable" : "")
+              .text(translateKey(key) || key);
+          },
+          onFailure: function() {
+            statusElements
+              .removeClass("keyserver-reachable keyserver-unreachable")
+              .text(translateKey("dialogNewDevicesKeyserverCheckFailed") || "dialogNewDevicesKeyserverCheckFailed");
+          }
+        });
+      };
       update_new_device_count = function() {
         var pb = "action=get_new_device_count";
         var opts = {
@@ -764,6 +793,7 @@ puts "</div>"
     }
 
     puts "translatePage('#messagebox');"
+    puts "checkKeyserver();"
     puts "dlgPopup.readaptSize();"
 
   }
@@ -979,6 +1009,15 @@ proc action_wir_search {} {
 
 proc action_get_new_device_count {} {
   puts [get_new_device_count]
+}
+
+proc action_check_keyserver {} {
+  global KEYSERVER_HOST KEYSERVER_PORT
+  if {[catch {exec nc -z -w 3 $KEYSERVER_HOST $KEYSERVER_PORT}]} {
+    puts "unreachable"
+  } else {
+    puts "reachable"
+  }
 }
 
 cgi_eval {

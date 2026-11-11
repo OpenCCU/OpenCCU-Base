@@ -862,6 +862,10 @@ jQuery.extend(true,langJSON, {
     "dialogNewDevicesBtnSetKeyAndTryAgain" : "Set security key and try again",
 
     "dialogNewDevicesLblAllDevicesConfigured" : "All devices configured",
+    "dialogNewDevicesKeyserverChecking" : "eQ-3 key server: Checking connectivity ...",
+    "dialogNewDevicesKeyserverReachable" : "eQ-3 key server: Reachable",
+    "dialogNewDevicesKeyserverUnreachable" : "eQ-3 key server: Not reachable",
+    "dialogNewDevicesKeyserverCheckFailed" : "eQ-3 key server: Check failed",
 
     "commentDialogNewDevicesEnd" : "***********************************************",
 
