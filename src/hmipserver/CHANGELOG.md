@@ -8,6 +8,25 @@ OpenCCU-Base release they are part of when it is published.
 
 ## Unreleased
 
+* update `HMIPServer.jar` to version 1.5.1 (build 6137 of 2026-11-12) from
+  eQ-3. A call from `HmIP-RF` to a registered XML-RPC client now times out
+  after `Legacy.Client.Socket.Timeout` (10 s if unset) instead of waiting
+  forever for a client that accepted the connection but never answers, and
+  a client gets events only after its `listDevices` succeeded
+  ([homematicip#16](https://github.com/homematicip/OpenCCU-Base/pull/16),
+  fixes [#192](https://github.com/OpenCCU/OpenCCU-Base/issues/192), @cn-eq3).
+* `HmIP-RF` now retries the `listDevices` call to a newly registered client
+  every 30 s while it fails, instead of dropping the client after the first
+  failure, so a client whose callback port opens a moment late (e.g. the
+  bridge of `VirtualDevices`, `HmIP-RF_java`, on a busy start) is no longer
+  lost until the next restart
+  ([homematicip#16](https://github.com/homematicip/OpenCCU-Base/pull/16),
+  fixes [#180](https://github.com/OpenCCU/OpenCCU-Base/issues/180), @cn-eq3).
+* a client that registers again on `HmIP-RF` with `init` (or deregisters)
+  no longer leaves its HTTP client with one thread and two file descriptors
+  behind. The same leak on `VirtualDevices` remains
+  ([homematicip#16](https://github.com/homematicip/OpenCCU-Base/pull/16),
+  [#36](https://github.com/OpenCCU/OpenCCU-Base/issues/36), @cn-eq3).
 * update `HMIPServer.jar` to the build of 2026-10-08 (build 5936, version
   1.5.1-SNAPSHOT) from eQ-3: avoid a security counter update with invalid
   values. (@cn-eq3)
