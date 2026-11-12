@@ -20,6 +20,10 @@ if { [info exists EQ3_SERVICE_HS485D_PORT] } {
 }
 set HS485D_URL "bin://127.0.0.1:$portnumber"
 
+set KEYSERVER_CONF "/var/etc/crRFD.conf"
+set KEYSERVER_HOST "secgtw.homematic.com"
+set KEYSERVER_PORT 8443
+
 
 proc getButton {class onclick title} {
   set html ""
@@ -40,20 +44,57 @@ proc getButtonWired {class onclick title} {
 }
 
 proc initJavascript {} {
+  global env
   cgi_javascript {
+    puts "var keyserverUrl = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
     puts {
+      keyserverCheckStarted = false;
+      checkKeyserver = function() {
+        var statusElements = jQuery(".keyserver-status");
+        var states = {
+          "reachable": ["dialogNewDevicesKeyserverReachable", "keyserver-reachable"],
+          "unreachable": ["dialogNewDevicesKeyserverUnreachable", "keyserver-unreachable"]
+        };
+        var showStatus = function(result) {
+          var state = states.hasOwnProperty(result) ? states[result] : ["dialogNewDevicesKeyserverCheckFailed", ""];
+          statusElements
+            .removeClass("keyserver-reachable keyserver-unreachable")
+            .addClass(state[1])
+            .text(translateKey(state[0]));
+          dlgPopup.readaptSize();
+        };
+        new Ajax.Request(keyserverUrl, {
+          method: "post",
+          postBody: "action=check_keyserver",
+          onSuccess: function(transport) {
+            showStatus(transport.responseText.trim());
+          },
+          onFailure: function() {
+            showStatus("");
+          }
+        });
+      };
+      sectionShown = function(section) {
+        if ((section == "HmIP-RF" || section == "HmIP-Wired") && !keyserverCheckStarted) {
+          keyserverCheckStarted = true;
+          checkKeyserver();
+        }
+      };
       showSection = function(section){
         var thisSection = jQuery("body").data(section);
         if(thisSection) {
           jQuery('#section'+section).show();
           jQuery('#sectionUNAVAIL').hide();
+          sectionShown(section);
         } else {
           if (typeof thisSection == "undefined") {
             homematic('Interface.isPresent', {"interface": section}, function(result, error) {
               if (result == true)
               {
+                jQuery("body").data(section, true);
                 jQuery('#section'+section).show();
                 jQuery('#sectionUNAVAIL').hide();
+                sectionShown(section);
                 dlgPopup.readaptSize();
               }
             });
@@ -202,7 +243,7 @@ proc putSectionHMIP {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-RF")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -304,7 +345,7 @@ proc putSectionHMIPWired {} {
          append html "</tr>"
 
         append html "<tr>"
-          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div></td>"
+          append html "<td class='CLASS21206'><div id='teachCounter_$iFace' class='CLASS21215' style='width:100%;'>\${dialogNewDevicesBidCosRFFetchmodeNotActive}</div><span class='keyserver-status'>\${dialogNewDevicesKeyserverChecking}</span></td>"
           append html "<td>"
           append html [getButton {CLASS21210 colorGradient50px} {buttonPressed(this); hmip_install_mode("HmIP-Wired")} \${dialogNewDevicesHmIPAddDeviceBtn}]
           append html "</td>"
@@ -394,6 +435,8 @@ proc action_put_page {} {
   }
 
 puts "<div class='CLASS21200 j_translate'>"
+
+  puts "<style>.CLASS21206 .keyserver-status { display:block; margin-top:5px; text-align:center; background:none; border:0; box-shadow:none; } .keyserver-status.keyserver-reachable { color: green; } .keyserver-status.keyserver-unreachable { color: red; }</style>"
 
   initJavascript
 
@@ -979,6 +1022,70 @@ proc action_wir_search {} {
 
 proc action_get_new_device_count {} {
   puts [get_new_device_count]
+}
+
+# Reads the "key=value" lines of a properties file into the array arrName.
+proc read_properties {file arrName} {
+  upvar 1 $arrName props
+  if {[catch {open $file r} fd]} { return }
+  while {[gets $fd line] >= 0} {
+    if {[regexp {^[ \t]*([A-Za-z0-9_.]+)[ \t]*=(.*)$} $line dummy key value]} {
+      set props($key) [string trim $value]
+    }
+  }
+  close $fd
+}
+
+# Host and port of the key server the HmIP server uses: KeyServer.Gateway.URL
+# and KeyServer.Gateway.Port of its configuration /var/etc/crRFD.conf and of
+# the files it includes (Config.Include, e.g. /etc/config/crRFD/hmip_user.conf),
+# else the eQ-3 default.
+proc get_keyserver_address {} {
+  global KEYSERVER_CONF KEYSERVER_HOST KEYSERVER_PORT
+  read_properties $KEYSERVER_CONF props
+  if {[info exists props(Config.Dir)] && [info exists props(Config.Include)]} {
+    foreach file [split $props(Config.Include) ", "] {
+      if {$file != ""} { read_properties [file join $props(Config.Dir) $file] props }
+    }
+  }
+  set host $KEYSERVER_HOST
+  set port $KEYSERVER_PORT
+  if {[info exists props(KeyServer.Gateway.URL)]} {
+    # the host of a URL, without scheme, path, user info and port
+    set value $props(KeyServer.Gateway.URL)
+    regsub {^[A-Za-z][A-Za-z0-9+.-]*://} $value {} value
+    regsub {[/?#].*$} $value {} value
+    regsub {^.*@} $value {} value
+    if {[regexp {^\[([0-9A-Fa-f:.]+)\]} $value dummy value] || [regexp {^[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*$} $value]} {
+      # IPv6 address, in brackets or without a port
+      if {[regexp {^[0-9A-Fa-f:.]+$} $value]} { set host $value }
+    } else {
+      regsub {:.*$} $value {} value
+      # no leading "-", which nc would take as an option
+      if {[regexp {^[A-Za-z0-9][A-Za-z0-9.-]*$} $value]} { set host $value }
+    }
+  }
+  if {[info exists props(KeyServer.Gateway.Port)] && [regexp {^[0-9]{1,5}$} $props(KeyServer.Gateway.Port)]} {
+    scan $props(KeyServer.Gateway.Port) %d value
+    if {$value > 0 && $value < 65536} { set port $value }
+  }
+  return [list $host $port]
+}
+
+# Prints "reachable" or "unreachable", or "failed" if nc could not be run.
+proc action_check_keyserver {} {
+  global errorCode
+  set address [get_keyserver_address]
+  set cmd [list nc -z -w 3 [lindex $address 0] [lindex $address 1]]
+  # timeout also limits the name lookup, which "nc -w" does not
+  if {[auto_execok timeout] != ""} { set cmd [concat [list timeout 10] $cmd] }
+  if {![catch {eval exec $cmd 2>/dev/null}]} {
+    puts "reachable"
+  } elseif {[lindex $errorCode 0] == "CHILDSTATUS" && [lindex $errorCode 2] != 127} {
+    puts "unreachable"
+  } else {
+    puts "failed"
+  }
 }
 
 cgi_eval {
