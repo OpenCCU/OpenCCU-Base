@@ -15,6 +15,22 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the teach-in dialog shows below the teach-in counter of HmIP-RF and
+  HmIP-Wired whether the eQ-3 key server, which the teach-in of Homematic
+  IP devices needs, can be reached from the CCU. It checks the server the
+  HmIP server uses (`KeyServer.Gateway.URL` and `KeyServer.Gateway.Port` of
+  `/var/etc/crRFD.conf` or of `/etc/config/crRFD/hmip_user.conf`, by default
+  `secgtw.homematic.com`, port 8443), and only if a Homematic IP interface
+  is present
+  ([#355](https://github.com/OpenCCU/OpenCCU-Base/pull/355); refs
+  [OpenCCU/OpenCCU#3405](https://github.com/OpenCCU/OpenCCU/issues/3405),
+  @MichaelN0815, @jens-maus)
+* "Inbox" in the teach-in dialog now also stops the BidCos-RF and HmIP-RF
+  teach-in mode when the interface was only found by the dialog's own
+  check and not yet by the interface monitor of the WebUI. Before, the
+  teach-in mode stayed active (OpenCCU patch 0039)
+  ([#355](https://github.com/OpenCCU/OpenCCU-Base/pull/355), @MichaelN0815,
+  @jens-maus)
 * a page that is opened or reloaded while another page is still loading is
   now loaded afterwards; before, the WebUI ignored it. A click in the menu
   during a page load now opens the clicked page, and two quick changes of
