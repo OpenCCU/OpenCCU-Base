@@ -1056,11 +1056,14 @@ proc get_keyserver_address {} {
     regsub {^[A-Za-z][A-Za-z0-9+.-]*://} $value {} value
     regsub {[/?#].*$} $value {} value
     regsub {^.*@} $value {} value
-    if {![regexp {^\[([0-9A-Fa-f:.]+)\]} $value dummy value]} {
+    if {[regexp {^\[([0-9A-Fa-f:.]+)\]} $value dummy value] || [regexp {^[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*$} $value]} {
+      # IPv6 address, in brackets or without a port
+      if {[regexp {^[0-9A-Fa-f:.]+$} $value]} { set host $value }
+    } else {
       regsub {:.*$} $value {} value
+      # no leading "-", which nc would take as an option
+      if {[regexp {^[A-Za-z0-9][A-Za-z0-9.-]*$} $value]} { set host $value }
     }
-    # no leading "-", which nc would take as an option
-    if {[regexp {^[A-Za-z0-9][A-Za-z0-9.:-]*$} $value]} { set host $value }
   }
   if {[info exists props(KeyServer.Gateway.Port)] && [regexp {^[0-9]{1,5}$} $props(KeyServer.Gateway.Port)]} {
     scan $props(KeyServer.Gateway.Port) %d value
