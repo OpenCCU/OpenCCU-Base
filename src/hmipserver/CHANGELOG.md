@@ -14,7 +14,8 @@ OpenCCU-Base release they are part of when it is published.
   the connection but does not answer held up the registration of other
   clients for 10 minutes and logged a blocked-thread warning every second
   meanwhile; now it gives up after 30 s
-  ([#192](https://github.com/OpenCCU/OpenCCU-Base/issues/192), @jens-maus).
+  ([#359](https://github.com/OpenCCU/OpenCCU-Base/pull/359),
+  [#192](https://github.com/OpenCCU/OpenCCU-Base/issues/192), @jens-maus).
 * update `HMIPServer.jar` to version 1.5.1 (build 6137 of 2026-11-12) from
   eQ-3. A call from `HmIP-RF` to a registered XML-RPC client now times out
   after `Legacy.Client.Socket.Timeout` (10 s if unset) instead of waiting
