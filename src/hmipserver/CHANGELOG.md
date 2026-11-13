@@ -44,7 +44,7 @@ OpenCCU-Base release they are part of when it is published.
   smaller of it and `Legacy.Client.Socket.Timeout`), so a call to a client
   on a host that does not answer at all (e.g. switched off) could wait up
   to 10 minutes for the connection; now it gives up after 30 s
-  (@jens-maus).
+  ([#361](https://github.com/OpenCCU/OpenCCU-Base/pull/361), @jens-maus).
 
 ## Older versions
 
