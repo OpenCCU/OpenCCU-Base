@@ -9,10 +9,11 @@ OpenCCU-Base release they are part of when it is published.
 ## Unreleased
 
 * update `HMIPServer.jar` to version 1.5.2-SNAPSHOT (build 6140 of
-  2026-11-13) from eQ-3. The server again finishes its start while rfd does
-  not answer (e.g. a BidCos LAN gateway that is off at boot) and picks rfd
-  up later; with 1.5.1 the start stopped, so `HmIP-RF`, `VirtualDevices`
-  and the heating groups stayed down until the server was restarted
+  2026-11-13) from eQ-3. The server again finishes its start while rfd or
+  hs485d does not answer (e.g. a BidCos LAN gateway that is off at boot)
+  and picks them up later without a restart; with 1.5.1 the start stopped,
+  so `HmIP-RF`, `VirtualDevices` and the heating groups stayed down until
+  the server was restarted
   ([#360](https://github.com/OpenCCU/OpenCCU-Base/pull/360),
   [homematicip#17](https://github.com/homematicip/OpenCCU-Base/pull/17),
   [#358](https://github.com/OpenCCU/OpenCCU-Base/issues/358), @cn-eq3).
@@ -62,6 +63,13 @@ OpenCCU-Base release they are part of when it is published.
 * update `HMIPServer.jar` to the build of 2026-10-08 (build 5936, version
   1.5.1-SNAPSHOT) from eQ-3: avoid a security counter update with invalid
   values. (@cn-eq3)
+* lower `Legacy.Client.Connection.Timeout` in the `crRFD.conf` template
+  from 600 s to 30 s. Since `HMIPServer.jar` 1.5.2 this value alone is the
+  connect timeout of the calls to registered XML-RPC clients (before, the
+  smaller of it and `Legacy.Client.Socket.Timeout`), so a call to a client
+  on a host that does not answer at all (e.g. switched off) could wait up
+  to 10 minutes for the connection; now it gives up after 30 s
+  ([#361](https://github.com/OpenCCU/OpenCCU-Base/pull/361), @jens-maus).
 
 ## Older versions
 
