@@ -9,10 +9,11 @@ OpenCCU-Base release they are part of when it is published.
 ## Unreleased
 
 * update `HMIPServer.jar` to version 1.5.2-SNAPSHOT (build 6140 of
-  2026-11-13) from eQ-3. The server again finishes its start while rfd does
-  not answer (e.g. a BidCos LAN gateway that is off at boot) and picks rfd
-  up later; with 1.5.1 the start stopped, so `HmIP-RF`, `VirtualDevices`
-  and the heating groups stayed down until the server was restarted
+  2026-11-13) from eQ-3. The server again finishes its start while rfd or
+  hs485d does not answer (e.g. a BidCos LAN gateway that is off at boot)
+  and picks them up later without a restart; with 1.5.1 the start stopped,
+  so `HmIP-RF`, `VirtualDevices` and the heating groups stayed down until
+  the server was restarted
   ([#360](https://github.com/OpenCCU/OpenCCU-Base/pull/360),
   [homematicip#17](https://github.com/homematicip/OpenCCU-Base/pull/17),
   [#358](https://github.com/OpenCCU/OpenCCU-Base/issues/358), @cn-eq3).
