@@ -8,6 +8,30 @@ OpenCCU-Base release they are part of when it is published.
 
 ## Unreleased
 
+* update `HMIPServer.jar` to version 1.5.2-SNAPSHOT (build 6140 of
+  2026-11-13) from eQ-3. The server again finishes its start while rfd does
+  not answer (e.g. a BidCos LAN gateway that is off at boot) and picks rfd
+  up later; with 1.5.1 the start stopped, so `HmIP-RF`, `VirtualDevices`
+  and the heating groups stayed down until the server was restarted
+  ([#360](https://github.com/OpenCCU/OpenCCU-Base/pull/360),
+  [homematicip#17](https://github.com/homematicip/OpenCCU-Base/pull/17),
+  [#358](https://github.com/OpenCCU/OpenCCU-Base/issues/358), @cn-eq3).
+* `HmIP-RF` now removes a registered XML-RPC client after 3 failed calls in
+  a row (can be switched off with `Legacy.RemoveUnreachableClients=false`),
+  so a client that hangs no longer gets every further event for the full
+  `Legacy.Client.Socket.Timeout`, and the `listDevices` calls to newly
+  registered clients run in parallel, so a hanging client no longer holds
+  up the registration of others
+  ([#360](https://github.com/OpenCCU/OpenCCU-Base/pull/360),
+  [homematicip#17](https://github.com/homematicip/OpenCCU-Base/pull/17),
+  [#192](https://github.com/OpenCCU/OpenCCU-Base/issues/192), @cn-eq3).
+* a registration on `VirtualDevices` is no longer kept for ever after it
+  was replaced, so its HTTP client can be freed again; it is not closed
+  explicitly yet, so its thread and file descriptors stay until the Java
+  garbage collector runs
+  ([#360](https://github.com/OpenCCU/OpenCCU-Base/pull/360),
+  [homematicip#17](https://github.com/homematicip/OpenCCU-Base/pull/17),
+  [#36](https://github.com/OpenCCU/OpenCCU-Base/issues/36), @cn-eq3).
 * lower `Legacy.Client.Socket.Timeout` in the `crRFD.conf` template from
   600 s to 30 s. Since `HMIPServer.jar` 1.5.1 this is the answer timeout
   of every call to a registered XML-RPC client: a receiver that accepts
