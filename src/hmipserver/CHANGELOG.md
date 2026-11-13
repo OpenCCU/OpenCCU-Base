@@ -38,6 +38,13 @@ OpenCCU-Base release they are part of when it is published.
 * update `HMIPServer.jar` to the build of 2026-10-08 (build 5936, version
   1.5.1-SNAPSHOT) from eQ-3: avoid a security counter update with invalid
   values. (@cn-eq3)
+* lower `Legacy.Client.Connection.Timeout` in the `crRFD.conf` template
+  from 600 s to 30 s. Since `HMIPServer.jar` 1.5.2 this value alone is the
+  connect timeout of the calls to registered XML-RPC clients (before, the
+  smaller of it and `Legacy.Client.Socket.Timeout`), so a call to a client
+  on a host that does not answer at all (e.g. switched off) could wait up
+  to 10 minutes for the connection; now it gives up after 30 s
+  (@jens-maus).
 
 ## Older versions
 
