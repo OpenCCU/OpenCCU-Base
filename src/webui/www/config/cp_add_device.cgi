@@ -50,14 +50,15 @@ proc initJavascript {} {
     puts {
       keyserverCheckStarted = false;
       checkKeyserver = function() {
-        var statusElements = jQuery(".keyserver-status");
         var states = {
           "reachable": ["dialogNewDevicesKeyserverReachable", "keyserver-reachable"],
           "unreachable": ["dialogNewDevicesKeyserverUnreachable", "keyserver-unreachable"]
         };
         var showStatus = function(result) {
           var state = states.hasOwnProperty(result) ? states[result] : ["dialogNewDevicesKeyserverCheckFailed", ""];
-          statusElements
+          // looked up only now: translatePage() rewrites the cells of the
+          // dialog after it was inserted and so replaces the elements
+          jQuery(".keyserver-status")
             .removeClass("keyserver-reachable keyserver-unreachable")
             .addClass(state[1])
             .text(translateKey(state[0]));
@@ -1074,7 +1075,10 @@ proc get_keyserver_address {} {
 
 # Prints "reachable" or "unreachable", or "failed" if nc could not be run.
 proc action_check_keyserver {} {
-  global errorCode
+  global env errorCode
+  # a CGI may run without PATH, which auto_execok needs and which also tells
+  # timeout where to find nc
+  if {![info exists env(PATH)] || $env(PATH) == ""} { set env(PATH) "/bin:/sbin:/usr/bin:/usr/sbin" }
   set address [get_keyserver_address]
   set cmd [list nc -z -w 3 [lindex $address 0] [lindex $address 1]]
   # timeout also limits the name lookup, which "nc -w" does not
