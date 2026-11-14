@@ -15,6 +15,15 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the help page shows in the HomeMatic-RF (HmRF) block whether a
+  BidCos-RF security key is set ("Security Key": `set (index N)` or
+  `not set (default key)`), read with `crypttool` from
+  `/etc/config/crypttool.cfg`; if the key index of `rfd` in
+  `/etc/config/keys` differs, it is added (`rfd: index N`). Before, this
+  could only be checked with a script
+  ([#365](https://github.com/OpenCCU/OpenCCU-Base/pull/365); refs
+  [OpenCCU/OpenCCU#4726](https://github.com/OpenCCU/OpenCCU/issues/4726),
+  @MichaelN0815)
 * a firmware update now needs 1.8 GB instead of 2.8 GB of free user space
   if the recovery system unpacks the disk image of the update as sparse file
   (OpenCCU with BusyBox `dd conv=sparse`), otherwise the 2.8 GB remain.

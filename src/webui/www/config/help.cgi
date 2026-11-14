@@ -173,6 +173,30 @@ proc action_put_page {} {
   catch { set HMIP_DUTYCYCLE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .dutyCycle" /tmp/dutycycle.json] }
   set HMIP_CARRIERSENSE "n/a"
   catch { set HMIP_CARRIERSENSE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .carrierSense" /tmp/dutycycle.json] }
+  # crypttool -g -t 1 prints the index of the current user key stored in
+  # /etc/config/crypttool.cfg: 0 while the default key is active, >0 once a
+  # user key is set; anything else -> n/a
+  set HMRF_SECKEY "n/a"
+  execCmd HMRF_SECKEYINDEX {exec crypttool -g -t 1}
+  if {[string is integer -strict $HMRF_SECKEYINDEX]} {
+    if {$HMRF_SECKEYINDEX > 0} {
+      set HMRF_SECKEY "set (index $HMRF_SECKEYINDEX)"
+    } else {
+      set HMRF_SECKEY "not set (default key)"
+    }
+  }
+  # rfd keeps its own copy of the key index in /etc/config/keys; show it if
+  # it differs from crypttool.cfg (e.g. after a restore without crypttool.cfg)
+  set RFD_SECKEYINDEX ""
+  catch {
+    set fd [open /etc/config/keys r]
+    set keyfile [read $fd]
+    close $fd
+    regexp -line {^\s*Current Index\s*=\s*([0-9]+)\s*$} $keyfile -> RFD_SECKEYINDEX
+  }
+  if {$RFD_SECKEYINDEX != "" && $RFD_SECKEYINDEX != $HMRF_SECKEYINDEX} {
+    append HMRF_SECKEY ", rfd: index $RFD_SECKEYINDEX"
+  }
 
   set sid ""
   catch {import sid}
@@ -274,6 +298,7 @@ proc action_put_page {} {
           putsVar "Address" "$hm(HM_HMRF_ADDRESS) ($hm(HM_HMRF_ADDRESS_ACTIVE))"
           putsVar "Serial" $hm(HM_HMRF_SERIAL)
           putsVar "DutyCycle, CarrierSense" "$HMRF_DUTYCYCLE %, $HMRF_CARRIERSENSE %"
+          putsVar "Security Key" $HMRF_SECKEY
         puts "</div>"
       puts "</td>"
 
