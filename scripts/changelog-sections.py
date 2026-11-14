@@ -2,7 +2,8 @@
 """Print the changelog entries of the OpenCCU-Base components that are new
 between two git revisions, as Markdown for release notes.
 
-Usage: scripts/changelog-sections.py [--limit N] [--link-base URL] <old> <new>
+Usage: scripts/changelog-sections.py [--limit N] [--collapse COMPONENT:SUBSECTION]
+                                     [--link-base URL] <old> <new>
 
 Every src/<component>/CHANGELOG.md of <new> is compared with the same
 file of <old>. An entry (a "* " list item) that the old file does not
@@ -16,6 +17,10 @@ on or after the commit date of <old>, and its "Unreleased" section.
 The output starts with "## Component changes" and uses "###" for the
 components, "####" for their sections and "#####" for subsections. It is
 empty if nothing is new.
+
+With --limit, the output is shortened until it fits: first the entries of
+the subsections given with --collapse are replaced by a link to their
+changelog, then the largest components.
 """
 
 import argparse
@@ -130,14 +135,22 @@ def main():
                         help="URL the changelog paths are appended to for "
                              "these links, e.g. https://github.com/OpenCCU/"
                              "OpenCCU-Base/blob/<tag>")
+    parser.add_argument("--collapse", action="append", default=[],
+                        metavar="COMPONENT:SUBSECTION",
+                        help="with --limit, replace the entries of this "
+                             "subsection (e.g. \"webui:Migrated from OpenCCU "
+                             "patches\") by a link to the changelog before "
+                             "whole components are replaced")
     args = parser.parse_args()
+    collapsible = set()
+    for item in args.collapse:
+        component, sep, sub = item.partition(":")
+        if not sep or not component or not sub:
+            parser.error(f"invalid --collapse {item!r}: expected COMPONENT:SUBSECTION")
+        collapsible.add((component, sub))
     cutoff = git("log", "-1", "--format=%cs", args.old).strip()
-    blocks = []
-    for path in changelogs(args.new):
-        picked = new_entries(show(args.old, path), show(args.new, path), cutoff)
-        if not picked:
-            continue
-        component = path.split("/")[1]
+
+    def render(component, picked, link, collapse):
         out = [f"### {component}\n"]
         for heading, groups in picked:
             out.append(f"#### {heading}\n")
@@ -146,16 +159,35 @@ def main():
                     out.append(f"##### {sub}\n")
                 for para in paras:
                     out.append(para + "\n")
-                out.append("\n".join(entries) + "\n")
-        link = f"{args.link_base.rstrip('/')}/{path}" if args.link_base else path
+                if collapse and (component, sub) in collapsible:
+                    out.append(f"The {len(entries)} entries of this part are "
+                               f"listed in [{link[1]}]({link[0]}).\n")
+                else:
+                    out.append("\n".join(entries) + "\n")
+        return "\n".join(out)
+
+    blocks = []
+    for path in changelogs(args.new):
+        picked = new_entries(show(args.old, path), show(args.new, path), cutoff)
+        if not picked:
+            continue
+        component = path.split("/")[1]
+        link = (f"{args.link_base.rstrip('/')}/{path}" if args.link_base else path, path)
         short = (f"### {component}\n\n"
-                 f"See [{path}]({link}) for the changes.\n")
-        blocks.append(["\n".join(out), short])
+                 f"See [{path}]({link[0]}) for the changes.\n")
+        blocks.append([render(component, picked, link, False), short,
+                       render(component, picked, link, True)])
     header = "## Component changes\n\n"
+
+    def total():
+        return len(header) + sum(len(b[0]) + 1 for b in blocks)
+
     if args.limit is not None:
+        if total() > args.limit:
+            for block in blocks:
+                block[0] = block[2]
         for block in sorted(blocks, key=lambda b: len(b[0]), reverse=True):
-            total = len(header) + sum(len(b[0]) + 1 for b in blocks)
-            if total <= args.limit:
+            if total() <= args.limit:
                 break
             block[0] = block[1]
     if blocks:
