@@ -1,0 +1,158 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <!-- R1.00.0379.0102 eQ-3 -->
+  <!-- % Call("/esp/system.fn::CheckUserFavorite()"); % -->
+  <meta http-equiv="Content-Language" content="de" />
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /> 
+  <meta http-equiv="Expires" content="01 Jan 2006 00:00:00 GMT" />
+
+  <link rel="shortcut icon" href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon"/>
+  <link rel="icon"          href="/ise/img/favicon.ico" type="image/vnd.microsoft.icon" />
+  
+  <link rel="stylesheet" type="text/css" href="/webui/css/extern/nfs_datepicker.css?_version_=1.600pre1" />
+  <link id="idCss" rel="stylesheet" type="text/css" href="/webui/style.cgi?_version_=1.600pre1" />
+  
+    <!--link id="idCss" rel="stylesheet" type="text/css" href="/webui/style.css"/-->
+ 
+  <title>HomeMatic WebUI</title>
+
+  <script type="text/javascript" src="/webui/js/extern/prototype.js?_version_=1.600pre1"></script>
+  <script type="text/javascript" src="/webui/js/extern/scriptaculous.js?_version_=1.600pre1&load=builder,effects,dragdrop,slider"></script>
+  <script type="text/javascript" src="/webui/js/extern/wz_jsgraphics.js?_version_=1.600pre1"></script>
+  <script type="text/javascript" src="/webui/js/extern/template.js?_version_=1.600pre1"></script>
+  <script type="text/javascript" src="/webui/js/extern/nfs_datepicker.js?_version_=1.600pre1"></script>
+  <script type="text/javascript" src="/webui/js/extern/sliderControl.js?_version_=1.600pre1"></script>
+  
+    
+  <script type="text/javascript">
+  
+    /*########################################################################*/
+    /*# Konstanten                                                           #*/
+    /*########################################################################*/
+ 		
+		PLATFORM = "CfgTool" 
+
+    WEBUI_VERSION = "1.600pre1"; 
+  
+    /**
+     * Flags
+     **/
+ /*  
+    iufNone       = <% Write( iufNone ); %>;
+    iufVisible    = <% Write( iufVisible ); %>;
+    iufInternal   = <% Write( iufInternal ); %>;
+    iufReadyState = <% Write( iufReadyState ); %>;
+    iufOperated   = <% Write( iufOperated ); %>;
+    iufVirtualChn = <% Write( iufVirtualChn ); %>;
+    iufReadable   = <% Write( iufReadable ); %>;
+    iufWriteable  = <% Write( iufWriteable ); %>;
+    iufEventable  = <% Write( iufEventable ); %>;
+    iufAll        = <% Write( iufAll ); %>;
+*/    
+    iufNone       = 0x00;
+    iufVisible    = 0x01;
+    iufInternal   = 0x02;
+    iufReadyState = 0x04;
+    iufOperated   = 0x08;
+    iufVirtualChn = 0x10;
+    iufReadable   = 0x20;
+    iufWriteable  = 0x40;
+    iufEventable  = 0x80;
+    iufAll        = 0xff;    
+  
+    /**
+     * User Privilege Level. Gibt die Nutzerrechte des angemeldeten Nutzers an.
+     **/     
+   // ul = <% Write( oUser.UserLevel()); %>;
+     ul = 8
+     
+    /**
+     * Privilegstufen.
+     **/
+    UPL_NONE  = 0;
+    UPL_GUEST = 1;
+    UPL_USER  = 2;
+    UPL_ADMIN = 8;   
+       
+    /*########################################################################*/
+    /*# Globale Variablen                                                    #*/
+    /*########################################################################*/
+
+    /**
+     * jg_250
+     * JS-Graphics-Objekt für die Anzeige der vergrößerten Bilder von HomeMatic
+     * Geräten, Kanalgruppen und Kanälen.
+     **/
+    var jg_250; 
+    
+    var mainMenu;
+    
+    /*
+    <%
+      object oUser = dom.GetObject( system.GetSessionVar('sessionUserID') );
+      string sUserFullName = oUser.UserFirstName()#' '#oUser.UserLastName();
+      if( sUserFullName == ' ' ){ sUserFullName = oUser.Name(); }
+      WriteLine('var userName = "' # sUserFullName # '";');
+    %>    
+    */
+     var userName = "Administrator";
+  
+    
+    /*########################################################################*/
+    /*# Funktionen                                                           #*/
+    /*########################################################################*/
+    
+    /**
+     * Ermittelt die Privilegstufe des momentan angemeldeten Benutzers.
+     **/    
+    function getUPL ()
+    {
+  /*
+      <%
+        integer sessionUPL   = 0;
+        string sUser = system.GetSessionVarStr(sessionId);
+        
+        if ("" != sUser)
+        {
+          string sUPL = sUser.StrValueByIndex(";", 1);
+          sessionUPL  = sUPL.ToInteger(); 
+        }
+        Write("return " # sessionUPL # ";");
+      %>
+      */
+      return 8;
+    }
+    
+    /**
+     * Prüft, ob der Benutzer eine bestimmte Privilegstufe besitzt
+     **/
+    function hasUPL(upl)
+    {
+      return (upl <= getUPL());
+    }  
+    
+    function getSessionId()
+    {
+  //return "<%Write(sessionId);%>";
+  SessionId = "@session@";
+  return SessionId;
+    }
+
+  </script>
+  
+</head>
+<body id="body" onload="WebUI.start();" > 
+
+  <div id="webuiloader_wrapper">
+    <div id="webuiloader_background">
+      <div id="webuiloader">
+        <div id="webuiloader_icon"><img src="/ise/img/homematic_logo_small_gray.png" /></div>
+        <div id="webuiloader_caption">HomeMatic WebUI wird geladen...</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/webui/webui.js?_version_=1.600pre1" ></script>
+   
+ </body>
+</html>

@@ -1,0 +1,96 @@
+#ic_setprofiles {
+	width: 100%;
+}
+
+#ic_setprofiles .SetProfLinkTbl {
+	width: 100%;
+	color: $_(textColorA); /* white */
+	border: 1px solid $_(black); /* black */
+}
+#ic_setprofiles .SetProfLinkTbl thead {
+	background-color: $_(clickable);
+	text-align:center;
+}
+#ic_setprofiles .SetProfLinkTbl tbody {
+	background-color: $_(inactiveBackground);
+	color: $_(textColorB); /* black */
+}
+#ic_setprofiles .SetProfLinkTbl .BlueHeader {
+	background-color: $_(active); /* #565657 */
+}
+#ic_setprofiles .SetProfLinkTbl .WhiteHeader {
+	background-color: $_(activeBackground);
+}
+#ic_setprofiles .SetProfLinkTbl .WhiteHeader input {
+	/*
+  width: 95%;
+  margin-left: 3px;
+  */
+}
+
+#ic_setprofiles .SetProfLinkTbl .WhiteHeader span {
+  position: absolute;
+  padding: 0px;
+  margin-left: 5px;
+}
+
+#ic_setprofiles .SetProfLinkTbl td {
+	border: 1px solid $_(black); /* black */
+}
+
+/*Buttons Profilvorlage speichern und testen*/
+#ic_setprofiles .SetProfLinkTbl .SetProfLinkTbl_Buttons {
+	padding:0;
+	margin:0;
+	border:0;
+	
+	width: 100%;
+	color: $_(textColorA); /* white */
+}
+#ic_setprofiles .SetProfLinkTbl .SetProfLinkTbl_Buttons td {
+	border:0;
+}
+
+/*Easy-Mode - Anzeigetafel (Tabelle)*/
+#ic_setprofiles .SetProfLinkTbl .ProfileTbl {
+	width: auto;
+	margin: 0;
+	border: 0;
+	height: auto;
+	vertical-align: top;
+	text-align: left;
+	background-color: $_(transparent);/* transparent */
+	color: $_(textColorB); /* black */
+}
+#ic_setprofiles .SetProfLinkTbl .ProfileTbl thead {
+	background-color: $_(transparent);/* transparent */
+	text-align:left;
+	height: auto;
+}
+#ic_setprofiles .SetProfLinkTbl .ProfileTbl thead tr {
+	height: auto;
+}
+#ic_setprofiles .SetProfLinkTbl .ProfileTbl tbody {
+	background-color: $_(transparent);/* transparent */
+	color: $_(textColorB); /* black */
+}
+#ic_setprofiles .SetProfLinkTbl .ProfileTbl td {
+	border: 0;
+}
+
+/*Anzeige-Feld für Expertenprofil und Easy-Mode-Profile*/
+#ic_setprofiles .SetProfLinkTbl .easymode_wrapper {
+	
+}
+
+#ic_setprofiles #body_wrapper
+{
+	background-color: $_(background); /* #183473 */
+	margin: 10px;
+}
+
+#ic_setprofiles  #id_sender_group_receiver_profiles_wrapper
+{
+	margin-top: 10px;
+	background-color: $_(background); /* #183473 */
+}

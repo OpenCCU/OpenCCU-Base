@@ -1,0 +1,137 @@
+{macro printHead(name, id, transKey)}
+  {if id != sortId}
+    <th class="ChannelChooserHead clickable" name=${transKey} onclick="ChannelChooser.sortBy('${id}');">${name}</th>
+  {else}
+    <th class="ChannelChooserHead_Active clickable" name=${transKey} onclick="ChannelChooser.sortBy('${id}');">
+      ${name}&#160;
+      {if sortDescend}
+        <img src="/ise/img/arrow_down.gif" />
+      {else}
+        <img src="/ise/img/arrow_up.gif" />
+      {/if}
+    </th>
+  {/if}
+{/macro}
+<div id="ChannelChooserDialog">
+<div id="ChannelChooserTitle" name="dialogChooseChannel" onmousedown="new Drag($('ChannelChooserDialog'), event);">Kanalauswahl</div>
+<div id="ChannelChooserContent">
+  <table id="ChannelChooserTable" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <colgroup>
+      <col style="width:20%;" />
+      <col style="width:55px;"/>
+      <col style="width:30%;"/>
+      <col style="width:12%;"/>
+      <col style="width:17%;"/>
+      <col style="width:17%;"/>
+    </colgroup>
+    <thead>
+      <tr> <!-- Überschriften -->
+        ${printHead("Name", "NAME", "thName")}
+        <th class="ChannelChooserHead" name="thPicture">Bild</th>
+        ${printHead("Beschreibung", "DESCRIPTION", "thDescription")}
+        ${printHead("Seriennummer", "ADDRESS", "thSerialNumber")}
+        ${printHead("Gewerke", "FUNC_NAMES", "thFuncs")}
+        ${printHead("R&auml;ume", "ROOM_NAMES", "thRooms")}
+      </tr>
+      <tr> <!-- Filter -->
+        ${nameFilter.getHTML()}
+        <th class="Filter">&nbsp;</th>
+        <th class="Filter">&nbsp;</th>
+        <!-- ${descriptionFilter.getHTML()} -->
+        ${addressFilter.getHTML()}
+        ${funcFilter.getHTML()}
+        ${roomFilter.getHTML()}
+      </tr>      
+    </thead>
+    <tbody>
+      {eval}actualDeviceAddress = "";{/eval}
+
+      {for channel in channels}
+        {if channel.device.inInbox != true}
+          {var virtualChannel = ""}
+          {var classExpertOnly = "hidden j_expertChannel"}
+          {var channelTypeID = channel.deviceType.id.toUpperCase()}
+
+          {if channel.channelType == "VIRTUAL_DIMMER"} {var virtualChannel = "hidden j_expertChannel"} {/if}
+          {if (channel.channelType == "VIRTUAL_DUAL_WHITE_BRIGHTNESS") || (channel.channelType == "VIRTUAL_DUAL_WHITE_COLOR")} {var virtualChannel = "hidden j_expertChannel"} {/if}
+
+          {if (channelTypeID != "HMIP-MIOB") && (channelTypeID != "HMIP-WHS2")}
+            {if (channel.channelType == "DIMMER_TRANSMITTER")
+              || (channel.channelType == "SWITCH_TRANSMITTER")
+              || (channel.channelType == "BLIND_TRANSMITTER")
+              || (channel.channelType == "SHUTTER_TRANSMITTER")
+              || (channel.channelType == "ACOUSTIC_SIGNAL_TRANSMITTER")}
+              {var virtualChannel = classExpertOnly;}
+            {/if}
+            {if (channel.channelType == "DIMMER_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SWITCH_VIRTUAL_RECEIVER")
+              || (channel.channelType == "BLIND_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SHUTTER_VIRTUAL_RECEIVER")
+              || (channel.channelType == "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SERVO_VIRTUAL_RECEIVER")}
+              {if actualDeviceAddress != channel.device.address}
+                {eval}
+                  actualDeviceAddress = channel.device.address;
+                  if (userIsNoExpert) {
+                    if ((typeof channel.virtChCounter != "undefined") && (channel.virtChCounter != 1)) {
+                      virtualChannel = classExpertOnly;
+                    }
+                  }
+                {/eval}
+              {/if}
+              {eval}if ((typeof channel.virtChCounter != "undefined") && (channel.virtChCounter != 1)) {virtualChannel = classExpertOnly;}{/eval}
+            {/if}
+          {/if}
+
+          {if (channelTypeID == "HMIP-MIOB") && ((channel.channelType == "SWITCH_TRANSMITTER") || ((channel.channelType == "SWITCH_VIRTUAL_RECEIVER") && ((channel.index != 3) && (channel.index != 7))))} {var virtualChannel = classExpertOnly} {/if}
+
+          {if ((channelTypeID == "HMIP-WHS2") && ((channel.channelType == "SWITCH_TRANSMITTER") || ((channel.channelType == "SWITCH_VIRTUAL_RECEIVER") &&
+            ((channel.index == 2) || (channel.index == 4) || (channel.index == 6) || (channel.index == 8))
+          )))} {var virtualChannel = classExpertOnly} {/if}
+
+          {if channel.channelType == "VIR-OL-GTW-CH"} {var virtualChannel = "hidden"} {/if}
+          {if channel.channelType == "VIR-HUE-GTW-CH"} {var virtualChannel = "hidden"} {/if}
+
+          {if (channel.index == 0)} {var virtualChannel = classExpertOnly} {/if}
+          
+          {if channel.channelType != "_MAINTENANCE"}
+              <tr class="ChannelChooserRow ${virtualChannel}" id="${PREFIX}${channel.id}" onclick="ChannelChooser.select(this.id);" onmouseover="this.className='ChannelChooserRow_Highlight';" onmouseout="this.className='ChannelChooserRow';">
+                <td class="ChannelChooserCell">${channel.name}<br/><br/><span class="j_extChnDescr">${channel.typeDescription}_${channel.address}</span></td>
+                <td class="ChannelChooserThumbnail"><div class="thumbnail" onmouseover="picDivShow(jg_250, '${channel.deviceType.id}', 250, '${channel.index}', this);" onmouseout="picDivHide(jg_250);">${channel.thumbnailHTML}</div></td>
+                <td class="ChannelChooserCell">${channel.typeDescription}<br/>${channel.device.name}</td>
+                <td class="ChannelChooserCell">${channel.address}</td>
+                <td class="ChannelChooserCell j_functions">
+                  {for subsection in channel.subsections}
+                    ${subsection.name}<br />
+                  {forelse}
+                    &#160;
+                  {/for}
+                </td>
+                <td class="ChannelChooserCell j_rooms">
+                  {for room in channel.rooms}
+                    ${room.name}<br />
+                  {forelse}
+                    &#160;
+                  {/for}
+                </td>
+              </tr>
+             {forelse}
+              <tr class="ChannelChooserRow">
+                <td colspan="10" class="ChannelChooserCell" name=""lblNoChannelsAvailable>Keine Kan&auml;le verf&uuml;gbar</td>
+              </tr>
+          {/if}
+        {/if}
+      {/for}
+    </tbody>
+  </table>
+</div>
+<div id="ChannelChooserFooter">
+  <div class="ChannelChooserButton colorGradient50px" id="ChannelChooserAbortButton" name="footerBtnCancel" onclick="ChannelChooser.abort();">Abbrechen</div>
+  <div class="ChannelChooserButton colorGradient50px" id="ChannelChooserResetFiltersButton" name="footerBtnResetFilterWOLineBreak" onclick="ChannelChooser.resetFilters();">Filter zur&uuml;cksetzen</div>
+  {if false === showVirtual}
+    <div class="ChannelChooserButton colorGradient50px" id="ChannelChooserVirtualButton" name="footerBtnVirtualChannelsShow" onclick="ChannelChooser.toggleVirtualChannels();">virtuelle Kan&auml;le anzeigen</div>
+  {else}
+    <div class="ChannelChooserButton colorGradient50px" id="ChannelChooserVirtualButton" name="footerBtnVirtualChannelsHide" onclick="ChannelChooser.toggleVirtualChannels();">virtuelle Kan&auml;le ausblenden</div>
+  {/if}
+</div>
+</div>

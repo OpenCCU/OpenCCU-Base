@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>
+
+<device version="5" has_serial="false" eep_size="0">
+	<docu brief="HS485 Lux-Sensor (drahtgebunden)" target="internal">
+	</docu>
+	
+	<supported_types>
+		<type name="HS485 lux sensor" id="HS485LX1" priority="2">
+			<parameter index="0" size="1" const_value="8"/>
+			<parameter index="1" size="1" const_value="0"/>
+		</type>
+	</supported_types>
+	
+	<paramset type="MASTER" id="HS485LX1_dev_master">
+		<subset ref="device_paramset"/>
+	</paramset>
+
+	<frames>
+		<frame id="LEVEL_GET" direction="to_device" type="#L" fixed_channel="0">
+		</frame>
+		<frame id="LEVEL_GET_RESPONSE" direction="from_device" type="0" fixed_channel="0">
+			<parameter type="integer" index="9.0" size="4.0" param="LEVEL"/>
+		</frame>
+	</frames>
+
+	<channels>
+		<channel index="1" count="1" physical_index_offset="-1" type="LUX">
+			<paramset type="MASTER" id="hs485_lx1_ch_master">
+			</paramset>
+			<paramset type="VALUES" id="hs485_lx1_ch_values">
+				<subset ref="lux_valueset"/>
+			</paramset>
+		</channel>  
+	</channels>
+
+	<paramset_defs>
+		<paramset id="lux_valueset">
+			<parameter id="LEVEL" operations="read,event" control="NONE">      
+				<logical type="float" min="0.0" max="200000.0" default="0.0" unit="lux"/>
+				<physical type="integer" interface="command" value_id="LEVEL">
+					<get request="LEVEL_GET" response="LEVEL_GET_RESPONSE"/>
+				</physical>
+				<conversion type="float_integer_scale"/>
+			</parameter>
+		</paramset> 
+	</paramset_defs>
+</device>

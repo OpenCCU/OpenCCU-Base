@@ -1,0 +1,26 @@
+# Translation
+../www/webui/js/lang/de/translate.lang.channelDescription.js
+../www/webui/js/lang/de/translate.lang.deviceDescription.js
+../www/webui/js/lang/de/translate.lang.diagram.js
+../www/webui/js/lang/de/translate.lang.extension.js
+../www/webui/js/lang/de/translate.lang.group.js
+../www/webui/js/lang/de/translate.lang.help.js
+../www/webui/js/lang/de/translate.lang.js
+../www/webui/js/lang/de/translate.lang.label.js
+../www/webui/js/lang/de/translate.lang.notTranslated.js
+../www/webui/js/lang/de/translate.lang.option.js
+../www/webui/js/lang/de/translate.lang.stringtable.js
+../www/webui/js/lang/de/translate.lang.system.js
+
+../www/webui/js/lang/en/translate.lang.channelDescription.js
+../www/webui/js/lang/en/translate.lang.deviceDescription.js
+../www/webui/js/lang/en/translate.lang.diagram.js
+../www/webui/js/lang/en/translate.lang.extension.js
+../www/webui/js/lang/en/translate.lang.group.js
+../www/webui/js/lang/en/translate.lang.help.js
+../www/webui/js/lang/en/translate.lang.js
+../www/webui/js/lang/en/translate.lang.label.js
+../www/webui/js/lang/en/translate.lang.notTranslated.js
+../www/webui/js/lang/en/translate.lang.option.js
+../www/webui/js/lang/en/translate.lang.stringtable.js
+../www/webui/js/lang/en/translate.lang.system.js

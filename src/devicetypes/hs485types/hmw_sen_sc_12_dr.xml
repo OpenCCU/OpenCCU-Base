@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>	
+<device version="7" eep_size="1024">
+	<docu brief="Schließerkontakt-Sensor (drahtgebunden)" target="internal,user,oem"></docu>
+	<supported_types>
+		<type name="RS485 shutter contact 12-channel (DIN rails)" id="HMW-Sen-SC-12-DR" priority="2">
+			<parameter index="0" size="1" const_value="25" />
+			<parameter index="1" size="1" const_value="0" />
+		</type>
+		<type name="RS485 shutter contact 12-channel (flush-mount)" id="HMW-Sen-SC-12-FM" priority="2">
+			<parameter index="0" size="1" const_value="26" />
+			<parameter index="1" size="1" const_value="0" />
+		</type>
+	</supported_types>
+  
+	<paramset type="MASTER" id="HMW-Sen-SC-12-DR_dev_master">
+		<parameter id="CENTRAL_ADDRESS" hidden="true">
+			<docu brief="Zentralen-Adresse">
+				Hier trägt die HomeMatic-Zentrale ihre HomeMatic-Wired-Adresse ein.
+			</docu>
+			<logical type="integer" />
+			<physical type="integer" size="4" interface="eeprom">
+				<address index="0x0002" />
+			</physical>
+		</parameter>
+		<enforce id="CENTRAL_ADDRESS" value="1" />
+	
+		<parameter id="DIRECT_LINK_DEACTIVATE" hidden="true">
+			<logical type="boolean" default="false" />
+			<physical type="integer" size="0.1" interface="eeprom">
+				<address index="0x0006" />
+			</physical>
+		</parameter>
+		<enforce id="DIRECT_LINK_DEACTIVATE" value="true" />
+	</paramset>
+  
+	<frames>
+		<frame id="LEVEL_GET" direction="to_device" type="#S" channel_field="10"></frame>
+		<frame id="INFO_LEVEL" direction="from_device" event="true" type="#i" channel_field="10">
+			<parameter type="integer" index="11.0" size="1.0" param="STATE" />
+		</frame>
+	</frames>
+	
+	<channels>
+		<channel index="0" type="MAINTENANCE" ui_flags="internal" class="maintenance" count="1">
+			<docu brief="Wartungskanal">
+				Enthält allgemeine Geräteparameter.
+			</docu>
+			
+			<paramset type="MASTER" id="maint_ch_master"></paramset>
+		  
+			<paramset type="VALUES" id="maint_ch_values">
+				<parameter id="UNREACH" operations="read,event" ui_flags="service">
+					<docu brief="Servicemeldung: Gerätekommunikation ist aktuell gestört">
+						Diese Servicemeldung tritt auf, wenn das Gerät momentan nicht erreichbar ist.
+						Sobald die HomeMatic Zentrale feststellt, dass das Problem behoben ist, verschwindet
+						die Sevicemeldung automatisch.
+					</docu>
+					<logical type="boolean" />
+					<physical type="integer" interface="internal" value_id="UNREACH" />
+				</parameter>
+			
+				<parameter id="STICKY_UNREACH" operations="read,write,event" ui_flags="service">
+					<docu brief="Servicemeldung: Gerätekommunikation war gestört">
+						Diese Servicemeldung tritt auf, sobald ein Gerät nicht erreichbar ist. Im Gegensatz
+						zu <i>UNREACH</i> muss diese Servicemeldung in der HomeMatic Zentrale zurückgesetzt
+						werden.
+					</docu>
+					<logical type="boolean" />
+					<physical type="integer" interface="internal" value_id="STICKY_UNREACH" />
+				</parameter>
+			
+				<parameter id="CONFIG_PENDING" operations="read,event" ui_flags="service">
+					<docu brief="Servicemeldung: Konfigurationsdaten stehen zur Übertragung an">
+						Diese Servicemeldung tritt auf, wenn Konfigurationsdaten an das Gerät übertragen werden sollen.
+						Bei solchen Daten kann es sich um veränderte Geräte- bzw. Kanaleinstellungen handeln. <br />
+					</docu>		
+					<logical type="boolean" />
+					<physical type="integer" interface="internal" value_id="CONFIG_PENDING" />
+				</parameter>
+			</paramset>
+		</channel>
+	
+		<!-- == Sensoren ========================================================================================= -->
+		<channel index="1" physical_index_offset="-1" count="12" type="SENSOR">
+			<docu brief="Eingänge">
+				Dies sind die 12 Eingänge des Gerätes.
+			</docu>
+			<paramset type="MASTER" id="hmw_sensor_ch_master" address_start="0x07" address_step="2">
+				<parameter id="INPUT_LOCKED">
+					<docu brief="Tastensperre">
+						Hierüber können die Eingänge des Gerätes gesperrt werden. Wenn ein Eingang gesperrt ist, so wird kein Befehl bei Zustandsänderung
+						am Eingang gesendet.
+					</docu>
+					<logical type="boolean" default="false" />
+					<physical type="integer" size="0.1" interface="eeprom">
+						<address index="+0.1" />
+					</physical>
+					<conversion type="boolean_integer" invert="true" />
+				</parameter>
+			</paramset>
+	  
+			<paramset type="VALUES" id="hmw_sensor_ch_values">
+				<parameter id="SENSOR" operations="read,event" control="DOOR_SENSOR.STATE">
+					<docu brief="Zustand des Eingangs">
+						Wenn der Eingang geschlossen ist, wird <i>false</i> zurückgegeben. Bei geöffnetem Eingang, wird <i>true</i> zurückgegeben.
+					</docu>
+					<logical type="boolean" />
+					<physical type="integer" interface="command" value_id="STATE">
+						<event frame="INFO_LEVEL" auth_violate_policy="reject" />
+						<get request="LEVEL_GET" response="INFO_LEVEL" />
+					</physical>
+				</parameter>
+			
+				<parameter id="INSTALL_TEST" operations="event" ui_flags="internal">
+					<docu brief="Kommunikations-Test">
+						Dient zum Testen der Kommunikation.
+					</docu>
+					<logical type="action" />
+					<physical type="integer" interface="command" value_id="TEST_COUNTER">
+						<event frame="INFO_LEVEL" />
+					</physical>
+				</parameter>
+			</paramset>
+		</channel>
+	</channels>
+</device>

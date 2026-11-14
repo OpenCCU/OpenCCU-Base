@@ -1,0 +1,19 @@
+<th class="{if isSet}Filter_Active{else}Filter{/if}">
+  <div class="FilterCaption" name="thFilter" onclick="Element.show('${id}');">Filter</div>
+  <div class="FilterBodyWrapper" id="${id}" style="display:none">
+    <form class="FilterBody" id="${formId}">
+      <table border="0" cellspacing="0" cellpadding="0">
+        <tbody>
+          {for item in list}
+          <tr>
+            <td class="FilterBodyCell"><input type="checkbox" name="values" value="${item.id}" {if true === item._selected}checked=""{/if}/><td>
+            <td class="FilterBodyCell j_Filter_${item.id}">${item.name}</td>
+          </tr>
+          {/for}
+        </tbody>
+      </table>
+      <div class="FilterButton" name="filterSet" onclick="${name}.set();">Setzen</div>
+      <div class="FilterButton" name="filterClose" onclick="${name}.close();">Schlie&szlig;en</div>
+    </form>
+  </div>
+</th>

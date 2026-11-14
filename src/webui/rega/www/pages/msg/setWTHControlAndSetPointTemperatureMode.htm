@@ -1,0 +1,34 @@
+<table style="margin: 0 auto;">
+   <tbody>
+   <table>
+      <tr>
+        <td id="dlgLblParam">Mode: </td>
+        <td>
+        <!--  <select id="idWTHControlMode" onchange="printHint(this.value);"> -->
+          <select id="idWTHControlMode">
+            <option value="0">${stringTableClimateControlRTTransceiverAutoMode}</option>
+            <option value="1">${stringTableClimateControlRTTransceiverManuMode}</option>
+            <option value="2">${stringTableClimateControlRTTransceiverPartyMode}</option>
+          </select>
+        </td>
+      </tr>
+   </table>
+   <table>
+     <tr>
+       <td>
+         ${helpPartyModeWithinPrograms}
+       </td>
+     </tr>
+     <tr>
+       <td>
+         <ul>
+           <li>${stringTableDurationUnit}</li>
+           <li>${stringTableDurationValue}</li>
+           <li>${stringTableSetPointTemperature}</li>
+         </ul>
+       </td>
+     </tr>
+   </table>
+   </tbody>
+</table>
+

@@ -1,0 +1,1 @@
+"description_1" : "<span class=\"translated\">Should the sensor lose contact with the CCU, the desired alarm is switched on for the specified time.</span><br/><br/>",

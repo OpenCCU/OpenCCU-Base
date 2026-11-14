@@ -1,0 +1,98 @@
+#DeviceListTable {
+  height:auto;
+  margin:10px;
+  border:1px black solid;
+  padding:0;
+  empty-cells:show;
+  width:100%;
+}
+
+.DeviceListHead {
+  height:40px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  font-weight:normal;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.DeviceListHead_Active {
+  height:40px;
+  margin:0;
+  border:1px black solid;
+  padding:0;
+  background-color:$_(active); /* #565657 */
+  color: $_(textColorA); /* white */
+  font-weight:normal;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.DeviceListFoot {
+  height:3px;
+  margin:0;
+  border:1px black solid;
+  padding:0;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  line-height:3px;
+}
+
+.DeviceListRow {
+  background-color: $_(activeBackground);
+}
+
+.DeviceListRow_Highlight {
+  background-color: $_(inactiveBackground);
+  cursor:pointer;
+}
+
+.DeviceListCell {
+  height:50px;
+  border: 1px solid $_(black); /* black */
+  color: $_(textColorB); /* black */
+  text-align: center;
+  vertical-align: middle;
+}
+
+.DeviceListCell_Invisible {
+  height:50px;
+  width:25px;
+  border: 0 none;
+  background-color: $_(background); /* #183473 */
+  cursor: default;
+}
+
+.DeviceListCell_Invisible img {
+  float:left;
+  width:16px;
+  height:16px;
+  cursor:pointer;
+}
+
+.DeviceListThumbnail {
+  border: 1px solid $_(black); /* black */
+  text-align:center;
+  mix-blend-mode: multiply;
+}
+
+.DeviceListButton {
+  background-color: $_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
+  margin:2%;
+  border:1px solid $_(black); /* black */
+  width:95%;
+  text-align:center;
+  height:20px;
+  line-height:20px;
+  vertical-align:middle;
+  color: $_(textColorB); /* black */
+  font-weight:bold;
+  cursor:pointer;
+  border-radius: 2px;
+}

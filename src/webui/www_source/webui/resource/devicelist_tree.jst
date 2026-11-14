@@ -1,0 +1,200 @@
+<table id="DeviceListTable" border="0" cellspacing="0" cellpadding="0">
+  <colgroup>
+    <col style="width:25px;" />
+    <col style="width:25px;" />
+    <col style="width:25px;" />
+    <col />
+    <col />
+    <col style="width:55px;" />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col />
+    <col style="width:100px;" />
+  </colgroup>
+  <thead>
+    <tr>
+      <!-- Alle Elemente mit Name-Attribut werden übersetzt. Der Wert des Name-Attributs ist der Key f. die Übersetzungsdatei -->
+      <th class="DeviceListCell_Invisible"><div class="CLASS10900">&nbsp;</div></th>
+      <th class="DeviceListHead clickable" name="thName" colspan="3" onclick="DeviceListPage.sortBy('NAME');">Name</th>
+      <th class="DeviceListHead clickable" name="thTypeDescriptor" onclick="DeviceListPage.sortBy('NAME');">Typen- Bezeichnung</th>
+      <th class="DeviceListHead" name="thPicture">Bild</th>
+      <th class="DeviceListHead clickable" name="thDescriptor" onclick="DeviceListPage.sortBy('NAME');">Bezeichnung</th>
+      <th class="DeviceListHead clickable" name="thSerialNumber" onclick="DeviceListPage.sortBy('NAME');">Serien- Nummer</th>
+      <th class="DeviceListHead clickable" name="thInterfaceCategory" onclick="DeviceListPage.sortBy('NAME');">Interface / Kategorie</th>
+      <th class="DeviceListHead clickable" name="thTransmitMode" onclick="DeviceListPage.sortBy('NAME');">&Uuml;bertragungsmodus</th>
+      <th class="DeviceListHead clickable" name="thFuncs" onclick="DeviceListPage.sortBy('NAME');">Gewerke</th>
+      <th class="DeviceListHead clickable" name="thRooms" onclick="DeviceListPage.sortBy('NAME');">R&auml;ume</th>
+      <th class="DeviceListHead"><img name="lblRSSI" src="/ise/img/rssi-icon.png" width="24px" height="24px" alt="RSSI" title="RSSI"/></th>
+      <th class="DeviceListHead"><img name="lblVisible" src="/ise/img/visible.png" width="24px" height="24px" alt="sichtbar" title="sichtbar"/></th>
+      <th class="DeviceListHead"><img name="lblUsable" src="/ise/img/usable.png" width="24px" height="24px" alt="bedienbar" title="bedienbar"/></th>
+      <th class="DeviceListHead"><img name="lblRecorded" src="/ise/img/logged.png" width="24px" height="24px" alt="protokolliert" title="protokolliert"/></th>
+      <th class="DeviceListHead" name="thActions" >Aktionen</th>
+    </tr>
+    <tr>
+      <th class="DeviceListCell_Invisible CLASS10901" ><div class="CLASS10900">&nbsp;</div></th>
+      ${nameFilter.getHTML(3)}
+      ${typeNameFilter.getHTML()}
+      <th class="Filter CLASS10901" >&nbsp;</th>
+      ${descriptionFilter.getHTML()}
+      ${addressFilter.getHTML()}
+      ${interfaceFilter.getHTML()}
+      ${modeFilter.getHTML()}
+      ${funcFilter.getHTML()}
+      ${roomFilter.getHTML()}
+      <th class="Filter CLASS10901">&nbsp;</th>
+      <th class="Filter CLASS10901">&nbsp;</th>
+      <th class="Filter CLASS10901">&nbsp;</th>
+      <th class="Filter CLASS10901">&nbsp;</th>
+      <th class="Filter CLASS10901">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {for device in devices}
+      {if !device.inInbox}
+        <tr id="${PREFIX}${device.id}" class="DeviceListRow" onclick="DeviceListPage.selectDevice('${device.id}');" onmouseover="this.className='DeviceListRow_Highlight';" onmouseout="this.className='DeviceListRow';">
+          <td class="DeviceListCell_Invisible" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">
+            <img id="${PREFIX}${device.id}PLUS" onclick="DeviceListPage.expandDevice(event, '${device.id}');" src="/ise/img/plus.png" width="16px" height="16px" alt="Kan&auml;le anzeigen" title="Kan&auml;le anzeigen" {if device._expanded} style="display:none;"{/if}/>
+            <img id="${PREFIX}${device.id}MINUS" onclick="DeviceListPage.collapseDevice(event, '${device.id}');" src="/ise/img/minus.png" width="16px" height="16px" alt="Kan&auml;le verbergen" title="Kan&auml;le verbergen" {if !device._expanded} style="display:none;"{/if}/>
+          </td>
+          <td class="DeviceListCell" colspan="3">${device.name}</td>
+          <td class="DeviceListCell" >${device.typeName}</td>
+          <td class="DeviceListThumbnail" ><div id="${PREFIX}${device.id}Thumbnail" class="thumbnail" onmouseover="picDivShow(jg_250, '${device.deviceType.id}', 250, '', this);" onmouseout="picDivHide(jg_250);">${device.getThumbnailHTML()}</div></td>
+          <td class="DeviceListCell" name="${device.typeDescription}" >${device.typeDescription}</td>
+          <td class="DeviceListCell" >${device.address}${device.rfAddress}</td>
+          <td class="DeviceListCell" id="DeviceInterfaceDisplayName${device.id}" >${device.interfaceDisplayName|default:''|h}</td>
+          <td class="DeviceListCell j_chMode" >{for name in device.modes}${name}<br />{forelse}&#160;{/for}</td>
+          <td class="DeviceListCell j_functions" >{for subsection in device.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
+          <td class="DeviceListCell j_rooms" >{for room in device.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+          <td class="DeviceListCell" id="DeviceStatus${device.id}" ></td>
+          <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isVisible}checked="checked"{/if}/></td>
+          <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isUsable}checked="checked"{/if}/></td>
+          <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if device.isLogged}checked="checked"{/if}/></td>
+          <td class="DeviceListCell" >
+            <div class="DeviceListButton" name="btnConfigure" onclick="DeviceListPage.showConfiguration(event, 'DEVICE', '${device.id}');">Einstellen</div>
+            {if device.isDeletable}
+              <div class="DeviceListButton" name="btnRemove" onclick="DeviceListPage.deleteDevice(event, '${device.id}');">L&ouml;schen</div>
+            {else}
+              <div class="DeviceListButton CLASS10902" name="btnRemove" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }" >L&ouml;schen</div>
+            {/if}
+            <div class="DeviceListButton" name="btnDirectLinks" onclick="DeviceListPage.showDirectLinks(event, 'DEVICE', '${device.id}');">Direkte</div>
+            <div class="DeviceListButton" name="btnPrograms" onclick="DeviceListPage.showPrograms(event, 'DEVICE', '${device.id}');">Programme</div>
+          </td>
+        </tr>
+        {for group in device.groups}
+          <tr id="${PREFIX}${group.id}"class="DeviceListRow" {if !device._expanded}style="display:none;"{/if}>
+            <td class="DeviceListCell_Invisible" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">&#160;</td>
+            <td class="DeviceListCell_Invisible" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">
+              <img id="${PREFIX}${group.id}PLUS" onclick="DeviceListPage.expandGroup(event, '${group.id}');" src="/ise/img/plus.png" width="16px" height="16px" alt="Kan&auml;le anzeigen" title="Kan&auml;le anzeigen" {if group._expanded} style="display:none;"{/if}/>
+              <img id="${PREFIX}${group.id}MINUS" onclick="DeviceListPage.collapseGroup(event, '${group.id}');" src="/ise/img/minus.png" width="16px" height="16px" alt="Kan&auml;le verbergen" title="Kan&auml;le verbergen" {if !group._expanded} style="display:none;"{/if}/>
+            </td>
+            <td class="DeviceListCell" colspan="2">${group.name}</td>
+            <td class="DeviceListCell" >${group.typeName}</td>
+            <td class="DeviceListThumbnail" ><div id="${PREFIX}${group.id}Thumbnail" class="thumbnail" onmouseover="picDivShow(jg_250, '${group.device.deviceType.id}', 250, '${group.formName}', this);" onmouseout="picDivHide(jg_250);">${group.thumbnailHTML}</div></td>
+            <td class="DeviceListCell" name="${group.typeDescription}" >${group.typeDescription}</td>
+            <td class="DeviceListCell" >${group.address}</td>
+            <td class="DeviceListCell" >{for name in group.categories}${name}<br />{forelse}&#160;{/for}</td>
+            <td class="DeviceListCell j_chMode" >{for name in group.modes}${name}<br />{forelse}&#160;{/for}</td>
+            <td class="DeviceListCell" >{for subsection in group.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
+            <td class="DeviceListCell" >{for room in group.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+            <td class="DeviceListCell" ></td>
+            <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isVisible}checked="checked"{/if}/></td>
+            <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isUsable}checked="checked"{/if}/></td>
+            <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if group.isLogged}checked="checked"{/if}/></td>
+            <td class="DeviceListCell" >
+              <div class="DeviceListButton" name="btnConfigure" onclick="DeviceListPage.showConfiguration(event, 'GROUP', '${group.id}');">Einstellen</div>
+              <div class="DeviceListButton" name="btnDirectLinks" onclick="DeviceListPage.showDirectLinks(event, 'GROUP', '${group.id}');">Direkte</div>
+              <div class="DeviceListButton" name="btnPrograms" onclick="DeviceListPage.showPrograms(event, 'GROUP', '${group.id}');">Programme</div>
+            </td>
+          </tr>
+          {for channel in group.channels}
+            <tr id="${PREFIX}${channel.id}" onclick="DeviceListPage.selectChannel('${channel.id}');" class="DeviceListRow" {if (!group._expanded) | (!device._expanded)}style="display:none;"{/if} onmouseover="this.className='DeviceListRow_Highlight';" onmouseout="this.className='DeviceListRow';">
+              <td class="DeviceListCell_Invisible" colspan="3" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">&#160;</td>
+              <td class="DeviceListCell" >${channel.name}<br/>${channel.nameExtention}</td>
+              <td class="DeviceListCell" >${channel.typeName}</td>
+              <td class="DeviceListThumbnail" ><div id="${PREFIX}${channel.id}Thumbnail" class="thumbnail" onmouseover="picDivShow(jg_250, '${channel.device.deviceType.id}', 250, '${channel.index}', this);" onmouseout="picDivHide(jg_250);">${channel.thumbnailHTML}</div></td>
+              <td class="DeviceListCell" name="${channel.typeDescription}" >${channel.typeDescription}</td>
+              <td class="DeviceListCell" >${channel.address}</td>
+              <td class="DeviceListCell" >${channel.category}</td>
+              <td class="DeviceListCell j_chMode" >${channel.mode}</td>
+              <td class="DeviceListCell" >{for subsection in channel.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" >{for room in channel.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" ></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isVisible}checked="checked"{/if} /></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isUsable}checked="checked"{/if} /></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isLogged}checked="checked"{/if} /></td>
+              <td class="DeviceListCell" >
+                <div class="DeviceListButton" name="btnConfigure" onclick="DeviceListPage.showConfiguration(event, 'CHANNEL', '${channel.id}');">Einstellen</div>
+                <div class="DeviceListButton" name="btnDirectLinks" onclick="DeviceListPage.showDirectLinks(event, 'CHANNEL', '${channel.id}');">Direkte</div>
+                <div class="DeviceListButton" name="btnPrograms" onclick="DeviceListPage.showPrograms(event, 'CHANNEL', '${channel.id}');">Programme</div>
+              </td>
+            </tr>
+          {/for}
+        {/for}
+        {for channel in device.singles}
+
+        {if channel._isVisible}
+            {if channel.highlightChannel}
+              <tr id="${PREFIX}${channel.id}" onclick="DeviceListPage.selectChannel('${channel.id}');" class="DeviceListRow virtualChannelBckGndA" {if !device._expanded} style="display:none;"{/if} onmouseover="this.className='DeviceListRow_Highlight';" onmouseout="this.className='DeviceListRow virtualChannelBckGndA';">
+            {else}
+              <tr id="${PREFIX}${channel.id}" onclick="DeviceListPage.selectChannel('${channel.id}');" class="DeviceListRow" {if !device._expanded} style="display:none;"{/if} onmouseover="this.className='DeviceListRow_Highlight';" onmouseout="this.className='DeviceListRow';">
+            {/if}
+
+              <td class="DeviceListCell_Invisible" colspan="2" onclick="if (event) { Event.stop(event); } else { Event.stop(window.event); }">&#160;</td>
+              <td class="DeviceListCell" colspan="2">${channel.name}<br/>${channel.nameExtention}</td>
+              <td class="DeviceListCell" >${channel.typeName}</td>
+              <td class="DeviceListThumbnail" ><div  id="${PREFIX}${channel.id}Thumbnail" class="thumbnail" onmouseover="picDivShow(jg_250, '${channel.device.deviceType.id}', 250, '${channel.index}', this);" onmouseout="picDivHide(jg_250);">${channel.thumbnailHTML}</div></td>
+              <td class="DeviceListCell" name="${channel.typeDescription}" >${channel.typeDescription}</td>
+              <td class="DeviceListCell" >${channel.address}</td>
+              <td class="DeviceListCell" >${channel.category}</td>
+              <td class="DeviceListCell j_chMode" >${channel.mode}</td>
+              <td class="DeviceListCell" >{for subsection in channel.subsections}${subsection.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" >{for room in channel.rooms}${room.name}<br />{forelse}&#160;{/for}</td>
+              <td class="DeviceListCell" ></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isVisible}checked="checked"{/if} /></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isUsable}checked="checked"{/if} /></td>
+              <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isLogged}checked="checked"{/if} /></td>
+              <td class="DeviceListCell" >
+                <div class="DeviceListButton" name="btnConfigure" onclick="DeviceListPage.showConfiguration(event, 'CHANNEL', '${channel.id}');">Einstellen</div>
+                <div class="DeviceListButton" name="btnDirectLinks" onclick="DeviceListPage.showDirectLinks(event, 'CHANNEL', '${channel.id}');">Direkte</div>
+                <div class="DeviceListButton" name="btnPrograms" onclick="DeviceListPage.showPrograms(event, 'CHANNEL', '${channel.id}');">Programme</div>
+              </td>
+            </tr>
+         {/if}
+        {/if}
+      {/for}
+    {forelse}
+      <tr class="DeviceListRow">
+        <td class="DeviceListCell_Invisible">&#160;</td>
+        <td class="DeviceListCell" name="noDevicesAvailable" colspan="16">Keine Ger&auml;te verf&uuml;gbar</td>
+      </tr>
+    {/for}
+  </tbody>
+  <tfoot>
+    <tr class="CLASS10903">
+      <td class="DeviceListCell_Invisible CLASS10903" ><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot CLASS10906" ><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot CLASS10907" ><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot CLASS10908" ><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10909" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10904" /></td>
+      <td class="DeviceListFoot"><div class="CLASS10905" /></td>
+    </tr>  
+  </tfoot>
+</table>

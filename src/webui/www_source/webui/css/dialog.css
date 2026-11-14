@@ -1,0 +1,83 @@
+/*
+html, body {
+  margin: 0;
+  border: 0 none;
+  padding: 0;
+  overflow:hidden; 
+}
+*/
+
+.DialogLayer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(/ise/img/tr50.gif);
+}
+
+.LayoutContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
+}
+
+.DialogContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
+  background-image:url(/ise/img/tr50.gif);
+}
+
+.DialogBoxWrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:url(/ise/img/tr50.gif);
+}
+
+.DialogBox {
+  position: absolute;
+  background-color: $_(black); /* black */
+}
+
+.DialogBoxTitle {
+  position: absolute;
+  background-color: $_(white); /* white */
+  text-indent: 5px;
+  color: $_(textColorB); /* black */
+}
+
+.DialogBoxContent {
+  position:absolute;
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+}
+
+.DialogBoxFooter {
+  position: absolute;
+  background-color:$_(white); /* white */
+}
+
+.DialogButton {
+  float:left;
+  background-color:$_(black); /* black */
+}
+
+.DialogButtonCaption {
+  text-align: center;
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  cursor: pointer;
+}

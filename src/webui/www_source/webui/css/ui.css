@@ -1,0 +1,211 @@
+
+html, body {
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+input, textarea, select, button, h1 {
+  font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;
+  font-size: 12px;
+}
+
+application {
+  position:absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;    
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+.UIDisabled {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: $_(activeBackground); /* rgb(224,224,224) */
+  opacity: 0.5;
+  filter:alpha(opacity=50);
+}
+
+.UIFrame {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: $_(black); /* black */
+}
+
+.UIFrameTitle {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  text-indent:5px;
+}
+
+.UIFrameContent {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+}
+
+.UILabel {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.UIText {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.UICheckbox {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.UIScrollPane {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.UIScrollPaneContent {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  overflow: scroll;
+}
+
+.UIButton {
+  position: absolute;
+  border: 1px solid $_(black); /* black */
+  border-radius: 5px;
+  background-color:$_(clickable);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.UIButtonText {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+	width: 150px;
+	height: 22px;
+	overflow:hidden;
+  color: $_(textColorB); /* black */
+  cursor:pointer;
+	line-height:22px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.UIImage {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.UIButtonHighlight {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+	width: 150px;
+	height: 22px;
+	overflow:hidden;
+  color: $_(textColorA); /* white */
+  cursor:pointer;
+	line-height:22px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.UIButtonPressed {
+  position: absolute;
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+	width: 150px;
+	height: 22px;
+	overflow:hidden;
+  color: $_(textColorA); /* white */
+  cursor:pointer;
+	line-height:22px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.UITextEdit {
+  position: absolute;
+/*  
+  border: 1px solid $_(black); /* black */
+  margin: 0;
+  padding: 0;
+*/
+  overflow: hidden;
+}
+
+.UITextArea {
+  position: absolute;
+/*  
+  border: 1px solid $_(black); /* black */
+  margin: 0;
+  padding: 0;
+*/
+  overflow: auto;
+}
+
+.UIListbox {
+  position: absolute;
+/*  
+  border: 1px solid $_(black); /* black */
+  margin: 0;
+  padding: 0;
+*/
+  overflow: hidden;
+}
+
+.UILink {
+  color: $_(link);
+  text-decoration: underline;
+	cursor: pointer;
+}
+

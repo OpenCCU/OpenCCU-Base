@@ -1,0 +1,5 @@
+"switch_off" : "Close window",
+"switch_on" : "Open window",
+"switch_on_off" : "Open/Close window",
+"switch_toggle" : "Toggle",
+

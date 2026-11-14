@@ -1,0 +1,28 @@
+<div class="CLASS10500">
+<form name="RFConfig_Interfaces">
+<table class="RFConfig_InterfacesTable" width="100%" border="1" cellspacing="0" cellpadding="5">
+  <colgroup>
+    <col style="width:10%;"/>
+    <col style="width:30%;" colspan="3" />
+  </colgroup>
+  <tr>
+    <th>Auswahl</th>
+    <th>Seriennummer</th>
+    <th>Zugriffscode</th>
+    <th>IP Adresse</td>
+  </tr>
+	{for gateway in m_gateways}
+  <tr class="RFConfig_InterfacesTable_tr" onmouseover="this.className='RFConfig_InterfacesTable_tr_hover';" onmouseout="this.className='RFConfig_InterfacesTable_tr';">
+    <td><input id="${gateway.id}" name="${gateway.id}" type="checkbox" /></td>
+    <td onclick="RFConfigDialog.changeGateway(${m_dialogId}, '${gateway.id}');">${gateway.serial}&nbsp;</td>
+    <td onclick="RFConfigDialog.changeGateway(${m_dialogId}, '${gateway.id}');">${gateway.key}&nbsp;</td>
+    <td onclick="RFConfigDialog.changeGateway(${m_dialogId}, '${gateway.id}');">${gateway.ip}&nbsp;</td>
+  </tr>
+	{forelse}
+	<tr class="RFConfig_InterfacesTable_tr">
+    <td colspan="4" style="text-align:center; vertical-align:middle;">Momentan sind keine Funk-LAN-Gateways verfügbar.</td>
+  </tr>
+	{/for}
+</table>
+</div>
+</form>

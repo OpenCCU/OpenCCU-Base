@@ -1,0 +1,16 @@
+# resources.js
+# Ressource, die direkt in die JavaScript-Datei eingebunden werden
+#
+# resource : type = filename
+
+CHANNELCHOOSER_JST       : STRING = webui/resource/channelchooser.jst
+CHANNEL_CONFIG_DIALOG_JST: STRING = webui/resource/channelconfigdialog.jst
+DEVICE_CONFIG_DIALOG_JST : STRING = webui/resource/deviceconfigdialog.jst
+DEVICELIST_FLAT_JST      : STRING = webui/resource/devicelist_flat.jst
+DEVICELIST_TREE_JST      : STRING = webui/resource/devicelist_tree.jst
+LISTFILTER_JST           : STRING = webui/resource/listfilter.jst
+MULTI_CHANNELCHOOSER_JST : STRING = webui/resource/multichannelchooser.jst
+RF_CONFIG_JST            : STRING = webui/resource/rfconfig.jst
+STRINGFILTER_JST         : STRING = webui/resource/stringfilter.jst
+
+

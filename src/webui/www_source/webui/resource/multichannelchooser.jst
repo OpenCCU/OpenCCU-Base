@@ -1,0 +1,139 @@
+{macro printHead(name, id, langKey)}
+  {if id != sortId}
+    <th class="MultiChannelChooserHead clickable" name=${langKey} onclick="MultiChannelChooser.sortBy('${id}');">${name}</th>
+  {else}
+    <th class="MultiChannelChooserHead_Active clickable" name=${langKey} onclick="MultiChannelChooser.sortBy('${id}');">
+      ${name}&#160;
+      {if sortDescend}
+        <img src="/ise/img/arrow_down.gif" />
+      {else}
+        <img src="/ise/img/arrow_up.gif" />
+      {/if}
+    </th>
+  {/if}
+{/macro}
+<div id="MultiChannelChooserDialog">
+<div id="MultiChannelChooserTitle" onmousedown="new Drag($('MultiChannelChooserDialog'), event);"><span name="dialogChooseChannel">Kanalauswahl</span>: ${title}</div>
+<div id="MultiChannelChooserContent">
+  <table id="MultiChannelChooserTable" width="100%" border="0" cellspacing="0" cellpadding="0">
+    <colgroup>
+      <col style="width:5%;"/>
+      <col style="width:19%;"/>
+      <col style="width:55px;"/>
+      <col style="width:30%;"/>
+      <col style="width:12%;"/>
+      <col style="width:17%;"/>
+      <col style="width:17%;"/>
+    </colgroup>
+    <thead>
+      <tr> <!-- Überschriften -->
+        <th class="MultiChannelChooserHead">&nbsp;</th>
+        ${printHead("Name", "NAME", "thName")}
+        <th class="MultiChannelChooserHead" name="thPicture">Bild</th>
+        ${printHead("Beschreibung", "DESCRIPTION", "thDescription")}
+        ${printHead("Seriennummer", "ADDRESS", "thSerialNumber")}
+        ${printHead("Gewerke", "FUNC_NAMES", "thFunc")}
+        ${printHead("R&auml;ume", "ROOM_NAMES", "thRooms")}
+      </tr>
+      <tr> <!-- Filter -->
+        <th class="Filter">&nbsp;</th>
+        ${nameFilter.getHTML()}
+        <th class="Filter">&nbsp;</th>
+        <th class="Filter">&nbsp;</th>
+        <!-- ${descriptionFilter.getHTML()} -->
+        ${addressFilter.getHTML()}
+        ${funcFilter.getHTML()}
+        ${roomFilter.getHTML()}
+      </tr>      
+    </thead>
+    <tbody>
+      {eval}actualDeviceAddress = "";{/eval}
+      {for channel in channels}
+        {if channel.device.inInbox != true}
+          {var virtualChannel = ""}
+          {var classExpertOnly = "hidden j_expertChannel"}
+          {var channelTypeID = channel.deviceType.id.toUpperCase()}
+
+          {if channel.channelType == "VIRTUAL_DIMMER"} {var virtualChannel = "hidden j_expertChannel"} {/if}
+          {if (channel.channelType == "VIRTUAL_DUAL_WHITE_BRIGHTNESS") || (channel.channelType == "VIRTUAL_DUAL_WHITE_COLOR")} {var virtualChannel = "hidden j_expertChannel"} {/if}
+
+          {if (channelTypeID != "HMIP-MIOB") && (channelTypeID != "HMIP-WHS2")}
+            {if (channel.channelType == "DIMMER_TRANSMITTER")
+              || (channel.channelType == "SWITCH_TRANSMITTER")
+              || (channel.channelType == "BLIND_TRANSMITTER")
+              || (channel.channelType == "SHUTTER_TRANSMITTER")
+              || (channel.channelType == "ACOUSTIC_SIGNAL_TRANSMITTER")}
+              {var virtualChannel = classExpertOnly;}
+            {/if}
+            {if (channel.channelType == "DIMMER_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SWITCH_VIRTUAL_RECEIVER")
+              || (channel.channelType == "BLIND_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SHUTTER_VIRTUAL_RECEIVER")
+              || (channel.channelType == "ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER")
+              || (channel.channelType == "SERVO_VIRTUAL_RECEIVER")}
+              {if actualDeviceAddress != channel.device.address}
+                {eval}
+                  actualDeviceAddress = channel.device.address;
+                  if (userIsNoExpert) {
+                    if ((typeof channel.virtChCounter != "undefined") && (channel.virtChCounter != 1)) {
+                      virtualChannel = classExpertOnly;
+                    }
+                  }
+                {/eval}
+              {/if}
+              {eval}if ((typeof channel.virtChCounter != "undefined") && (channel.virtChCounter != 1)) {virtualChannel = classExpertOnly;}{/eval}
+            {/if}
+          {/if}
+
+          {if (channelTypeID == "HMIP-MIOB") && ((channel.channelType == "SWITCH_TRANSMITTER") || ((channel.channelType == "SWITCH_VIRTUAL_RECEIVER") && ((channel.index != 3) && (channel.index != 7))))} {var virtualChannel = classExpertOnly} {/if}
+
+          {if ((channelTypeID == "HMIP-WHS2") && ((channel.channelType == "SWITCH_TRANSMITTER") || ((channel.channelType == "SWITCH_VIRTUAL_RECEIVER") &&
+            ((channel.index == 2) || (channel.index == 4) || (channel.index == 6) || (channel.index == 8))
+          )))} {var virtualChannel = classExpertOnly} {/if}
+
+          {if channel.channelType == "VIR-OL-GTW-CH"} {var virtualChannel = "hidden"} {/if}
+          {if channel.channelType == "VIR-HUE-GTW-CH"} {var virtualChannel = "hidden"} {/if}
+
+          {if channel._selected == true} {var virtualChannel = ""} {/if}
+
+        <tr class="MultiChannelChooserRow ${virtualChannel}" id="${PREFIX}${channel.id}" onmouseover="this.className='MultiChannelChooserRow_Highlight';" onmouseout="this.className='MultiChannelChooserRow';">
+          <td class="MultiChannelChooserCell_Active"><input type="checkbox" onclick="MultiChannelChooser.select('${channel.id}', this);" {if true === channel._selected}checked=""{/if}/></td>
+          <td class="MultiChannelChooserCell">${channel.name}<br/><span class="j_extChnDescr">${channel.nameExtention}</span></td>
+          <td class="MultiChannelChooserThumbnail"><div class="thumbnail" onmouseover="picDivShow(jg_250, '${channel.deviceType.id}', 250, '${channel.index}', this);" onmouseout="picDivHide(jg_250);">${channel.thumbnailHTML}</div></td>
+          <td class="MultiChannelChooserCell">${channel.typeDescription}<br/>${channel.device.name}</td>
+          <td class="MultiChannelChooserCell">${channel.address}</td>
+          <td class="MultiChannelChooserCell">
+            {for subsection in channel.subsections}
+              ${subsection.name}<br />
+            {forelse}
+              &#160;
+            {/for}
+          </td>
+          <td class="MultiChannelChooserCell">
+            {for room in channel.rooms}
+              ${room.name}<br />
+            {forelse}
+              &#160;
+            {/for}
+          </td>
+        </tr>
+        {forelse}
+        <tr class="MultiChannelChooserRow">
+          <td colspan="10" class="MultiChannelChooserCell" name="hintMultiChannelChooserNoChannelsAvailable">Keine Kan&auml;le verf&uuml;gbar</td>
+        </tr>
+      {/if}
+    {/for}
+    </tbody>
+  </table>
+</div>
+<div id="MultiChannelChooserFooter">
+  <div class="MultiChannelChooserButton colorGradient50px" id="MultiChannelChooserAbortButton" name="footerBtnCancel" onclick="MultiChannelChooser.abort();">Abbrechen</div>
+  <div class="MultiChannelChooserButton colorGradient50px" id="MultiChannelChooserOkButton" name="footerBtnOk" onclick="MultiChannelChooser.ok();">OK</div>
+  <div class="MultiChannelChooserButton colorGradient50px" id="MultiChannelChooserResetFiltersButton" name="footerBtnResetFilterWOLineBreak" onclick="MultiChannelChooser.resetFilters();">Filter zur&uuml;cksetzen</div>
+  {if false === showVirtual}
+    <div class="MultiChannelChooserButton colorGradient50px" id="MultiChannelChooserVirtualButton" name="footerBtnVirtualChannelsShow" onclick="MultiChannelChooser.toggleVirtualChannels();">virtuelle Kan&auml;le anzeigen</div>
+  {else}
+    <div class="MultiChannelChooserButton colorGradient50px" id="MultiChannelChooserVirtualButton" name="footerBtnVirtualChannelsHide" onclick="MultiChannelChooser.toggleVirtualChannels();">virtuelle Kan&auml;le ausblenden</div>
+  {/if}
+</div>
+</div>

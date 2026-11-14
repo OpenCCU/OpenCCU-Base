@@ -1,0 +1,10 @@
+"description_1" : "<span class=\"translated\">When receiving the selected decision value, a closed window is opened for the specified time or an open window is closed (toggle function). If a delay time is set, opening/closing will be performed only after this time has expired.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">When receiving the selected decision value, the window is opened or closed for the specified time according to the setting of the 'Decision value' parameter.</span><br/><br/>",
+
+
+"subset_1" : "Above upper limit value – open / Below lower limit value – close",
+"subset_2" : "Above upper limit value – close / Below lower limit value – open",
+
+"subset_3" : "Above upper limit value",
+"subset_4" : "Below lower limit value",
+"subset_5" : "Below lower limit value/Above upper limit value",

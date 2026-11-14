@@ -1,0 +1,135 @@
+#menubar {
+  height: 34px;
+  /* width: 100%; */
+  border-bottom:solid 5px $_(navBarSeparator); /* #ffffff */
+  background-color: $_(background); /* #183473 */
+  z-index: 189;
+  padding-top: 2px;
+}
+
+.MainMenuItem_Left {
+  height: 30px;
+  cursor: pointer;
+  /* border-right:2px solid $_(white); */ /* #183473 */
+  background-color: $_(background);
+  float: left;
+}
+    
+.MainMenuItem_Right {
+  height: 30px;
+  cursor: pointer;
+  /* border-left:2px solid $_(white); */ /* #183473 */
+  background-color: $_(background);
+  float: right;
+}
+
+.MainMenuItem_Help {
+    margin-right: 10px;
+}
+
+.MainMenuItem_Highlight {
+  /* background-color: $_(inactiveBackground); */
+
+}
+
+.MainMenuItem_Selected {
+  background: $_(active); /* #565657 */
+}
+
+._MainMenuItemCaption {
+  background: $_(mainMenuBackground);
+
+ /* Safari 4-5, Chrome 1-9 *//*
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from($_(backgroundEnd)), to($_(backgroundStart)));
+
+  *//* Safari 5.1, Chrome 10+ *//*
+  background: -webkit-linear-gradient(top, $_(backgroundEnd), $_(backgroundStart));
+
+  *//* Firefox 3.6+ *//*
+  background: -moz-linear-gradient(bottom, $_(backgroundStart), $_(backgroundEnd));
+
+  *//* IE 10 *//*
+  background: -ms-linear-gradient(top,$_(backgroundStart), $_(backgroundEnd));
+
+  *//* For Internet Explorer 8 *//*
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr= #ffffff, endColorstr=#d0d0d0)";*/
+
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
+
+  overflow: auto;
+
+  border: 1px solid $_(black);
+  /* padding-left: 5px;
+  padding-right: 5px; */
+  padding: 5px;
+  font-weight: bold;
+  text-align:center;
+  vertical-align:middle;
+  color: $_(textColorB); /* black */
+  /* line-height:30px; */
+  cursor:pointer;
+  margin-left: 5px;
+  border-radius: 5px;
+
+  /* behavior: url("PIE.htc"); */
+}
+
+.MainMenuItemCaption {
+  background-color: $_(mainMenuBackground);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
+
+  border: 1px solid $_(black);
+  /* padding-left: 5px;
+  padding-right: 5px; */
+  padding: 5px;
+  font-weight: bold;
+  text-align:center;
+  vertical-align:middle;
+  color: $_(textColorB); /* black */
+  /* line-height:30px; */
+  cursor:pointer;
+  margin-left: 5px;
+  border-radius: 5px;
+
+  /* behavior: url("PIE.htc"); */
+}
+
+
+.MainMenuSubMenu {
+  position:absolute;
+  border: 1px solid $_(black); /* black */
+  background-color: $_(subMenuBackground);
+  overflow:hidden;
+  z-index:189;
+  margin-left: 5px;
+}
+
+.MainMenuSubItem {
+
+  background-color: $_(subMenuBackground);
+  font-weight: bold;
+  /* padding-left: 5px; */
+  padding: 2px 5px; 
+  text-align:left;
+  vertical-align:middle;
+  color: $_(textColorB); /* black */
+  line-height:20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.MainMenuSubItem_Highlight {
+  background-color: $_(subMenuHighlight);
+  /* border: 2px solid $_(subMenuHighlight); */
+  /* line-height: 30px; */
+}
+
+.MainMenuSubItem > img {
+  vertical-align: middle;
+  width: 16px;
+}
+

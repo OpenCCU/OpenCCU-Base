@@ -1,0 +1,97 @@
+.EulaDialogLayer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(/ise/img/tr50.gif);
+}
+
+.EulaDialog {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 150px;
+  margin-left: -300px;
+  /*margin-top: -125px;*/
+  background-color: $_(black); /* black */
+}
+
+.EulaDialogTitle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 596px;
+  height: 20px;
+  background-color: $_(white); /* white */
+  text-indent: 5px;
+  color: $_(textColorB); /* black */
+  line-height: 20px;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.EulaDialogContentWrapper {
+  position: absolute;
+  top: 24px;
+  left: 2px;
+  width: 596px;
+  /* height: 70px; */
+  height: auto;
+  background-color: $_(white); /* white */
+  overflow: hidden;  
+}
+
+.EulaDialogContent {
+  padding:5px;
+  font-weight: bold;
+  color: $_(textColorB); /* black */
+}
+
+
+.EulaDialogFooter {
+  position: absolute;
+  top: 98px;
+  left: 2px;
+  width: 596px;
+  height: 80px;
+  background-color: $_(white); /* white */
+}
+
+.EulaDialog_yesButton {
+  position: absolute;
+  border: 1px solid $_(black); /* black */
+  top: 34px;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: $_(clickable);
+  overflow: hidden;
+  left: 4px;
+  width: 100px;  
+}
+
+.EulaDialog_noButton {
+  position: absolute;
+  border: 1px solid $_(black); /* black */
+  top: 34px;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: $_(clickable);
+  overflow: hidden;
+  left: 491px;
+  width: 100px;
+}
+
+.EulaDialog_checkBox {
+    position: absolute;
+    left: 4px
+}

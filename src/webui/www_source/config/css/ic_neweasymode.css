@@ -1,0 +1,43 @@
+#ic_neweasymode #id_body
+{
+	padding: 2px;
+	padding-top: 5px;
+	border-right: 1px solid $_(black); /* black */
+	border-left: 1px solid $_(black); /* black */
+	overflow: auto;
+	background-color: $_(white); /* white */
+	width: 99%;
+	height: 100%;
+	color: $_(textColorB); /* black */
+}
+
+.pname_color 
+{
+	color: $_(windowText);/* windowText */
+}
+
+.translated
+{
+	color: $_(windowText);/* windowText */
+}
+
+.track
+{
+	height: 0.5em;
+	width: 20em;
+	position: relative;
+	z-index: 0;
+	cursor: pointer;
+	background-color: $_(inactiveBackground);
+}
+
+.handle
+{
+	height: 1em;
+	width: 1.0em;
+	top: -0.25em;
+	position: absolute;
+	z-index: 1;
+	cursor: e-resize;
+	background-color: $_(clickable);
+}

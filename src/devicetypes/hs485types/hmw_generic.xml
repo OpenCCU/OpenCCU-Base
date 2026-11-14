@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>
+<device version="2">
+
+	<docu brief="Generische BidCos-Wired Geräte" target="internal,user,oem">
+    Falls ein unbekanntes BidCos-Wired Gerät gefunden wurde, wird dieses als generisches BidCos-Wired Gerät angezeigt.
+	</docu>
+
+<supported_types>
+  <type name="RS485 generic" id="HMW-Generic" priority="0">
+    <parameter/>
+  </type>
+</supported_types>
+
+<paramset type="MASTER" id="HMW-GENERIC_dev_master"/>
+
+</device>

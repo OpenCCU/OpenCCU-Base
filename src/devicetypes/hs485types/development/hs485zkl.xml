@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>
+<device version="3" has_serial="false" eep_size="0">
+  <docu brief="HS485 ZKL (drahtgebunden)" target="internal"></docu>
+  <supported_types>
+    <type name="HS485 ZKL" id="HS485ZKL" priority="2">
+      <parameter index="0" size="1" const_value="3" />
+      <parameter index="1" size="1" const_value="0" />
+    </type>
+  </supported_types>
+  <paramset type="MASTER" id="HS485ZKL_dev_master"></paramset>
+  <frames>
+    <frame id="RECEIVER_SET" direction="to_device" type="#q" channel_field="0">
+      <parameter type="integer" index="10.0" size="1.0" const_value="0" />
+      <parameter type="integer" index="11.0" size="1.0" const_value="0" />
+    </frame>
+    <frame id="BUZZER_SET" direction="to_device" type="#b" channel_field="0">
+      <parameter type="integer" index="10.0" size="1.0" const_value="7" />
+      <parameter type="integer" index="11.0" size="1.0" param="BUZZER_DURATION" />
+    </frame>
+    <frame id="INFO_TRANSPONDER" direction="from_device" event="true" type="#t" channel_field="0">
+      <parameter type="integer" index="12.0" size="5.0" param="TRANSPONDER_ID" />
+    </frame>
+  </frames>
+  <channels>
+    <channel index="1" count="1" physical_index_offset="-1" type="ZKL">
+      <paramset type="MASTER" id="hs485_zkl_ch_master"></paramset>
+      <paramset type="VALUES" id="hs485_zkl_ch_values">
+        <subset ref="zkl_valueset" />
+      </paramset>
+    </channel>
+  </channels>
+  <paramset_defs>
+    <paramset id="zkl_valueset">
+      <parameter id="RECEIVER" operations="write">
+        <logical type="option">
+          <option id="SET" default="true" />
+          <option id="UNSET_not_supported" />
+        </logical>
+        <physical type="integer" interface="command" value_id="RECEIVER">
+          <set request="RECEIVER_SET" />
+        </physical>
+        <conversion type="option_integer">
+          <value_map device_value="0" parameter_value="0" to_device="true" />
+          <value_map device_value="0" parameter_value="1" to_device="true" />
+        </conversion>
+      </parameter>
+      <parameter id="BUZZER" operations="write">
+        <logical type="option">
+          <option id="SHORT" default="true" />
+          <option id="LONG" />
+        </logical>
+        <physical type="integer" interface="command" value_id="BUZZER_DURATION">
+          <set request="BUZZER_SET" />
+        </physical>
+        <conversion type="option_integer">
+          <value_map device_value="3" parameter_value="0" to_device="true" />
+          <value_map device_value="8" parameter_value="1" to_device="true" />
+        </conversion>
+      </parameter>
+      <parameter id="TRANSPONDER_ID" operations="event" control="NONE">
+        <logical type="integer" />
+        <physical type="integer" interface="command" value_id="TRANSPONDER_ID">
+          <event frame="INFO_TRANSPONDER" />
+        </physical>
+        <conversion type="integer_integer_map">
+          <value_map device_value="11654872" parameter_value="1" from_device="true" />
+          <value_map device_value="11669721" parameter_value="2" from_device="true" />
+          <value_map device_value="11668202" parameter_value="3" from_device="true" />
+          <value_map device_value="11652855" parameter_value="4" from_device="true" />
+        </conversion>
+      </parameter>
+    </paramset>
+  </paramset_defs>
+</device>

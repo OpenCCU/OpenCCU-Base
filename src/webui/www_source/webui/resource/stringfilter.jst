@@ -1,0 +1,10 @@
+<th class="{if isSet}Filter_Active{else}Filter{/if}" colspan="${colspan}">
+  <div class="FilterCaption" name="thFilter" onclick="${name}.show();">Filter</div>
+  <div class="FilterBodyWrapper" id="${id}" style="display:none;">
+    <div class="FilterBody">
+        <input class="FilterText" id="${textId}" onkeypress="${name}.checkEnterEsc(event.keyCode);" type="text" name="${textId}" value="${value}" />
+        <div class="FilterButton" name="filterSet" onclick="${name}.set();">Setzen</div>
+        <div class="FilterButton" name="filterClose" onclick="${name}.close();">Schlie&szlig;en</div>
+    </div>
+  </div>
+</th>

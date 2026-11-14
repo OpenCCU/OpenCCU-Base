@@ -1,0 +1,77 @@
+.table_border {
+  margin:0;
+  border:0 none;
+  padding:20px;
+}
+
+.table_wrapper {
+  width:100%;
+  margin:0;
+  border:0 none;
+  padding:0;
+}
+
+.table {
+  width:100%;
+  height:auto;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  empty-cells:show;
+/*  table-layout:fixed; */
+}
+
+.table_head {
+  height:60px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+
+  font-weight:bold;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.table_head_active {
+  height:60px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(active); /* #565657 */
+  color: $_(textColorA); /* white */
+  font-weight:bold;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.table_data {
+  height:50px;
+  border:1px solid $_(black); /* black */
+  background-color:$_(inactiveBackground);
+  color: $_(textColorB); /* black */
+  text-align:center;
+}
+
+.table_data_active {
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  border: 1px solid $_(black); /* black */
+  height: 50px;  
+  text-align:center;
+}
+
+.table_data_button {
+  background-color: $_(clickable);
+  color: $_(textColorA); /* white */
+  border: solid 1px $_(black); /* black */
+  cursor: pointer;
+}
+
+.table_data_thumbnail {
+  border: 1px solid $_(black); /* black */
+	background-color: $_(white); /* white */
+	text-align: left;
+	height: 80px;  
+}

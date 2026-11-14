@@ -1,0 +1,10 @@
+"description_2_1" : "<span class=\"translated\">When passing from right to left, the selected MP3 file is played and stopped in turn (toggle function).</span><br/><br/>",
+"description_3_1" : "<span class=\"translated\">When passing left to right, the selected MP3 file is played and stopped in turn (toggle function).</span><br/><br/>",
+
+"description_2_2" : "<span class=\"translated\">When passing from right to left, the selected MP3 file is played depending on the settings selected.</span><br/><br/>",
+"description_3_2" : "<span class=\"translated\">When passing from left to right, the selected MP3 file is played depending on the settings selected.</span><br/><br/>",
+
+"description_2_3" : "<span class=\"translated\">When passing from right to left, the selected MP3 file is stopped depending on the settings selected.</span><br/><br/>",
+"description_3_3" : "<span class=\"translated\">When passing from left to right, the selected MP3 file is stopped depending on the settings selected.</span><br/><br/>",
+
+"description_4" : "<span class=\"translated\">The profile is not active.</span><br/><br/>",

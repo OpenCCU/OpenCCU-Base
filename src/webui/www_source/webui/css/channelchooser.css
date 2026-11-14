@@ -1,0 +1,141 @@
+#ChannelChooserWrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(/ise/img/tr50.gif);
+}
+
+#ChannelChooserDialog {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 1000px;
+  height: 600px;
+  margin-left: -500px;
+  margin-top: -300px;
+  background-color: $_(black); /* black */
+}
+
+#ChannelChooserTitle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 996px;
+  height: 20px;
+  background-color: $_(white); /* white */
+  text-indent: 5px;
+  color: $_(textColorB); /* black */
+  line-height: 20px;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#ChannelChooserContent {
+  position: absolute;
+  top: 24px;
+  left: 2px;
+  width: 996px;
+  height: 522px;
+  background-color: $_(white); /* white */
+  overflow: auto;
+}
+
+#ChannelChooserFooter {
+  position: absolute;
+  top: 548px;
+  left: 2px;
+  width: 996px;
+  height: 50px;
+  background-color: $_(white); /* white */
+}
+
+.ChannelChooserButton {
+  position: absolute;
+  border: 1px solid $_(black); /* black */
+  top: 4px;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: $_(clickable);
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+#ChannelChooserAbortButton {
+  left: 4px;
+  width: 100px;
+}
+
+#ChannelChooserResetFiltersButton {
+  left: 791px;
+  width: 200px;
+}
+
+#ChannelChooserVirtualButton {
+  left: 566px;
+  width: 220px;
+}
+
+#ChannelChooserTable {
+  width:100%;
+  height:auto;
+  margin:0;
+  padding:0;
+  empty-cells:show;
+}
+
+.ChannelChooserHead {
+  height:60px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(clickable);
+  color: $_(textColorA); /* white */
+  font-weight:normal;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.ChannelChooserHead_Active {
+  height:60px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(active); /* #565657 */
+  color: $_(textColorA); /* white */
+  font-weight:normal;
+  text-align:center;
+  vertical-align:middle;
+}
+
+.ChannelChooserRow {
+  background-color: $_(activeBackground);
+}
+  
+.ChannelChooserRow_Highlight {
+  background-color: $_(inactiveBackground);
+  cursor:pointer;
+}
+
+.ChannelChooserCell {
+  height:50px;
+  border: 1px solid $_(black); /* black */
+  color: $_(textColorB); /* black */
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ChannelChooserThumbnail {
+  border: 1px solid $_(black); /* black */
+  text-align:left;
+  height:80px;
+}
+
+.ChannelChooserCell_Highlight {
+  background-color: $_(inactiveBackground);
+}

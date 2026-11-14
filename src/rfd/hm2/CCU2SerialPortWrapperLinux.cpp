@@ -1,0 +1,176 @@
+/*
+* Copyright 2026 eQ-3 AG - All Rights Reserved.
+* 
+* Licensed under the HMSL 2 (the "License"). You may not use
+* this file except in compliance with the License.  You can obtain a copy
+* in the file HMSL.txt in the source distribution.
+*/
+
+
+#include "CCU2SerialPortWrapperLinux.h"
+#include <termios.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <errno.h>
+#include <string.h>
+#include <Logger.h>
+// Konstruktion/Destruktion
+
+//#define DUMP 1
+#include <stdio.h>
+
+using namespace HM2;
+
+#ifdef DUMP
+ #include <HM2Utils.h>
+#endif
+
+
+CCU2SerialPortWrapperLinux::CCU2SerialPortWrapperLinux()
+: CCU2SerialPortWrapper()
+{
+	fd=-1;
+	readError=false;
+}
+CCU2SerialPortWrapperLinux::~CCU2SerialPortWrapperLinux()
+{
+	Close();
+}
+int CCU2SerialPortWrapperLinux::SendData(const std::string& data)
+{
+#ifdef DUMP
+	LOG(Logger::LOG_ALL, "CCU2SerialPortWrapperLinux::SendData(): Writing %s", toDebugHexStr(data).c_str());
+#endif
+	unsigned int count=0;
+	int retval;
+	int i=0;
+	while(count<data.size()){
+		retval=write(fd, data.data()+count, data.size()-count);
+		if(retval<0)return retval;
+		count+=retval;
+		if(i++ == 100){
+			return data.size();
+		}
+	}
+#ifdef DUMP
+	LOG(Logger::LOG_ALL, "CCU2SerialPortWrapperLinux::SendData(): Wrote %u bytes.", count);
+#endif	
+	return count;
+}
+
+
+int CCU2SerialPortWrapperLinux::WaitForData(int msTime)
+{
+	fd_set inFd, outFd, excFd;
+	FD_ZERO(&inFd);
+	FD_ZERO(&outFd);
+	FD_ZERO(&excFd);
+
+	FD_SET(fd, &inFd);
+	
+	// Check for events
+	int nEvents;
+	struct timeval tv;
+	tv.tv_sec = msTime/1000;
+	tv.tv_usec = (msTime%1000)*1000;
+	nEvents = select(fd+1, &inFd, &outFd, &excFd, &tv);
+	return nEvents;
+}
+
+
+int CCU2SerialPortWrapperLinux::handleReadError(const char* what)
+{
+	if(errno == EINTR) {
+		return 0;
+	}
+	return handleReadError(what, strerror(errno));
+}
+
+int CCU2SerialPortWrapperLinux::handleReadError(const char* what, const char* reason)
+{
+	if(!readError) {
+		LOG(Logger::LOG_ERROR, "CCU2SerialPortWrapperLinux::ReadData(): %s() failed: %s", what, reason);
+		readError = true;
+	}
+	// The error usually persists (e.g. a hung up /dev/mmd_bidcos after a
+	// multimacd restart), and select() keeps reporting the device readable.
+	// So wait a bit to not spin in the receive thread.
+	sleep(1);
+	return -1;
+}
+
+int CCU2SerialPortWrapperLinux::ReadData(std::string* data)
+{
+	int n = 0;
+	do {
+		n = WaitForData(1000);
+	} while( n == 0);
+	if(n < 0) {
+		return handleReadError("select");
+	}
+	
+	//data->clear();
+	
+	char buf[256];
+	const ssize_t count = read(fd, buf, sizeof(buf));
+	if(count < 0) {
+		return handleReadError("read");
+	}
+	if(count == 0) { //end of file: the device is gone (e.g. a hung up pty or an unplugged USB adapter)
+		return handleReadError("read", "end of file");
+	}
+	readError = false;
+	if(count>0){
+#ifdef DUMP
+		std::string chunk(buf,count);
+		LOG(Logger::LOG_ALL, "CCU2SerialPortWrapperLinux::ReadData(): Read chunk: %s", toDebugHexStr(chunk).c_str());
+#endif
+		data->append( buf, count );
+	}
+#ifdef DUMP
+	LOG(Logger::LOG_ALL, "CCU2SerialPortWrapperLinux::ReadData(): Received %zd bytes", count);
+	LOG(Logger::LOG_ALL, "CCU2SerialPortWrapperLinux::ReadData(): Read: %s", toDebugHexStr((*data)).c_str());
+#endif
+	return (int)count;
+}
+bool CCU2SerialPortWrapperLinux::Open(std::string dev)
+{
+	struct termios newtio;
+	//Open
+	fd = open (dev.c_str(), O_RDWR);
+	if (fd <= 0)
+	{
+		//printf("failure %s open\n", dev);
+		return -1;
+	}
+	readError = false;
+	
+	tcgetattr(fd, &newtio);
+	cfmakeraw(&newtio);
+	newtio.c_cflag &= ~(PARODD | CRTSCTS | CSIZE | CSTOPB | PARENB);
+	newtio.c_cflag |= CLOCAL | CS8 | CREAD;
+	cfsetospeed(&newtio, B115200);
+	cfsetispeed(&newtio, B115200);
+	tcsetattr(fd, TCSANOW, &newtio);
+	return (fd != -1);
+}
+void CCU2SerialPortWrapperLinux::Close()
+{
+	if(fd!=-1) {
+		close(fd);
+		fd = -1;
+	}
+}
+
+bool CCU2SerialPortWrapperLinux::IsConnected() 
+{
+	// a persistent read error (e.g. a hung up /dev/mmd_bidcos) is reported as
+	// not connected, e.g. in listBidcosInterfaces()
+	return (fd != -1) && !readError;
+}
+
+

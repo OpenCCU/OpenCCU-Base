@@ -1,0 +1,210 @@
+
+#ic_selchannel {
+  display: initial;
+  width: 100%;
+  margin: 10px;
+}
+
+#ic_selchannel #body_wrapper {
+  display: inherit;
+}
+
+#ic_selchannel #previous_step_wrapper {
+	background-color: $_(background); /* #183473 */
+	margin-bottom: 10px;
+}
+	
+#ic_selchannel #createLinkStep1 {
+	color: $_(textColorA); /* white */
+	border: 1px solid $_(black); /* black */
+	width: 100%;
+}
+
+#ic_selchannel #createLinkStep1 thead {
+	background-color: $_(clickable);
+}
+
+#ic_selchannel #createLinkStep1 tbody {
+	background-color: $_(activeBackground);
+	color: $_(textColorB); /* black */
+}
+
+#ic_selchannel #createLinkStep1 td {
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_selchannel #createLinkStep1 .BlueHeader {
+	background-color: $_(active); /* #565657 */
+}
+#ic_selchannel #createLinkStep1 .WhiteHeader {
+	background-color: $_(white); /* white */
+}
+#ic_selchannel #createLinkStep1 .WhiteHeader input {
+	width: -webkit-fill-available;
+}
+
+#ic_selchannel .ChnListTbl {
+	border: 1px solid $_(black); /* black */
+	background-color: $_(background); /* #183473 */
+	width: 100%;
+	margin: 0px;
+}
+
+#ic_selchannel .ChnListTbl tr td {
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_selchannel .ChnListTbl tbody tr td {
+  height: 56px;
+  border: 1px solid $_(black); /* black */
+  text-align: center;
+}
+
+#ic_selchannel .ChnListTbl .filterBox {
+	visibility: hidden;
+	background-color: $_(inactiveBackground);
+	color: $_(textColorA); /* white */
+	position: relative;
+	left: 0;
+	top: 0;
+	padding: 5px;
+	text-align: right;
+	border: 1px solid $_(black); /* black */
+	z-index: 9999;
+	width: auto;
+}
+
+#ic_selchannel .ChnListTbl .filterBox table td {
+	border:  0; 
+	padding: 0; 
+	margin:  0; 
+	height:  auto;
+	width: auto;
+	color:   $_(white); /* white */
+	background-color: $_(inactiveBackground);
+}
+
+/*Allgemeine Tags*/
+/*===============*/
+
+#ic_selchannel .ChnListTbl a
+{
+	color: $_(textColorA); /* white */
+}
+
+#ic_selchannel .ChnListTbl img
+{
+	border: 0;
+}
+
+/*IDs in der Tabelle*/
+/*==================*/
+
+/*Überschriftzeile*/
+#ic_selchannel .ChnListTbl .chnListTbl_Caption
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+	height: auto;
+	padding: 6px;
+	text-align: center;
+}
+/*--------------------------------------------*/
+
+/*Überschriftzeile Sortierfunktion*/
+#ic_selchannel .ChnListTbl .sorted
+{
+	background-color: $_(active); /* #565657 */
+	color: $_(textColorA); /* white */
+	cursor: pointer;
+}
+
+#ic_selchannel .ChnListTbl .unsorted
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+	cursor: pointer;
+}
+
+#ic_selchannel .ChnListTbl .nosort
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+}
+
+#ic_selchannel .ChnListTbl .unsorted img
+{
+	visibility: hidden;
+}
+/*--------------------------------------------*/
+
+/*Überschriftzeile Filterfunktion*/
+#ic_selchannel .ChnListTbl .filtered
+{
+	background-color: $_(active); /* #565657 */
+	color: $_(textColorA); /* white */
+	height: auto;
+	cursor: pointer;
+}
+
+#ic_selchannel .ChnListTbl .unfiltered
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+	height: auto;
+	cursor: pointer;
+}
+
+#ic_selchannel .ChnListTbl .nofilter
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+	height: auto;
+}
+
+#ic_selchannel .ChnListTbl .filtered a
+{
+	color: $_(textColorA); /* white */
+}
+
+#ic_selchannel .ChnListTbl .filtered a img
+{
+	border: 0;
+}
+
+#ic_selchannel .ChnListTbl .unfiltered a img
+{
+	visibility: hidden;
+}
+
+/*--------------------------------------------*/
+
+/*Tabellenkörper Virtuelle Tasten*/
+#ic_selchannel .ChnListTbl  .virtual_key_hidden
+{
+	visibility: hidden;
+	display: none;
+	border: 1px solid $_(black); /* black */
+}
+#ic_selchannel .ChnListTbl .virtual_key_visible
+{
+	border: 1px solid $_(black); /* black */
+}
+/*--------------------------------------------*/
+
+/*Tabellenkörper Bilderspalte*/
+#ic_selchannel .ChnListTbl .chnListTbl_dev_img 
+{
+	text-align: left;
+	height: 50px;  
+}
+/*--------------------------------------------*/
+
+/*Tabellenfuß Navibuttons*/
+#ic_selchannel .ChnListTbl #chnListFoot tr td
+{
+	background-color: $_(clickable);
+	color: $_(textColorA); /* white */
+	height: auto;
+}
+/*--------------------------------------------*/

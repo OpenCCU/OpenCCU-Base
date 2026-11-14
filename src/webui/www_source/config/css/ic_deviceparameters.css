@@ -1,0 +1,184 @@
+
+#id_body
+{
+  display: inherit;
+}
+
+#ic_deviceparameters
+{
+  display: contents;
+}
+
+#ic_deviceparameters #id_body
+{
+	background-color: $_(background); /* #183473 */
+}
+
+#ic_deviceparameters .id_firmware_table
+{
+	width: 100%;
+}
+
+#ic_deviceparameters .id_firmware_table tr td
+{
+	border: 0 !important;
+}
+
+#ic_deviceparameters #DeviceInformation
+{
+	width: 100%;
+	color: $_(textColorA); /* white */
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_deviceparameters #DeviceInformation thead
+{
+	background-color: $_(clickable);
+	text-align:center;
+}
+
+#ic_deviceparameters #DeviceInformation tbody
+{
+	background-color: $_(activeBackground);
+	color: $_(textColorB); /* black */
+}
+
+#ic_deviceparameters #DeviceInformation td
+{
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_deviceparameters #DeviceInformation #DeviceImage
+{
+	width: 52px;
+	height: 56px;
+	margin: 0;
+	padding: 0;
+}
+
+#ic_deviceparameters .parameter_area 
+{
+	margin-top:0;
+	margin-bottom:0;
+	padding-top: 0;
+	background-color: $_(background); /* #183473 */
+	color: $_(textColorA); /* white */
+}
+
+#ic_deviceparameters .parameter_header
+{
+	width: 100%;
+	color: $_(textColorA); /* white */
+	margin: 2px;
+	padding: 2px;
+}
+
+#ic_deviceparameters .parameter_header thead tr
+{
+	height: 50px;
+}
+
+#ic_deviceparameters .parameter_area .parameters_table 
+{
+	width: 100%;
+	color: $_(textColorA); /* white */
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_deviceparameters .parameter_area .parameters_table thead {
+
+	background-color: $_(clickable);
+	text-align:center;
+	height: 50px;
+}
+
+#ic_deviceparameters .parameter_area .parameters_table tbody {
+
+	background-color: $_(inactiveBackground);
+	color: $_(textColorB); /* black */
+}
+
+#ic_deviceparameters .parameter_area .parameters_table td {
+	border: 1px solid $_(black); /* black */
+}
+
+#ic_deviceparameters .parameter_area .parameters_table .ProfileTbl
+{
+	border: 0;
+	height: auto;
+	background-color: $_(white); /* white */
+	border-spacing: 0px;
+}
+
+#ic_deviceparameters .parameter_area .parameters_table .ProfileTbl thead
+{
+	visibility: hidden;
+	display: none;
+	height: auto;
+	background-color: $_(white); /* white */
+}
+
+#ic_deviceparameters .parameter_area .parameters_table .ProfileTbl tbody tr td
+{
+	border: 0;
+	background-color: $_(white); /* white */
+}
+
+#ic_deviceparameters #Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P1_Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P2_Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P3_Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P4_Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P5_Timeouts_Area .TimeoutTable,
+#ic_deviceparameters #P6_Timeouts_Area .TimeoutTable
+{
+	background-color: $_(white); /* white */
+	border: 0;
+	margin: 6px;
+	border-collapse: collapse;
+	height: auto;
+}
+
+#ic_deviceparameters #Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P1_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P2_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P3_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P4_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P5_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P6_Timeouts_Area .TimeoutTable thead td
+{
+	height: auto;
+	border: 0;
+	background-color: $_(white); /* white */
+	text-align: right;
+	color: $_(textColorB); /* black */
+}
+
+#ic_deviceparameters #Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P1_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P2_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P3_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P4_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P5_Timeouts_Area .TimeoutTable thead td,
+#ic_deviceparameters #P6_Timeouts_Area .TimeoutTable thead td
+{
+	height: auto;
+	text-align: center;
+	background-color: $_(white); /* white */
+	border: 0;
+	padding-bottom: 6px;
+}
+
+#ic_deviceparameters #Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P1_Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P2_Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P3_Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P4_Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P5_Timeouts_Area .TimeoutTable tbody td,
+#ic_deviceparameters #P6_Timeouts_Area .TimeoutTable tbody td
+{
+	height: auto;
+	padding: 1px 10px;
+	background-color: $_(white); /* white */
+	border: 0;
+}

@@ -1,0 +1,103 @@
+{macro printHead(name, id)}
+  {if id != sortId}
+    <th class="DeviceListHead clickable" name="${name}" onclick="DeviceListPage.sortBy('${id}');">${name}</th>
+  {else}
+    <th class="DeviceListHead_Active clickable" name="${name}" onclick="DeviceListPage.sortBy('${id}');">
+      ${name}&#160;
+      {if sortDescend}
+        <img src="/ise/img/arrow_down.gif" />
+      {else}
+        <img src="/ise/img/arrow_up.gif" />
+      {/if}
+    </th>
+  {/if}
+{/macro}
+<table id="DeviceListTable" border="0" cellspacing="0" cellpadding="0">
+  <colgroup>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:55px;"/>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:11%;"/>
+    <col style="width:25px;"/>
+    <col style="width:25px;"/>
+    <col style="width:25px;"/>
+    <col style="width:11%;""/>
+  </colgroup>
+  <thead>
+    <tr>
+      ${printHead("thName", "NAME")}
+      ${printHead("thTypeDescriptor", "TYPE_NAME")}
+      <th class="DeviceListHead" name="thPicture">Bild</th>
+      ${printHead("thDescriptor", "DESCRIPTION")}
+      ${printHead("thSerialNumber", "ADDRESS")}
+      ${printHead("thInterfaceCategory", "CATEGORY")}
+      ${printHead("thTransmitMode", "MODE")}
+      ${printHead("thFuncs", "FUNC_NAMES")}
+      ${printHead("thRooms", "ROOM_NAMES")}
+      <th class="DeviceListHead"><img name="lblVisible" src="/ise/img/visible.png" width="24px" height="24px" alt="sichtbar" title="sichtbar"/></th>
+      <th class="DeviceListHead"><img name="lblUsable" src="/ise/img/usable.png" width="24px" height="24px" alt="bedienbar" title="bedienbar"/></th>
+      <th class="DeviceListHead"><img name="lblRecorded" src="/ise/img/logged.png" width="24px" height="24px" alt="protokolliert" title="protokolliert"/></th>
+      <th class="DeviceListHead" name="thActions">Flat Aktionen</th>
+    </tr>
+    <tr>
+      ${nameFilter.getHTML()}
+      ${typeNameFilter.getHTML()}
+      <th class="Filter CLASS10700" >&nbsp;</th>
+      ${descriptionFilter.getHTML()}
+      ${addressFilter.getHTML()}
+      ${categoryFilter.getHTML()}
+      ${modeFilter.getHTML()}
+      ${funcFilter.getHTML()}
+      ${roomFilter.getHTML()}
+      <th class="Filter CLASS10700" >&nbsp;</th>
+      <th class="Filter CLASS10700" >&nbsp;</th>
+      <th class="Filter CLASS10700" >&nbsp;</th>
+      <th class="Filter CLASS10700" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {for channel in channels}
+      <tr class="DeviceListRow" id="${PREFIX}${channel.Id}"  onclick="DeviceListPage.selectChannel('${channel.id}');" onmouseover="this.className = 'DeviceListRow_Highlight';" onmouseout="this.className = 'DeviceListRow';">
+        <td class="DeviceListCell">${channel.name}</td>
+        <td class="DeviceListCell">${channel.typeName}</td>
+        <td class="DeviceListThumbnail"><div class="thumbnail" onmouseover="picDivShow(jg_250, '${channel.device.deviceType.id}', 250, '${channel.index}', this);" onmouseout="picDivHide(jg_250);">${channel.thumbnailHTML}</div></td>
+        <td class="DeviceListCell" name="${channel.typeDescription}" >${channel.typeDescription}</td>
+        <td class="DeviceListCell">${channel.address}</td>
+        <td class="DeviceListCell">${channel.category}</td>
+        <td class="DeviceListCell j_chMode">${channel.mode}</td>
+        <td class="DeviceListCell j_function">
+          {for subsection in channel.subsections}
+            ${subsection.name}<br />
+          {forelse}
+            &#160;
+          {/for}
+        </td>
+        <td class="DeviceListCell j_rooms">
+          {for room in channel.rooms}
+            ${room.name}<br />
+          {forelse}
+            &#160;
+          {/for}
+        </td>
+        <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isVisible}checked="checked"{/if} /></td>
+        <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isUsable}checked="checked"{/if} /></td>
+        <td class="DeviceListCell"><input type="checkbox" disabled="disabled" readonly="readyonly" {if channel.isLogged}checked="checked"{/if} /></td>
+        <td class="DeviceListCell">
+          <div class="DeviceListButton" name="btnConfigure" onclick="DeviceListPage.showConfiguration(event, 'CHANNEL', '${channel.id}');">Einstellen</div>
+          <div class="DeviceListButton" name="btnDirectLinks" onclick="DeviceListPage.showDirectLinks(event, 'CHANNEL', '${channel.id}');">Direkte</div>
+          <div class="DeviceListButton" name="btnPrograms" onclick="DeviceListPage.showPrograms(event, 'CHANNEL', '${channel.id}');">Programme</div>
+        </td>
+      </tr>
+    {forelse}
+      <tr class="DeviceListRow">
+        <td class="DeviceListCell" name="noChannelsAvailable" colspan="13">Keine Kan&auml;le verf&uuml;gbar</td>
+      </tr>
+    {/for}
+  </tbody>
+</table>
+

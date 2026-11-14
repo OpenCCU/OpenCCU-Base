@@ -1,0 +1,40 @@
+<table width="100%">
+<colgroup>
+  <col style="width:7%;"/>
+  <col style="width:57%;"/>
+  <col style="width:24%;"/>
+  <col style="width:12%;"/>
+</colgroup>
+<tr>
+  <!-- Logo -->
+          <td class="CLASS11100"><img id="headerLogo" src="/ise/img/homematic_logo_small.png" onclick="LogoClick();" class="SmallLogo" alt="" /></td>
+  <!-- Username und Pfad-->
+  <td style="vertical-align:middle;">
+    <table style="width: 100%;">
+      <tr>
+        <td id="UserName" style="" >HomeMatic Konfigurator</td>
+        <td rowspan="2"><div id="menuDbg"></div></td>
+      </tr>
+    </table>
+  </td>
+
+
+  <td style="text-align:right;padding-top:7px;">
+    <img id="ajaxload" src="/ise/img/ajaxload.gif" />
+  </td>
+  
+  <!-- Alarm-/Service-Meldungen -->
+  
+  <td style="padding-right: 8px; padding-top: 7px;">
+    <table id="AlarmServiceMsg">
+      <tr id="ServiceMsg">
+        <td class="CLASS11106"><img id="imgServices" src="/ise/img/dot/grey.png" alt="" /></td>
+        <!--td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages" onclick="WebUI.enter(ServiceMessagePage);" class="Messages">Servicemeldungen (0)</div></td-->
+        <td class="CLASS11107"><div id="msgServices" class="CLASS11108 Messages" onclick="WebUI.enter(ServiceMessagesPage);" >Servicemeldungen</div></td>
+      </tr>
+    </table>
+  </td>
+    
+</tr>
+</table>
+

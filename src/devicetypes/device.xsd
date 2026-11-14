@@ -1,0 +1,1542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  
+  <!-- ParamsetDefs -->
+  <xsd:complexType name="ParamsetDefs">
+    <xsd:annotation>
+      <xsd:documentation>Definitionen für Parametersätze</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="paramset" type="Paramset" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Frames.Frame.Parameter.TypeAttribute -->
+  <xsd:simpleType name="Frames.Frame.Parameter.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Typ des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="integer" />
+      <xsd:enumeration value="string" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Frames.Frame.Parameter -->
+  <xsd:complexType name="Frames.Frame.Parameter">
+    <xsd:annotation>
+      <xsd:documentation>Parameter des Datenrahmens</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="type" type="Frames.Frame.Parameter.TypeAttribute" use="required" />
+
+    <xsd:attribute name="index" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Index des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="size" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Größe des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="const_value" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Konstanter Wert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="param" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Parameter</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="signed" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="omit_if" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="PARAM" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Frames.Frame.DirectionAttribute -->
+  <xsd:simpleType name="Frames.Frame.DirectionAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Richtung des Datenrahmens</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="to_device" />
+      <xsd:enumeration value="from_device" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Frames.Frame -->
+  <xsd:complexType name="Frames.Frame">
+    <xsd:annotation>
+      <xsd:documentation>Datenrahmen</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="parameter" type="Frames.Frame.Parameter" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="direction" type="Frames.Frame.DirectionAttribute" use="required" />
+
+    <xsd:attribute name="type" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Typ des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="channel_field" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="receiver_channel_field" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="event" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Legt fest, ob der Datenrahmen ein Ereignis ist</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="allowed_receivers" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="fixed_channel" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="subtype" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="subtype_index" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Frames -->
+  <xsd:complexType name="Frames">
+    <xsd:annotation>
+      <xsd:documentation>Liste der Datenrahmen</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="frame" type="Frames.Frame" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.LinkRoles.NameAttribute -->
+  <xsd:simpleType name="Channels.Channel.LinkRoles.NameAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Name der Rolle</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="SWITCH" />
+      <xsd:enumeration value="WEATHER_CS" />
+      <xsd:enumeration value="WEATHER_T" />
+      <xsd:enumeration value="WEATHER_TH" />
+      <xsd:enumeration value="WEATHER_THP" />
+      <xsd:enumeration value="KEYMATIC" />
+      <xsd:enumeration value="WINMATIC" />
+      <xsd:enumeration value="CLIMATECONTROL_TC" />
+      <xsd:enumeration value="WINDOW_SWITCH_RECEIVER" />
+      <xsd:enumeration value="WINDOW_SWITCH_RECEIVER_V2" />
+      <xsd:enumeration value="SMOKE_DETECTOR_TEAM" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Channels.Channel.LinkRoles.Source -->
+  <xsd:complexType name="Channels.Channel.LinkRoles.Source">
+    <xsd:annotation>
+      <xsd:documentation>Rolle, die der Kanal als Sender einnehmen kann</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="name" type="Channels.Channel.LinkRoles.NameAttribute" use="required" />
+
+    <xsd:attribute name="team" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="virtual" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.LinkRoles.Target -->
+  <xsd:complexType name="Channels.Channel.LinkRoles.Target">
+    <xsd:annotation>
+      <xsd:documentation>Rolle, die der Kanal als Empfänger einnehmen kann</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="name" type="Channels.Channel.LinkRoles.NameAttribute" use="required" />
+
+    <xsd:attribute name="team" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="virtual" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.LinkRoles -->
+  <xsd:complexType name="Channels.Channel.LinkRoles">
+    <xsd:annotation>
+      <xsd:documentation>Rollen, die der Kanal in der Verknüpfung annehmen kann.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="source" type="Channels.Channel.LinkRoles.Source" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="target" type="Channels.Channel.LinkRoles.Target" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.EnforceLink.Value -->
+  <xsd:complexType name="Channels.Channel.EnforceLink.Value">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.EnforceLink -->
+  <xsd:complexType name="Channels.Channel.EnforceLink">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="value" type="Channels.Channel.EnforceLink.Value" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Channels.Channel.UIFlagsAttribute -->
+  <xsd:simpleType name="Channels.Channel.UIFlagsAttribute">
+    <xsd:annotation>
+      <xsd:documentation>UI Flags</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="internal" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Channels.Channel -->
+  <xsd:complexType name="Channels.Channel">
+    <xsd:annotation>
+      <xsd:documentation>Kanal</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="description" type="Description" />
+      <xsd:element name="docu" type="Paramset.Parameter.Docu" />
+      <xsd:element name="link_roles" type="Channels.Channel.LinkRoles" />
+      <xsd:element name="special_parameter" type="Paramset.Parameter"  />
+      <xsd:element name="paramset" type="Paramset" />
+      <xsd:element name="subconfig" type="Channels.Channel" />
+      <xsd:element name="enforce_link" type="Channels.Channel.EnforceLink" />
+    </xsd:choice>
+
+    <xsd:attribute name="index" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Index des Kanals</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="type" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Kanaltyp</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="ui_flags" type="Channels.Channel.UIFlagsAttribute" use="optional" />
+
+    <xsd:attribute name="class" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Klasse des Kanals</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="count" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Anzahl der Kanäle</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="hidden" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Legt fest, ob der Kanal versteckt ist.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="physical_index_offset" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Offset des physischen Wertes</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="autoregister" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="pair_function" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="function" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="paired" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Gibt an, ob der Kanal Teil einer Gruppe ist</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="aes_default" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Legt die AES-Einstellung fest</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="count_from_sysinfo" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Ermittelt die Anzahl der Kanäle aus dem SysInfo-Telegramm</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="direction" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="aes_always" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="has_team" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="team_tag" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Channels -->
+  <xsd:complexType name="Channels">
+    <xsd:annotation>
+      <xsd:documentation>Kanäle</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="channel" type="Channels.Channel" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Conversion.Code.ScopeAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Conversion.Code.ScopeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Geltungsbereich des Codes</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="l2p" />
+      <xsd:enumeration value="p2l" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.Conversion.Code -->
+  <xsd:complexType name="Paramset.Parameter.Conversion.Code">
+    <xsd:annotation>
+      <xsd:documentation>Tcl-Script zur Konvertierung (veraltet)</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="scope" type="Paramset.Parameter.Conversion.Code.ScopeAttribute" use="required" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Conversion.ValueMap -->
+  <xsd:complexType name="Paramset.Parameter.Conversion.ValueMap">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="device_value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="parameter_value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="mask" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="from_device" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="to_device" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Conversion.TypeAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Conversion.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Typ der Kovertierung</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="integer_integer_map" />
+      <xsd:enumeration value="float_configtime" />
+      <xsd:enumeration value="float_integer_scale" />
+      <xsd:enumeration value="boolean_integer" />
+      <xsd:enumeration value="action_key_counter" />
+      <xsd:enumeration value="option_integer" />
+      <xsd:enumeration value="integer_integer_scale" />
+      <xsd:enumeration value="integer_tinyfloat" />
+      <xsd:enumeration value="rc19display" />
+      <xsd:enumeration value="toggle" />
+      <xsd:enumeration value="blind_test" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.Conversion -->
+  <xsd:complexType name="Paramset.Parameter.Conversion">
+    <xsd:annotation>
+      <xsd:documentation>Kovertierung</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="code" type="Paramset.Parameter.Conversion.Code" minOccurs="0" maxOccurs="2"/>
+      <xsd:element name="value_map" type="Paramset.Parameter.Conversion.ValueMap" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    
+    <xsd:attribute name="type" type="Paramset.Parameter.Conversion.TypeAttribute" use="required" />
+
+    <xsd:attribute name="factors" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value_size" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="factor" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="offset" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="invert" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="sim_counter" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="counter_size" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="threshold" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="false" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="true" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="div" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="mul" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="mantissa_start" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Start der Mantisse</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="mantissa_size" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Größe der Mantisse</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="exponent_start" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Start des Exponenten</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="exponent_size" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Größe des Exponenten</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+   </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.Get -->
+  <xsd:complexType name="Paramset.Parameter.Physical.Get">
+    <xsd:annotation>
+      <xsd:documentation>Liest den Parameter</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="request" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Anfrage-Datenrahmens</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="response" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Id des Antwort-Datenrahmens</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="process_as_event" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="auth_violate_policy" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="event" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.Set -->
+  <xsd:complexType name="Paramset.Parameter.Physical.Set">
+    <xsd:annotation>
+      <xsd:documentation>Kommando zum Setzen des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="request" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id der Anfrage</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="process_as_event" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <!-- Paramset.Parameter.Physical.Address -->
+  <xsd:complexType name="Paramset.Parameter.Physical.Address">
+    <xsd:annotation>
+      <xsd:documentation>Adresse des Parameters</xsd:documentation>      
+    </xsd:annotation>
+
+    <xsd:attribute name="index" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Start-Adresse des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="step" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.Event.DominoEvent -->
+  <xsd:complexType name="Paramset.Parameter.Physical.Event.DominoEvent">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="value" type="xsd:int">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="delay_id" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.Event -->
+  <xsd:complexType name="Paramset.Parameter.Physical.Event">
+    <xsd:annotation>
+      <xsd:documentation>Ereignis</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="domino_event" type="Paramset.Parameter.Physical.Event.DominoEvent" minOccurs="0" maxOccurs="1" />
+    </xsd:sequence>
+    
+    <xsd:attribute name="frame" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des verknüpften Datenrahmens</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="auth_violate_policy" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.ResetAfterSend -->
+  <xsd:complexType name="Paramset.Parameter.Physical.ResetAfterSend">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="param" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Physical.TypeAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Physical.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Typ der physischen Repräsentation des Parameter</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="boolean" />
+      <xsd:enumeration value="integer" />
+      <xsd:enumeration value="string" />
+      <xsd:enumeration value="array" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.Physical.InterfaceAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Physical.InterfaceAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Interface der physichen Repräsentation des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string" >
+      <xsd:enumeration value="central_command" />
+      <xsd:enumeration value="command" />
+      <xsd:enumeration value="eeprom" />
+      <xsd:enumeration value="internal" />
+      <xsd:enumeration value="store" />
+      <xsd:enumeration value="config" />
+      <xsd:enumeration value="config_string" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- Paramset.Parameter.Physical.EndianAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Physical.EndianAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Verwendete Byte-Order</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="little" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.Physical -->
+  <xsd:complexType name="Paramset.Parameter.Physical">
+    <xsd:annotation>
+      <xsd:documentation>Physische Repräsentation des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="event" type="Paramset.Parameter.Physical.Event" />
+      <xsd:element name="set" type="Paramset.Parameter.Physical.Set" />
+      <xsd:element name="get" type="Paramset.Parameter.Physical.Get" />
+      <xsd:element name="physical" type="Paramset.Parameter.Physical" />
+      <xsd:element name="address" type="Paramset.Parameter.Physical.Address"  />
+      <xsd:element name="reset_after_send" type="Paramset.Parameter.Physical.ResetAfterSend" />
+    </xsd:choice>
+    
+    <xsd:attribute name="type" type="Paramset.Parameter.Physical.TypeAttribute" use="required" />
+    <xsd:attribute name="interface" type="Paramset.Parameter.Physical.InterfaceAttribute" use="optional" />
+
+    <xsd:attribute name="counter" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="size" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Größe des physischen Wertes</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value_id" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="endian" type="Paramset.Parameter.Physical.EndianAttribute" use="optional" />
+
+    <xsd:attribute name="id" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="save_on_change" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="read_size" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="no_init" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Legt fest, ob der Wert initialisiert werden soll</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="list" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Liste, in welcher der Parameter definiert ist.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="index" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Index des Parameters in der Liste</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="volatile" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="mask" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute> 
+   </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Logical.SpecialValue -->
+  <xsd:complexType name="Paramset.Parameter.Logical.SpecialValue">
+    <xsd:annotation>
+      <xsd:documentation>Spezieller Wert</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Wertes</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Wert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="default" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Logical.Option -->
+  <xsd:complexType name="Paramset.Parameter.Logical.Option">
+    <xsd:annotation>
+      <xsd:documentation>Option</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Option</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="index" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Index des Parameters</xsd:documentation>
+      </xsd:annotation>  
+    </xsd:attribute>
+    
+    <xsd:attribute name="default" type="xsd:boolean" default="true" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>legt fest, ob die Option des Standardwert ist</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.Logical.TypeAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.Logical.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Logischer Typ des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="address" />
+      <xsd:enumeration value="action" />
+      <xsd:enumeration value="boolean" />
+      <xsd:enumeration value="integer" />
+      <xsd:enumeration value="option" />
+      <xsd:enumeration value="float" />
+      <xsd:enumeration value="string" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.Logical -->
+  <xsd:complexType name="Paramset.Parameter.Logical">
+    <xsd:annotation>
+      <xsd:documentation>Logische Repräsentation des Parameters</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="option" type="Paramset.Parameter.Logical.Option" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="special_value" type="Paramset.Parameter.Logical.SpecialValue" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+    
+    <xsd:attribute name="type" type="Paramset.Parameter.Logical.TypeAttribute" use="required" />
+
+    <xsd:attribute name="min" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Minimalwert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="max" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Maximalwert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="default" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Standard-Wert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="unit" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Einheit</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="use_default_on_failure" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Verwendet den Standardwert im Fall von Fehlern</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+
+  <!-- Paramset.Parameter.Docu -->
+  <xsd:complexType name="Paramset.Parameter.Docu" mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>Parameter-Dokumentation</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="brief" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Kurzbeschreibung</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    
+    <xsd:attribute name="default" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Legt fest, ob eine Standard-Dokumentation verwendet wird</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>    
+  </xsd:complexType>
+  
+  <!-- Paramset.Parameter.ControlAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.ControlAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Bedien-Control für die HomeMatic WebUI</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="NONE" />
+      <xsd:enumeration value="BUTTON.SHORT" />
+      <xsd:enumeration value="BUTTON.LONG" />
+      <xsd:enumeration value="SWITCH.STATE" />
+      <xsd:enumeration value="BLIND.LEVEL" />
+      <xsd:enumeration value="BLIND.STOP" />
+      <xsd:enumeration value="DIMMER.LEVEL" />
+      <xsd:enumeration value="DOOR_SENSOR.STATE" />
+      <xsd:enumeration value="TEMP.SETPOINT" />
+      <xsd:enumeration value="DIMMER.OLD_LEVEL" />
+      <xsd:enumeration value="DOOROPENER.STATE" />
+      <xsd:enumeration value="LOCK.STATE" />
+      <xsd:enumeration value="LOCK.OPEN" />
+      <xsd:enumeration value="LOCK.UNCERTAIN" />
+      <xsd:enumeration value="RC19_DISPLAY.TEXT" />
+      <xsd:enumeration value="RC19_DISPLAY.BULB" />
+      <xsd:enumeration value="RC19_DISPLAY.SWITCH" />
+      <xsd:enumeration value="RC19_DISPLAY.WINDOW" />
+      <xsd:enumeration value="RC19_DISPLAY.DOOR" />
+      <xsd:enumeration value="RC19_DISPLAY.BLIND" />
+      <xsd:enumeration value="RC19_DISPLAY.SCENE" />
+      <xsd:enumeration value="RC19_DISPLAY.PHONE" />
+      <xsd:enumeration value="RC19_DISPLAY.BELL" />
+      <xsd:enumeration value="RC19_DISPLAY.CLOCK" />
+      <xsd:enumeration value="RC19_DISPLAY.ARROW_UP" />
+      <xsd:enumeration value="RC19_DISPLAY.ARROW_DOWN" />
+      <xsd:enumeration value="RC19_DISPLAY.UNIT" />
+      <xsd:enumeration value="RC19_DISPLAY.BEEP" />
+      <xsd:enumeration value="RC19_DISPLAY.BACKLIGHT" />
+      <xsd:enumeration value="RC19_DISPLAY.SUBMIT" />
+      <xsd:enumeration value="RHS.STATE" />
+      <xsd:enumeration value="DIGITAL_ANALOG_OUTPUT.FREQUENCY" />
+      <xsd:enumeration value="EVENT_INTERFACE.TRIGGER" />
+      <xsd:enumeration value="WINDOW.LEVEL" />
+      <xsd:enumeration value="WINDOW.STOP" />
+      <xsd:enumeration value="WINDOW.UNCERTAIN" />
+      <xsd:enumeration value="DANGER.STATE" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter.UIFlagsAttribute -->
+  <xsd:simpleType name="Paramset.Parameter.UIFlagsAttribute">
+    <xsd:annotation>
+      <xsd:documentation>UI Flags</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="service" />
+      <xsd:enumeration value="service,sticky" />
+      <xsd:enumeration value="internal" />
+      <xsd:enumeration value="transform" />
+      <xsd:enumeration value="invisible" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Paramset.Parameter -->
+  <xsd:complexType name="Paramset.Parameter">
+    <xsd:annotation>
+      <xsd:documentation>Parameter</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice minOccurs="2" maxOccurs="unbounded">
+      <xsd:element name="docu" type="Paramset.Parameter.Docu" />
+      <xsd:element name="logical" type="Paramset.Parameter.Logical" />
+      <xsd:element name="physical" type="Paramset.Parameter.Physical" />
+      <xsd:element name="conversion" type="Paramset.Parameter.Conversion" />
+      <xsd:element name="description" type="Description" />
+    </xsd:choice>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="operations" type="xsd:string" default="read,write" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Operationen des Parameter. Möglich sind die Werte read, write und event.
+          Mehrere Werte können durch Kommata getrennt angegeben werden.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="loopback" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Loopback ???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="control" type="Paramset.Parameter.ControlAttribute" default="NONE" use="optional" />
+
+    <xsd:attribute name="ui_flags" type="Paramset.Parameter.UIFlagsAttribute" use="optional" />
+
+    <xsd:attribute name="hidden" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>legt fest, ob der Parameter versteckt ist</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="default" type="xsd:boolean">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Enforce -->
+  <xsd:complexType name="Paramset.Enforce">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.Subset -->
+  <xsd:complexType name="Paramset.Subset">
+    <xsd:annotation>
+      <xsd:documentation>Referenz auf eine Paramset-Definition</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="ref" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id der Paramset-Definition</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.DefaultValues.Value -->
+  <xsd:complexType name="Paramset.DefaultValues.Value">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.DefaultValues -->
+  <xsd:complexType name="Paramset.DefaultValues">
+    <xsd:annotation>
+      <xsd:documentation>???</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="value" type="Paramset.DefaultValues.Value" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="function" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Paramset.TypeAttribute -->
+  <xsd:simpleType name="Paramset.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Typ des Parametersatzes</xsd:documentation>  
+    </xsd:annotation>
+    
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="MASTER" />
+      <xsd:enumeration value="VALUES" />
+      <xsd:enumeration value="LINK" />
+    </xsd:restriction>
+  </xsd:simpleType>  
+  
+  <!-- Paramset -->
+  <xsd:complexType name="Paramset">
+    <xsd:annotation>
+      <xsd:documentation>Parametersatz</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice minOccurs="0" maxOccurs="2">
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="parameter" type="Paramset.Parameter" />
+        <xsd:element name="enforce" type="Paramset.Enforce" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:element name="subset" type="Paramset.Subset" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="default_values" type="Paramset.DefaultValues" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:choice>
+
+    <xsd:attribute name="type" type="Paramset.TypeAttribute" use="optional"/>
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Id des Parametersatzes</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="peer_param" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="address_start" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="address_step" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="count" type="xsd:int" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="channel_param" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="link" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>???</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    </xsd:complexType>
+  
+  <!-- SupportetTypes.Type.Parameter.CondOpAttribute -->
+  <xsd:simpleType name="SupportetTypes.Type.Parameter.CondOpAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Operator</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="GE" />
+      <xsd:enumeration value="E" />
+      <xsd:enumeration value="LE" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- SupportetTypes.Type.Parameter -->
+  <xsd:complexType name="SupportetTypes.Type.Parameter">
+    <xsd:annotation>
+      <xsd:documentation>
+        Beschreibt einen Parameter (also ein Feld) innerhalb eines Kommunikationsrahmens.      
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="index" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Index des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="size" type="xsd:decimal" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Länge des Parameters</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="const_value" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Konstanter Weert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="cond_op" type="SupportetTypes.Type.Parameter.CondOpAttribute" use="optional" />
+  </xsd:complexType>
+  
+  <!-- SupportetTypes.Type -->
+  <xsd:complexType name="SupportetTypes.Type">
+    <xsd:annotation>
+      <xsd:documentation>Beschreibt einen unterstützten Gerätetyp anhand der Beschreibung des SysInfo-Rahmens. Wird im wesentlichen wie das Tag frame behandelt.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="parameter" type="SupportetTypes.Type.Parameter" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+
+    <xsd:attribute name="name" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Menschenlesbarer englischer Name des Gerätetyps.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Kurzbezeichnung des Gerätetyps.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="priority" type="xsd:int" default="0" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Priorität der Beschreibung. Falls mehrere Beschreibungen zutriffen, gewinnt die mit der höchsten Priorität.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- SupportetTypes -->
+  <xsd:complexType name="SupportetTypes">
+    <xsd:annotation>
+      <xsd:documentation>Listet die unterstützten Gerätetypen auf.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="type" type="SupportetTypes.Type" minOccurs="1" maxOccurs="unbounded" />
+    </xsd:sequence> 
+  </xsd:complexType>
+  
+  <!-- Docu -->
+  <xsd:complexType name="Docu" mixed="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        Allgemeine Dokumentation der Gerätefamilie.
+        Das docu-Tag wird zum automatischen Erstellen der Dokumentation verwendet. Es enthält die allgemeine Dokumentation
+        für die gesamte Gerätefamilie. Grundsätzlich ist dasa Tag optional und muss nicht zwingend in einer XML-Datei enthalten sein.
+        Um eine sinnvolle Darstellung der automatisch erzeugten Dokumentaiton zu gewährleisten sollte es jedoch immer angegeben werden.
+        Während des Build-Prozesses der HomeMatic Zentrale wird das docu-Tag aus der entsprechenden XML-Datei enfernt. Die XML-Dateien, 
+        die auf der HomeMatic Zentrale liegen, enthalten diese Informationen demnach nicht mehr.
+      </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="brief" type="xsd:string" default="Unbekannte Gerätefamilie" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Bezeichnung der Gerätefamilie.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="target" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt fest, für welches Dokument die Dokumentation verwendet wird.
+          Der Wert ist eine Kommaseparierte Liste aus folgenden Werten;
+          <ul>
+            <li>internal: interne Dokumentation</li>
+            <li>oem: Dokumentation für Firmenkunden</li>
+            <li>user: Endbenutzer-Dokumentation</li>
+          </ul>
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="developer" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Name des zuständigen Geräte-Entwicklers.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="developer_email" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>E-Mail-Adresse des zuständigen Geräte-Entwicklers.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="developer_telephone_number" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Telefon-Durchwahl des zuständigen Geräte-Entwicklers.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <!-- Description.Field.TypeAttribute -->
+  <xsd:simpleType name="Description.Field.TypeAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Typ für die Interpretation von value.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="string" />
+      <xsd:enumeration value="int" />
+      <xsd:enumeration value="float" />
+      <xsd:enumeration value="bool" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Description.Field -->
+  <xsd:complexType name="Description.Field">
+    <xsd:annotation>
+      <xsd:documentation>Spezifiziert ein einzelnes Name-Wert-Paar innerhalb einer Description</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Name.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="value" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Wer.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="type" type="Description.Field.TypeAttribute" default="string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Typ für die Interpretation von value.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <!-- Description -->
+  <xsd:complexType name="Description">
+    <xsd:annotation>
+      <xsd:documentation>Parameter-Beschreibung</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="field" type="Description.Field" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Device.ClassAttribute -->
+  <xsd:simpleType name="Device.ClassAttribute">
+    <xsd:annotation>
+      <xsd:documentation>Verwendung einer besonderen C++-Klasse für das Geräte anstatt HS485Device bzw. RFDevice. centeral für RFCenteral bzw HS485Central.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="central"></xsd:enumeration>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Device.UIFlagsAttribute -->  
+  <xsd:simpleType name="Device.UIFlagsAttribute">
+    <xsd:annotation>
+      <xsd:documentation>
+        dontdelete: Gerät kann über die Oberfläche nicht gelöscht werden
+      </xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="dontdelete" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Device -->
+  <xsd:complexType name="Device">
+    <xsd:annotation>
+      <xsd:documentation>Root-Knoten der Gerätebeschreibung</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:element name="docu" type="Docu" />
+      <xsd:element name="supported_types" type="SupportetTypes" />
+      <xsd:element name="paramset" type="Paramset" />
+      <xsd:element name="channels" type="Channels" />
+      <xsd:element name="frames" type="Frames"  />
+      <xsd:element name="paramset_defs" type="ParamsetDefs" />
+      <xsd:element name="team" type="Device" />
+      <xsd:element name="description" type="Description" />
+    </xsd:choice>
+
+    <xsd:attribute name="version" type="xsd:int" default="0" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Version der XML-Datei. Muss hochgezählt werden, damit Änderungen an die Logikschicht weitergegeben werden.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="ui_flags" type="Device.UIFlagsAttribute" use="optional" />
+
+    <xsd:attribute name="supports_aes" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Gibt an, obdas Gerät AES unterstützt.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="cyclic_timeout" type="xsd:int" default="0" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Zeit in Sekunden, nach der sich das Gerät auf UNREACH geht, wenn keine Nachricht empfangen wurde.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="unreach_ceck_aes" type="xsd:boolean" default="false" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Beit true werden nur AES-authentifizierte Nachrichten für zyklische Meldungen akzeptiert.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="class" type="Device.ClassAttribute" use="optional" />
+
+    <xsd:attribute name="rx_modes" type="xsd:string" default="ALWAYS" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Komma-separierte Liste aus ALWAYS, BURST, CONFIG, WAKEUP.
+          ALWAYS: Always-On.
+          BURST: Wake-On-Radio.
+          CONFIG: Nach Senden der SysInfo.
+          WAKEUP: Nach Aussendung mit gesetzem Wake-Me-Up-Bit.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="eep_size" type="xsd:int" default="0" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Größe in Byes des Geräte-EEProms</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="has_serial" type="xsd:boolean" default="true" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Gibt an, ob das Gerät eine abfragbare HomeMatic-Seriennummer besitzt. Bei false wird eine Seriennummer aus der HS485-Adresse erzeugt.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+
+    <xsd:attribute name="peering_sysinfo_expect_channel" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Undokumentiert</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Root-Element -->
+  <xsd:element name="device" type="Device" />
+  
+</xsd:schema>

@@ -1,0 +1,9 @@
+"security_on" : "Ventilation lock On",
+"security_off" : "Ventilation lock Off",
+"security_toggle" : "Ventilation lock On / Off",
+
+"paramDescr" : "Mode&nbsp;&nbsp;",
+
+"mode0" : "Ignore switching command",
+"mode1" : "On",
+"mode2" : "Off",

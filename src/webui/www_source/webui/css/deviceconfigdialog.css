@@ -1,0 +1,123 @@
+#DeviceConfigDialogLayer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url(/ise/img/tr50.gif);
+}
+
+#DeviceConfigDialog {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 470px;
+  margin-left: -400px;
+  margin-top: -225px;
+  background-color: $_(black); /* black */
+}
+
+#DeviceConfigDialogTitle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 796px;
+  height: 20px;
+  background-color: $_(white); /* white */
+  text-indent: 5px;
+  color: $_(textColorB); /* black */
+  line-height: 20px;
+  vertical-align: middle;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#DeviceConfigDialogContent {
+  position: absolute;
+  top: 24px;
+  left: 2px;
+  width: 796px;
+  height: 391px;
+  background-color: $_(white); /* white */
+  color: $_(textColorB); /* black */
+  overflow: auto;
+}
+
+#DeviceConfigDialogFooter {
+  position: absolute;
+  top: 418px;
+  left: 2px;
+  width: 796px;
+  height: 50px;
+  background-color: $_(white); /* white */
+}
+
+.DeviceConfigDialogButton {
+  position: absolute;
+  border: 1px solid $_(black); /* black */
+  top: 4px;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: $_(clickable);
+  overflow: hidden;
+}
+
+#DeviceConfigDialogOkButton {
+  left: 691px;
+  width: 100px;
+}
+
+#DeviceConfigDialogAbortButton {
+  left: 4px;
+  width: 100px;
+}
+
+#DeviceConfigDialogContentLeft {
+  position:absolute;
+  margin:5px;
+  padding:5px;
+  top:0;
+  left:0;
+  width: 260px;
+  overflow:hidden;
+}
+
+#DeviceConfigDialogContentMain {
+  position:absolute;
+  margin:10px;
+  top:0px;
+  left:280px;
+  width:480px;
+}
+
+.DeviceConfigDialogSection {
+  margin-bottom:10px;
+  color: $_(textColorB); /* black */
+}
+
+.DeviceConfigDialogTable {
+  color: $_(textColorB); /* black */
+}
+
+#_DeviceConfigDialogTestButton {
+  width:120px;
+  border:1px solid $_(black); /* black */
+  height:20px;
+  text-align:center;
+  line-height:20px;
+  background-color:$_(clickable);
+  font-weight:bold;
+  color:$_(textColorB); /* black */
+  cursor:pointer;
+}
+
+#DeviceConfigDialogTestResult {
+  width:120px;
+  height:20px;
+  text-align:center;
+  line-height:20px;
+}

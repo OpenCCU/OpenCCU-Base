@@ -1,0 +1,9 @@
+#/bin/sh
+
+MAJOR="2"
+MINOR="6"
+PATCH="8"
+
+VERSION="$MAJOR.$MINOR.$PATCH"
+
+echo $VERSION

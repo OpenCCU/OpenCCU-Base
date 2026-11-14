@@ -1,0 +1,9 @@
+"description_1" : "<span class=\"translated\">According to the selected switching mode, the selected MP3 file is switched on for the desired time and switched off after the next motion detected (toggle function).</span><br/><br/>",
+
+"description_2" : "<span class=\"translated\">According to the selected switching mode, the selected MP3 file will be switched on for the desired time.</span><br/><br/>",
+
+"description_3" : "<span class=\"translated\">eAccording to the selected switching mode, a running MP3 file will be switched off</span><br/><br/>",
+
+"subset_1": "Motion/Tilted",
+"subset_2": "Standby/Horizontal",
+"subset_3": "Every change",

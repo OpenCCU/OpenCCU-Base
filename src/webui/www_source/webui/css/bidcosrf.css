@@ -1,0 +1,69 @@
+.bidcosrf_page {
+  margin: 10px;
+  width: 100%;
+}
+
+
+.bidcosrf_footer {
+}
+
+.bidcosrf_button {
+  padding: 5px;
+  border: 2px solid $_(black);
+  text-align: center;
+  background-color: $_(clickable);
+   color: $_(textColorA);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.bidcosrf_optionbutton {
+  float: left;
+  margin: 10px 20px 10px 0px;
+  width: 100px;
+}
+
+.bidcosrf_clear {
+  clear: both;
+}
+
+.bidcosrf_table {
+  border: 1px solid $_(black);
+  border-spacing: 0px;
+  width: 100%;
+}
+
+.bidcosrf_tableheader {
+  background-color: $_(clickable);
+  border: 1px solid $_(black);
+  padding: 5px;
+  color: $_(textColorA);
+  font-weight: bold;
+}
+
+.bidcosrf_tablecell {
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB);
+  border: 1px solid $_(black);
+  empty-cells: show;
+  text-align: center;
+}
+
+.bidcosrf_imagecell {
+  background-color: $_(inactiveBackground);
+  border: 1px solid $_(black);
+  empty-cells: show;
+  text-align: center;
+}
+
+.bidcosrf_actioncell {
+  background-color: $_(activeBackground);
+  border: 1px solid $_(black);
+  empty-cells: show;
+  text-align: center;
+  width: 200px;
+}
+
+.bidcosrf_imagesize {
+  width: 55px;
+}

@@ -1,0 +1,86 @@
+.Filter {
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(clickable);
+  color: $_(textColorB); /* black */
+  font-weight:normal;
+  text-align:left;
+  vertical-align:middle;  
+  height:20px !important;
+}
+
+.FilterHeight20 {
+  height: 20px !important;
+}
+
+.Filter_Active {
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:0;
+  background-color:$_(active); /* #565657 */
+  color: $_(textColorB); /* black */
+  font-weight:normal;
+  text-align:left;
+  vertical-align:middle;  
+}
+
+.FilterCaption {
+
+  background-color:$_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
+
+  color: $_(textColorB); /* black */
+
+  height:20px;
+  line-height:20px;
+  width: 100%;
+  text-align:center;
+  cursor:pointer; 
+}
+
+.FilterBodyWrapper {
+  position:absolute;
+  z-index:500; 
+}
+
+.FilterBody {
+  position:relative;
+  top:-5px;
+  left:5px;
+  margin:0;
+  border:1px solid $_(black); /* black */
+  padding:5px;
+  background-color:$_(inactiveBackground);
+  color: $_(textColorA); /* white */
+}
+
+.FilterBodyCell {
+  height:15px;
+  border:0 none;
+  background-color:$_(inactiveBackground);
+  color: $_(textColorA); /* white */
+  font-weight:normal;
+}
+
+.FilterText {
+  margin:2px;
+}
+
+.FilterButton {
+
+  background-color:$_(clickable);
+  background-image:url(/ise/img/gradientButton25px.png);
+  /*background-image: linear-gradient(to bottom, white 40%, gray );*/
+  background-image: var(--btnGradient);
+
+  margin:2px;
+  border:1px solid $_(black); /* black */
+  color: $_(textColorB); /* white */
+  font-weight:normal;
+  text-align:center;
+  vertical-align:middle;
+  cursor:pointer;
+}

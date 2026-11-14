@@ -1,0 +1,29 @@
+.MainMenu {
+  height: 40px;
+  width: 100%;
+  background-color: $_(clickable);
+}
+    
+.SubMenu {
+  height: 20px;
+  width: 100%;
+  background-color: $_(clickable);
+}
+  
+.SubMenuItem {
+  font-weight: bold;
+  float: left;
+  padding-left: 5px;
+  padding-right: 5px;
+  height: 20px;
+  text-align:center;
+  vertical-align:middle;
+  color: $_(textColorA); /* white */
+  line-height:20px;
+  border-right:1px solid $_(black); /* black */
+  cursor:pointer;      
+}
+    
+.SubMenuItem_Hover {
+  background-color:$_(active); /* #565657 */      
+}

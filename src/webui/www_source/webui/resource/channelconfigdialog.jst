@@ -1,0 +1,112 @@
+<div id="ChannelConfigDialog">
+<div id="ChannelConfigDialogTitle" onmousedown="new Drag($('ChannelConfigDialog'), event);"><span name="generalChannelConfigTitle">Allgemeine Kanaleinstellungen:</span> ${channel.address}</div>
+<div id="ChannelConfigDialogContent">
+
+  <div id="ChannelConfigDialogContentLeft">
+    <div  class="ChannelConfigDialogSection">
+      <div class="CLASS11000">
+        <div class="CLASS11001">${channel.imageHTML}</div>
+      </div>
+      <div class="CLASS11002">${channel.typeName}</div>
+    </div>
+    
+    {if channel.supportsComTest()}
+    <div id="channelFunctionTestPanel" class="ChannelConfigDialogSection">
+      <div class="CLASS11003" name="generalDeviceChannelConfigLblFuncTest">Funktionstest</div>
+      <hr />
+      <div>
+        <table border="0"  class="ChannelConfigDialogTable" width="250px">
+          <tr>
+            <td width="50%"><div id="ChannelConfigDialogTestButton" class="StdButton" name="generalDeviceChannelConfigBtnFuncTest" onclick="ChannelConfigDialog.startTest();">Test starten</div></td>
+            <td width="50%"><div id="ChannelConfigDialogTestResult">--:--:--</div></td>
+          </tr>
+        </table>
+        <div class="CLASS11004">
+          <p name="generalChannelConfigHint">
+            Im Rahmen des Funktionstests wird gepr&uuml;ft, ob die Kommunikation mit dem Kanal fehlerfrei funktioniert.
+          </p>
+          {if channel.category == Channel.CATEGORY.SENDER}<p name="generalChannelConfigHintSender">Bei Sensoren wartet die HomeMatic Zentrale, bis diese sich melden. Eine Fernbedienung meldet sich z.B. erst dann, wenn sie manuell betätigt wird.</p>{/if}
+          {if channel.category == Channel.CATEGORY.RECEIVER}<p name="generalChannelConfigHintReceiver">Bei Aktoren wird dazu in der Regel ein Schaltbefehl ausgelöst.</p>{/if}
+          </div>
+      </div>
+    </div>
+    {/if}
+    {if ChannelConfigDialog.getCentralLinkInterface(channel)}
+      <div id="channelCentralLink" class="ChannelConfigDialogSection">
+      <div class="CLASS11003"><span name="generalDeviceChannelConfigLblCentralLink">Taster-/Schaltevent an Zentrale</span>&nbsp;<img src="/ise/img/help.png" style="cursor: pointer; width:18px; height:18px; position:relative; top:2px" onclick="ChannelConfigDialog.showConfigCentralLinkHelp();"></div>
+      <hr />
+       <div>
+        <table border="0" class="ChannelConfigDialogTable" width="250px">
+          <tr>
+            <td width="50%"><div id="ChannelConfigDialogCreateCentralLinkButton" class="StdButton" name="channelConfigBtnCreateCentralLink" onclick="ChannelConfigDialog.createCentralLink();">Aktivieren</div></td>
+            <td width="50%"><div id="ChannelConfigDialogRemoveCentralLinkButton" class="{if !channel.hasProgramIds()}StdButton{else}StdButtonInactive{/if}" name="channelConfigBtnRemoveCentralLink" onclick="{if !channel.hasProgramIds()}ChannelConfigDialog.removeCentralLink();{/if}">Deaktivieren</div></td>
+          </tr>
+        </table>
+      </div>
+      </div>
+    {/if}
+  </div>
+
+  <div id="ChannelConfigDialogContentMain">
+    <div class="ChannelConfigDialogSection">
+      <table border="0" cellspacing="0" cellpadding="2px"  class="ChannelConfigDialogTable">
+        <tr><td name="generalDeviceChannelConfigLblName">Name:</td><td><input id="ChannelConfigDialog_ChannelName" class="CLASS11005" type="text" value="${channel.name}"/></td></tr>
+        <tr><td name="generalDeviceChannelConfigLblTypeDescription">Typenbezeichnung:</td><td><input class="CLASS11005" disabled="disabled" readonly="readonly" type="text" value="${channel.typeName}"/></td></tr>
+        <tr><td name="generalDeviceChannelConfigLblSerialNumber">Seriennummer:</td><td><input class="CLASS11005" disabled="disabled" readonly="readonly" type="text" value="${channel.address}"/></td></tr>
+        <tr><td name="generalDeviceChannelConfigLblCategory">Kategorie:</td><td><input class="CLASS11005" disabled="disabled" readonly="readonly" type="text" 
+            {if channel.category == Channel.CATEGORY.SENDER} value="Sender (Sensor)" id="generalChannelConfigLblSender" {/if}
+            {if channel.category == Channel.CATEGORY.RECEIVER} value="Empf&auml;nger (Aktor)" id="generalChannelConfigLblReceiver" {/if}
+            {if channel.category == Channel.CATEGORY.NONE} value="nicht verkn&uuml;pfbar" id="generalChannelConfigLblNone"{/if}
+            />
+        </td></tr>
+        <tr><td name="generalDeviceChannelConfigLblTransmitMode">&Uuml;bertragungsmodus:</td>
+          <td>
+            <select id="ChannelConfigDialog_Mode" class="CLASS11005" {if !channel.isAesAvailable} disabled="disabled" readonly="readonly" {/if}>
+              <option value="Standard" name="lblStandard" {if channel.mode == translateKey(Channel.MODE.DEFAULT)} selected="selected" {/if} >Standard</option>
+              <option value="Gesichert" name="lblSecured" {if channel.mode == translateKey(Channel.MODE.AES)} selected="selected" {/if} >Gesichert</option>
+            </select>
+          </td>
+        </tr>
+        <tr><td name="generalDeviceChannelConfigLblUsable">Bedienbar:</td><td><input id="ChannelConfigDialog_isUsable" type="checkbox" {if channel.isUsable} checked="checked" {/if} {if !channel.isWritable} disabled="disabled" readonly="readonly" {/if}/></td></tr>
+        <tr><td name="generalDeviceChannelConfigLblVisible">Sichtbar:</td><td><input id="ChannelConfigDialog_isVisible" type="checkbox" {if channel.isVisible} checked="checked" {/if}/></td></tr>
+        <tr id="btnEnableChannelLogging"><td name="generalDeviceChannelConfigLblLogged">Protokolliert:</td><td><input id="ChannelConfigDialog_isLogged" type="checkbox" {if channel.isLogged} checked="checked" {/if} {if !channel.isLogable} disabled="disabled" readonly="readonly" {/if}/></td></tr>
+      </table>
+    </div>
+    
+    <div  id="ChannelConfigDialogSectionRoom" class="ChannelConfigDialogSection">
+      <img src="{if !isRoomListVisible}/ise/img/plus.png{else}/ise/img/minus.png{/if}" class="CLASS11006" width="16px" height="16px" onclick="ChannelConfigDialog.toggleRooms(this);">
+      <div class="CLASS11007" name="generalChannelConfigLblRooms">R&auml;ume</div>
+      <hr />
+      <form id="ChannelConfigDialogRooms" {if !isRoomListVisible} style="display:none" {/if} >
+        <table class="ChannelConfigDialogTable">
+          {for room in rooms}
+          <tr>
+            <td><input type="checkbox" name="values" value="${room.id}" {if room.contains(channel.id)} checked="checked" {/if}/></td><td>${room.name}</td>
+          </tr>
+          {/for}
+        </table>
+      </form>
+    </div>
+    
+    <div id="ChannelConfigDialogSectionFunc" class="ChannelConfigDialogSection">
+      <img src="{if !isSubsectionListVisible}/ise/img/plus.png{else}/ise/img/minus.png{/if}" class="CLASS11006" width="16px" height="16px" onclick="ChannelConfigDialog.toggleFuncs(this);">
+      <div class="CLASS11007" name="generalChannelConfigLblFunctions">Gewerke</div>
+      <hr />
+      <form id="ChannelConfigDialogFuncs" {if !isSubsectionListVisible} style="display:none" {/if}>
+        <table class="ChannelConfigDialogTable">
+          {for func in funcs}
+          <tr>
+            <td><input type="checkbox" name="values" value="${func.id}" {if func.contains(channel.id)} checked="checked" {/if}/></td><td>${func.name}</td>
+          </tr>
+          {/for}
+        </table>
+      </form>
+    </div>
+    
+  </div>
+</div>
+<div id="ChannelConfigDialogFooter">
+  <div class="ChannelConfigDialogButton FooterButton" name="btnCancel" id="ChannelConfigDialogAbortButton" onclick="ChannelConfigDialog.abort();">Abbrechen</div>
+  <div class="ChannelConfigDialogButton FooterButton" name="btnOk" id="ChannelConfigDialogOkButton" onclick="ChannelConfigDialog.ok();">OK</div>
+</div>
+</div>

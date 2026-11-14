@@ -1,0 +1,21 @@
+"dim_down" : "MP3 - quieter",
+"dim_up" : "MP3 - louder",
+"dimmer_off" : "MP3 - off",
+"dimmer_off_darker" : "MP3 - off/quieter",
+"dimmer_on" : "MP3 - on",
+"dimmer_on_brighter" : "MP3 - on/louder",
+"dimmer_on_off" : "MP3 - on/off",
+"dimmer_on_off_b_d" : "MP3 - on/off &amp; louder/quieter",
+"dimmer_toggle" : "MP3 on/off in turn",
+"dimmer_on_when_change_signal" : "MP3 on when change signal",
+
+"internalSystemSound" : "Internal sound",
+"randomPlayback" : "Random repeat",
+"soundOldValue" : "Last MP3 file played",
+"dontCare" : "Ignore",
+
+"noRepetitions" : "No repeat",
+"infiniteRepetitions" : "Continuously",
+
+"condThresholdLo" : "Lower limit",
+"condThresholdHi" : "Upper limit",

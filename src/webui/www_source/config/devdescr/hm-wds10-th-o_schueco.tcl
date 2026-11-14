@@ -1,0 +1,27 @@
+#!/bin/tclsh
+
+#Typ dieser Beschreibung (Schlüssel)
+#-----------------------------------------------------------------------
+#set TYPE "HM-WDS10-TH-O"
+set TYPE "263 158"
+
+#Beschreibung des Gerätetyps
+#-----------------------------------------------------------------------
+#set DESCRIPTION "Funk- Temperatur-/ Feuchtesensor außen"
+set DESCRIPTION "263_158"
+
+#Pfade zu den Bildern verschiedener Größe
+#lappend PATHLIST <Pixellänge maximale Ausdehnung> <Pfad zum Bild>
+#-----------------------------------------------------------------------
+set     PATHLIST ""
+lappend PATHLIST [list  50	"/config/img/devices/50/TH_CS_thumb.png"]
+lappend PATHLIST [list  250	"/config/img/devices/250/TH_CS.png"]
+
+#Koordinaten für Highlight:
+#P {<Formname> <Formtyp> <x,y,dx,dy,r je nach Formtyp>}
+#-----------------------------------------------------------------------
+set     P ""
+#Beispiel Circle: varname kreistyp x y r
+#lappend P {"4"   1 380 475 170}
+#Beispiel Rectangle varname rechtecktyp x y dx dy
+#lappend P {"1+2" 2 187 202 380 302}

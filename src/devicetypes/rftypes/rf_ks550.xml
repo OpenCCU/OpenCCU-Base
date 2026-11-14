@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="device.xsl"?>
+<device version="10" rx_modes="CONFIG,WAKEUP,BURST" default="WAKEUP" cyclic_timeout="600">
+
+  <docu brief="Funk-Kombisensor" target="internal,user,oem">
+  </docu>
+
+  <supported_types>
+    <type name="KS550" id="KS550">
+      <parameter index="10.0" size="2.0" const_value="7"/>
+    </type>
+	<type name="KS888" id="KS888">
+      <parameter index="10.0" size="2.0" const_value="31"/>
+    </type>
+	<type name="KS550Tech" id="KS550Tech">
+      <parameter index="10.0" size="2.0" const_value="44"/>
+    </type>
+	<type name="KS550LC" id="KS550LC">
+      <parameter index="10.0" size="2.0" const_value="51"/>
+    </type>
+    <type name="HM-WDS100-C6-O" id="HM-WDS100-C6-O">
+      <parameter index="10.0" size="2.0" const_value="0x0040"/>
+    </type>
+	<!-- <type name="HM-WDS100-C6-O-2" id="HM-WDS100-C6-O-2" updatable="true">
+      <parameter index="10.0" size="2.0" const_value="0x00ae"/>
+    </type> -->
+  </supported_types>
+  
+  <paramset type="MASTER" id="ks550_dev_master">
+    <parameter id="LIVE_MODE_RX">
+      <logical type="boolean" default="false"/>
+      <physical type="integer" interface="config"  list="0" index="1" size="1.0"/>
+    </parameter>
+  </paramset>
+      
+  <channels>
+    <channel index="0" type="MAINTENANCE" ui_flags="internal" class="maintenance" count="1">
+      <paramset type="MASTER" id="maint_ch_master">
+      </paramset>
+    
+      <paramset type="VALUES" id="maint_ch_values">
+        <parameter id="UNREACH" operations="read,event" ui_flags="service">
+        <docu default="true"></docu>
+        <logical type="boolean"/>
+        <physical type="integer" interface="internal" value_id="UNREACH"/>
+      </parameter>
+      <parameter id="STICKY_UNREACH" operations="read,write,event" ui_flags="service,sticky">
+        <docu default="true"></docu>
+        <logical type="boolean"/>
+        <physical type="integer" interface="internal" value_id="STICKY_UNREACH"/>
+      </parameter>
+      <parameter id="CONFIG_PENDING" operations="read,event" ui_flags="service">
+        <docu default="true"></docu>
+        <logical type="boolean"/>
+        <physical type="integer" interface="internal" value_id="CONFIG_PENDING"/>
+      </parameter>
+      <parameter id="LOWBAT" operations="read,event" ui_flags="service">
+        <docu default="true"></docu>
+        <logical type="boolean"/>
+        <physical type="integer" interface="internal" value_id="LOWBAT"/>
+      </parameter>
+        <parameter id="RSSI_DEVICE" operations="read,event">
+          <docu default="true"></docu>
+          <logical type="integer"/>
+          <physical type="integer" interface="internal" value_id="RSSI_DEVICE"/>
+        </parameter>
+        <parameter id="RSSI_PEER" operations="read,event">
+          <docu default="true"></docu>
+          <logical type="integer"/>
+          <physical type="integer" interface="internal" value_id="RSSI_PEER"/>
+        </parameter>
+        <parameter id="DEVICE_IN_BOOTLOADER" operations="read,event" ui_flags="service">
+          <docu default="true"></docu>
+          <logical type="boolean"/>
+          <physical type="integer" interface="internal" value_id="DEVICE_IN_BOOTLOADER"/>
+        </parameter>
+        <parameter id="UPDATE_PENDING" operations="read,event" ui_flags="service">
+          <docu default="true"></docu>
+          <logical type="boolean"/>
+          <physical type="integer" interface="internal" value_id="UPDATE_PENDING"/>
+        </parameter>
+    </paramset>
+    </channel>
+  
+    <channel index="1" type="WEATHER">
+    <link_roles>
+      <source name="WEATHER_CS"/>    
+    </link_roles>
+    
+    <paramset type="MASTER" id="ks550_ch_master">
+      <parameter id="SUNSHINE_THRESHOLD">
+        <docu default="false" brief="Sonnenscheinschwelle"></docu>
+        <logical type="integer" min="0" max="0xff"/>
+        <physical type="integer" interface="config"  list="1" index="5.0" size="1.0"/>
+      </parameter>
+    </paramset>
+    <paramset type="VALUES" id="ks550_ch_values">
+      <parameter id="TEMPERATURE" operations="read,event">
+        <docu default="false" brief="Temperatur">Der Parameter beinhaltet die gemessene Temperatur.</docu>
+        <logical type="float" min="-40.0" max="80.0" unit="&#176;C"/>
+        <physical type="integer" interface="command" value_id="TEMPERATURE" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <conversion type="float_integer_scale" factor="10.0"/>
+        <description>
+          <field id="AutoconfRoles" value="WEATHER"/>
+        </description>
+      </parameter>
+      <parameter id="HUMIDITY" operations="read,event">
+        <docu default="false" brief="Luftfeuchtigkeit">Der Parameter beinhaltet die gemessene relative Luftfeuchtigkeit.</docu>
+        <logical type="integer" min="0" max="99" unit="%"/>
+        <physical type="integer" interface="command" value_id="HUMIDITY" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <description>
+          <field id="AutoconfRoles" value="WEATHER"/>
+        </description>
+      </parameter>
+      <parameter id="RAINING" operations="read,event">
+        <docu default="false" brief="Regnet es zur Zeit?">Der Parameter gibt an, ob es momentan regnet.</docu>
+        <logical type="boolean"/>
+        <physical type="integer" interface="command" value_id="RAINING" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+      </parameter>
+      <parameter id="RAIN_COUNTER" operations="read,event" control="NONE">
+        <docu default="false" brief="Regenmenge">Der Parameter gibt die gemessene Regenmenge an.</docu>
+        <logical type="float" min="0.0" max="9666.265" unit="mm"/>
+        <physical type="integer" interface="command" value_id="RAIN_COUNTER" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <conversion type="float_integer_scale" factor="3.38983050847"/>
+      </parameter>
+      <parameter id="WIND_SPEED" operations="read,event">
+        <docu default="false" brief="Windgeschwindigkeit">Der Parameter gibt die gemessene Windgeschwindigkeit an.</docu>
+        <logical type="float" min="0.0" max="1638.3" unit="km/h"/>
+        <physical type="integer" interface="command" value_id="WIND_SPEED" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <conversion type="float_integer_scale" factor="10.0"/>
+      </parameter>
+      <parameter id="WIND_DIRECTION" operations="read,event">
+        <docu default="false" brief="Windrichtung">
+          Der Parameter gibt die gemessene Windrichtung an. Die übertragene Richtungsangabe entspricht im Auslieferungszustand
+          nicht der Ausrichtung einer Windrose (0 = Nord), da die Ausrichtung nicht festgelegt ist. Die 0-Grad-Position muss
+          während der Installation festgelegt werden.
+        </docu>
+        <logical type="integer" min="0" max="355" unit="degree"/>
+        <physical type="integer" interface="command" value_id="WIND_DIRECTION" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <conversion type="integer_integer_scale" div="5"/>
+      </parameter>
+      <parameter id="WIND_DIRECTION_RANGE" operations="read,event">
+        <docu default="false" brief="Schwankungsbreite der Windrichtung">Der Parameter gibt die gemessene Schwankungsbreite der Windrichtung an.</docu>
+        <logical type="integer" min="0" max="67" unit="degree"/>
+        <physical type="integer" interface="command" value_id="WIND_DIRECTION_RANGE" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+        <conversion type="integer_integer_scale" div="45" mul="2"/>
+      </parameter>
+      <parameter id="SUNSHINEDURATION" operations="read,event">
+        <docu default="false" brief="Sonnenscheindauer">Der Parameter gibt die gemessene Sonnenscheindauer an.</docu>
+        <logical type="integer" min="0" max="255"/>
+        <physical type="integer" interface="command" value_id="SUNSHINEDURATION" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+      </parameter>
+      <parameter id="BRIGHTNESS" operations="read,event">
+        <docu default="false" brief="Helligkeit">
+          Der Parameter gibt die gemessene Helligkeit an. Die Messgenauigkeit ist für die Angabe eines genauen Helligkeitswertes nicht geeignet.
+          Dieser Wert wird lediglich zur Erfassung der Sonnenscheindauer verwendet.
+        </docu>
+        <logical type="integer" min="0" max="255"/>
+        <physical type="integer" interface="command" value_id="BRIGHTNESS" no_init="true">
+          <event frame="WEATHER_EVENT"/>
+        </physical>
+      </parameter>
+    </paramset>
+    
+    <paramset type="LINK" id="ks550_ch_link">
+      <parameter id="STORM_UPPER_THRESHOLD">
+        <docu default="false" brief="Oberer Schwellwert, ab welcher der Schaltbefehl gesendet wird.">
+          Dieser Parameter bestimmt die Windstärke, welche überschritten werden muss, um übertragen zu werden.
+          Hiermit kann z. B. gewählt werden, ab welcher Windstärke die Markisensteuerung die Markise einfährt.
+        </docu>
+        <logical type="integer" min="0" max="0xff"/>
+        <physical type="integer" interface="config"  list="1" index="6.0" size="1.0"/>
+        </parameter>
+      <parameter id="STORM_LOWER_THRESHOLD">
+        <docu default="false" brief="Unterer Schwellwert, ab welcher der Schaltbefehl gesendet wird.">
+          Dieser Parameter bestimmt die Windstärke, welche unterschritten werden muß, um übertragen zu werden.
+        </docu>
+        <logical type="integer" min="0" max="0xff"/>
+        <physical type="integer" interface="config"  list="1" index="7.0" size="1.0"/>
+      </parameter>
+    </paramset>
+    
+    <enforce_link>
+      <value id="SHORT_CT_RAMPOFF" value="0"/>
+      <value id="SHORT_CT_RAMPON" value="0"/>
+      <value id="SHORT_COND_VALUE_LO" value="200"/>
+      <value id="SHORT_JT_REFOFF" value="1"/>
+    </enforce_link>
+
+    </channel>
+  </channels>
+  
+  <frames>
+    <frame id="WEATHER_EVENT" direction="from_device" event="true" fixed_channel="1" type="0x70">
+      <parameter type="integer" signed="true" index="9.0" size="1.7" param="TEMPERATURE"/>
+      <parameter type="integer" index="11.0" size="1.0" param="HUMIDITY"/>
+      <parameter type="integer" index="12.7" size="0.1" param="RAINING"/>
+      <parameter type="integer" index="12.0" size="1.7" param="RAIN_COUNTER"/>
+      <parameter type="integer" index="14.0" size="1.6" param="WIND_SPEED"/>
+      <parameter type="integer" index="16.0" size="1.0" param="WIND_DIRECTION"/>
+      <parameter type="integer" index="14.6" size="0.2" param="WIND_DIRECTION_RANGE"/>
+      <parameter type="integer" index="17.0" size="1.0" param="SUNSHINEDURATION"/>
+      <parameter type="integer" index="18.0" size="1.0" param="BRIGHTNESS"/>
+    </frame>
+  </frames>
+
+  <paramset_defs>
+  </paramset_defs>
+  
+</device>
