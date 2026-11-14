@@ -20,7 +20,7 @@ or extended in it.
   `not set (default key)`), read with `crypttool` from
   `/etc/config/crypttool.cfg`. Before, this could only be checked with a
   script
-  ([#364](https://github.com/OpenCCU/OpenCCU-Base/pull/364); refs
+  ([#365](https://github.com/OpenCCU/OpenCCU-Base/pull/365); refs
   [OpenCCU/OpenCCU#4726](https://github.com/OpenCCU/OpenCCU/issues/4726),
   @MichaelN0815)
 * the teach-in dialog shows below the teach-in counter of HmIP-RF and
