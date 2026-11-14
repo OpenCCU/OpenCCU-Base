@@ -18,8 +18,9 @@ or extended in it.
 * the help page shows in the HomeMatic-RF (HmRF) block whether a
   BidCos-RF security key is set ("Security Key": `set (index N)` or
   `not set (default key)`), read with `crypttool` from
-  `/etc/config/crypttool.cfg`. Before, this could only be checked with a
-  script
+  `/etc/config/crypttool.cfg`; if the key index of `rfd` in
+  `/etc/config/keys` differs, it is added (`rfd: index N`). Before, this
+  could only be checked with a script
   ([#365](https://github.com/OpenCCU/OpenCCU-Base/pull/365); refs
   [OpenCCU/OpenCCU#4726](https://github.com/OpenCCU/OpenCCU/issues/4726),
   @MichaelN0815)
