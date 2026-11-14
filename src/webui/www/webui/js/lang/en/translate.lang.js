@@ -521,6 +521,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsCMBtnLogLoadLogFile" : "Download log file",
     "dialogSettingsCMErrorTitle" : "Software update - error",
     "dialogSettingsCMErrorSoftwareUpdate" : "The uploaded file does not contain valid software.",
+    "dialogSettingsCMErrorSoftwareUpdateNoSpace" : "The uploaded file is valid, but there is not enough free space to prepare the update. Please free up some space, e.g. by removing add-ons or backups that are no longer needed, and try again.",
     "dialogSettingsCMHintSoftwareUpdate1" : "Attention!",
     "dialogSettingsCMHintSoftwareUpdate2" : "Do not disconnect the Central Control Unit from the power supply while the update is in progress. The device may be damaged.",
     "dialogSettingsCMHintSoftwareUpdate3" : "Please perform a data backup before starting the update.",

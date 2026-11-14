@@ -182,6 +182,14 @@ proc action_firmware_update_confirm {} {
 
 proc action_firmware_update_invalid {} {
   global env downloadOnly
+
+  # set by action_firmware_upload if the file is valid but there is not
+  # enough free space to prepare the update
+  set requiredMB ""
+  set availableMB ""
+  catch { import requiredMB }
+  catch { import availableMB }
+  set nospace [expr {[string is integer -strict $requiredMB] && [string is integer -strict $availableMB]}]
    
   http_head
   division {class="popupTitle"} {
@@ -194,8 +202,15 @@ proc action_firmware_update_invalid {} {
           table {class="CLASS20913"} {
             table_row {
               table_data {
-                puts {
-                  ${dialogSettingsCMErrorSoftwareUpdate}
+                if { $nospace } {
+                  set requiredGB [format "%.2f" [expr {$requiredMB / 1024.0}]]
+                  set availableGB [format "%.2f" [expr {$availableMB / 1024.0}]]
+                  puts "\${dialogSettingsCMErrorSoftwareUpdateNoSpace}<br/><br/>"
+                  puts "\${dialogSettingsCMLblFreeUserSpace} $availableGB GB (&gt;&nbsp;$requiredGB GB \${dialogSettingsCMLblFreeUserSpaceRequired})"
+                } else {
+                  puts {
+                    ${dialogSettingsCMErrorSoftwareUpdate}
+                  }
                 }
               }
             }
@@ -351,6 +366,78 @@ proc execCmd {varName cmd} {
   }
 }
 
+# 1 if dd supports conv=sparse. The recovery system is built with the same
+# BusyBox and then unpacks the disk image of an update as sparse file, which
+# needs considerably less free space than its full size.
+proc firmware_sparse_supported {} {
+  if {[catch {exec dd if=/dev/null of=/dev/null conv=sparse status=none 2>/dev/null}]} {
+    return 0
+  }
+  return 1
+}
+
+# free space of the userfs (/usr/local) in bytes, -1 if unknown
+proc get_userfs_free_bytes {} {
+  if {[catch {exec df -k /usr/local | tail -1 | awk {{ print $(NF-2) }}} kbytes]
+      || ![string is wide -strict $kbytes] || $kbytes < 0} {
+    return -1
+  }
+  return [expr {wide($kbytes) * 1024}]
+}
+
+# Free space in bytes the recovery system needs on the userfs to prepare the
+# uploaded firmware file (fwprepare of fwinstall.sh), in addition to the
+# file itself: the unpacked content of a zip or tar archive, where the disk
+# image (*.img) of a zip archive is unpacked as sparse file if supported
+# (estimated as three times the size of the zip file, at most its full
+# size). Other files are only moved (0). -1 if it cannot be determined.
+proc get_firmware_required_bytes {filename} {
+  if {[catch {exec file -b $filename} type]} {
+    return -1
+  }
+
+  if {[string match "*Zip archive data*" $type]} {
+    if {[catch {exec /usr/bin/unzip -l $filename 2>/dev/null} listing]} {
+      return -1
+    }
+    set total -1
+    set img -1
+    foreach line [split $listing "\n"] {
+      if {[regexp {^\s*(\d+)\s+[0-9][0-9-]+\s+[0-9][0-9:]+\s+(.*\S)\s*$} $line -> size name]} {
+        if {$img < 0 && [string match "*.img" $name]} {
+          set img $size
+        }
+      } elseif {[regexp {^\s*(\d+)\s+\d+ files?\s*$} $line -> size]} {
+        set total $size
+      }
+    }
+    if {$total < 0} {
+      return -1
+    }
+    if {$img < 0} {
+      return $total
+    }
+    set sparse $img
+    if {[firmware_sparse_supported]} {
+      set sparse [expr {3 * wide([file size $filename])}]
+      if {$sparse > $img} {
+        set sparse $img
+      }
+    }
+    return [expr {wide($total) - $img + $sparse}]
+  }
+
+  if {[regexp {gzip compressed|tar archive} $type]} {
+    if {[catch {exec /bin/tar -tvf $filename 2>/dev/null | awk {{ s += $3 } END { print s + 0 }}} total]
+        || ![string is wide -strict $total]} {
+      return -1
+    }
+    return $total
+  }
+
+  return 0
+}
+
 proc action_put_page {} {
   global env sid REMOTE_FIRMWARE_SCRIPT LOGLEVELS HMIP_LOGLEVELS REGA_LOGLEVELS RFD_URL HS485D_URL downloadOnly
   http_head
@@ -371,7 +458,14 @@ proc action_put_page {} {
     } else {
       set USERFSFREE_GB "\${dialogSettingsCMLblFreeUserSpaceUnknown}"
     }
-    set USERFSFREE_MB_REQ 2867.2
+    # free space for an update with a release zip (~400 MB): the zip plus
+    # its unpacked disk image (2.3 GB), which the recovery system unpacks
+    # as sparse file (about three times the zip size) if supported
+    if {[firmware_sparse_supported]} {
+      set USERFSFREE_MB_REQ 1843.2
+    } else {
+      set USERFSFREE_MB_REQ 2867.2
+    }
     set USERFSFREE_GB_REQ [format "%.1f" [expr {$USERFSFREE_MB_REQ / 1024.0}]]
   }
   
@@ -1126,6 +1220,18 @@ proc action_firmware_upload {} {
     if { $file_invalid == 0 && [file exists /usr/local/.firmwareUpdate] } {
       #set action "acceptEula"
       set action "askCreateBackup"
+
+      # check that the recovery system will have enough free space to
+      # prepare the update, otherwise it would only fail after the reboot
+      set required [get_firmware_required_bytes $filename]
+      set available [get_userfs_free_bytes]
+      if { $required >= 0 && $available >= 0 && $required >= $available } {
+        file delete -force -- $filename
+        catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
+        set requiredMB [expr {($required + 1048575) / 1048576}]
+        set availableMB [expr {$available / 1048576}]
+        set action "firmware_update_invalid&requiredMB=$requiredMB&availableMB=$availableMB"
+      }
     } else {
       file delete -force -- $filename
       catch { exec rm -f /usr/local/.firmwareUpdate /tmp/EULA.* }
