@@ -104,7 +104,9 @@ what you could and could not test.
   The release workflow (`.github/workflows/release.yml`) builds the release
   notes from these changelogs with `scripts/changelog-sections.py`, so keep
   the `## <version> (<YYYY-MM-DD>)` / `## Unreleased` headings and `* ` list
-  entries.
+  entries. The release notes show every entry as one line: the title of its
+  pull request followed by the parenthesis at the end of the entry, so keep
+  the links and authors in that final parenthesis.
 - WebUI, Tcl and ReGa code must escape every user-controlled value.
 - Changes to the closed-source binaries come from eQ-3; do not patch them.
 

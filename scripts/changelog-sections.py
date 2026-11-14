@@ -2,7 +2,8 @@
 """Print the changelog entries of the OpenCCU-Base components that are new
 between two git revisions, as Markdown for release notes.
 
-Usage: scripts/changelog-sections.py [--limit N] [--collapse COMPONENT:SUBSECTION]
+Usage: scripts/changelog-sections.py [--compact [--pr-titles FILE]] [--limit N]
+                                     [--collapse COMPONENT:SUBSECTION]
                                      [--link-base URL] <old> <new>
 
 Every src/<component>/CHANGELOG.md of <new> is compared with the same
@@ -18,18 +19,35 @@ The output starts with "## Component changes" and uses "###" for the
 components, "####" for their sections and "#####" for subsections. It is
 empty if nothing is new.
 
+With --compact, every component is a "###" heading linked to its changelog,
+followed by the new versions, and every change is one line: the title of its
+pull request (from --pr-titles, without a "component: " prefix) or else the
+first clause of the entry, followed by the references and authors at the end
+of the entry. A pull request with several entries in one component gives one
+line. The entries of a subsection given with --collapse are always one line
+with a link to the changelog.
+
 With --limit, the output is shortened until it fits: first the entries of
 the subsections given with --collapse are replaced by a link to their
 changelog, then the largest components.
 """
 
 import argparse
+import json
 import re
 import subprocess
 
 SKIPPED_SECTIONS = ("Older versions",)
+# components without a version of their own: their sections carry the release
+RELEASE_VERSIONED = ("webui", "devicetypes", "hmipserver")
 DATE_RE = re.compile(r"\((\d{4}-\d{2}-\d{2})\)\s*$")
 AUTHORS_RE = re.compile(r"(, | \()@[A-Za-z0-9-]+(?:, @[A-Za-z0-9-]+)*\)$")
+# a pull request of this repository, written as "[#123](.../pull/123)"
+OWN_PR_RE = re.compile(r"\[#(\d+)\]\([^)\s]*/pull/(\d+)\)")
+# "rfd: ", "libelvutils, hs485d: ", "fix(webui): " at the start of a title
+TITLE_PREFIX_RE = re.compile(
+    r"^(?:[\w./-]+(?:, [\w./-]+)*(?:\([\w ,./-]+\))?|[a-z]+\([\w ,./-]+\)): ")
+VERSION_HEADING_RE = re.compile(r"^(\S+)(?: \(\d{4}-\d{2}-\d{2}\))?$")
 
 
 def git(*args):
@@ -120,6 +138,51 @@ def new_entries(old_text, new_text, cutoff):
     return picked
 
 
+def split_references(entry):
+    """Return the text of an entry and the content of the parenthesis at its
+    end (links and authors, e.g. "[#1](...), fixes [#2](...), @a"), or ""."""
+    text = " ".join(entry[2:].split()).rstrip(".")
+    if text.endswith(")"):
+        depth = 0
+        for i in range(len(text) - 1, -1, -1):
+            depth += {")": 1, "(": -1}.get(text[i], 0)
+            if depth == 0:
+                return text[:i].rstrip(" ."), text[i + 1:-1]
+    return text, ""
+
+
+def first_clause(text, length=110):
+    """Return the first clause of a changelog text, shortened to length."""
+    masked = text.replace("e.g.", "e\0g\0").replace("i.e.", "i\0e\0")
+    clause = re.split(r"(?<=[a-z0-9`)\"])[:;.] ", masked, maxsplit=1)[0]
+    clause = clause.replace("\0", ".")
+    if len(clause) > length:
+        clause = clause[:length - 2].rsplit(" ", 1)[0] + " …"
+    return clause
+
+
+def compact_line(entry, titles, seen):
+    """Return the one-line form of an entry, or None for a pull request that
+    already has a line (seen)."""
+    text, references = split_references(entry)
+    numbers = [a for a, b in OWN_PR_RE.findall(references) if a == b]
+    pr = titles.get(numbers[0]) if numbers else None
+    if pr and pr.get("title"):
+        if numbers[0] in seen:
+            return None
+        seen.add(numbers[0])
+        title = TITLE_PREFIX_RE.sub("", pr["title"].strip())
+        if re.match(r"[A-Z][a-z]", title):
+            title = title[0].lower() + title[1:]
+        author = pr.get("author") or ""
+        if (not re.search(r"@[A-Za-z0-9-]+", references) and author
+                and not author.endswith("[bot]") and author != "Copilot"):
+            references = f"{references}, @{author}" if references else f"@{author}"
+    else:
+        title = first_clause(text)
+    return f"* {title}" + (f" ({references})" if references else "")
+
+
 def main():
     """Print the new component changelog entries between two revisions."""
     parser = argparse.ArgumentParser(
@@ -137,11 +200,23 @@ def main():
                              "OpenCCU-Base/blob/<tag>")
     parser.add_argument("--collapse", action="append", default=[],
                         metavar="COMPONENT:SUBSECTION",
-                        help="with --limit, replace the entries of this "
-                             "subsection (e.g. \"webui:Migrated from OpenCCU "
-                             "patches\") by a link to the changelog before "
-                             "whole components are replaced")
+                        help="replace the entries of this subsection (e.g. "
+                             "\"webui:Migrated from OpenCCU patches\") by a "
+                             "link to the changelog: with --compact always, "
+                             "otherwise with --limit before whole components "
+                             "are replaced")
+    parser.add_argument("--compact", action="store_true",
+                        help="one line per change and headings linked to the "
+                             "changelogs")
+    parser.add_argument("--pr-titles", metavar="FILE",
+                        help="with --compact, JSON object of the pull requests "
+                             "of this repository: {\"123\": {\"title\": ..., "
+                             "\"author\": ...}}")
     args = parser.parse_args()
+    titles = {}
+    if args.pr_titles:
+        with open(args.pr_titles, encoding="utf-8") as titles_file:
+            titles = {str(k): v for k, v in json.load(titles_file).items()}
     collapsible = set()
     for item in args.collapse:
         component, sep, sub = item.partition(":")
@@ -166,6 +241,27 @@ def main():
                     out.append("\n".join(entries) + "\n")
         return "\n".join(out)
 
+    def render_compact(component, picked, link):
+        versions = [m.group(1) for heading, _ in picked
+                    for m in [VERSION_HEADING_RE.match(heading)]
+                    if m and heading != "Unreleased"]
+        # webui, devicetypes and hmipserver are dated with the release only
+        if versions and component not in RELEASE_VERSIONED:
+            span = versions[0] if len(versions) == 1 else f"{versions[-1]} – {versions[0]}"
+            heading = f"### [{component}]({link[0]}) {span}\n"
+        else:
+            heading = f"### [{component}]({link[0]})\n"
+        lines, seen = [], set()
+        for _, groups in picked:
+            for sub, _, entries in groups:
+                if (component, sub) in collapsible:
+                    lines.append(f"* {len(entries)} entries of \"{sub}\" "
+                                 f"([list]({link[0]}))")
+                    continue
+                lines += [line for line in (compact_line(e, titles, seen) for e in entries)
+                          if line]
+        return heading + "\n" + "\n".join(lines) + "\n"
+
     blocks = []
     for path in changelogs(args.new):
         picked = new_entries(show(args.old, path), show(args.new, path), cutoff)
@@ -173,6 +269,11 @@ def main():
             continue
         component = path.split("/")[1]
         link = (f"{args.link_base.rstrip('/')}/{path}" if args.link_base else path, path)
+        if args.compact:
+            full = render_compact(component, picked, link)
+            short = full.split("\n", 1)[0] + "\n\nSee the changelog for the changes.\n"
+            blocks.append([full, short, full])
+            continue
         short = (f"### {component}\n\n"
                  f"See [{path}]({link[0]}) for the changes.\n")
         blocks.append([render(component, picked, link, False), short,
