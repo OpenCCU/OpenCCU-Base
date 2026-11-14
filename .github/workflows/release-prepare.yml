@@ -221,9 +221,11 @@ jobs:
               -m "Give every component with unreleased changelog entries its version for the release (scripts/release-bump.py)."
           fi
 
-          # the generated trees are replaced as a whole, so files that are no
-          # longer generated are removed
-          rm -rf www firmware/rftypes firmware/hs485types usr/lib/tcl8.2/homematic
+          # the built trees are replaced as a whole, so files that are no
+          # longer built are removed (the archives hold the complete platform
+          # directories, including the prebuilt ReGaHss and tclticks.so)
+          rm -rf www firmware/rftypes firmware/hs485types usr/lib/tcl8.2/homematic \
+            bin/*-linux-* lib/*-linux-*
           for archive in "${ARTIFACTS}"/release-*-linux-*/release-*.tar.gz; do
             tar -xzf "${archive}"
           done
@@ -239,7 +241,8 @@ jobs:
             echo "::error::Nothing to release: no unreleased changes and no changed files."
             exit 1
           fi
-          git show --stat --format='%s' HEAD~1..HEAD | head -n 50
+          # sed reads all of the output: head would make git fail with SIGPIPE
+          git show --stat --format='%s' HEAD~1..HEAD | sed -n '1,50p'
 
       - name: Push and open the pull request
         shell: bash

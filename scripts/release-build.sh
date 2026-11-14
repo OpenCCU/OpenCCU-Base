@@ -24,8 +24,10 @@
 #   usr/lib/tcl8.2/homematic/
 #                        Tcl helpers (generated from src/tcl_homematic)
 #
-# The prebuilt ReGaHss binaries and lib/<platform>/tclticks.so, which is not
-# built from src/, are left as they are.
+# bin/<platform>/ and lib/<platform>/ are emptied first, so that a program,
+# library or alternate name that is no longer built is removed. The prebuilt
+# ReGaHss and lib/<platform>/tclticks.so, which is not built from src/, are
+# kept.
 
 set -euo pipefail
 
@@ -100,6 +102,10 @@ test -f "${tcl_libdir}/libtcl.so"
 
 build_dir="build/${platform}"
 rm -rf "${build_dir}"
+
+find "bin/${platform}" "lib/${platform}" -mindepth 1 -maxdepth 1 \
+  ! -path "bin/${platform}/ReGaHss" ! -path "lib/${platform}/tclticks.so" \
+  -exec rm -rf {} +
 
 if [[ ${assets} == true ]]; then
   # The device descriptions in firmware/ are generator output only. The

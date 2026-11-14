@@ -212,9 +212,13 @@ def main():
             parser.error(f"invalid --bump {item!r}: expected COMPONENT=major|minor|patch")
         if not (SRC / component / "CHANGELOG.md").is_file():
             parser.error(f"invalid --bump {item!r}: no changelog src/{component}/CHANGELOG.md")
+        if component in SKIPPED or component in RELEASE_VERSIONED:
+            parser.error(f"invalid --bump {item!r}: {component} has no version of its own here")
         levels[component] = level
 
+    # plan and check every change first, so that an error changes no file
     rows = []
+    writes = []
     for changelog in sorted(SRC.glob("*/CHANGELOG.md"), key=lambda p: p.parent.name.lower()):
         component = changelog.parent.name
         data = changelog.read_bytes()
@@ -252,20 +256,22 @@ def main():
                     reason = "an entry adds something" if adds else "fixes and changes"
                 version = raise_version(old, level)
                 reason = f"{level} ({reason})"
-            if not args.dry_run and version != current:
-                for location in where:
-                    location.write(component, version)
+            if version != current:
+                writes += [(location.write, component, version) for location in where]
 
-        if not args.dry_run:
-            new_heading = f"## {version} ({args.date})".encode()
-            line_end = b"\r" if heading.group(0).endswith(b"\r") else b""
-            changelog.write_bytes(data[:heading.start()] + new_heading + line_end
-                                  + data[heading.end():])
+        new_heading = f"## {version} ({args.date})".encode()
+        line_end = b"\r" if heading.group(0).endswith(b"\r") else b""
+        writes.append((Path.write_bytes, changelog, data[:heading.start()] + new_heading
+                       + line_end + data[heading.end():]))
         rows.append((component, old or "", version, len(entries(section)), reason))
 
     unknown = sorted(set(levels) - {row[0] for row in rows})
     if unknown:
         raise SystemExit(f"--bump for components without unreleased changes: {', '.join(unknown)}")
+
+    if not args.dry_run:
+        for write, *arguments in writes:
+            write(*arguments)
 
     lines = ["| Component | Previous | New | Entries | Reason |",
              "| --- | --- | --- | ---: | --- |"]
