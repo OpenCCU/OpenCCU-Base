@@ -15,6 +15,16 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* a firmware update now needs 1.8 GB instead of 2.8 GB of free user space
+  if the recovery system unpacks the disk image of the update as sparse file
+  (OpenCCU with BusyBox `dd conv=sparse`), otherwise the 2.8 GB remain.
+  After the upload, the maintenance page also checks whether the recovery
+  system will have enough free space to prepare the uploaded file, and if
+  not shows the available and the required space and removes the file,
+  instead of rebooting into the recovery system, where the update failed
+  ([#366](https://github.com/OpenCCU/OpenCCU-Base/pull/366); refs
+  [OpenCCU/OpenCCU#4741](https://github.com/OpenCCU/OpenCCU/pull/4741),
+  @jens-maus)
 * the teach-in dialog shows below the teach-in counter of HmIP-RF and
   HmIP-Wired whether the eQ-3 key server, which the teach-in of Homematic
   IP devices needs, can be reached from the CCU. It checks the server the
