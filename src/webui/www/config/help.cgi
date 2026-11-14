@@ -173,6 +173,19 @@ proc action_put_page {} {
   catch { set HMIP_DUTYCYCLE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .dutyCycle" /tmp/dutycycle.json] }
   set HMIP_CARRIERSENSE "n/a"
   catch { set HMIP_CARRIERSENSE [exec /usr/bin/jq -r ".\[\] | select(.address == \"$hm(HM_HMIP_SERIAL)\") | .carrierSense" /tmp/dutycycle.json] }
+  # crypttool -v -t 0 prints "Key OK" (exit 0) while the default key is active
+  # and "Key mismatch" (exit 1) once a user key is set; anything else -> n/a
+  set HMRF_SECKEY "n/a"
+  catch {exec /bin/crypttool -v -t 0 2>@1} SECKEYRES
+  if {[string match "*Key OK*" $SECKEYRES]} {
+    set HMRF_SECKEY "not set (default key)"
+  } elseif {[string match "*Key mismatch*" $SECKEYRES]} {
+    set HMRF_SECKEY "set"
+    execCmd HMRF_SECKEYINDEX {exec /bin/crypttool -g -t 1}
+    if {[string is integer -strict $HMRF_SECKEYINDEX]} {
+      append HMRF_SECKEY " (index $HMRF_SECKEYINDEX)"
+    }
+  }
 
   set sid ""
   catch {import sid}
@@ -274,6 +287,7 @@ proc action_put_page {} {
           putsVar "Address" "$hm(HM_HMRF_ADDRESS) ($hm(HM_HMRF_ADDRESS_ACTIVE))"
           putsVar "Serial" $hm(HM_HMRF_SERIAL)
           putsVar "DutyCycle, CarrierSense" "$HMRF_DUTYCYCLE %, $HMRF_CARRIERSENSE %"
+          putsVar "Security Key" $HMRF_SECKEY
         puts "</div>"
       puts "</td>"
 

@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* the help page shows in the HomeMatic-RF (HmRF) block whether a
+  BidCos-RF security key is set ("Security Key": `set (index N)` or
+  `not set (default key)`), read with `crypttool` from
+  `/etc/config/crypttool.cfg`. Before, this could only be checked with a
+  script
+  ([#364](https://github.com/OpenCCU/OpenCCU-Base/pull/364); refs
+  [OpenCCU/OpenCCU#4726](https://github.com/OpenCCU/OpenCCU/issues/4726),
+  @MichaelN0815)
 * the teach-in dialog shows below the teach-in counter of HmIP-RF and
   HmIP-Wired whether the eQ-3 key server, which the teach-in of Homematic
   IP devices needs, can be reached from the CCU. It checks the server the
