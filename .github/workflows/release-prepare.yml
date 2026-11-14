@@ -1,0 +1,283 @@
+# OpenCCU-Base release preparation
+#
+# Prepares a release as a pull request from the branch release/<tag>:
+#
+#   1. every component with unreleased changelog entries gets its version
+#      for the release (scripts/release-bump.py),
+#   2. all components are built for all four platforms from these sources
+#      (scripts/release-build.sh) and the built programs, libraries, WebUI,
+#      device descriptions and Tcl helpers are committed to bin/, lib/,
+#      www/, firmware/ and usr/.
+#
+# Merging the pull request (squash) starts the Release workflow, which
+# creates the release draft; publishing the draft creates the tag.
+# yamllint disable rule:truthy
+---
+name: Release preparation
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag of the new release (e.g. 3.89.12), prepared from the selected branch'
+        required: true
+        type: string
+      bump:
+        description: 'Bump levels overriding the automatic choice (e.g. "hss_led=minor,rfd=patch")'
+        required: false
+        type: string
+
+# default read-only permission
+permissions:
+  contents: read
+
+concurrency:
+  group: release-prepare
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    name: Component versions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      date: ${{ steps.bump.outputs.date }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check release tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          if [[ ! "${TAG}" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+            echo "::error::Invalid release tag '${TAG}' (expected e.g. 3.89.12)."
+            exit 1
+          fi
+          if [[ -n "${BUMP}" && ! "${BUMP}" =~ ^[A-Za-z0-9_]+=(major|minor|patch)(,[A-Za-z0-9_]+=(major|minor|patch))*$ ]]; then
+            echo "::error::Invalid bump levels '${BUMP}' (expected e.g. hss_led=minor,rfd=patch)."
+            exit 1
+          fi
+          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
+            echo "::error::Tag ${TAG} already exists."
+            exit 1
+          fi
+          PUBLISHED=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" \
+            | jq -r --arg tag "${TAG}" '.[] | select(.tag_name == $tag and .draft == false) | .id')
+          if [[ -n "${PUBLISHED}" ]]; then
+            echo "::error::Release ${TAG} is already published."
+            exit 1
+          fi
+
+      - name: Raise component versions
+        id: bump
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          echo "date=${DATE}" >> "${GITHUB_OUTPUT}"
+          mkdir -p "${RUNNER_TEMP}/bump"
+          python3 scripts/release-bump.py "${TAG}" --date "${DATE}" \
+            --bump "${BUMP}" --summary "${RUNNER_TEMP}/bump/summary.md"
+          git diff --binary > "${RUNNER_TEMP}/bump/bump.patch"
+          git diff --stat
+          cat "${RUNNER_TEMP}/bump/summary.md" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload version changes
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
+        with:
+          name: release-bump
+          path: ${{ runner.temp }}/bump/
+          retention-days: 7
+
+  build:
+    name: Build [${{ matrix.platform }}]
+    needs: bump
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: x86_64-linux-gnu
+            binary_format: x86-64
+            # the platform independent assets are taken from this build
+            assets: '--assets'
+          - platform: aarch64-linux-gnu
+            binary_format: ARM aarch64
+            assets: ''
+          - platform: arm-linux-gnueabihf
+            binary_format: ARM
+            assets: ''
+          - platform: i686-linux-gnu
+            binary_format: Intel 80386
+            assets: ''
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download version changes
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
+        with:
+          name: release-bump
+          path: ${{ runner.temp }}/bump
+
+      - name: Apply version changes
+        run: |
+          if [[ -s "${RUNNER_TEMP}/bump/bump.patch" ]]; then
+            git apply --index "${RUNNER_TEMP}/bump/bump.patch"
+          fi
+
+      - name: Build and deploy
+        env:
+          TARGET_PLATFORM: ${{ matrix.platform }}
+          ASSETS: ${{ matrix.assets }}
+        run: |
+          # shellcheck disable=SC2086 # ASSETS is empty or one option
+          docker run --rm \
+            --platform linux/amd64 \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            --workdir /workspace \
+            debian:bookworm-slim \
+            scripts/release-build.sh "${TARGET_PLATFORM}" ${ASSETS}
+          sudo chown -R "$(id -u):$(id -g)" .
+
+      - name: Verify and pack the built files
+        env:
+          BINARY_FORMAT: ${{ matrix.binary_format }}
+          TARGET_PLATFORM: ${{ matrix.platform }}
+          ASSETS: ${{ matrix.assets }}
+        run: |
+          for artifact in rfd hs485d multimacd hss_led; do
+            description=$(file "bin/${TARGET_PLATFORM}/${artifact}")
+            echo "${description}"
+            grep --fixed-strings "${BINARY_FORMAT}" <<<"${description}" >/dev/null
+          done
+          paths=("bin/${TARGET_PLATFORM}" "lib/${TARGET_PLATFORM}")
+          if [[ -n "${ASSETS}" ]]; then
+            test -s www/webui/webui.js
+            test -s www/config/devdescr/DEVDB.tcl
+            paths+=(www firmware/rftypes firmware/hs485types
+              usr/lib/tcl8.2/homematic bin/hm_autoconf bin/hm_deldev
+              bin/hm_startup etc/config_templates/crypttool.cfg)
+          fi
+          # tar keeps file modes and symbolic links
+          tar -czf "${RUNNER_TEMP}/release-${TARGET_PLATFORM}.tar.gz" "${paths[@]}"
+
+      - name: Upload the built files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7
+        with:
+          name: release-${{ matrix.platform }}
+          path: ${{ runner.temp }}/release-${{ matrix.platform }}.tar.gz
+          retention-days: 7
+
+  pull_request:
+    name: Pull request
+    needs: [bump, build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write  # push the release branch
+      pull-requests: write  # open the pull request
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Download version changes and built files
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8
+        with:
+          path: ${{ runner.temp }}/artifacts
+
+      - name: Commit
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag }}
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+        run: |
+          ARTIFACTS="${RUNNER_TEMP}/artifacts"
+          git config user.name "${ACTOR}"
+          git config user.email "${ACTOR_ID}+${ACTOR}@users.noreply.github.com"
+          git switch -c "release/${TAG}"
+
+          if [[ -s "${ARTIFACTS}/release-bump/bump.patch" ]]; then
+            git apply --index "${ARTIFACTS}/release-bump/bump.patch"
+            git commit \
+              -m "release: raise the component versions for ${TAG}" \
+              -m "Give every component with unreleased changelog entries its version for the release (scripts/release-bump.py)."
+          fi
+
+          # the generated trees are replaced as a whole, so files that are no
+          # longer generated are removed
+          rm -rf www firmware/rftypes firmware/hs485types usr/lib/tcl8.2/homematic
+          for archive in "${ARTIFACTS}"/release-*-linux-*/release-*.tar.gz; do
+            tar -xzf "${archive}"
+          done
+          python3 tests/test-hm-scripts.py -v
+
+          git add --all bin lib www firmware usr etc
+          if ! git diff --cached --quiet; then
+            git commit \
+              -m "release: update the built files for ${TAG}" \
+              -m "Build all components for x86_64, i686, aarch64 and armhf in the Debian bookworm build environment and update the programs and libraries in bin/ and lib/, the WebUI in www/, the device descriptions in firmware/ and the Tcl helpers in usr/ (scripts/release-build.sh)."
+          fi
+          if [[ "$(git rev-list --count "${GITHUB_SHA}..HEAD")" -eq 0 ]]; then
+            echo "::error::Nothing to release: no unreleased changes and no changed files."
+            exit 1
+          fi
+          git show --stat --format='%s' HEAD~1..HEAD | head -n 50
+
+      - name: Push and open the pull request
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+          DATE: ${{ needs.bump.outputs.date }}
+          BASE: ${{ github.ref_name }}
+        run: |
+          BRANCH="release/${TAG}"
+          # a new preparation of the same release replaces the branch
+          git push --force origin "${BRANCH}"
+
+          BODY="${RUNNER_TEMP}/body.md"
+          {
+            echo "Release preparation of OpenCCU-Base ${TAG} (${DATE}), from ${BASE} at ${GITHUB_SHA}."
+            echo
+            echo "### Component versions"
+            echo
+            cat "${RUNNER_TEMP}/artifacts/release-bump/summary.md"
+            echo
+            echo "### Built files"
+            echo
+            echo "All components were built for x86_64, i686, aarch64 and armhf in the Debian bookworm build environment; the programs and libraries in \`bin/\` and \`lib/\`, the WebUI in \`www/\`, the device descriptions in \`firmware/\` and the Tcl helpers in \`usr/\` are updated."
+            echo
+            echo "### Next steps"
+            echo
+            echo "1. Review the versions above. To change them, run the Release preparation workflow again with \`bump\` (e.g. \`hss_led=minor\`); it replaces this branch."
+            echo "2. Squash-merge this pull request. Nothing else may be merged to ${BASE} in between: the Release workflow checks that the merged tree equals this branch, so that the built files match the released sources."
+            echo "3. The Release workflow then creates the release draft ${TAG}. Publishing the draft creates the tag ${TAG}."
+            echo
+            echo "Created by the [Release preparation](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}) workflow."
+          } > "${BODY}"
+
+          PR=$(gh pr list --head "${BRANCH}" --state open --json number --jq '.[0].number')
+          if [[ -n "${PR}" ]]; then
+            gh pr edit "${PR}" --body-file "${BODY}"
+          else
+            gh pr create --base "${BASE}" --head "${BRANCH}" \
+              --title "release: ${TAG}" --body-file "${BODY}"
+          fi

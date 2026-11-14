@@ -1,9 +1,16 @@
 # OpenCCU-Base release draft
+#
+# Runs when a release pull request from the branch release/<tag> (created by
+# the Release preparation workflow) is merged, or by hand. Creates the release
+# draft <tag> on the merged commit; publishing the draft creates the tag.
 # yamllint disable rule:truthy
 ---
 name: Release
 
 on:
+  pull_request:
+    types:
+      - closed
   workflow_dispatch:
     inputs:
       tag:
@@ -25,12 +32,65 @@ jobs:
       contents: write  # ncipollo/release-action
     name: Release draft
     runs-on: ubuntu-24.04
+    # by hand, or a merged release pull request of this repository
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release/') &&
+       github.event.pull_request.head.repo.full_name == github.repository)
 
     steps:
+      - name: Determine release
+        id: release
+        shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          MERGE_COMMIT: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            TAG=${HEAD_REF#release/}
+            COMMIT=${MERGE_COMMIT}
+          else
+            TAG=${INPUT_TAG}
+            COMMIT=${GITHUB_SHA}
+          fi
+          if [[ ! "${TAG}" =~ ^[0-9]+(\.[0-9]+)+$ ]]; then
+            echo "::error::Invalid release tag '${TAG}' (expected e.g. 3.89.12)."
+            exit 1
+          fi
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "commit=${COMMIT}" >> "${GITHUB_OUTPUT}"
+
       - name: Checkout Code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
+          ref: ${{ steps.release.outputs.commit }}
           fetch-depth: 0
+          persist-credentials: false
+
+      # The built files of the release pull request were built from its
+      # branch: if anything else was merged in between, the merged sources
+      # differ from the built ones and the release has to be prepared again.
+      - name: Check merged release pull request
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          COMMIT: ${{ steps.release.outputs.commit }}
+        run: |
+          git fetch --no-tags origin "+refs/pull/${PR_NUMBER}/head:refs/remotes/pull/head"
+          if [[ "$(git rev-parse refs/remotes/pull/head)" != "${HEAD_SHA}" ]]; then
+            echo "::error::Head of pull request #${PR_NUMBER} is not ${HEAD_SHA}."
+            exit 1
+          fi
+          if [[ "$(git rev-parse "${COMMIT}^{tree}")" != "$(git rev-parse "${HEAD_SHA}^{tree}")" ]]; then
+            echo "::error::The merged commit ${COMMIT} differs from the release branch ${HEAD_SHA}: other changes were merged in between. Run the Release preparation workflow again and merge its pull request."
+            git diff --stat "${HEAD_SHA}" "${COMMIT}"
+            exit 1
+          fi
 
       # The release action does not move an existing tag, and a published
       # release (also a prerelease) must not be changed: only a new tag, a tag
@@ -39,11 +99,12 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ steps.release.outputs.tag }}
+          COMMIT: ${{ steps.release.outputs.commit }}
         run: |
           if TAG_COMMIT=$(git rev-parse --verify --quiet "refs/tags/${TAG}^{commit}"); then
-            if [[ "${TAG_COMMIT}" != "${GITHUB_SHA}" ]]; then
-              echo "::error::Tag ${TAG} points to ${TAG_COMMIT}, not to ${GITHUB_SHA}."
+            if [[ "${TAG_COMMIT}" != "${COMMIT}" ]]; then
+              echo "::error::Tag ${TAG} points to ${TAG_COMMIT}, not to ${COMMIT}."
               exit 1
             fi
           fi
@@ -58,7 +119,7 @@ jobs:
         id: previous
         shell: bash
         env:
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ steps.release.outputs.tag }}
           PREVIOUS_TAG: ${{ inputs.previous_tag }}
         run: |
           if [[ -z "${PREVIOUS_TAG}" ]]; then
@@ -79,18 +140,19 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ steps.release.outputs.tag }}
+          COMMIT: ${{ steps.release.outputs.commit }}
           PREVIOUS_TAG: ${{ steps.previous.outputs.tag }}
         run: |
           NOTES="${RUNNER_TEMP}/release-notes.md"
           PULL_REQUESTS="${RUNNER_TEMP}/pull-requests.md"
           gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
-            -f tag_name="${TAG}" -f target_commitish="${GITHUB_SHA}" \
+            -f tag_name="${TAG}" -f target_commitish="${COMMIT}" \
             -f previous_tag_name="${PREVIOUS_TAG}" --jq .body > "${PULL_REQUESTS}"
           # the tag only exists once the draft is published, so link the commit
           components() {
             python3 scripts/changelog-sections.py --limit "$1" \
-              --link-base "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}" \
+              --link-base "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${COMMIT}" \
               "${PREVIOUS_TAG}" HEAD
           }
           LIMIT=$((120000 - $(wc -c < "${PULL_REQUESTS}")))
@@ -101,7 +163,7 @@ jobs:
             {
               components 120000
               echo
-              echo "**Full Changelog**: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${GITHUB_SHA}"
+              echo "**Full Changelog**: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${PREVIOUS_TAG}...${COMMIT}"
             } > "${NOTES}"
           fi
           echo "Release notes: $(wc -c < "${NOTES}") characters"
@@ -110,9 +172,9 @@ jobs:
       - name: Create release draft
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd  # v1.21.0
         with:
-          tag: ${{ inputs.tag }}
-          commit: ${{ github.sha }}
-          name: ${{ inputs.tag }}
+          tag: ${{ steps.release.outputs.tag }}
+          commit: ${{ steps.release.outputs.commit }}
+          name: ${{ steps.release.outputs.tag }}
           bodyFile: ${{ runner.temp }}/release-notes.md
           draft: true
           prerelease: false
