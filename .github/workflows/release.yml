@@ -175,6 +175,7 @@ jobs:
           components() {
             python3 scripts/changelog-sections.py --compact \
               --pr-titles "${TITLES}" \
+              --repo-url "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
               --collapse "webui:Migrated from OpenCCU patches" \
               --link-base "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${COMMIT}" \
               "$@" "${PREVIOUS_TAG}" HEAD

@@ -42,8 +42,9 @@ SKIPPED_SECTIONS = ("Older versions",)
 RELEASE_VERSIONED = ("webui", "devicetypes", "hmipserver")
 DATE_RE = re.compile(r"\((\d{4}-\d{2}-\d{2})\)\s*$")
 AUTHORS_RE = re.compile(r"(, | \()@[A-Za-z0-9-]+(?:, @[A-Za-z0-9-]+)*\)$")
-# a pull request of this repository, written as "[#123](.../pull/123)"
-OWN_PR_RE = re.compile(r"\[#(\d+)\]\([^)\s]*/pull/(\d+)\)")
+# a pull request link written as "[#123](<repository URL>/pull/123)"
+PR_LINK_RE = re.compile(r"\[#(\d+)\]\(([^)\s]*)/pull/(\d+)\)")
+DEFAULT_REPO_URL = "https://github.com/OpenCCU/OpenCCU-Base"
 # "rfd: ", "libelvutils, hs485d: ", "fix(webui): " at the start of a title
 TITLE_PREFIX_RE = re.compile(
     r"^(?:[\w./-]+(?:, [\w./-]+)*(?:\([\w ,./-]+\))?|[a-z]+\([\w ,./-]+\)): ")
@@ -161,11 +162,14 @@ def first_clause(text, length=110):
     return clause
 
 
-def compact_line(entry, titles, seen):
+def compact_line(entry, titles, seen, repo_url=DEFAULT_REPO_URL):
     """Return the one-line form of an entry, or None for a pull request that
-    already has a line (seen)."""
+    already has a line (seen). Only pull requests of repo_url are looked up in
+    titles; links to other repositories keep the entry's own text."""
     text, references = split_references(entry)
-    numbers = [a for a, b in OWN_PR_RE.findall(references) if a == b]
+    repo_url = repo_url.rstrip("/")
+    numbers = [number for number, url, target in PR_LINK_RE.findall(references)
+               if number == target and url.rstrip("/") == repo_url]
     pr = titles.get(numbers[0]) if numbers else None
     if pr and pr.get("title"):
         if numbers[0] in seen:
@@ -208,6 +212,10 @@ def main():
     parser.add_argument("--compact", action="store_true",
                         help="one line per change and headings linked to the "
                              "changelogs")
+    parser.add_argument("--repo-url", default=DEFAULT_REPO_URL,
+                        help="with --compact, URL of the repository the pull "
+                             "requests of --pr-titles belong to (default: "
+                             f"{DEFAULT_REPO_URL})")
     parser.add_argument("--pr-titles", metavar="FILE",
                         help="with --compact, JSON object of the pull requests "
                              "of this repository: {\"123\": {\"title\": ..., "
@@ -258,7 +266,7 @@ def main():
                     lines.append(f"* {len(entries)} entries of \"{sub}\" "
                                  f"([list]({link[0]}))")
                     continue
-                lines += [line for line in (compact_line(e, titles, seen) for e in entries)
+                lines += [line for line in (compact_line(e, titles, seen, args.repo_url) for e in entries)
                           if line]
         return heading + "\n" + "\n".join(lines) + "\n"
 
