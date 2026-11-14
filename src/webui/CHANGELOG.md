@@ -22,7 +22,8 @@ or extended in it.
   system will have enough free space to prepare the uploaded file, and if
   not shows the available and the required space and removes the file,
   instead of rebooting into the recovery system, where the update failed
-  (refs [OpenCCU/OpenCCU#4741](https://github.com/OpenCCU/OpenCCU/pull/4741),
+  ([#366](https://github.com/OpenCCU/OpenCCU-Base/pull/366); refs
+  [OpenCCU/OpenCCU#4741](https://github.com/OpenCCU/OpenCCU/pull/4741),
   @jens-maus)
 * the teach-in dialog shows below the teach-in counter of HmIP-RF and
   HmIP-Wired whether the eQ-3 key server, which the teach-in of Homematic
