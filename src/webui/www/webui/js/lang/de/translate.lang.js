@@ -522,6 +522,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsCMBtnLogLoadLogFile" : "Logdatei herunterladen",
     "dialogSettingsCMErrorTitle" : "Softwareupdate - Fehler",
     "dialogSettingsCMErrorSoftwareUpdate" : "Die hochgeladene Datei enth%E4lt keine g%FCltige Software.",
+    "dialogSettingsCMErrorSoftwareUpdateNoSpace" : "Die hochgeladene Datei ist g%FCltig, aber f%FCr die Vorbereitung des Updates ist nicht gen%FCgend freier Speicherplatz vorhanden. Bitte schaffen Sie Platz, z.B. durch Entfernen nicht mehr ben%F6tigter Zusatzsoftware oder Sicherungen, und versuchen Sie es erneut.",
     "dialogSettingsCMHintSoftwareUpdate1" : "Achtung!",
     "dialogSettingsCMHintSoftwareUpdate2" : "Trennen Sie die Zentrale w%E4hrend des Updates nicht von der Stromversorgung. Das Ger%E4t kann besch%E4digt werden.",
     "dialogSettingsCMHintSoftwareUpdate3" : "F%FChren Sie vor dem Update eine Datensicherung durch.",

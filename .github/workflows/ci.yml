@@ -135,6 +135,7 @@ jobs:
 
               if [ "${TARGET_PLATFORM}" = "x86_64-linux-gnu" ]; then
                 python3 tests/test-components.py -v
+                python3 tests/test-webui-firmware-space.py -v
               fi
 
               # Read Tcl paths from the target container. Preset search roots
