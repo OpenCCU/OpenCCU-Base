@@ -216,3 +216,5 @@ webui/js/groups/deviceInboxGroupHandling.js
 
 # Konfigtool
 CfgTool/system.js
+
+webui/js/common/sessionMessage.js

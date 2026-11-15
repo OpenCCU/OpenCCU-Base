@@ -11,6 +11,9 @@ is published.
 
 ### Changes
 
+* center and enlarge expired-session messages in the WebUI content area
+  (@unbox-digital-printing).
+
 Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
