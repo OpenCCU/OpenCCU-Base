@@ -5,6 +5,6 @@
 extern "C" const char* xmlrpc_version();
 
 // Also part of XmlRpc::XMLRPC_VERSION ("XMLRPC++ <version>").
-#define XMLRPC_VERSION_NUMBER "0.12"
+#define XMLRPC_VERSION_NUMBER "0.13"
 
 #endif

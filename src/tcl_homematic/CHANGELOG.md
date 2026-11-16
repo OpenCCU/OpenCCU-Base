@@ -7,7 +7,7 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`package provide` in
 `src/trailer.tcl`).
 
-## Unreleased
+## 1.1 (2026-11-16)
 
 * add `RemoveConfigPage`, so an add-on can remove its own configuration page
   from `/etc/config/hm_addons.cfg`.

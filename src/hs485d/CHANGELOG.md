@@ -9,7 +9,7 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and
 `generated-hs485d-version.h`).
 
-## Unreleased
+## 1.5.0 (2026-11-16)
 
 * add the option `-v` / `--version`, which prints the version of hs485d and the
   versions of the OpenCCU-Base libraries it uses (libXmlRpc, libxmlparser,

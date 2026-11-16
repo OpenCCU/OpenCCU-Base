@@ -5,6 +5,6 @@
 extern "C" const char* xmlparser_version();
 
 // Keep in sync with "@version" in xmlParser.h.
-#define XMLPARSER_VERSION_NUMBER "1.14"
+#define XMLPARSER_VERSION_NUMBER "1.15"
 
 #endif

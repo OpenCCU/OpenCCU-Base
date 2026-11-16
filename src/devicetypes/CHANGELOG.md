@@ -6,7 +6,7 @@ BidCos-Wired devices. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 OpenCCU-Base release they are part of when it is published.
 
-## Unreleased
+## 3.89.12 (2026-11-16)
 
 * fix the error messages `Unknown paramset` / `GetAESMasterOperation()` of
   rfd and ReGaHss when opening the device list or channel settings of an

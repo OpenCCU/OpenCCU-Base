@@ -6,7 +6,7 @@ Changes of `hss_led`, the LED controller and status monitor of the CCU
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh`).
 
-## Unreleased
+## 2.3.1 (2026-11-16)
 
 * the radio LED takes any color as `'#RRGGBB'` besides the eight names
   (`hss_ledctl --led rpi-rf-mod '#ff8000' slow`, also for `alternate`) and a
