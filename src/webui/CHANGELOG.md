@@ -9,8 +9,6 @@ is published.
 
 ## Unreleased
 
-### Changes
-
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
@@ -30,6 +28,14 @@ is published.
   ([#374](https://github.com/OpenCCU/OpenCCU-Base/pull/374), fixes
   [OpenCCU/OpenCCU#4749](https://github.com/OpenCCU/OpenCCU/issues/4749),
   @jens-maus)
+* changing a program condition from a device selection to a system state,
+  a time control or an empty selection no longer leaves the channel of the
+  previous device selection in the condition (`ConditionChannel()`); it is
+  reset when the type of the condition changes and set again when a
+  channel is chosen. Conditions saved before keep their stale channel.
+  ([#371](https://github.com/OpenCCU/OpenCCU-Base/pull/371),
+  fixes [OpenCCU/OpenCCU#3030](https://github.com/OpenCCU/OpenCCU/issues/3030),
+  @MichaelN0815)
 
 ## 3.89.12 (2026-11-16)
 
