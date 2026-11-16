@@ -71,7 +71,7 @@ function ::CreateServoVirtualReceiver()
 
         WriteLine("<tr>");
           WriteLine("<td colspan='2' class='CLASS02546'>");
-            WriteLine("<div class='__PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b; margin:auto;'>");
+            WriteLine("<div class='__PercBtn' style='height:19px; width:96px; background-color:#89989b; margin:auto;'>");
               WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>"#unitServoPos#"</b>");
             WriteLine("</div>");
           WriteLine("</td>");
@@ -91,7 +91,7 @@ function ::CreateServoVirtualReceiver()
 
         WriteLine("<tr>");
           WriteLine("<td>");
-            WriteLine("<div id='sliderPos"#chnId#"' class='ControlBtnInfo' style='width:220px;;min-height:unset'></div>");
+            WriteLine("<div id='sliderPos"#chnId#"' style='width:220px;;min-height:unset'></div>");
           WriteLine("</td>");
         WriteLine("</tr>");
       WriteLine("</table>");
@@ -107,7 +107,7 @@ function ::CreateServoVirtualReceiver()
 
           WriteLine("<tr>");
             WriteLine("<td colspan='2' class='CLASS02546'>");
-              WriteLine("<div class='__PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b; margin:auto;'>");
+              WriteLine("<div class='__PercBtn' style='height:19px; width:96px; background-color:#89989b; margin:auto;'>");
                 WriteLine("<input id='infoSliderRamp"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>"#unitServoRampTime#"</b>");
               WriteLine("</div>");
             WriteLine("</td>");
@@ -126,7 +126,7 @@ function ::CreateServoVirtualReceiver()
 
           WriteLine("<tr>");
             WriteLine("<td>");
-              WriteLine("<div id='sliderRamp"#chnId#"' class='ControlBtnInfo' style='width:220px;;min-height:unset'></div>");
+              WriteLine("<div id='sliderRamp"#chnId#"' style='width:220px;;min-height:unset'></div>");
             WriteLine("</td>");
           WriteLine("</tr>");
         WriteLine("</table>");
@@ -140,7 +140,7 @@ function ::CreateServoVirtualReceiver()
 
     !      WriteLine("<tr>");
     !        WriteLine("<td colspan='2' class='CLASS02546'>");
-    !          WriteLine("<div class='__PercBtn GrayBkg' style='height:35px; line-height:35px; width:100px; _background-color:#89989b; margin:auto;'>");
+    !          WriteLine("<div class='__PercBtn GrayBkg' style='height:19px; width:96px; _background-color:#89989b; margin:auto;'>");
     !            WriteLine("<input id='infoSliderRamp"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/>");
     !          WriteLine("</div>");
     !        WriteLine("</td>");

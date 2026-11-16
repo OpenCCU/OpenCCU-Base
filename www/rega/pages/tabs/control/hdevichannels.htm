@@ -40,15 +40,17 @@
 
 <table id="tblHDeviChannel" class="filterTable CLASS03500 j_translate" cellpadding="0" cellspacing="0" border="1" >
   <colgroup>
-     <col style="width:12%;"/>
-     <col style="width:10%;"/>
-     <col style="width:10%;"/>
-     <col style="width:10%;"/>
-     <col style="width:58%;"/>
+     <col />
+     <col style="width:55px;" />
+     <col />
+     <col />
+     <col style="width:100px;" />
+     <col />
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thChannel}</div></th>
+  <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
   <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
@@ -71,6 +73,8 @@
     </div>
   </td>
   <td class="CLASS03501">
+  </td>
+  <td class="CLASS03501">
     <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
       <% 
@@ -83,7 +87,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -108,7 +112,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -130,13 +134,26 @@
     object oUser = dom.GetObject( system.GetSessionVar('sessionUserID'));
     integer userID = oUser.ID();
     object user = dom.GetObject(userID);
-    integer virtChnCounter = 0;
 
     object device = dom.GetObject(system.GetVar("id"));
     if (device) {
       if (device.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = "";
+        if( system.IsSessionVar("sessionSIDC") ) {
+          if( system.GetSessionVar("sessionSIDC") == "1" ) {
+           sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+          }
+        }
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumIDs()) {
+        foreach(tmp, sEnumUserIDs) {
           object chn = dom.GetObject(tmp);
           object oDev = dom.GetObject(chn.Device());
           string oDevHssType = oDev.HssType();
@@ -174,19 +191,38 @@
           } else {
             Call("/esp/functions.fn::showHideHmIPChannel()");
           }
-          if( bShow && chn.ReadyConfig() && oDev.ReadyConfig() && bShowChannel )
+          if( bShow && oDev.ReadyConfig() && bShowChannel )
           {
             string trId = device.ID()#tmp;
             boolean showExtDesc = false;
             Write("<tr id='"#trId#"'>");
-            Write("<td class='GrayBkg' name='devName'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS03905' name='devName' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'><span role='button' tabindex='0'>");
+            } else {
+              Write("<td class='GrayBkg' name='devName'>");
+            }
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("</span>");
+            }
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+              string sPicDivId = "picDiv"#chn.ID();
+              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
+                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
+                Write("onmouseout='picDivHide(jg_250);'");
+               Write("></div>");
+              Write("<script type='text/javascript'>");
+                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
+                Write("InitGD(jg_0, 50);");
+                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
+              Write("</script>");
             Write("</td>");
             Write("<td class='GrayBkg'>");
             string rooms = "";
@@ -194,7 +230,7 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name() # "<br />";
+              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);
@@ -205,14 +241,14 @@
             string funcIDs = "";
             foreach(funcTmp, chn.ChnFunction()) {
               object objTmp = dom.GetObject(funcTmp);
-              functions = functions # objTmp.Name() # "<br />";
+              functions = functions # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               funcIDs = funcIDs # objTmp.ID() # '\t';
             }
             Write(functions);
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03502'><span id='tmc"#chn.ID()#"' name='timeStamp'>");
             
             integer cId = chn.ID();
@@ -243,7 +279,7 @@
             Write("</tr>");
             
             Write("<script type='text/javascript'>");
-            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name()#"','"#rooms#"','"#functions#"','"#roomIDs#"', '"#funcIDs#"');");
+            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#roomIDs#"', '"#funcIDs#"');");
 
             Write("arChns[arChns.length] = o;");
             Write("if (!fltHD.objPassFilter(o ))");

@@ -2,6 +2,10 @@ jQuery.extend(true, langJSON, {
   "en": {
     "genericBtnTxtHelp" : "Help",
     "genericBtnTxtHelpOff" : "Disable help",
+    "dialogHelpCentralLinkTitle" : "Pushbutton event to CCU - Info",
+    "dialogHelpCentralLinkContent" :
+      "In order to keep the radio load / duty cycle of the CCU central and potentially also the battery consumption as low as possible, Homematic devices with a push-button channel do not send the current value to the CCU central every time the status changes, but only if this push-button channel is explicitly used in 'Programs & central links'.<br/><br/>" +
+      "If the creation of such a program is not desired and you just want to make sure to receive all status events, forwarding of these status events can be explicitly activated or deactivated for a button channel with the help of the 'Pushbutton event to CCU' function. In this case, the creation or deletion of a special internal direct link takes place in the respective device, so that the CCU central is automatically informed about all button actuations, though this might increase the duty cycle and battery consumption to some extent.",
     "helpPowerCost" : "Here you can set the price per kWh of your electricity provider.",
     "diagramHelpCustomModeTitle" : "Description of the values for longer periods",
     "diagramHelpCustomModeContent" :
@@ -26,7 +30,6 @@ jQuery.extend(true, langJSON, {
 
     "helpOsramLightify" : "You can create the pairing between the "+HMIdentifier.en.CCUShortName+" and <b>OSRAM Lightify</b> here. Please find further information here:",
     "helpPhilipsHue" : "You can create the pairing between the "+HMIdentifier.en.CCUShortName+" and <b>Philips Hue</b> here. Please find further information here:",
-    "lblTDReGaVersionHelp" :                     "Here you can define, which logic layer version of the CCU should be used. You can change to <b>Compatibility mode</b> if you have problems with older Homematic scripts.",
     "helpPartyModeWithinPrograms" : "If you select the holiday mode, you have to set the following parameters as well:",
     "dialogSettingsCMHintSoftwareUpdate3a" : "Update any additional modules installed to the latest version before installation of the update!",
 
@@ -165,8 +168,8 @@ jQuery.extend(true, langJSON, {
     "helpColorBehaviour_12" : "The selected behaviour is only taken into account for channel 12!",
 
     "helpConditionWaterFlow" :
-      "en* Bestimmen Sie hier die %D6ffnungsdauer des Bew%E4sserungsaktors. Sie k%F6nnen zwischen der Zeitdauer und der Durchflussmenge w%E4hlen.<br/><br/>" +
-      "Wenn die Zeitdauer und die Durchflussmenge angegeben sind, wird gestoppt, sobald das Erste von beiden erreicht ist.",
+      "Set the duration of the watering actuator here. You can choose between the duration and the flow rate. <br/><br/>" +
+      "If both the duration and the flow rate are specified, the system will stop as soon as the first of the two is reached.",
 
     "END" : ""
   }

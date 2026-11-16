@@ -15,7 +15,7 @@ function ::CreateWndRotSensor() {
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/window/open_h.png' width='80' height='80' />");
+          WriteLine("<img src='/ise/img/window/open_h.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -27,7 +27,7 @@ function ::CreateWndRotSensor() {
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/window/open_v.png' width='80' height='80' />");
+          WriteLine("<img src='/ise/img/window/open_v.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -39,7 +39,7 @@ function ::CreateWndRotSensor() {
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/window/closed.png' width='80' height='80' />");
+          WriteLine("<img src='/ise/img/window/closed.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");

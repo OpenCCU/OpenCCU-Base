@@ -17,7 +17,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
   string tmp = "";
   Write("deviceData = new Object();");
   Write("deviceData['id'] = "#dev.ID()#";");
-  Write("deviceData['name'] = '"#dev.Name()#"';");
+  Write("deviceData['name'] = '"#dev.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
   Write("deviceData['type'] = '"#dev.Label()#"';");
   string sIface = "";
   integer iface = dev.Interface();
@@ -56,7 +56,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       Write("Group["#gE#"]['deviface'] = '"#sIface#"';");
       Write("Group["#gE#"]['transOp'] = '"#chn.ChnAESOperation()#"';");
       Write("Group["#gE#"]['trans'] = ("#chn.ChnAESActive()#" ? '${lblSecured}' : '${lblStandard}' );");
-      Write("Group["#gE#"]['name'] = '"#chn.Name()#"';");
+      Write("Group["#gE#"]['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
 
       Write("console.dir(Group);");
 
@@ -66,14 +66,14 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         object objTmp = dom.GetObject(funcTmp);
         functions = functions # objTmp.Name() # ";";
       }
-      Write("Group["#gE#"]['func'] = '"#functions#"';");
+      Write("Group["#gE#"]['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       string rooms = "";
       string roomTmp = "";
       foreach(roomTmp, chn.ChnRoom()) {
         object objTmp = dom.GetObject(roomTmp);
         rooms = rooms # objTmp.Name() # ";";
       }
-      Write("Group["#gE#"]['room'] = '"#rooms#"';");
+      Write("Group["#gE#"]['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("Group["#gE#"]['action'] = '';");
       Write("Group["#gE#"]['links'] = '';");
       Write("Group["#gE#"]['ready'] = "#chn.ReadyConfig()#";");
@@ -157,7 +157,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       Write("deviceData['hasSubs'] = true;");
       Write('var tmp = new Object();');
       Write("tmp['id'] = "#chn.ID()#";");
-      Write("tmp['name'] = '"#chn.Name()#"';");
+      Write("tmp['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['type'] = '"#chn.Label()#"';");
       Write("tmp['pic'] = '';");
       Write("tmp['desc'] = DEV_getDescription(deviceData['type']);");     
@@ -178,14 +178,14 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         object objTmp = dom.GetObject(funcTmp);
         functions = functions # objTmp.Name() # ";";
       }
-      Write("tmp['func'] = '"#functions#"';");
+      Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       string rooms = "";
       string roomTmp = "";
       foreach(roomTmp, chn.ChnRoom()) {
         object objTmp = dom.GetObject(roomTmp);
         rooms = rooms # objTmp.Name() # ";";
       }
-      Write("tmp['room'] = '"#rooms#"';");
+      Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['action'] = '';");
       Write("tmp['links'] = '';");
       Write("tmp['ready'] = "#chn.ReadyConfig()#";");
@@ -271,7 +271,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       td.appendChild(img);
 
       tr.appendChild(td);
-      td = Builder.node('td', {colSpan: 2, className: 'GrayBkg border1px'}, strCut(GroupsArray[i][0]['type'] + " " + GroupsArray[i][1]['type'])); tr.appendChild(td);
+      td = Builder.node('td', {colSpan: 2, className: 'GrayBkg border1px'}, GroupsArray[i][0]['type'] + " " + GroupsArray[i][1]['type']); tr.appendChild(td);
       td.innerHTML = GroupsArray[i][0]['type'] + "<br/>" + GroupsArray[i][1]['type'];
       
       td = Builder.node('td', {className: 'WhiteBkgPic border1px'}, [
@@ -281,16 +281,16 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       Element.addClassName(td, "CLASS04402");
       tr.appendChild(td);
       
-      //td = Builder.node('td', {className: 'GrayBkg border1px'}, translateKey(strCut(DEV_getDescription(deviceData['type']))) ); tr.appendChild(td);
+      //td = Builder.node('td', {className: 'GrayBkg border1px'}, translateKey(DEV_getDescription(deviceData['type'])) ); tr.appendChild(td);
       td = Builder.node('td', {className: 'GrayBkg border1px'}, translateKey(DEV_getDescription(deviceData['type'])) ); tr.appendChild(td);
-      td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(GroupsArray[i][0]['sn'] + " " + GroupsArray[i][1]['sn'])); tr.appendChild(td);
+      td = Builder.node('td', {className: 'GrayBkg border1px'}, GroupsArray[i][0]['sn'] + " " + GroupsArray[i][1]['sn']); tr.appendChild(td);
       var sIface = (GroupsArray[i][0]['iface'] != GroupsArray[i][1]['iface'] ? GroupsArray[i][0]['iface'] + " " +  GroupsArray[i][1]['iface'] : GroupsArray[i][0]['iface']);
       td = Builder.node('td', {className: 'GrayBkg border1px'}, sIface); tr.appendChild(td);
       
       td = Builder.node('td', {id: 'trans' + GroupsArray[i][0]['id'] + GroupsArray[i][1]['id'], 
                      className: 'GrayBkg border1px'}, removeDuplicates(GroupsArray[i][0]['trans'], GroupsArray[i][1]['trans'], "")); tr.appendChild(td);
       
-      td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(GroupsArray[i][0]['name'] + " " + GroupsArray[i][1]['name'])); tr.appendChild(td);
+      td = Builder.node('td', {className: 'GrayBkg border1px'}, GroupsArray[i][0]['name'] + " " + GroupsArray[i][1]['name']); tr.appendChild(td);
       var sGrRoId = 'funcs' + GroupsArray[i][0]['id'] + GroupsArray[i][1]['id'];
       td = Builder.node('td', {id: sGrRoId, className: 'GrayBkg border1px'}, removeDuplicates(GroupsArray[i][0]['func'],  GroupsArray[i][1]['func'], ';')); tr.appendChild(td);
       var sGrRoId = 'rooms' + GroupsArray[i][0]['id'] + GroupsArray[i][1]['id'];
@@ -340,7 +340,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         td = Builder.node('td', {className: 'GrayBkg border1px'}, GroupsArray[i][x]['desc'] );
         td.innerHTML = translateKey(GroupsArray[i][x]['desc']);
         tr.appendChild(td);
-        td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(GroupsArray[i][x]['sn'])); tr.appendChild(td);
+        td = Builder.node('td', {className: 'GrayBkg border1px'}, GroupsArray[i][x]['sn']); tr.appendChild(td);
         td = Builder.node('td', {className: 'GrayBkg border1px'}, GroupsArray[i][x]['iface']); tr.appendChild(td);
         var trsId = "trs" + GroupsArray[i][x]['id'];
         var s = "WhiteBkg border1px";
@@ -365,10 +365,10 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
           
         if (NAV_IE) {
           td = Builder.node('td', {className: 'WhiteBkg border1px'},
-              [Builder.node('div', {id:'tdn' + GroupsArray[i][x]['id'], className: "CLASS04403 CLASS04404", onclick: 'textEdit(id, '+GroupsArray[i][x]['id']+', false, 0, CALL_STRCUT)'}, strCut(GroupsArray[i][x]['name'])) ]); tr.appendChild(td);
+              [Builder.node('div', {id:'tdn' + GroupsArray[i][x]['id'], className: "CLASS04403 CLASS04404", onclick: 'textEdit(id, '+GroupsArray[i][x]['id']+', false, 0)'}, GroupsArray[i][x]['name']) ]); tr.appendChild(td);
         }
         else {
-          td = Builder.node('td', {className: 'WhiteBkg CLASS04403 border1px', id:'tdn' + GroupsArray[i][x]['id'], onclick: 'textEdit(id, '+GroupsArray[i][x]['id']+', false, 0, CALL_STRCUT)'}, strCut(GroupsArray[i][x]['name'])); tr.appendChild(td);
+          td = Builder.node('td', {className: 'WhiteBkg CLASS04403 border1px', id:'tdn' + GroupsArray[i][x]['id'], onclick: 'textEdit(id, '+GroupsArray[i][x]['id']+', false, 0)'}, GroupsArray[i][x]['name']); tr.appendChild(td);
         } 
         
         if (NAV_IE) {
@@ -465,7 +465,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         td = Builder.node('td', {className: 'GrayBkg border1px'}, chns[i]['desc']);
         td.innerHTML = translateKey(chns[i]['desc']);
         tr.appendChild(td);
-        td = Builder.node('td', {className: 'GrayBkg border1px'}, strCut(chns[i]['sn'])); tr.appendChild(td);
+        td = Builder.node('td', {className: 'GrayBkg border1px'}, chns[i]['sn']); tr.appendChild(td);
         td = Builder.node('td', {className: 'GrayBkg border1px'}, chns[i]['iface']); tr.appendChild(td);
         var trsId = "trs" + chns[i]['id'];
         var s = "WhiteBkg border1px";
@@ -491,10 +491,10 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
 
         if (NAV_IE) {
           td = Builder.node('td', {className: 'WhiteBkg border1px'},
-              [Builder.node('div', {id:'tdn' + chns[i]['id'], className: "CLASS04403 CLASS04404", onclick: 'textEdit(id, '+chns[i]['id']+', false, 0, CALL_STRCUT)'}, strCut(chns[i]['name'], true)) ]); tr.appendChild(td);
+              [Builder.node('div', {id:'tdn' + chns[i]['id'], className: "CLASS04403 CLASS04404", onclick: 'textEdit(id, '+chns[i]['id']+', false, 0)'}, chns[i]['name']) ]); tr.appendChild(td);
         }
         else {
-         td = Builder.node('td', {className: 'WhiteBkg CLASS04404 border1px', id:'tdn' + chns[i]['id'], onclick: 'textEdit(id, '+chns[i]['id']+', false, 0, CALL_STRCUT)'}, strCut(chns[i]['name'].replace(/:/g, ":<br/>"), true)); tr.appendChild(td);
+         td = Builder.node('td', {className: 'WhiteBkg CLASS04404 border1px', id:'tdn' + chns[i]['id'], onclick: 'textEdit(id, '+chns[i]['id']+', false, 0)'}, chns[i]['name']); tr.appendChild(td);
         }
         
         if (NAV_IE) {

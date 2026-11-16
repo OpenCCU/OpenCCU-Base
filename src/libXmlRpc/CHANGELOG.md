@@ -7,7 +7,7 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`XMLRPC_VERSION_NUMBER` in
 `src/xmlrpc_version.h`).
 
-## Unreleased
+## 0.13 (2026-11-16)
 
 * add `xmlrpc_version()`, which returns the version of the loaded library
   (`XMLRPC_VERSION` still reads "XMLRPC++ 0.12").

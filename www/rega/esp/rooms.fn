@@ -73,7 +73,7 @@ function ::buildRoomOverlay() {
     foreach( tmp, rooms.EnumEnabledIDs() ) {
        object room = dom.GetObject(tmp);
        s = s# "<tr>";
-       s = s# "<td>"# room.Name() # "</td>";
+       s = s# "<td>"# room.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "</td>";
        s = s#"<td><input id='chk"#room.ID()#"' type='checkbox' onclick='addRoom(id, "#tmp#")' /></td>";
        s = s# "</tr>";
     }

@@ -7,7 +7,7 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
-## Unreleased
+## 3.89.12 (2026-11-16)
 
 ### Changes
 

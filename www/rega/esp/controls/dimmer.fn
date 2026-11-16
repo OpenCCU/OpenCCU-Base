@@ -79,8 +79,10 @@ function ::CreateDimmingActuator()
 
         WriteLine("<td class='CLASS02529'>");
           WriteLine("<table width='100%' height='100%' cellspacing='10'>");
-            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtnOn CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
-            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtnOff CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
+            string btnOnState = "On"; string btnOffState = "Off";
+            if (iState == 0) { btnOnState = "Off"; btnOffState = "On"; }
+            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtn"#btnOnState#" CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
+            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtn"#btnOffState#" CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
           WriteLine("</table>");
         WriteLine("</td>");
 
@@ -237,8 +239,10 @@ function ::CreateDALIDimmingActuator()
 
         WriteLine("<td class='CLASS02529'>");
           WriteLine("<table width='100%' height='100%' cellspacing='10'>");
-            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtnOn CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
-            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtnOff CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
+            string btnOnState = "On"; string btnOffState = "Off";
+            if (iState == 0) { btnOnState = "Off"; btnOffState = "On"; }
+            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtn"#btnOnState#" CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
+            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtn"#btnOffState#" CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
           WriteLine("</table>");
         WriteLine("</td>");
 
@@ -319,8 +323,10 @@ function ::CreateOpticalSignalReceiver()
 
         WriteLine("<td class='CLASS02529'>");
           WriteLine("<table width='100%' height='100%' cellspacing='10'>");
-            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtnOn CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
-            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtnOff CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
+            string btnOnState = "On"; string btnOffState = "Off";
+            if (iState == 0) { btnOnState = "Off"; btnOffState = "On"; }
+            WriteLine("<tr><td><div id='"#chnId#"On'  class='ControlBtn"#btnOnState#" CLASS02545 j_translate'>${actionStatusControlLblOn}</div></td></tr>");
+            WriteLine("<tr><td><div id='"#chnId#"Off' class='ControlBtn"#btnOffState#" CLASS02545 j_translate'>${actionStatusControlLblOff}</div></td></tr>");
           WriteLine("</table>");
         WriteLine("</td>");
 

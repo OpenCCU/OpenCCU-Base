@@ -41,11 +41,14 @@ grayText                GrayText
 textColorA              white
 textColorB              black
 
+pgmTextColorInactive    #bcc7cb
+pgmBackColorInactive    #f0f0f0
+
 navBarSeparator         #bcc7cb
 
 mainMenuBackground      #ebf1f2
 subMenuBackground       #ebf1f2
-subMenuHighlight        #89989b
+subMenuHighlight        #bcc7cb
 
 messagesBackground      #ebf1f2
 logoutButton            #ebf1f2

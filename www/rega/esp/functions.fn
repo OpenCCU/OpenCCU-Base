@@ -18,22 +18,22 @@ function ::WriteDPText()
         {
           if ( (sValue == "0") || (sValue == "") )
           {
-            sRet=sRet#to.ValueName0();
+            sRet=sRet#to.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
           else
           {
-            sRet=sRet#to.ValueName1();
+            sRet=sRet#to.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
         }
         if( btoList ) 
         { 
           if( sValue == "" )
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),0);
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),0).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
           else
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger());
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           }
         }
         if( btoNumber ) 
@@ -61,7 +61,7 @@ function ::WriteDPText()
         }
         if( to.ValueUnit() != "" )
         {
-          sRet=sRet#" "#to.ValueUnit();
+          sRet=sRet#" "#to.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
           if( btoNumber )
           {
             sRet = sRet # ")";
@@ -111,17 +111,26 @@ function ::WriteDPText()
            }
         }
         
-        if( tbBinary && (tbRead || tbAction) )
+        ! Keys without the =TRUE/=FALSE suffix, used as fallback below
+        string tsBaseShortKey = tsShortKey;
+        string tsBaseLongKey = tsLongKey;
+        string tsBinaryValueText = "";
+
+        ! Event-only datapoints (e.g. the HmIP VALVE_STATE_* service flags)
+        ! and write/event datapoints (e.g. BOOST_MODE) carry a value too
+        if( tbBinary && (tbRead || tbEvent || tbAction) )
         {
           if( sValue == "0" )
           {
             tsShortKey = tsShortKey#"=FALSE";
             tsLongKey = tsLongKey#"=FALSE";
+            tsBinaryValueText = "${lblNo}";
           }
           else
           {
             tsShortKey = tsShortKey#"=TRUE";
             tsLongKey = tsLongKey#"=TRUE";
+            tsBinaryValueText = "${lblYes}";
           }
         }
         
@@ -141,6 +150,23 @@ function ::WriteDPText()
         if( !sVTmp.Length() )
         {
           sVTmp = web.webKeyFromStringTable( tsShortKey );
+          if( !sVTmp.Length() )
+          {
+            if( tsBinaryValueText.Length() )
+            {
+              ! No =TRUE/=FALSE entry: show the plain label with Yes/No,
+              ! never the plain label alone as it reads like an active state
+              sVTmp = web.webKeyFromStringTable( tsBaseLongKey );
+              if( !sVTmp.Length() )
+              {
+                sVTmp = web.webKeyFromStringTable( tsBaseShortKey );
+              }
+              if( sVTmp.Length() )
+              {
+                sVTmp = sVTmp#": "#tsBinaryValueText;
+              }
+            }
+          }
           if( !sVTmp.Length() )
           {
             sVTmp = "${unknownMessage} ("#tsShortKey#")";
@@ -308,7 +334,7 @@ function ::buildFuncOverlay() {
     foreach( tmp, rooms.EnumEnabledIDs() ) {
        object func = dom.GetObject(tmp);
        s = s# "<tr>";
-       s = s# "<td>"# func.Name() # "</td>";
+       s = s# "<td>"# func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "</td>";
        s = s#"<td><input id='chk"#func.ID()#"' type='checkbox' onclick='addFunc(id, "#tmp#")' /></td>";
        s = s# "</tr>";
     }
@@ -396,52 +422,14 @@ function ::showHideHmIPChannel() {
   if (bShowChannel == true) {
 
     ! Interface HmIP-RF and HmIP-Wired
-    if (chn.HssType().Find("MAINTENANCE") != -1) {
+    if ( (chn.HssType().Find("MAINTENANCE") != -1) && ((system.IsSessionVar("sessionSIDC") == false) || (system.GetSessionVar("sessionSIDC") != "1")) ) {
       ! Don't show the maintenance channel of the new HmIP devices
       ! This is necessary because the name of such a channel of an HmIP device
       !   can be MAINTENANCE_BAT_BL, MAINTENANCE_BAT_EL, MAINTENANCE_BAT_CL and so on
       ! For BidCos-RF this isn't necessary
 
-      integer devFwMajor = 0;
-      Call("/esp/functions.fn::getFirmwareVersion()");
-
-      if ((oDevHssType.Substr(0,6) == "HmIPW-")
-        || (oDevHssType == "HmIP-DRSI1")
-        || (oDevHssType == "HmIP-DRSI4")
-        || (oDevHssType == "HmIP-DRG-DALI")
-        || ((oDevHssType == "HmIP-BSL") && (devFwMajor >= 2))
-        || (oDevHssType == "HmIP-WGD")
-        || (oDevHssType == "HmIP-WGD-PL")
-        || (oDevHssType == "HmIP-UDI-PB2")
-        || (oDevHssType == "HmIP-UDI-PB2-A")
-        || (oDevHssType == "HmIP-UDI-SMI55")
-        || (oDevHssType == "HmIP-UDI-SMI55-A")
-        || (oDevHssType == "HmIP-DRBLI4")
-        ) {
-
-        object chnParam;
-        ! A HmIPW-* device with a control for the parameter IDENTIFY_TARGET_LEVEL (MAINTENANCE channel)
-        ! should be visible. So it's possible to use the identify function of HmIPW-devices.
-        chnParam = dom.GetObject("HmIP-RF."#chn.Address()#".IDENTIFY_TARGET_LEVEL");
-
-        ! A HmIPW-* device with a control for the parameter ERROR_POWER_SHORT_CIRCUIT_BUS_1 (MAINTENANCE channel)
-        ! should be visible. This is the DRAP.
-        if (!chnParam) {
-          chnParam = dom.GetObject("HmIP-RF."#chn.Address()#".ERROR_POWER_SHORT_CIRCUIT_BUS_1");
-        }
-
-        if (chnParam) {
-          string controlName = chnParam.MetaData("CONTROL");
-          if (! controlName) {
-            bShowChannel = false;
-          }
-        } else {
-          bShowChannel = false;
-        }
-      } else {
-        if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD")) {
-          bShowChannel = false;
-        }
+      if ((oDevHssType != "HmIP-CCU3") && (oDevHssType != "HmIP-HAP")  && (oDevHssType != "HmIP-HAP-A")  && (oDevHssType != "HmIP-HAP2") && (oDevHssType != "HmIP-HAP2-A") && (oDevHssType != "HmIP-HAP-B1")  && (oDevHssType != "HmIP-HAP JS1") && (oDevHssType != "RPI-RF-MOD") && (oDevHssType != "HmIP-RFUSB")) {
+        bShowChannel = false;
       }
 
       ! Necessary to be able to learn the codes of keypads and finger print sensors
@@ -551,9 +539,26 @@ function ::showHideHmIPChannel() {
         || (chn.HssType().Find("ACOUSTIC_SIGNAL_VIRTUAL_RECEIVER") != -1)
         || (chn.HssType().Find("SERVO_VIRTUAL_RECEIVER") != -1)
         ) {
-          if (virtChnCounter >= 3) {virtChnCounter = 0;}
-          virtChnCounter = virtChnCounter + 1;
-          if (virtChnCounter != 1) {bShowChannel = false; return;}
+          ! Show only the first of the three virtual channels of a group. The groups follow
+          ! their status channel, so count the virtual channels directly before this one.
+          ! This does not depend on the order of the channel list, which can be sorted by name.
+          integer iVirtChnPos = 0;
+          integer iVirtPrevChnNo = chNumber - 1;
+          boolean bVirtPrevChn = true;
+          string sVirtChnId;
+          while (bVirtPrevChn && (iVirtPrevChnNo > 0)) {
+            bVirtPrevChn = false;
+            foreach (sVirtChnId, oDev.Channels()) {
+              object oVirtChn = dom.GetObject(sVirtChnId);
+              if ((oVirtChn.ChnNumber() == iVirtPrevChnNo) && (oVirtChn.HssType().Find("_VIRTUAL_RECEIVER") != -1)) {bVirtPrevChn = true;}
+            }
+            if (bVirtPrevChn) {
+              iVirtChnPos = iVirtChnPos + 1;
+              if (iVirtChnPos >= 3) {iVirtChnPos = 0;}
+              iVirtPrevChnNo = iVirtPrevChnNo - 1;
+            }
+          }
+          if (iVirtChnPos != 0) {bShowChannel = false; return;}
         } else {
           ! HmIP-MIOB and HmIP-WHS2
           ! Hide all SWITCH_VIRTUAL_RECEIVER channels other than 3 and 7 (the 2nd virtual channel instead of the first one) when the expert mode is not active
@@ -816,11 +821,11 @@ function ::conditionIsParameterVisible() {
     }
   }
 
-  if (oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") {
-    if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
-      showChannelParam = false;
-    }
-  }
+  ! if ((oCC.HssType() == "HEATING_CLIMATECONTROL_TRANSCEIVER") && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
+  !  if (oDP.HSSID().Find("ACTIVE_PROFILE") != -1) {
+  !    showChannelParam = false;
+  !  }
+  ! }
 
   if ( sInterface == hmIPVirtualDevIdentifier ) {
     excludeParams = "BOOST_TIME,CONTROL_DIFFERENTIAL_TEMPERATURE,LEVEL_STATUS,OPERATING_VOLTAGE,PARTY_,PARTY_MODE,PROCESS,QUICK_VETO_TIME,";
@@ -1018,23 +1023,22 @@ function ::destinationIsParameterVisible() {
     }
   }
 
-  if (oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) {
-    if (
-    (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
-    || (oDP.HSSID().Find("DURATION_VALUE") != -1)
-    || (oDP.HSSID().Find("DURATION_UNIT") != -1)
-    ) {
-      showChannelParam = false;
-    }
-  }
+  ! if ((oCH.HssType().Find("HEATING_CLIMATECONTROL_TRANSCEIVER") != -1) && (oCC.Label().Find("HmIPW-WGTC") != -1)) {
+  !  if (
+  !  (oDP.HSSID().Find("ACTIVE_PROFILE") != -1)
+  !  (oDP.HSSID().Find("DURATION_VALUE") != -1)
+  !  || (oDP.HSSID().Find("DURATION_UNIT") != -1)
+  !  ) {
+  !    showChannelParam = false;
+  !  }
+  ! }
 
   !HmIP-DLP
-  ! Hide most of the parameters of the channel DOOR_LOCK_TRANSCEIVER
+  ! Hide all parameters of the channel DOOR_LOCK_TRANSCEIVER except LOCK_TARGET_LEVEL
   if ( oCH.HssType().Find("DOOR_LOCK_TRANSCEIVER") != -1) {
-    // TODO - refactoring necessary
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelLocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelUnlocked}")) ) {showChannelParam = true;} else {showChannelParam = false;}
-    if ( (sValue.Find("${stringTableDoorLockStateTransmitterLockTargetLevelOpen}")) ) {showChannelParam = true;} else {showChannelParam = false;}
+    if ( oDP.HSSID().Find("LOCK_TARGET_LEVEL") == -1 ) {
+      showChannelParam = false;
+    }
   }
 
   return;

@@ -27,7 +27,7 @@
 <%
   object chn = dom.GetObject(system.GetVar("chnId"));
   if (chn) {
-    Write("<td class='CLASS01105'>"#chn.Name()#"</td>");
+    Write("<td class='CLASS01105'>"#chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
     Write("<td class='CLASS01105'>"#chn.Label()#"</td>");
     Write("<td class='CLASS01106'>");
     

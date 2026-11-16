@@ -4,7 +4,7 @@ function ::CreateThermostat()
   real rState = 0;
   real rMin = 6;
   real rMax = 30;
-  string sUnit = "&deg;<i>C</i>";
+  string sUnit = "&deg;C";
   integer iReadOnlyState = 0;
 
   object oLevel = cObj.DPByControl("TEMP.SETPOINT");
@@ -15,7 +15,7 @@ function ::CreateThermostat()
     sUnit = oLevel.ValueUnit();
     if (sUnit == 'degree')
     {
-      sUnit = "&deg;<i>C</i>";
+      sUnit = "&deg;C";
     }
     rMin = oLevel.MetaData("MIN").ToFloat();
     rMax = oLevel.MetaData("MAX").ToFloat();
@@ -34,7 +34,7 @@ function ::CreateThermostat()
   WriteLine("  <div id='button"#chnId#"' class='PercBtn' >");
   WriteLine("  <table width='100%' height='100%' class='CLASS02530'>");
   WriteLine("    <tr class='CLASS02531'>");
-  WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='3' class='CLASS02542' "#sReadOnly#" /><b>"#sUnit#"</b></td></tr>");
+  WriteLine("      <td colspan='2' class='CLASS02546'><input id='"#chnId#"Deg' type='text' value='"#rState.ToString(2)#"' size='3' class='CLASS02542' "#sReadOnly#" />&nbsp;<b>"#sUnit#"</b></td></tr>");
   WriteLine("      <input id='"#chnId#"Perc' type='hidden' value='"#rState.ToString(2)#"' />");
   WriteLine("      <td style='text-align: center' class='CLASS02548'>");
   WriteLine("      <table cellspacing='0' cellpadding='0'><tr><td><img id='"#chnId#"Up' height='12px' width='40px' src='/ise/img/up.png' class='CLASS02543' /></td></tr><tr><td><img id='"#chnId#"Down' height='12px' width='40px' src='/ise/img/down.png' class='CLASS02543' /></td></tr></table>");

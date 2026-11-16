@@ -64,6 +64,7 @@ function GroupDevice(id, serialNumber, type)
       if (typeof self.device != "undefined") {
         return DEV_getImagePath(self.device.deviceType.id, 50);
       }
+      else return DEV_getImagePath(this.type, 50);
     }
         
     }, this);

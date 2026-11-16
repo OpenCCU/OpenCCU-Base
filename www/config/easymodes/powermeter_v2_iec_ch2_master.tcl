@@ -44,8 +44,18 @@ proc getTextField {psDescr type param value inputId} {
   array set param_descr $descr($param)
 
   set elemId '$inputId'
+  set min $param_descr(MIN)
+  set max $param_descr(MAX)
 
-  set s "<input id=$elemId type=\"text\" size=\"5\" value=\"$value\" name=\"$param\" onblur=\"ProofAndSetValue($elemId, $elemId,$param_descr(MIN), $param_descr(MAX), parseFloat(1))\"/>"
+  # Limit min/max to 3 decimal places
+  if {[llength [split $min "."]] == 2} {
+    set min [format {%1.3f} $min]
+  }
+  if {[llength [split $max "."]] == 2} {
+    set max [format {%1.3f} $max]
+  }
+
+  set s "<input id=$elemId type=\"text\" size=\"5\" value=\"$value\" name=\"$param\" onblur=\"ProofAndSetValue($elemId, $elemId, '$min', '$max', 1)\"/>"
   return $s
 }
 

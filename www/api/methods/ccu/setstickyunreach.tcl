@@ -16,3 +16,4 @@ if {$hide == "true"} {
   catch {exec rm /etc/config/hideStickyUnreach}
 }
 
+jsonrpc_response ""

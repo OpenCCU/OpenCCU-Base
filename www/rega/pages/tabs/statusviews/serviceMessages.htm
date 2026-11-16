@@ -69,23 +69,35 @@ iseInitUpdateArrays();
   Cursor.set(Cursor.NORMAL);
 </script>
 <table id="tblServices" class="filterTable tTable CLASS02601" border="0" cellpadding="0" cellspacing="0" style="display:none;">
+<colgroup>
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: 55px;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: auto;">
+  <col style="width: 100px;">
+</colgroup>
 <tr>
  <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="first"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="_first" class="_pt11 <%Write(sCssName);%>" style="height:auto;" onclick="IseSort(arServices,'first',true);">${thFirstMessageDateTime}</div></th>
-  <th align="center" valign="middle">${thLastMessageDateTime}</th>
+  <th class="thCell CLASS02603"><div id="_first" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'first',true);">${thFirstMessageDateTime}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'>${thLastMessageDateTime}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="name" class="pt11 <%Write(sCssName);%> " onclick="IseSort(arServices,'name',true);">${thName}</div></th>
-  <th align="center" valign="middle"><div class="pt11 Sort">${thPicture}</div></th>
+  <th class="thCell CLASS02603"><div id="name" class="pt11 <%Write(sCssName);%> " onclick="IseSort(arServices,'name',true);">${thName}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'><div>${thPicture}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="sn"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="sn" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'sn',true);">${thSerialNumber}</div></th>
+  <th class="thCell CLASS02603"><div id="sn" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'sn',true);">${thSerialNumber}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="func" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'func',true);">${thFunc}</div></th>
+  <th class="thCell CLASS02603"><div id="func" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'func',true);">${thFunc}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="room" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'room',true);">${thRoom}</div></th>
-  <th align="center" valign="middle">${thLastChange}</th>
+  <th class="thCell CLASS02603"><div id="room" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'room',true);">${thRoom}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'>${thLastChange}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
-  <th class="CLASS02602"><div id="desc" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'desc',true);">${thServiceMessage}</div></th>
-  <th align="center" valign="middle"><div class="pt11 Sort">${thAction}</div></th>
+  <th class="thCell CLASS02603"><div id="desc" class="pt11 <%Write(sCssName);%>" onclick="IseSort(arServices,'desc',true);">${thServiceMessage}</div></th>
+  <th class="thCell CLASS02603" style='text-align:center; vertical-align: middle;'><div>${thAction}</div></th>
 </tr>
 <tr id="trFlt">
   <td style="text-align:center; vertical-align: middle;" class="CLASS02603"></td>
@@ -120,7 +132,7 @@ iseInitUpdateArrays();
           if (elem) {
             string divId = "rdiv"#tmp;
               Write("<tr>");
-                Write("<td  class='CLASS02619'>"#elem.Name()#"</td>");
+                Write("<td  class='CLASS02619'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                 Write("<td  class='CLASS02619'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
               Write("</tr>");
           }
@@ -145,7 +157,7 @@ iseInitUpdateArrays();
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS02619'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS02619'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS02619'><input type='checkbox' id='fr"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -178,7 +190,7 @@ iseInitUpdateArrays();
     {
       if( oAlarm.IsTypeOf(OT_ALARMDP) )
       {
-        if( oAlarm.AlState() == asOncoming )
+        if( (oAlarm.Used() == true) && (oAlarm.Enabled() == true) && (oAlarm.AlState() == asOncoming) )
         {
           iSvcCount = iSvcCount + 1;
           string sTimestamp = oAlarm.AlOccurrenceTime();
@@ -237,7 +249,7 @@ iseInitUpdateArrays();
                 string roomIDs = "";
                 if( oRoom )
                 {
-                  sRoom = sRoom#oRoom.Name()#"<br />";
+                  sRoom = sRoom#oRoom.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br />";
                   roomIDs = roomIDs#sRID# "\t";
                 }
               }
@@ -249,7 +261,7 @@ iseInitUpdateArrays();
                 string funcIDs = "";
                 if( oFunc )
                 {
-                  sFunction = sFunction#oFunc.Name()#"<br />";
+                  sFunction = sFunction#oFunc.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br />";
                   funcIDs = funcIDs#sFID# "\t";
                 }
               }
@@ -296,14 +308,14 @@ iseInitUpdateArrays();
           Write( '<tr id="'#sTrId#'" class="CLASS02604">' );
             Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sFirstTimestamp#'</td>' );
             Write( '<td id="sla'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastTimestamp#'</td>' );
-            Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName#'</td>' );
-            Write( '<td style="text-align:center; vertical-align: middle; background-color:white;" class="CLASS02607">');
+            Write( '<td id="n'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;"class="CLASS02606">'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
+            Write( '<td class="DeviceListThumbnail">');
             if (oLastTriggerChannel)
             {
               object devId = oLastTriggerChannel.Device();
               object dev = dom.GetObject(devId);
               string sPicDivId = "picDiv"#oAlarm.ID();
-              Write("<div id='"#sPicDivId#"' class='CLASS02608' style='margin:0 auto;'");
+              Write("<div id='"#sPicDivId#"' class='thumbnail'");
               Write(" onmouseover='picDivShow(jg_250, \""#dev.Label()#"\", 250, -1, this);'");
               Write(" onmouseout='picDivHide(jg_250);'");
               Write("></div>");
@@ -320,12 +332,12 @@ iseInitUpdateArrays();
             Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02609">'#sSerialNumber#'</td>' );
             Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sFunction#'</td>' );
             Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02610">'#sRoom#'</td>' );
-            Write( '<td id="sgu'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02609">'#sLastUse#'</td>' );
+            Write( '<td id="sgu'#sAID#'"  style="text-align:center; vertical-align: middle;" class="CLASS02605">'#sLastUse#'</td>' );
             Write( '<td id="m'#oAlarm.ID()#'"  style="text-align:center; vertical-align: middle;" class="CLASS02611">'#sServiceMessage#'</td>' );
             boolean bWrite = (oLastTrigger.Operations() & OPERATION_WRITE);
             if( oLastTrigger.Operations() & OPERATION_WRITE )
             {
-              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input  type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oAlarm.ID()#');" class="CLASS02613"/></td>' );
+              Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input  type="button" name="btnConfirm" value="btnConfirm" onclick="ReceiptAlarm('#oAlarm.ID()#');" class="StdButton CLASS02613"/></td>' );
 
               if (oLastTrigger.HSSID() == "STICKY_UNREACH") {
                   Write( '<script type="text/javascript">' );
@@ -336,7 +348,7 @@ iseInitUpdateArrays();
             }
             else
             {
-               Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input type="button" name="btnConfirm" value="btnConfirm" disabled="disabled" class="CLASS02614"/></td>' );
+               Write( '<td style="text-align:center; vertical-align: middle;" class="CLASS02612"><input type="button" name="btnConfirm" value="btnConfirm" disabled="disabled" class="StdButton CLASS02614"/></td>' );
             }
           Write( '</tr>' );
           Write( '<script type="text/javascript">');
@@ -344,7 +356,7 @@ iseInitUpdateArrays();
             ! Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut("'#sAlarmName#'", false, true);');
             ! Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut("'#sServiceMessage#'", false, true);');
 
-            Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sAlarmName#'"), false, true);');
+            Write( '$("n'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sAlarmName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n")#'"), false, true);');
             Write( '$("m'#oAlarm.ID()#'").innerHTML = strCut(translateString("'#sServiceMessage#'"), false, true);');
             
           Write( '}');
@@ -361,10 +373,10 @@ iseInitUpdateArrays();
               Write( 'tmp["write"] = false;' );
             }
             Write( 'tmp["first"] = "'#sFirstTimestamp#'"; ');
-            Write( 'tmp["name"] = "'#sAlarmName#'";');
+            Write( 'tmp["name"] = "'#sAlarmName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'";');
             Write( 'tmp["sn"] = "'#sSerialNumber#'";');
-            Write( 'tmp["func"] = "'#sFunction#'"; ');
-            Write( 'tmp["room"] = "'#sRoom#'"; ');
+            Write( 'tmp["func"] = "'#sFunction.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ');
+            Write( 'tmp["room"] = "'#sRoom.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'"; ');
             Write( 'tmp["desc"] = "'#sServiceMessage#'"; ');
             Write( 'tmp["trid"] = "'#sTrId#'"; ');
 

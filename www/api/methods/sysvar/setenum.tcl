@@ -12,7 +12,7 @@
  ##
 
  set script {
-   var sv = dom.GetObject(name);
+   var sv = dom.GetObject(ID_SYSTEM_VARIABLES).Get(name);
 
    if (sv)
    {
@@ -21,7 +21,7 @@
  }
 
  if {[hmscript $script args] } {
-   jsonrpc_response $args(valueList)
+   jsonrpc_response \"$args(valueList)\"
  } else {
    jsonrpc_response -1
  }

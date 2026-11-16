@@ -473,7 +473,6 @@ proc base_put_page {iface address pid peer ps_type} {
 
   html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"de\" lang=\"de\" {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
       title "$HTMLTITLE - Geräteparameter"
 
@@ -567,7 +566,6 @@ proc activate_link_paramset {iface address ps_id long_push} {
 
   html {
     head {
-      put_meta_nocache
     }
     body {
       if { ![catch { xmlrpc $url activateLinkParamset [list string $address] [list string $ps_id] [list bool $long_push] } ] } then {
@@ -583,11 +581,10 @@ proc modify_easymode_ui {IGNORE_PARAMS profile pPROFILE} {
 
 #cgi_debug -on
 
-  global env
+  global env _cgi _cgi_uservar
   upvar $pPROFILE PROFILE_TMP
 
-  set params [split [cgi_unquote_input $env(QUERY_STRING)] &]
-
+  set params $_cgi(uservars)
 
   #Parametername eines evtl. Subsets auf den URL-Parametern generieren. z.B. subset_4_1
   set i 1
@@ -595,7 +592,10 @@ proc modify_easymode_ui {IGNORE_PARAMS profile pPROFILE} {
 
   foreach p $params {
 
-    if { [regexp {^(.*)=(.*)$} $p dummy name value] } then {
+    set name $p
+    set value $_cgi_uservar($name)
+
+    if { $name != "" } then {
 
       if { [lsearch -exact $IGNORE_PARAMS $name] >= 0} then {
 
@@ -648,7 +648,7 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
   global HTMLTITLE env
 
-  set IGNORE_PARAMS {AvoidBrowserCache address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME}
+  set IGNORE_PARAMS {address cmd iface paramid peer pnr ps_id ps_type sid SUBSET_OPTION_VALUE NAME _}
 
   if { $profile != "" } then {
     
@@ -692,7 +692,6 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
     html {
       head {
-        put_meta_nocache
       }
       body {
         if {$ret == "1"} then {
@@ -710,7 +709,6 @@ proc base_put_profile {iface address profile peer ps_type {html_response 1}} {
 
     html {
       head {
-        put_meta_nocache
       }
       body {
         if {$ret == "1"} then {
@@ -731,7 +729,6 @@ proc put_error404 {} {
 
   html {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">"
       title "$HTMLTITLE - Profil nicht gefunden"
     }
@@ -749,7 +746,6 @@ proc put_error_profilenotfound {} {
 
   html {
     head {
-      put_meta_nocache
       puts "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">"
       title "$HTMLTITLE - Profil nicht gefunden"
     }
@@ -1119,7 +1115,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
     set idval "separate_${pnr}_$j"
 
     if { ! ($operations & 3) } then { continue }
-    if {    $operations & 1  } then { catch {set value $ps($param_id)} }
+    if {    $operations & 1  } then { catch {set value [cgi_quote_html $ps($param_id)]} }
     if {    $operations & 2  } then { set access "" } else { set access "disabled=\"disabled\"" }
 
     append s "<tr>"
@@ -1256,7 +1252,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
                 } else  {
                   set selected ""
                 }
-                append s "<option value=\"$sv_value\" $selected class=\"stringtable_value\">$v</option>"
+                append s "<option value=\"$sv_value\" $selected class=\"_stringtable_value\">$v</option>"
                 incr i
                 set selected selected=\"selected\"
                 set hidden ""
@@ -1386,7 +1382,7 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
 
           append s "<input type=\"hidden\" name=\"$param_id\"   value=\"$value_orig\" $id $access style=\"visibility:hidden;display:none;\" />"
           append s "<input type=\"text\"   name=\"__$param_id\" value=\"$value\"       id=\"$input_idval\" $access $hidden"
-          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', [expr $min + 0.001], [expr $max + 0.001], parseFloat([expr 1 / $factor]));\" /></td>"
+          append s "  onblur=\"_iface='$iface'; ProofAndSetValue('$input_idval', '${idval}', '$min', '$max', parseFloat([expr 1 / $factor]));\" /></td>"
           append s "<td><div id=\"${input_idval}_unit\" $hidden>$unit ($min-$max)</div></td>"
       }
       "ENUM" {
@@ -1733,12 +1729,6 @@ proc get_Pulse {val_arr id ps_arr pname dev_address arr_pulse {extraparam ""}} {
     upvar $val_arr arr
   upvar arr_pulse pulse
   return [get_Pulse2 arr $id $ps($pname) $dev_address pulse $extraparam]
-}
-
-proc put_meta_nocache {} {
-  puts "<meta http-equiv=\"cache-control\" content=\"no-cache\" />"
-  puts "<meta http-equiv=\"pragma\"        content=\"no-cache\" />"
-  puts "<meta http-equiv=\"expires\"       content=\"0\" />"
 }
 
 proc get_InputElem {name id ps_arr pname {extraparam ""}} {
