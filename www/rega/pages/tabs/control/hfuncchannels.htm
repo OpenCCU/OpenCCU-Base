@@ -16,7 +16,7 @@
     object oTmpArray = dom.GetObject(system.GetVar("id"));
     if( oTmpArray )
     {
-      oTmpArray.SortByName();
+      oTmpArray.SortByName(soAsc,stNatural);
       string sTmp;
       foreach(sTmp,oTmpArray.EnumIDs())
       {
@@ -51,15 +51,17 @@
 <table id="tblHFuncChannels" class="filterTable CLASS03800 j_translate" cellpadding="0" cellspacing="0" border="1">
   
   <colgroup>
-     <col style="width:15%;"/>
-     <col style="width:15%;"/>
-     <col style="width:15%;"/>
-     <col style="width:55%;"/>
+     <col />
+     <col style="width:55px;" />
+     <col />
+     <col style="width:100px;" />
+     <col />
   </colgroup>
   
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
   <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+  <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="room"){sCssName="SortSelected";} %>
   <th><div id="room" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'room',true);">${thRoom}</div></th>
   <th>${thLastChange}</th>
@@ -76,6 +78,8 @@
     </div>
   </td>
   <td class="CLASS03801">
+  </td>
+  <td class="CLASS03801">
     <div id="btnFilterRoom" class="FilterBtn">${thFilter}</div>
     <div class="FilterSubMenu" id="btnFilterRoomSub" style="display:none">
       <% 
@@ -88,7 +92,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03806'>"#elem.Name()#"</td>");
+                  Write("<td  class='CLASS03806'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
                   Write("<td  class='CLASS03806'><input type='checkbox' id='hr"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -116,8 +120,17 @@
     object func = dom.GetObject(system.GetVar("id"));
     if (func) {
       if (func.Visible()) {
+        string sEnumUserIDs = oUser.UserTempViewIDs().EnumIDs();
+        string sEnumUserInternalIDs = oUser.UserTempViewIDs().EnumEnabledInternalIDs();
+        if( sEnumUserInternalIDs != "" ) {
+          if( sEnumUserIDs != "" ) {
+            sEnumUserIDs = sEnumUserIDs # "\t" # sEnumUserInternalIDs;
+          } else {
+            sEnumUserIDs = sEnumUserInternalIDs;
+          }
+        }
         string tmp;
-        foreach(tmp, oUser.UserTempViewIDs().EnumEnabledIDs()) {
+        foreach(tmp, sEnumUserIDs) {
           string trId = func.ID()#tmp;
           Write("<tr id='"#trId#"'>");
           object chn = dom.GetObject(tmp);
@@ -140,14 +153,33 @@
           if( bShow && chn.ReadyConfig() && oDev.ReadyConfig())
           {
             boolean showExtDesc = false;
-            Write("<td class='GrayBkg'>");
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("<td class='GrayBkg CLASS04007' onclick='if (DeviceList.getChannel("#chn.ID()#")) { DeviceListPage.showConfiguration(event, \"CHANNEL\", "#chn.ID()#"); }' onmouseover='this.addClassName(\"DeviceListRow_Highlight\");' onmouseout='this.removeClassName(\"DeviceListRow_Highlight\");'><span role='button' tabindex='0'>");
+            } else {
+              Write("<td class='GrayBkg'>");
+            }
 
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
+            if( oUser && oUser.UserLevel() == iulAdmin ) {
+              Write("</span>");
+            }
+            Write("</td>");
+            Write("<td class='GrayBkg'>");
+              string sPicDivId = "picDiv"#chn.ID();
+              Write("<div id='"#sPicDivId#"' class='CLASS03907' style='margin:auto;' ");
+                Write("onmouseover='picDivShow(jg_250, \""#chn.Label()#"\", 250, \""#chn.ChnNumber()#"\", this);'");
+                Write("onmouseout='picDivHide(jg_250);'");
+               Write("></div>");
+              Write("<script type='text/javascript'>");
+                Write("var jg_0 = new jsGraphics('"#sPicDivId#"');");
+                Write("InitGD(jg_0, 50);");
+                Write("Draw(jg_0, '"#chn.Label()#"', 50, '"#chn.ChnNumber()#"');");
+              Write("</script>");
             Write("</td>");
             Write("<td  class='GrayBkg'>");
             string rooms = "";
@@ -155,14 +187,14 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name() # "<br />";
+              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);
             Write("</td>");
             Write("<td class='GrayBkg'>");
             
-            Write("<table>");
+            Write("<table style='width:100%;'>");
             Write("<tr><td class='CLASS03802'><span id='tmc"#chn.ID()#"'><br /><br />");
             
             integer cId = chn.ID();
@@ -197,8 +229,8 @@
             Write("chn = new Object();");
             Write("chn['id'] = '"#chn.ID()#"';");
             Write("chn['ctrlId'] = '"#sCtrlId#"';");
-            Write("chn['name'] = '"#chn.Name()#"';");
-            Write("chn['room'] = '"#rooms#"';");
+            Write("chn['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("chn['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
             Write("chn['fltOpts'] = new Object();");
             Write("chn['fltOpts']['rooms'] = '"#roomIDs#"';");
             Write("chn['trid'] = '"#trId#"';");

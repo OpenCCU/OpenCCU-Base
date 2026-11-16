@@ -18,3 +18,4 @@ if {$activate == "true"} {
 
 source "/bin/setfirewall.tcl"
 
+jsonrpc_response ""

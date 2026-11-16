@@ -10,7 +10,7 @@
 ##
 
 set script {
-  var sv = dom.GetObject(id);
+  var sv = dom.GetObject(ID_SYSTEM_VARIABLES).Get(id);
   
   if (sv)
   {

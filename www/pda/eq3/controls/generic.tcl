@@ -105,7 +105,7 @@ proc GenericControl_getDPValue { channelId dataPoint } {
 		
 		
 		! Ausgabe
-		Write(value # " " # unit);
+		Write(value # "&nbsp;" # unit);
 	}
 	
 #	puts "<pre>$script</pre>"

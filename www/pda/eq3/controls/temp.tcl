@@ -24,19 +24,19 @@ proc TempControl_getStatus {channelId dataPoint} {
 	set status [rega_exec $script]
 	
 	switch -exact -- $cmd {
-		temp_up_5   { set correctionValue "(+5 &deg;C)" }
-		temp_up_2   { set correctionValue "(+2 &deg;C)" }
-		temp_up_1   { set correctionValue "(+1 &deg;C)" }
-		temp_down_1 { set correctionValue "(-1 &deg;C)" }
-		temp_down_2 { set correctionValue "(-2 &deg;C") }
-		temp_down_5 { set correctionValue "(-5 &deg;C)" }
+		temp_up_5   { set correctionValue "(+5&nbsp;&deg;C)" }
+		temp_up_2   { set correctionValue "(+2&nbsp;&deg;C)" }
+		temp_up_1   { set correctionValue "(+1&nbsp;&deg;C)" }
+		temp_down_1 { set correctionValue "(-1&nbsp;&deg;C)" }
+		temp_down_2 { set correctionValue "(-2&nbsp;&deg;C)" }
+		temp_down_5 { set correctionValue "(-5&nbsp;&deg;C)" }
 		default     { set correctionValue "" }
 	}
 	
 	set    result [status_separator]
 	append result {<tr><td class="status">}
 	append result {<div class="caption">Soll-Temperatur</div>}
-	append result "<div class=\"center\">$status &deg;C $correctionValue</div>"
+	append result "<div class=\"center\">$status&nbsp;&deg;C $correctionValue</div>"
 	append result {</td></tr>}
 	
 	if { "" != $correctionValue } {
@@ -53,12 +53,12 @@ proc TempControl_getControls {channelId dataPoint} {
 	global sid favListId favId UI_URLBASE
 	set result ""
 	
-	append result [button "+5 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_5"]
-	append result [button "+2 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_2"]
-	append result [button "+1 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_1"]
-	append result [button "-1 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_1"]
-	append result [button "-2 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_2"]
-	append result [button "-5 &deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_5"]
+	append result [button "+5&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_5"]
+	append result [button "+2&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_2"]
+	append result [button "+1&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_up_1"]
+	append result [button "-1&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_1"]
+	append result [button "-2&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_2"]
+	append result [button "-5&nbsp;&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=temp_down_5"]
 
 	return $result
 }

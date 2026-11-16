@@ -1,13 +1,17 @@
 function ::CreateShutterActuator()
 {
+  object ch = dom.GetObject(chnId);
+  string chnAddress = ch.Address();
+  string devAddress = chnAddress.StrValueByIndex(":",0);
+
   object oLvl = cObj.DPByControl("BLIND.LEVEL");
   object oStop = cObj.DPByControl("BLIND.STOP");
-  integer oLvlId = 0;
-  integer oStopId = 0;
+  integer iLvlId = 0;
+  integer iStopId = 0;
   integer iLvl = 0;
   if (oLvl)
   {
-    oLvlId = oLvl.ID();
+    iLvlId = oLvl.ID();
     iLvl = oLvl.Value();
     if( oLvl.ValueUnit() == "100%" )
     {
@@ -16,7 +20,7 @@ function ::CreateShutterActuator()
   }
   if (oStop)
   {
-    oStopId = oStop.ID();
+    iStopId = oStop.ID();
   }
 
   WriteLine("<td colspan='2' id='shutter"#chnId#"' class='CLASS02549' >&nbsp;</td>");
@@ -79,7 +83,13 @@ function ::CreateShutterActuator()
 
   string sCtrlId = "shutter"#chnId;
   WriteLine("<script type='text/javascript'>");
-  WriteLine("ibs"#cObj.ID()#" = new iseButtonsShutter(" # chnId # ", " # iLvl # ", " # oLvlId # ", " # oStopId # ", " #system.GetVar("iStatusOnly")# " );" );
+
+  WriteLine("var opts = {");
+    WriteLine("chnLabel:'"#ch.Label()#"',");
+    WriteLine("devAddress:'"#devAddress#"'");
+  WriteLine("};");
+
+  WriteLine("ibs"#cObj.ID()#" = new iseButtonsShutter(" # chnId # ", " # iLvl # ", " # iLvlId # ", " # iStopId # ", " #system.GetVar("iStatusOnly")# ", opts );" );
   WriteLine("translatePage('#ctrl"#chnId#"tbl');");
   WriteLine("</script>");
   return;
@@ -87,6 +97,11 @@ function ::CreateShutterActuator()
 
 function ::CreateJalousieActuator()
 {
+
+  object ch = dom.GetObject(chnId);
+  string chnAddress = ch.Address();
+  string devAddress = chnAddress.StrValueByIndex(":",0);
+
   object oLvl = cObj.DPByControl("JALOUSIE.LEVEL");
   object oLvlSlats = cObj.DPByControl("JALOUSIE.LEVEL_SLATS");
   object oLvlCombined = cObj.DPByControl("JALOUSIE.LEVEL_COMBINED");
@@ -132,7 +147,7 @@ function ::CreateJalousieActuator()
 
   WriteLine("<td>");
     WriteLine("<table>");
-     WriteLine("<tr><td colspan='5'><div style='text-align:'center'; background-color:#89989b; color:black'>${stringTableBlindLevel}</div></td></tr>");
+     WriteLine("<tr><td colspan='5'><div style='text-align:center; background-color:#89989b; color:black'>${stringTableBlindLevel}</div></td></tr>");
 
       WriteLine("<tr>");
           WriteLine("<td colspan='2' id='shutter"#chnId#"' class='CLASS02549' >&nbsp;</td>");
@@ -216,12 +231,12 @@ function ::CreateJalousieActuator()
           WriteLine("<table>");
             WriteLine("<tr>");
               WriteLine("<td colspan='2' class='CLASS02546'>");
-                WriteLine("<div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>");
+                WriteLine("<div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>");
                   WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>%</b>");
                 WriteLine("</div>");
               WriteLine("</td>");
-              WriteLine("<td>");
-                WriteLine("<div id='slider"#chnId#"' class='ControlBtnInfo' style='width:220px;min-height:unset'></div>");
+              WriteLine("<td style='padding-left: 10px'>");
+                WriteLine("<div id='slider"#chnId#"' style='width:220px;min-height:unset'></div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -243,6 +258,8 @@ function ::CreateJalousieActuator()
   WriteLine("<script type='text/javascript'>");
 
     WriteLine("var opts = {");
+      WriteLine("chnLabel:'"#ch.Label()#"',");
+      WriteLine("devAddress:'"#devAddress#"',");
       WriteLine("levelD:"#iLvlId#",");
       WriteLine("levelValue:"#iLvl#",");
       WriteLine("levelSlatsID:"#iLvlSlatsId#",");
@@ -421,12 +438,12 @@ function ::CreateBlindVirtualReceiver()
           WriteLine("<table>");
             WriteLine("<tr>");
               WriteLine("<td colspan='2' class='CLASS02546'>");
-                WriteLine("<div class='PercBtn' style='height:35px; line-height:35px; width:100px; background-color:#89989b'>");
+                WriteLine("<div class='PercBtn' style='height:19px; width:96px; background-color:#89989b'>");
                   WriteLine("<input id='infoSliderPos"#chnId#"' type='text' value='0' size='3' class='CLASS02542' style='text-align:center'/><b>%</b>");
                 WriteLine("</div>");
               WriteLine("</td>");
-              WriteLine("<td>");
-                WriteLine("<div id='slider"#chnId#"' class='ControlBtnInfo' style='width:220px;;min-height:unset'></div>");
+              WriteLine("<td style='padding-left: 10px'>");
+                WriteLine("<div id='slider"#chnId#"' style='width:220px;;min-height:unset'></div>");
               WriteLine("</td>");
             WriteLine("</tr>");
           WriteLine("</table>");
@@ -442,6 +459,8 @@ function ::CreateBlindVirtualReceiver()
     WriteLine("var opts = {");
       WriteLine("chnInterface:'"#chInterface.Name()#"',");
       WriteLine("chnAddress:'"#chnAddress#"',");
+      WriteLine("devAddress:'"#devAddress#"',");
+      WriteLine("chnLabel:'"#ch.Label()#"',");
       WriteLine("levelD:"#iLvlId#",");
       WriteLine("levelValue:"#iLvl#",");
       WriteLine("levelSlatsID:"#iLvlSlatsId#",");

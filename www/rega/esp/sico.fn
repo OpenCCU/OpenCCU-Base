@@ -13,6 +13,22 @@ function ::ReloadSiCo()
   return;
 }
 
+function ::SetNegateCondition() {
+  if( system.IsVar("scid") && system.IsVar("nc") )
+  {
+    object oTmp = dom.GetObject( system.GetVar("scid") );
+    if( oTmp )
+    {
+      string sNC = system.GetVar("nc");
+      if (sNC == "false") {
+        oTmp.NegateCondition(false);
+      } else {
+        oTmp.NegateCondition(true);
+      }
+    }
+  }
+}
+
 function ::SetOperatorType()
 {
   string sCI = "SetOperatorType[SICO]: ";

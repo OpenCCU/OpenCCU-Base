@@ -12,6 +12,22 @@
 #   Objekt der Systemvariablen mit Name, ID, Wert.
 ##
 
+if { ![regexp {^[A-Za-z0-9_\-\.:]+$} $args(name)] } then {
+  jsonrpc_error 100 "Invalid name. Must match \[A-Za-z0-9_\-.:\]"
+}
+if {[catch { hmscript_assertFloat $args(minValue)} err]} {
+  jsonrpc_error 101 $err
+}
+if {[catch { hmscript_assertFloat $args(maxValue)} err]} {
+  jsonrpc_error 102 $err
+}
+if {[catch { hmscript_assertInteger $args(internal)} err]} {
+  jsonrpc_error 103 $err
+}
+if {[catch { hmscript_assertInteger $args(chnID)} err]} {
+  jsonrpc_error 104 $err
+}
+
 set script {
   if (chnID != -1) {
     object channel = dom.GetObject(chnID);
@@ -23,7 +39,12 @@ set script {
   sv.ValueMin(minValue);
   sv.ValueMax(maxValue);
   sv.State(0);
-  sv.Internal(internal);
+
+  if((internal == "true") || (internal == 1)) {
+    sv.Internal(true);
+  } else {
+    sv.Internal(false);
+  }
 
   if (channel) {
     sv.Channel(chnID);
@@ -32,7 +53,7 @@ set script {
 
   oSysVars.Add(sv.ID());
 
-  Write("{'name':'"#sv.Name()#"','id':'"#sv.ID()#"','value':'"#sv.Value()#"' }");
+  Write('{"name":"'#sv.Name()#'","id":"'#sv.ID()#'","value":"'#sv.Value()#'" }');
 }
 
 jsonrpc_response [hmscript $script args]

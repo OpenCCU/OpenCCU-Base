@@ -9,7 +9,7 @@ function ::CreateDoorOpener() {
     WriteLine("<tr>");
       WriteLine("<td  class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/door/open.png' width='80' height='80' />");
+          WriteLine("<img src='/ise/img/door/open.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -210,7 +210,7 @@ function ::CreateDoorLockStateTransmitter() {
               WriteLine("<tr>");
                 WriteLine("<td  class='CLASS02513'>");
                   WriteLine("<div align='center'>");
-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                   WriteLine("</div>");
                 WriteLine("</td>");
               WriteLine("</tr>");
@@ -218,7 +218,7 @@ function ::CreateDoorLockStateTransmitter() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 }
@@ -249,7 +249,7 @@ function ::CreateDoorLockStateTranseiver() {
               WriteLine("<tr>");
                 WriteLine("<td  class='CLASS02513'>");
                   WriteLine("<div align='center'>");
-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                   WriteLine("</div>");
                 WriteLine("</td>");
               WriteLine("</tr>");
@@ -257,7 +257,7 @@ function ::CreateDoorLockStateTranseiver() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 }
@@ -287,7 +287,7 @@ function ::CreateDoorStateTranseiver() {
               WriteLine("<tr>");
                 WriteLine("<td  class='CLASS02513'>");
                   WriteLine("<div align='center'>");
-                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                    WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                   WriteLine("</div>");
                 WriteLine("</td>");
               WriteLine("</tr>");
@@ -295,7 +295,7 @@ function ::CreateDoorStateTranseiver() {
               WriteLine("</table>");
             WriteLine("</td>");
           WriteLine("</tr>");
-        WriteLine("</table");
+        WriteLine("</table>");
       WriteLine("</td>");
   }
 
@@ -348,9 +348,9 @@ function ::CreateDoorLockTranseiver() {
 
   if (
     ((oErrorJammed) && (oErrorJammed.Value() == true))
-    || ((oErrorLoadTooLow) && (oErrorLoadTooLow == true))
-    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock == true))
-    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock == true))
+    || ((oErrorLoadTooLow) && (oErrorLoadTooLow.Value() == true))
+    || ((oErrorNoEndStopLock) && (oErrorNoEndStopLock.Value() == true))
+    || ((oErrorNoEndStopUnlock) && (oErrorNoEndStopUnlock.Value() == true))
     ) {
     errorMsg = true;
   }
@@ -394,7 +394,7 @@ function ::CreateDoorLockTranseiver() {
                 WriteLine("<tr>");
                   WriteLine("<td  class='CLASS02513'>");
                     WriteLine("<div align='center'>");
-                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' />");
+                      WriteLine("<img src='/ise/img/"#statePic#"' width='80' height='70' style='mix-blend-mode:multiply;' />");
                     WriteLine("</div>");
                   WriteLine("</td>");
                 WriteLine("</tr>");

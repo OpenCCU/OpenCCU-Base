@@ -16,8 +16,29 @@
 #                           Der Wert 65536 bedeutet, dass keine Informationen vorliegen.
 ##
 
-checkXmlRpcStatus [catch { array set rssiInfo [xmlrpc $interface(URL) rssiInfo] }]
+if { [catch {
+  set rssi_list [xmlrpc $interface(URL) rssiInfo]
+} ] } {
+  set rssi_list ""
+  if { "$interface(INFO)" == "HmIP-RF" } {
+    set devlist [xmlrpc $interface(URL) listDevices [list bool 0]]
+    foreach dev $devlist {
+      array_clear dev_descr
+      array set dev_descr $dev
+      if { "$dev_descr(PARENT)" == "" } {
+        set rssi_device 65536
+        set rssi_peer 65536
+        catch { set rssi_device [xmlrpc $interface(URL) getValue "$dev_descr(ADDRESS):0" "RSSI_DEVICE"] }
+        catch { set rssi_peer [xmlrpc $interface(URL) getValue "$dev_descr(ADDRESS):0" "RSSI_PEER"] }
+        if { "$rssi_device" == "" } { set rssi_device 65536 }
+        if { "$rssi_peer" == "" } { set rssi_peer 65536 }
+        set rssi_list "$dev_descr(ADDRESS) { $dev_descr(ADDRESS) { $rssi_device $rssi_peer }} $rssi_list"
+      }
+    }
+  }
+}
 
+array set rssiInfo $rssi_list
 set result "\["
 set first 1
 

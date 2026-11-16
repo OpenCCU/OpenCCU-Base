@@ -1,3 +1,3 @@
 # Paktet verfügbar machen
 
-package provide HomeMatic 1.0
+package provide HomeMatic 1.1

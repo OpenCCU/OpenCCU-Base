@@ -13,6 +13,7 @@
 ##
 proc rega_escape {value} {
   return [string map {
+    "\\"  "\\\\"
     "\'"  "\\\'"
     "\""  "\\\""
     "\f"  "\\\f"

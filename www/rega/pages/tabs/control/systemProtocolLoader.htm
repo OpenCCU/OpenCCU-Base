@@ -45,8 +45,8 @@
             string selvDate = stmpDay#"."#stmpMonth#"."#stmpYear;
             Write("var tmp = new Object();");
             Write("tmp['trid'] = 'hd"#iIndex#"';");
-            Write("tmp['name'] = '"#sCollectedNames#"';");
-            Write("tmp['value'] = '"#sCollectedValues#"';");
+            Write("tmp['name'] = '"#sCollectedNames.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("tmp['value'] = '"#sCollectedValues.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
             Write("tmp['datetime'] = '"#sCollectedDateTimes#"';");
             Write("tmp['sqldate'] = '"#stmpDate#"';");
             Write("tmp['date'] = '"#selvDate#"';");
@@ -92,9 +92,9 @@
       string stmpDay = stmpDate.StrValueByIndex("-",2);
       string selvDate = stmpDay#"."#stmpMonth#"."#stmpYear;
       Write("var tmp = new Object();");
-      Write("tmp['name'] = '"#sCollectedNames#"';");
+      Write("tmp['name'] = '"#sCollectedNames.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['trid'] = 'hd"#iIndex#"';");
-      Write("tmp['value'] = '"#sCollectedValues#"';");
+      Write("tmp['value'] = '"#sCollectedValues.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       Write("tmp['datetime'] = '"#sCollectedDateTimes#"';");
       Write("tmp['sqldate'] = '"#stmpDate#"';");
       Write("tmp['date'] = '"#selvDate#"';");

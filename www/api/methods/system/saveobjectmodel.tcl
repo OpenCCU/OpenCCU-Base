@@ -9,8 +9,9 @@
 ##
 
 
+# call system.Save() async to keep WebUI active
 set script {
-  system.Save();
+  system.Exec("echo 'load tclrega.so; rega system.Save()' | /bin/tclsh &");
   Write("true");
 }
 

@@ -6,7 +6,7 @@ is only provided as a binary. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 OpenCCU-Base release they are part of when it is published.
 
-## Unreleased
+## 3.89.12 (2026-11-16)
 
 * update `HMIPServer.jar` to version 1.5.2-SNAPSHOT (build 6140 of
   2026-11-13) from eQ-3. The server again finishes its start while rfd or

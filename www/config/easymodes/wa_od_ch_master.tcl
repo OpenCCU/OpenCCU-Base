@@ -10,14 +10,26 @@ proc getMinValue {ps_descr param} {
   upvar ps_descr descr
   array_clear param_descr
   array set param_descr $descr($param)
-  return $param_descr(MIN)
+  set min $param_descr(MIN)
+
+  # Limit float to 2 decimal places
+  if {$param == "LED_ONTIME"} {
+    set min [format {%1.2f} $min]
+  }
+  return "$min"
 }
 
 proc getMaxValue {ps_descr param} {
   upvar ps_descr descr
   array_clear param_descr
   array set param_descr $descr($param)
-  return $param_descr(MAX)
+  set max $param_descr(MAX)
+
+  # Limit float to 2 decimal places
+  if {$param == "LED_ONTIME"} {
+    set max [format {%1.2f} $max]
+  }
+  return "$max"
 }
 
 proc getMinMaxValueDescr {ps_descr param} {
@@ -183,7 +195,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     set max [getMaxValue ps_descr $param]
     append HTML_PARAMS(separate_1) "<tr class=\"j_custom\">"
       append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\">$devType|$param</td>"
-      append HTML_PARAMS(separate_1) "<td> <input type=\"text\" id=\"separate_CHANNEL_1_$paramNr\" name=\"$param\" value=\"[format {%1.2f} $ps($param)]\" onblur=\"ProofAndSetValue('separate_CHANNEL_1_$paramNr', 'separate_CHANNEL_1_$paramNr', parseFloat($min), parseFloat($max), parseFloat(1));\"> </td>"
+      append HTML_PARAMS(separate_1) "<td> <input type=\"text\" id=\"separate_CHANNEL_1_$paramNr\" name=\"$param\" value=\"[format {%1.2f} $ps($param)]\" onblur=\"ProofAndSetValue('separate_CHANNEL_1_$paramNr', 'separate_CHANNEL_1_$paramNr', '$min', '$max', parseFloat(1));\"> </td>"
       append HTML_PARAMS(separate_1) "<td>[getUnit ps_descr $param] [getMinMaxValueDescr ps_descr $param] </td>"
     append HTML_PARAMS(separate_1) "</tr>"
 

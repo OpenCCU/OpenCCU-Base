@@ -4,7 +4,9 @@
 #
 # Parameter: kein
 #
-# Rückgabewert: kein
+# RÃ¼ckgabewert: kein
 ##
 
-catch {exec /etc/init.d/S50sshd restart}
+catch {exec /usr/bin/monit restart sshd}
+
+jsonrpc_response ""

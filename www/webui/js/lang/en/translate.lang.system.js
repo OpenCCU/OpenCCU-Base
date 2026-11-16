@@ -15,8 +15,8 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsInitialisingMessageTitle" : "microSD card is currently being initialized.",
     "lblSysConfStorage" : "Memory management",
 
-    "dialogSettingsExternalStorageStateInitialised" : "external USB memory available.",
-    "dialogSettingsExternalStorageStateNotPresent" : "No external USB memory found."
+    "dialogSettingsExternalStorageStateInitialised" : "external disk space available.",
+    "dialogSettingsExternalStorageStateNotPresent" : "No external disk space found."
   }
 });
 

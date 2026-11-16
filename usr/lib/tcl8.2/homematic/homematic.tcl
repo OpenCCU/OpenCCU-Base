@@ -1,17 +1,14 @@
-
 namespace eval ::HomeMatic {
 	namespace export Addon Script Session Util GetSerialNumber
 	
-	if { ![info exists rega_script] } then {
+	if { ![llength [info commands ::rega_script]] } then {
 		load tclrega.so
 	}
 	
-	if { ![info exists xmlrpc] } then  {
+	if { ![llength [info commands ::xmlrpc]] } then  {
 		load tclrpc.so
 	}
-	
 }
-
 proc ::HomeMatic::GetSerialNumber { } {
   set content [::HomeMatic::Util::LoadFile "/etc/config/ids"]
   
@@ -85,7 +82,7 @@ proc ::HomeMatic::Script::eval { script } {
 namespace eval ::HomeMatic::Addon {
   global ::HomeMatic::Addon::_CONFIG_FILE_
   
-  namespace export GetAll AddConfigPage
+  namespace export GetAll AddConfigPage RemoveConfigPage
   
   set ::HomeMatic::Addon::_CONFIG_FILE_ "/etc/config/hm_addons.cfg"
 }
@@ -105,6 +102,17 @@ proc ::HomeMatic::Addon::AddConfigPage { id url name description } {
   ::HomeMatic::Util::SaveFile $filename [array get addons]
 }
 
+proc ::HomeMatic::Addon::RemoveConfigPage { id } {
+  global ::HomeMatic::Addon::_CONFIG_FILE_
+  set filename $::HomeMatic::Addon::_CONFIG_FILE_
+
+  array set addons [::HomeMatic::Util::LoadFile $filename]
+  if {[info exists addons($id)]} {
+    unset addons($id)
+  }
+  ::HomeMatic::Util::SaveFile $filename [array get addons]
+}
+
 proc ::HomeMatic::Addon::GetAll { } {
   global ::HomeMatic::Addon::_CONFIG_FILE_
   set filename $::HomeMatic::Addon::_CONFIG_FILE_
@@ -115,5 +123,5 @@ proc ::HomeMatic::Addon::GetAll { } {
 
 
 
-package provide HomeMatic 1.0
+package provide HomeMatic 1.1
 

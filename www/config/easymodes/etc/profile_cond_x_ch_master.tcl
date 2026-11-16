@@ -98,6 +98,11 @@ proc getMinValue {param} {
 	if {![catch {array set param_descr $psDescr($param)}]} {
     set min $param_descr(MIN)
   }
+
+  # Limit float to 2 decimal places
+  if {[llength [split $min "."]] == 2} {
+    set min [format {%1.2f} $min]
+  }
   return $min
 }
 
@@ -107,6 +112,11 @@ proc getMaxValue {param} {
   array_clear param_descr
 	if {![catch {array set param_descr $psDescr($param)}]} {
     set max $param_descr(MAX)
+  }
+
+  # Limit float to 2 decimal places
+  if {[llength [split $max "."]] == 2} {
+    set max [format {%1.2f} $max]
   }
   return $max
 }
@@ -164,7 +174,7 @@ proc getTextField {param value prn special_input_id class} {
     if {[string first "lowerVal_" $param 0] != -1 || [string first "upperVal_" $param 0] != -1} {
       append s "<td class='$class'><input id=$elemId type=\"text\" size=\"5\" value=$value name=$param onblur='setVal(this)'>&nbsp;[getUnit $param]&nbsp;[getMinMaxValueDescr $param]</td>"
     } else {
-      append s "<td class='$class'><input id=$elemId type=\"text\" size=\"5\" value=$value name=$param onblur='ProofAndSetValue(this.id, this.id, [getMinValue $param], [getMaxValue $param], 1);'>&nbsp;[getUnit $param]&nbsp;[getMinMaxValueDescr $param]</td>"
+      append s "<td class='$class'><input id=$elemId type=\"text\" size=\"5\" value=$value name=$param onblur=\"ProofAndSetValue(this.id, this.id, '[getMinValue $param]', '[getMaxValue $param]', 1);\">&nbsp;[getUnit $param]&nbsp;[getMinMaxValueDescr $param]</td>"
     }
   }
   append s "</tr>"

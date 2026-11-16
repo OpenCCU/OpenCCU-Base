@@ -8,7 +8,7 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`XMLPARSER_VERSION_NUMBER` in
 `xmlparser_version.h` and `@version` in `xmlParser.h`).
 
-## Unreleased
+## 1.15 (2026-11-16)
 
 * add `xmlparser_version()`, which returns the version of the loaded library.
   ([#294](https://github.com/OpenCCU/OpenCCU-Base/pull/294), @jens-maus)

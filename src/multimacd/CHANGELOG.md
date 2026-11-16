@@ -7,7 +7,7 @@ first.
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh`).
 
-## Unreleased
+## 1.3.0 (2026-11-16)
 
 * add the option `-v` / `--version`, which prints the version of multimacd and
   of the libelvutils it uses.
