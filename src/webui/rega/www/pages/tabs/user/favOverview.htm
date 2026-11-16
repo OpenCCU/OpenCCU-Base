@@ -237,6 +237,7 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
                     Write('<td rowspan="2" id="favPosCount" class="CLASS06313">');
                       string iIpP = localCount;
                       Write( iIpP );
+                      Write('<button type="button" class="FavoriteDragHandle" data-favorite-list="'#oUserFav.ID()#'" data-favorite-id="'#oFav.ID()#'" title="${lblFavoriteDragSort}" aria-label="${lblFavoriteDragSort}" onpointerdown="iseFavorites.StartPositionDrag(event,this);">&#8801;</button>');
                     Write('</td>');
                     Write('<td class="tMoveUp CLASS06315" onclick="MoveUp('#oUserFav.ID()#','#oFav.ID()#');"></td>');
                   Write('</tr>');

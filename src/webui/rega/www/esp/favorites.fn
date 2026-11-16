@@ -188,6 +188,57 @@ function ::MovePosition()
   }
 }
 
+
+! Move an item relative to a member of the same favorite enumeration.
+! Only the current editing copy or an accessible user list may be reordered.
+function ::MovePositionTo()
+{
+  object oList = dom.GetObject(system.GetVar("flid"));
+  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+  boolean allowed = false;
+  if (oList && oUser)
+  {
+    if (oList.IsTypeOf(OT_FAVORITE))
+    {
+      if (oList.ID() == system.GetSessionVar("sessionFAVID").ToInteger())
+      {
+        if (oList.EnCopyID() != ID_ERROR) { allowed = true; }
+      }
+      if (oList.Name() == "_USER" # oUser.ID()) { allowed = true; }
+      if ((oUser.UserLevel() == iulAdmin) && (oList.Name().Substr(0,5) == "_USER")) { allowed = true; }
+    }
+  }
+  if (!allowed) { Write("ERR"); return; }
+
+  integer source = system.GetVar("id").ToInteger();
+  integer target = system.GetVar("target").ToInteger();
+  integer after = system.GetVar("after").ToInteger();
+  if ((source <= 0) || (target <= 0) || (source == target) || (after < 0) || (after > 1))
+  { Write("ERR"); return; }
+
+  integer sourceIndex = -1;
+  integer targetIndex = -1;
+  integer index = 0;
+  string member;
+  foreach (member, oList.EnumIDs())
+  {
+    if (member.ToInteger() == source) { sourceIndex = index; }
+    if (member.ToInteger() == target) { targetIndex = index; }
+    index = index + 1;
+  }
+  if ((sourceIndex < 0) || (targetIndex < 0)) { Write("ERR"); return; }
+  integer destination = targetIndex + after;
+  if (sourceIndex < destination) { destination = destination - 1; }
+  integer step = 1;
+  if (sourceIndex > destination) { step = -1; }
+  while (sourceIndex != destination)
+  {
+    if (!oList.MoveObject(source, step)) { Write("ERR"); return; }
+    sourceIndex = sourceIndex + step;
+  }
+  Write("OK");
+}
+
 function ::SaveFavoriteList()
 {
   if( system.IsVar("flid") && system.IsVar("bIsPC") && system.IsVar("bIsPDA") && system.IsVar("bIsCENTRAL") && system.IsVar("sargs") )

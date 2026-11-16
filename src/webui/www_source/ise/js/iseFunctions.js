@@ -170,6 +170,111 @@ ise.Favorites.prototype =
     };
     new Ajax.Request(url, opts);
   },
+
+  // The handles are rendered with the native tables. Temporary pointer handlers
+  // belong to one drag and are removed on drop, cancellation or navigation.
+  StartPositionDrag: function(event, handle)
+  {
+    if (event.button !== 0 || this.positionDrag || this.positionSaving) { return; }
+    event.preventDefault();
+    var self = this, row = handle.closest("tr[id]");
+    var list = handle.getAttribute("data-favorite-list");
+    var source = handle.getAttribute("data-favorite-id");
+    if (!row || !/^[1-9][0-9]*$/.test(list) || !/^[1-9][0-9]*$/.test(source)) { return; }
+    var state = { target: null, after: false, active: false, frame: null,
+      x: event.clientX, y: event.clientY };
+    var startX = state.x, startY = state.y;
+    this.positionDrag = state;
+    handle.setPointerCapture(event.pointerId);
+
+    function clearTarget()
+    {
+      if (state.target) { state.target.closest("tr[id]").classList.remove("FavoriteDropBefore", "FavoriteDropAfter"); }
+      state.target = null;
+    }
+
+    function locate()
+    {
+      clearTarget();
+      var hit = document.elementFromPoint(state.x, state.y);
+      var targetRow = hit && hit.closest("tr[id]");
+      var target = targetRow && targetRow.querySelector(".FavoriteDragHandle");
+      if (!target || targetRow === row || target.getAttribute("data-favorite-list") !== list) { return; }
+      var box = targetRow.getBoundingClientRect();
+      state.after = state.y >= box.top + box.height / 2;
+      state.target = target;
+      targetRow.classList.add(state.after ? "FavoriteDropAfter" : "FavoriteDropBefore");
+    }
+
+    function scroll()
+    {
+      if (!row.isConnected) { finish(); return; }
+      if (state.active)
+      {
+        var scrollHost = row.parentElement;
+        while (scrollHost && scrollHost !== document.body)
+        {
+          if (scrollHost.scrollHeight > scrollHost.clientHeight &&
+              /auto|scroll/.test(window.getComputedStyle(scrollHost).overflowY))
+          {
+            var box = scrollHost.getBoundingClientRect();
+            var delta = state.y < box.top + 32 ? -10 : state.y > box.bottom - 32 ? 10 : 0;
+            if (delta) { scrollHost.scrollTop += delta; locate(); }
+            break;
+          }
+          scrollHost = scrollHost.parentElement;
+        }
+      }
+      state.frame = window.requestAnimationFrame(scroll);
+    }
+
+    function move(e)
+    {
+      if (e.pointerId !== event.pointerId) { return; }
+      state.x = e.clientX; state.y = e.clientY;
+      state.active = state.active || Math.abs(state.x - startX) + Math.abs(state.y - startY) > 6;
+      if (state.active) { locate(); }
+    }
+
+    function finish(e)
+    {
+      if (e && e.pointerId !== undefined && e.pointerId !== event.pointerId) { return; }
+      var target = state.target, after = state.after;
+      clearTarget();
+      window.cancelAnimationFrame(state.frame);
+      handle.removeEventListener("pointermove", move);
+      handle.removeEventListener("pointerup", finish);
+      handle.removeEventListener("pointercancel", finish);
+      handle.removeEventListener("lostpointercapture", finish);
+      document.removeEventListener("keydown", escape);
+      if (handle.hasPointerCapture(event.pointerId)) { handle.releasePointerCapture(event.pointerId); }
+      self.positionDrag = null;
+      if (!e || e.type !== "pointerup" || !state.active || !target || !row.isConnected) { return; }
+      var targetId = target.getAttribute("data-favorite-id");
+      if (!/^[1-9][0-9]*$/.test(targetId)) { return; }
+      self.positionSaving = true;
+      new Ajax.Request("/esp/favorites.htm?sid=" + SessionId, {
+        postBody: ReGa.encode('string action = "MovePositionTo";string flid = "' + list +
+          '";string id = "' + source + '";string target = "' + targetId +
+          '";string after = "' + (after ? "1" : "0") + '";'),
+        onComplete: function(response) {
+          self.positionSaving = false;
+          if (response.status !== 200 || response.responseText.trim() !== "OK") {
+            window.alert(translateKey("lblFavoriteSortFailed"));
+          }
+          reloadPage();
+        }
+      });
+    }
+
+    function escape(e) { if (e.key === "Escape") { finish(); } }
+    handle.addEventListener("pointermove", move);
+    handle.addEventListener("pointerup", finish);
+    handle.addEventListener("pointercancel", finish);
+    handle.addEventListener("lostpointercapture", finish);
+    document.addEventListener("keydown", escape);
+    state.frame = window.requestAnimationFrame(scroll);
+  },
   MovePosition: function(flid,id,dir)
   {
     var url = "/esp/favorites.htm?sid="+SessionId;

@@ -585,6 +585,7 @@ arChSv = new Array();
                   } 
                   oEnte.MetaData("pos",iIpP);        
                 }
+                Write('<button type="button" class="FavoriteDragHandle" data-favorite-list="'#oFav.ID()#'" data-favorite-id="'#oEntry.ID()#'" title="${lblFavoriteDragSort}" aria-label="${lblFavoriteDragSort}" onpointerdown="iseFavorites.StartPositionDrag(event,this);">&#8801;</button>');
                 Write( '</td>');
                 Write('<td class="tMoveUp CLASS06315" onclick="MoveUp('#oFav.ID()#','#oEntry.ID()#');"></td>');
               Write('</tr>');
