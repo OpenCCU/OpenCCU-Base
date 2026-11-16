@@ -247,8 +247,8 @@
                   boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
                   Call( "/esp/system.fn::getSysVarValAsString()" );
                   ! The value may contain HTML. showSysVarValues() shows it with only
-                  ! simple text formatting, so it is passed HTML-escaped in an attribute.
-                  Write( '<span data-sysvar-value="' # sSysVarVal.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('"', "&quot;") # '"></span>' );
+                  ! its formatting, so it is passed HTML-escaped in an attribute.
+                  Call( "/esp/system.fn::writeSysVarVal()" );
                   Write("</td>");
                   Write("</tr>");
                 }
