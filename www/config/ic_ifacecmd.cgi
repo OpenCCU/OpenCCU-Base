@@ -645,6 +645,7 @@ proc cmd_set_profile {} {
   set ps_type ""
   set paramid ""
   set pnr     ""
+  set new_profilepath ""
   set HmIPIdentifier "HmIP-RF"
   set HmIPWiredIdentifier "HmIP-Wired"
 
@@ -815,7 +816,6 @@ cgi_eval {
 
     html {
       head {
-        put_meta_nocache
         puts "<title>response of request with command: $cmd</title>"
       }
       body {

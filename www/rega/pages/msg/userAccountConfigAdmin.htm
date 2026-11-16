@@ -22,10 +22,9 @@
       {
         sDeviceDisabled = "";
       }
-      if(userToTest.Name() == "Admin") 
+      if(userToTest.ID() == 1004)
       {
         sDisabled = "disabled";
-        sSuperAdminDisabled = "disabled";
         sDeviceDisabled = "disabled";
       }
     }
@@ -34,6 +33,7 @@
 </div>
 
 <div class="CLASS00700">
+  <script type="text/javascript">onPwChange = function(){};</script>
   <table class="tblUserData CLASS00701" cellpadding="0" cellspacing="0" >
     <tr>
     <td class="CLASS00702">
@@ -45,16 +45,16 @@
         <tr>    
           <td class="CLASS00704">${lblUserName}</td>
           <td class="CLASS00704">
-            <input type="text" id="fullName" class="CLASS00704" <% Write(sSuperAdminDisabled); %> />
+            <input type="text" id="fullName" class="CLASS00704" <% Write(sSuperAdminDisabled); %> autocomplete="username" />
           </td>
         </tr>
         <tr>
           <td class="CLASS00704">${lblUserPassword}</td>
-          <td class="CLASS00704"><input type="Password" id="txtPw" class="CLASS00704" onchange="onPwChange()"/></td>
+          <td class="CLASS00704"><input type="Password" id="txtPw" class="CLASS00704" onchange="onPwChange()" autocomplete="new-password" /></td>
         </tr>
         <tr>
           <td class="CLASS00704">${lblUserPasswordRepeat}</td>
-          <td class="CLASS00704"><input type="Password" id="txtPw2" class="CLASS00704" onchange="onPwChange()"/></td>
+          <td class="CLASS00704"><input type="Password" id="txtPw2" class="CLASS00704" onchange="onPwChange()" autocomplete="new-password" /></td>
         </tr>
         <tr>
           <td colspan="2" class="CLASS00705">
@@ -180,6 +180,9 @@
             <td class="CLASS00709">
               <div class="FooterButton CLASS00716" onclick="addSysVar()">${btnAddSysVariable}</div>
             </td>
+            <td class="CLASS00709">
+              <div class="FooterButton CLASS00716" onclick="sortSysVar()">${btnSortSysVariable}</div>
+            </td>
           </tr>
         </table>
     </td>
@@ -288,6 +291,14 @@
     return arTmp;
   };
   
+  
+  sortSysVar = function()
+  {
+    if (iUserId != 0) {
+     iseUser.sortSysVarTable(iUserId);
+    }
+  };
+
   addSysVar = function()
   {
     dlgResult = "";
@@ -508,7 +519,7 @@
       if (tmp != uid)
       {
         object o = dom.GetObject(tmp);
-        Write("arUserNames[arUserNames.length] = '"#o.Name()#"';");
+        Write("arUserNames[arUserNames.length] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
       }
     }
     
@@ -520,7 +531,7 @@
         string sUserFullName = user.UserFirstName()#' '#user.UserLastName();
         if( sUserFullName == ' ' ){ sUserFullName = user.Name(); }
         ! sUserFullName        
-        Write("$('fullName').value = '"#sUserFullName#"';");
+        Write("$('fullName').value = '"#sUserFullName.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
         Write("$('txtPw').value = '"#user.UserBlankPwd()#"';");
         Write("$('txtPw2').value = '"#user.UserBlankPwd()#"';");
         Write("$('cbUserS').checked = "#user.UserShowLogin()#";");

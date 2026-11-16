@@ -11,6 +11,19 @@
 #   Objekt der Systemvariablen mit Name, ID, Wert.
 ##
 
+if { ![regexp {^[A-Za-z0-9_\-\.:]+$} $args(name)] } then {
+  jsonrpc_error 100 "Invalid name. Must match \[A-Za-z0-9_\-.:\]"
+}
+if { ![regexp {^[A-Za-z0-9_\-;,]+$} $args(valList)] } then {
+  jsonrpc_error 101 "Invalid valList. Expected format: Wert1;Wert2;Wert3;..."
+}
+if {[catch { hmscript_assertInteger $args(internal)} err]} {
+  jsonrpc_error 102 $err
+}
+if {[catch { hmscript_assertInteger $args(chnID)} err]} {
+  jsonrpc_error 103 $err
+}
+
 set script {
 
   if (chnID != -1) {
@@ -26,8 +39,11 @@ set script {
   sv.ValueList( valList );
   sv.State(0);
 
-
-  sv.Internal(internal);
+  if((internal == "true") || (internal == 1)) {
+    sv.Internal(true);
+  } else {
+    sv.Internal(false);
+  }
 
   if (channel) {
     sv.Channel(chnID);
@@ -36,7 +52,7 @@ set script {
 
   oSysVars.Add(sv.ID());
 
-  Write("{'name':'"#sv.Name()#"','id':'"#sv.ID()#"','value':'"#sv.ValueList()#"' }");
+  Write('{"name":"'#sv.Name()#'","id":"'#sv.ID()#'","value":"'#sv.ValueList()#'" }');
 }
 
 jsonrpc_response [hmscript $script args]

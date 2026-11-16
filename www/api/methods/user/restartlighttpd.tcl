@@ -5,10 +5,8 @@
 # Parameter:
 #   keine
 #
-# Rückgabewert: true
+# RÃ¼ckgabewert: true
 
-exec echo "restart-lighttpd" | socat - UNIX-CONNECT:/tmp/eq3-services.uds >/dev/null
-#exec -- /usr/bin/nohup /etc/init.d/S50lighttpd restart >/dev/null
-#exec /etc/init.d/S50lighttpd restart
+exec /usr/bin/monit restart lighttpd
 
 jsonrpc_response true

@@ -353,7 +353,7 @@ jQuery.extend(true, langJSON, {
 
     "helpHeatingCooling" :
       "Damit das Homematic IP System zuverl%E4ssig funktioniert, m%FCssen immer alle Komponenten, welche miteinander verkn%FCpft sind, gemeinsam in den Heiz- bzw. K%FChlmodus gesetzt werden. " +
-      "Wenn dies nicht passiert, kann der Zustand durch eine andere Komponente wieder %FCberschrieben werden.<br/><br/>" +
+      "Andernfalls kann der Zustand durch eine andere Komponente wieder %FCberschrieben werden.<br/><br/>" +
       "Beispielsweise verteilt die HmIP-MIOB diesen Zustand zyklisch an die Fu%DFbodenheizungsaktoren und diese verteilen die Information weiter an die Wandthermostate.",
 
     "lblFlowControl" : "Durchfluss-Kontrolle",
@@ -385,14 +385,14 @@ jQuery.extend(true, langJSON, {
     "optionPressureSensorGBHW1" : "Gr%FCnbeck HW1",
 
     "lblEventBlindTime" : "Durchflusszeit %DCberwachung",
-    "lblCondThresholdHi_WSS" : "Durchflussmenge %DFberwachung",
+    "lblCondThresholdHi_WSS" : "Durchflussmenge %DCberwachung",
     "unitLiters" : "Liter",
 
     "stringTableErrorMaxWaterFlow" :
-      "Spitzendurchfluss %FCberschritten. Bitte auf Leckage pr%FCfen.",
+      "Spitzendurchfluss %FCberschritten. Auf Leckage pr%FCfen.",
 
     "stringTableErrorMaxWaterFlowDuration" :
-      "Wasserdurchflusszeit %FCberschritten. Bitte auf Leckage pr%FCfen.",
+      "Wasserdurchflusszeit %FCberschritten. Auf Leckage pr%FCfen.",
 
     "stringTableManualSelfCalibrationBottomPosSetFalse" : "Untere Endlage gesetzt: Nein",
     "stringTableManualSelfCalibrationBottomPosSetTrue" : "Untere Endlage gesetzt: Ja",

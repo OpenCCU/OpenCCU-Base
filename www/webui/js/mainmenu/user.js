@@ -7,14 +7,14 @@
   {id: "menuStartPage", align: "left", action: function() { WebUI.enter(StartPage); }   , submenu: [ ]},
 	{id: "menuControlPage", align: "left", action: function() { WebUI.enter(ControlPage); }, submenu:
 	[
-    {id: "submenuDevices"   , action: function() { WebUI.enter(ControlDevicesPage); }  },
-    {id: "submenuRooms"    , action: function() { WebUI.enter(ControlRoomsPage); }    },
-    {id: "submenuFunction"  , action: function() { WebUI.enter(ControlFunctionsPage); }},
     {id: "submenuDiagramListPage", action: function() { ConfigData.check(function() { WebUI.enter(DiagramListPage);});}},
 		{id: "submenuFavorites", action: function() { WebUI.enter(ControlFavoritesPage); }},
+    {id: "submenuDevices"   , action: function() { WebUI.enter(ControlDevicesPage); }  },
+    {id: "submenuFunction"  , action: function() { WebUI.enter(ControlFunctionsPage); }},
 		{id: "submenuPrograms", action: function() { WebUI.enter(ControlProgramsPage); } },
-		{id: "submenuSysVar" , action: function() { WebUI.enter(ControlVariablesPage); }},
-		{id: "submenuSysProtocol", action: function() { WebUI.enter(ControlProtocolPage); } }
+    {id: "submenuRooms"    , action: function() { WebUI.enter(ControlRoomsPage); }    },
+		{id: "submenuSysProtocol", action: function() { WebUI.enter(ControlProtocolPage); } },
+		{id: "submenuSysVar" , action: function() { WebUI.enter(ControlVariablesPage); }}
 	]},
   {id: "menuSettingsPage", align: "left", action: function() { ConfigData.check(function() { WebUI.enter(SystemConfigPageUser); }); }, submenu:
   [ 

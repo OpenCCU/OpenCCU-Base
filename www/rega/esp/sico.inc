@@ -32,13 +32,20 @@
     boolean bOK = false;
 
     string sVLValue = "";
+    
+    string oCCName = "";
+    string oLVName = "";
 
     if( iLVT == ivtObjectId )
     {
       bOK = ( oCC && oLV );
       if( bOK )
       {
-        Write( ' <b class="CLASS02201" onclick="ShowChannelChooser2('#oSC.ID()#');">'#oCC.Name()#'</b>' );
+        oCCName = oCC.Name();
+        oCCName = oCCName.Replace("&", "&amp;");
+        oCCName = oCCName.Replace("<", "&lt;");
+        oCCName = oCCName.Replace(">", "&gt;");
+        Write( ' <b class="CLASS02201" onclick="ShowChannelChooser2('#oSC.ID()#');">'#oCCName#'</b>' );
       }
       else
       {
@@ -51,7 +58,11 @@
       if( oLV ) { bOK = true; }
       if( bOK )
       {
-        Write( ' <b class="CLASS02201" onclick="ShowSysVarChooser('#oSC.ID()#');">'#oLV.Name()#'</b>' );
+        oLVName = oLV.Name();
+        oLVName = oLVName.Replace("&", "&amp;");
+        oLVName = oLVName.Replace("<", "&lt;");
+        oLVName = oLVName.Replace(">", "&gt;");
+        Write( ' <b class="CLASS02201" onclick="ShowSysVarChooser('#oSC.ID()#');">'#oLVName#'</b>' );
       }
       else
       {
@@ -65,20 +76,29 @@
       boolean isGenericValueType = ((oLV.ValueType() == ivtFloat) || (oLV.ValueType() == ivtInteger));
       boolean bSysVarGeneric = ( (iLVT == ivtSystemId) && (isGenericValueType)  && (oLV.ValueSubType() == istGeneric ) );
       boolean bSysVarString  = ( (iLVT == ivtSystemId) && (oLV.ValueType() == ivtString) && (oLV.ValueSubType() == istChar8859) );
+      string  sNotSelectedFalse = "selected";string sNotSelectedTrue = "";
+      if( oSC.NegateCondition() ) { sNotSelectedTrue = "selected"; sNotSelectedFalse = ""; }
+
+      if ( (!bSysVarGeneric) || (bSysVarString) ) {
+        Write( '&nbsp;<select id="selectConditionNot'#oSC.ID()#'" name="selectConditionNot" onchange="iseSingleCondition.SetNegateCondition('#oSC.ID()#',this.value);" class="SelectBox">' );
+        Write( '<option value="false"'#sNotSelectedFalse#' >${ruleConditionLblWhen}</option>');
+        Write( '<option value="true"'#sNotSelectedTrue#'>${ruleConditionLblNot} ${ruleConditionLblWhen}</option>' );
+        Write( '</select> ');
+      }
 
       if (bSysVarString)
       {
         !Write("<i>bei</i>");
-        Write("<i>${ruleConditionLblWhen}</i>");
+        !Write("<i>${ruleConditionLblWhen}</i>");
 !        Write("<input type='text' onblur='javascript:alert(\"blur\");' class='SelectBox' />");
-        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1 # "' class='SelectBox' />");
+        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&#39;") # "' class='SelectBox' />");
 
       }
 
       if( (!bSysVarGeneric) && (!bSysVarString) )
       {
         !Write( ' <i>bei</i> ' );
-        Write( ' <i>${ruleConditionLblWhen}</i> ' );
+        !Write( ' <i>${ruleConditionLblWhen}</i> ' );
         Write( '<select id="selectConditionWhen'#oSC.ID()#'" name="selectConditionWhen" onchange="SetLeftValue('#oSC.ID()#',this.value); setOptionWidthSelectConditionWhen();" class="SelectBox">' );
       }
 
@@ -136,6 +156,9 @@
                         }
                       }
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
+                      sValue = sValue.Replace("&", "&amp;");
+                      sValue = sValue.Replace("<", "&lt;");
+                      sValue = sValue.Replace(">", "&gt;");
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -168,6 +191,9 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
+                    sValue = sValue.Replace("&", "&amp;");
+                    sValue = sValue.Replace("<", "&lt;");
+                    sValue = sValue.Replace(">", "&gt;");
                     Write( sValue );
 
                     Write( '</option>' );
@@ -195,6 +221,9 @@
                       }
 
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
+                      sValue = sValue.Replace("&", "&amp;");
+                      sValue = sValue.Replace("<", "&lt;");
+                      sValue = sValue.Replace(">", "&gt;");
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -224,6 +253,9 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
+                    sValue = sValue.Replace("&", "&amp;");
+                    sValue = sValue.Replace("<", "&lt;");
+                    sValue = sValue.Replace(">", "&gt;");
                     Write( sValue );
                     Write( '</option>' );
                   }
@@ -249,6 +281,9 @@
                   }
                 }
                 Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
+                sValue = sValue.Replace("&", "&amp;");
+                sValue = sValue.Replace("<", "&lt;");
+                sValue = sValue.Replace(">", "&gt;");
                 Write( sValue );
                 Write( '</option>' );
               }
@@ -273,6 +308,9 @@
             sVLValue = web.webGetValueFromList( oLV.ValueList(), sVLKey );
             if( iRV1 == sVLKey ) { sSelected = " selected"; } else { sSelected = ""; }
             Write( '<option value="'#oLV.ID()#':'#sVLKey#'"'#sSelected#'>' );
+            sVLValue = sVLValue.Replace("&", "&amp;");
+            sVLValue = sVLValue.Replace("<", "&lt;");
+            sVLValue = sVLValue.Replace(">", "&gt;");
             Write( sVLValue );
             Write( '</option>' );
           }
@@ -281,11 +319,19 @@
         {
           if( iRV1 == 0 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':0"'#sSelected#'>' );
-          Write( oLV.ValueName0() );
+          string sValueName0 = oLV.ValueName0();
+          sValueName0 = sValueName0.Replace("&", "&amp;");
+          sValueName0 = sValueName0.Replace("<", "&lt;");
+          sValueName0 = sValueName0.Replace(">", "&gt;");
+          Write( sValueName0 );
           Write( '</option>' );
           if( iRV1 == 1 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':1"'#sSelected#'>' );
-          Write( oLV.ValueName1() );
+          string sValueName1 = oLV.ValueName1();
+          sValueName1 = sValueName1.Replace("&", "&amp;");
+          sValueName1 = sValueName1.Replace("<", "&lt;");
+          sValueName1 = sValueName1.Replace(">", "&gt;");
+          Write( sValueName1 );
           Write( '</option>' );
         }
       }
@@ -300,11 +346,18 @@
       if( (!bOptionList) && (!bBinary) && (!bSpecial) && (!bSysVarString) )
       {
         !Write( ' <i>im Wertebereich</i> ' );
+        if ( (!bSysVarGeneric) && (!bSysVarString) ) {
         if (iCT1 != 5) {
           Write( ' <i>${ruleConditionLblWithinValueRange}</i> ' );
         }
+        } else {
+          Write( ' <select id="selectConditionNot'#oSC.ID()#'" name="selectConditionNot" onchange="iseSingleCondition.SetNegateCondition('#oSC.ID()#',this.value);" class="SelectBox">' );
+          Write( '<option value="false"'#sNotSelectedFalse#' >${ruleConditionLblWithinValueRange}</option>');
+          Write( '<option value="true"'#sNotSelectedTrue#'>${ruleConditionLblNot} ${ruleConditionLblWithinValueRange}</option>' );
+          Write( '</select> ');
+        }
         string sCT = "";
-        string sValueUnit = oLV.ValueUnit();
+        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         if( sValueUnit == "100%" )
         {
           sValueUnit = "%";
@@ -326,7 +379,7 @@
           sValueUnit = "";
         }
 
-        if( (iCT1 != 5) && (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 10) & (iCT1 != 11) & (iCT1 != 9) )
+        if( (iCT1 != 5) && (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 9) && (iCT1 != 10) && (iCT1 != 11) && (iCT1 != 12) )
         {
           oSC.ConditionType(6);
           iCT1 = 6;
@@ -349,6 +402,10 @@
         if( iCT1 == 9 ) { sCT = "${ruleConditionLblGreaterOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
         !if( iCT1 == 11 ) { sCT = "kleiner oder gleich "#iRV1.ToString(2)#sValueUnit; }
         if( iCT1 == 11 ) { sCT = "${ruleConditionLblLessOrEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+        !if( iCT1 == 5 ) { sCT = "gleich "#iRV1.ToString(2)#sValueUnit; }
+        if( iCT1 == 5) { sCT = "${ruleConditionLblEqualThan} "#iRV1.ToString(2)#sValueUnit; }
+        !if( iCT1 == 12 ) { sCT = "ungleich "#iRV1.ToString(2)#sValueUnit; }
+        if( iCT1 == 12 ) { sCT = "${ruleConditionLblNotEqualThan} "#iRV1.ToString(2)#sValueUnit; }
 
         Write( ' <b class="CLASS02201" onclick="CreatePopup(ID_SET_VALUE_RANGE,'#oSC.ID()#');">'#sCT#'</b>' );
       }

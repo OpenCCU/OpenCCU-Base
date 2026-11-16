@@ -5,59 +5,59 @@ function ::ShowExtDesc() {
   if ((chn.HssType() == "SWITCH_TRANSMITTER") && ((chn.Label() == "HmIP-MOD-OC8") || (chn.Label() == "ELV-SH-SB8"))) {
 
     if ((chn.Label() == "ELV-SH-SB8")) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LED}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LED}</span>");
     } else {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_OC}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_OC}</span>");
     }
     showExtDesc = true;
   }
 
   if ((chn.HssType() == "SWITCH_VIRTUAL_RECEIVER") && (chn.Label() == "ELV-SH-SB8")) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LED}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LED}</span>");
     showExtDesc = true;
   }
 
   if (chn.HssType() == "DIMMER_TRANSMITTER") {
     if (((chn.Label() == "HmIP-WUA") || (chn.Label() == "ELV-SH-WUA"))) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_UNIVERSAL_ACTOR_TRANSMITTER_010V}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_UNIVERSAL_ACTOR_TRANSMITTER_010V}</span>");
       showExtDesc = true;
     }
 
     if (chn.Label() == "HmIP-BSL") {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_OPTICAL_SIGNAL_RECEIVERB}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_OPTICAL_SIGNAL_RECEIVERB}</span>");
       showExtDesc = true;
     }
   }
 
   if (chn.HssType() == "DIMMER_VIRTUAL_RECEIVER") {
     if (((chn.Label() == "HmIP-WUA") || (chn.Label() == "ELV-SH-WUA"))) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_UNIVERSAL_ACTOR_VIRTUAL_RECEIVER_010V}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_UNIVERSAL_ACTOR_VIRTUAL_RECEIVER_010V}</span>");
       showExtDesc = true;
     }
 
     if (chn.Label() == "HmIP-BSL") {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_OPTICAL_SIGNAL_RECEIVER}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_OPTICAL_SIGNAL_RECEIVER}</span>");
       showExtDesc = true;
     }
   }
 
   if ((chn.HssType() == "DOOR_RECEIVER") && (chn.Label() == "HmIP-MOD-HO") ) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_HO}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_HO}</span>");
     showExtDesc = true;
   }
 
   if ((chn.HssType() == "SIMPLE_SWITCH_RECEIVER") && (chn.Label() == "HmIP-MOD-HO") ) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_HO}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_HO}</span>");
     showExtDesc = true;
   }
 
   if ((chn.HssType() == "DOOR_RECEIVER") && (chn.Label() == "HmIP-MOD-TM") ) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_TM}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_TM}</span>");
     showExtDesc = true;
   }
 
   if ((chn.HssType() == "SIMPLE_SWITCH_RECEIVER") && (chn.Label() == "HmIP-MOD-TM") ) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_TM}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_MOD_TM}</span>");
     showExtDesc = true;
   }
 
@@ -65,14 +65,14 @@ function ::ShowExtDesc() {
     ! Show the device address instead of the channel address because channel 2 and 3 are summarized together in channel 2.
     ! Channel 3 is not visible.
     ! - See SPHM-1030 - Write(chn.Label()#"<br/>&nbsp;"#oDev.Address()#"&nbsp;");
-    Write(oDev.Name()#"<br/>&nbsp;"#oDev.Address()#"&nbsp;");
+    Write(oDev.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/>&nbsp;"#oDev.Address()#"&nbsp;");
     showExtDesc = true;
   }
 
   if (chn.HssType() == "MULTI_MODE_INPUT_TRANSMITTER") {
     string mode = chn.MetaData("channelMode");
     if (mode == null) {mode = "1";}
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_"#mode#"}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_"#mode#"}</span>");
     showExtDesc = true;
   }
 
@@ -83,7 +83,7 @@ function ::ShowExtDesc() {
       ) {
       object mode = dom.GetObject(chn.Address());
       if (mode.MetaData("channelMode") == "shutter") {
-        Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_SHUTTER_TRANSMITTER}</span>");
+        Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_SHUTTER_TRANSMITTER}</span>");
         showExtDesc = true;
       }
     }
@@ -96,7 +96,7 @@ function ::ShowExtDesc() {
       ) {
       object mode = dom.GetObject(chn.Address());
       if (mode.MetaData("channelMode") == "shutter") {
-        Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_SHUTTER_VIRTUAL_RECEIVER}</span>");
+        Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_SHUTTER_VIRTUAL_RECEIVER}</span>");
         showExtDesc = true;
       }
     }
@@ -104,32 +104,32 @@ function ::ShowExtDesc() {
 
   if (chn.HssType() == "SHUTTER_TRANSMITTER") {
     if ((chn.Label().Substr(0,9) == "HmIP-M-TD")) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TUBULAR_MOTOR}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TUBULAR_MOTOR}</span>");
       showExtDesc = true;
     }
   }
 
   if (chn.HssType() == "SHUTTER_VIRTUAL_RECEIVER") {
     if ((chn.Label().Substr(0,9) == "HmIP-M-TD")) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TUBULAR_MOTOR}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TUBULAR_MOTOR}</span>");
       showExtDesc = true;
     }
   }
 
   if ((chn.HssType() == "ROTARY_CONTROL_TRANSCEIVER") && (chn.Label() == "HmIP-WRCR") ) {
     if (chNumber == 2) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TR}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TR}</span>");
       showExtDesc = true;
     }
     if (chNumber == 3) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TL}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_TL}</span>");
       showExtDesc = true;
     }
   }
 
   if (chn.HssType() == "CLIMATE_TRANSCEIVER") {
     if (chn.Label() == "ELV-SH-TACO") {
-        Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_CLIMATE_TRANSCEIVER_TEMP}</span>");
+        Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_CLIMATE_TRANSCEIVER_TEMP}</span>");
         showExtDesc = true;
     }
   }
@@ -147,24 +147,24 @@ function ::ShowExtDesc() {
   !}
 
   if ( (chn.HssType() == "COND_SWITCH_TRANSMITTER_TEMPERATURE") && (chn.Label() == "HmIP-STE2-PCB") && (chNumber == 3) ) {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_COND_SWITCH_TRANSMITTER_TEMPERATURE_DIFF}</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_COND_SWITCH_TRANSMITTER_TEMPERATURE_DIFF}</span>");
     showExtDesc = true;
   }
 
   if ((chn.HssType() == "ACCESS_RECEIVER") && ((chn.Label() == "HmIP-DLD") || (chn.Label() == "HmIP-DLD-A") || (chn.Label() == "HmIP-DLD-S")))  {
-    Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_RECEIVER} "#(chNumber - 1)#"</span>");
+    Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_RECEIVER} "#(chNumber - 1)#"</span>");
     showExtDesc = true;
   }
 
   if (chn.HssType() == "ACCESS_TRANSCEIVER")  {
     if (chn.Label() == "HmIP-FWI") {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_TRANSCEIVER} "#chNumber#"</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_TRANSCEIVER} "#chNumber#"</span>");
       showExtDesc = true;
     }
 
     if (chn.Label() == "HmIP-WKP") {
       integer tmpChn = (chNumber + 1) / 2;
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_TRANSCEIVER} "#tmpChn#"</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_ACCESS_TRANSCEIVER} "#tmpChn#"</span>");
       showExtDesc = true;
     }
   }
@@ -178,19 +178,19 @@ function ::ShowExtDesc() {
         index = index + 1;
         if (chNo == tmp) {
           if (chNumber <= 7) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 1 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 1 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
           if ((chNumber >= 9) && (chNumber <= 15)) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 2 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 2 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
           if ((chNumber >= 17) && (chNumber <= 23)) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 3 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_A} 3 - ${chType_DISPLAY_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
           if (chNumber == 25) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_D} </span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_INPUT_TRANSMITTER_D} </span>");
             showExtDesc = true;
           }
         }
@@ -208,15 +208,15 @@ function ::ShowExtDesc() {
         index = index + 1;
         if (chNo == tmp) {
           if (chNumber <= 8) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 1 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 1 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
           if ((chNumber >= 10) && (chNumber <= 16)) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 2 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 2 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
           if ((chNumber >= 18) && (chNumber <= 24)) {
-            Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 3 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
+            Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_A} 3 - ${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_B} "#index#"${chType_DISPLAY_LEVEL_INPUT_TRANSMITTER_C}</span>");
             showExtDesc = true;
           }
         }
@@ -227,42 +227,42 @@ function ::ShowExtDesc() {
 
   if ((chn.HssType() == "UNIVERSAL_LIGHT_RECEIVER") && (chn.Label() == "HmIP-DRG-DALI"))  {
     if ((chNumber >= 33) && (chNumber <= 48)) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${lblGroup} "#(chNumber - 32)#"</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${lblGroup} "#(chNumber - 32)#"</span>");
       showExtDesc = true;
     }
   }
 
   if ((chn.Label() == "HmIP-SMO230") || (chn.Label() == "HmIP-SMO230-A") || (chn.Label() == "HmIPW-SMO230") || (chn.Label() == "HmIPW-SMO230-A")) {
     if (chNumber == 1) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LEFT}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_LEFT}</span>");
       showExtDesc = true;
     }
     if (chNumber == 2) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_RIGHT}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_RIGHT}</span>");
       showExtDesc = true;
     }
     if (chNumber == 3) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_BOTTOM}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_BOTTOM}</span>");
       showExtDesc = true;
     }
     if (chNumber == 4) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_VIRTUEL}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_VIRTUEL}</span>");
       showExtDesc = true;
     }
     if (chNumber == 5) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE1}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE1}</span>");
       showExtDesc = true;
     }
     if (chNumber == 6) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE2}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE2}</span>");
       showExtDesc = true;
     }
     if (chNumber == 7) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE3}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_ZONE3}</span>");
       showExtDesc = true;
     }
     if (chNumber == 8) {
-      Write(chn.Name()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_VIRTUEL}</span>");
+      Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"_VIRTUEL}</span>");
       showExtDesc = true;
     }
   }

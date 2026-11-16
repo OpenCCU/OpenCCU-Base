@@ -95,7 +95,7 @@ sliderControl = function(type,id, val, iViewOnly, bSliderPosFlag,min, max, facto
     iLeftTextPos = -10;
     this.n_pathTop = 1;
   }
-  var sHTML =  '<div style="width:' + this.n_controlWidth + 'px;height:' + this.n_controlHeight + 'px;border:0; background-repeat:no-repeat; background-position:center; background-image:url(' + this.s_imgControlGray + ')" id="sl' + this.n_id + 'base">';
+  var sHTML =  '<div style="width:' + this.n_controlWidth + 'px;height:' + this.n_controlHeight + 'px;border:0; background-repeat:no-repeat; background-position:center; background-image:url(' + this.s_imgControlGray + '); cursor:pointer" id="sl' + this.n_id + 'base">';
   sHTML += '<div id ="spec'+id+'"><div style="width:5px;height:' + this.n_controlHeight + 'px;border:0;'+sSliderPos+'background-image:url(' + this.s_imgControlGreen + '); background-repeat:no-repeat; position:relative;left:' + this.n_pathLeft + 'px;top:' + this.n_pathTop + 'px;" id="sl' + this.n_id + 'green">';
   sHTML += '<img src="' + this.s_imgSlider + '" width="' + this.n_sliderWidth + '" height="' + this.n_sliderHeight + '" border="0" style="position:relative;left:' + this.n_pathLeft + 'px;top:' + this.n_pathTop + 'px;z-index:' + this.n_zIndex + ';cursor:pointer;visibility:hidden;" name="sl' + this.n_id + 'slider" id="sl' + this.n_id + 'slider" onmousedown="return f_sliderMouseDown(' + this.n_id + ')"/></div>';
   sHTML  += '<div id="slMin" style="position:relative;left:4px;top:'+iLeftTextPos+'px;width:'+this.n_pathLength+'px;color:black;text-align:left;z-index:4;"><b>'+this.sMinText+'</b>';

@@ -5,7 +5,7 @@ function ::CreateDoorWindowContact()
     WriteLine("<tr>");
       WriteLine("<td class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/door/open.png' width='80' height='80' />");
+          WriteLine("<img src='/ise/img/door/open.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");
@@ -18,7 +18,7 @@ function ::CreateDoorWindowContact()
     WriteLine("<tr>");
       WriteLine("<td  class='CLASS02513'>");
         WriteLine("<div align='center'>");
-          WriteLine("<img src='/ise/img/door/closed.png' width='80px' height='80px' />");
+          WriteLine("<img src='/ise/img/door/closed.png' width='80' height='80' style='mix-blend-mode:multiply;' />");
         WriteLine("</div>");
       WriteLine("</td>");
     WriteLine("</tr>");

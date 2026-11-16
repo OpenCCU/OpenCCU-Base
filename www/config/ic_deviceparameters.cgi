@@ -18,12 +18,12 @@ proc put_error {iface address} {
       puts "<div class=\"subOffsetDivPopup CLASS22000\">"
 
       puts "<script type=\"text/javascript\">"
-      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>Programme &amp; Verkn&uuml;pfungen</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>Direkte Verkn&uuml;pfungen</span> &gt; Ger&auml;te- / Kanalparameter einstellen\");"
+      puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>\${menuProgramsLinksPage}</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>\${submenuDirectLinks}</span> &gt; \${setDeviceAndChannelParams}\");"
 
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>Abbrechen</div></td>\";"
+      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\${footerBtnPageBack}</div></td>\";"
       puts "  s += \"</tr>\";"
       puts "  s += \"</table>\";"
       puts "  setFooter(s);"
@@ -40,8 +40,8 @@ proc put_error {iface address} {
 
 proc put_page {} {
 
-  global MODE redirect_url dev_descr
-
+  global MODE redirect_url dev_descr iface iface_descr
+  set HMRFIdentifier "BidCos-RF"
   #cgi_debug -on
 
   puts "<div id=\"ic_deviceparameters\">"
@@ -51,6 +51,97 @@ proc put_page {} {
       puts "<div class=\"subOffsetDivPopup CLASS22000\">"
       
       puts "<script type=\"text/javascript\">"
+      if {($iface_descr($iface) == $HMRFIdentifier)} then {
+        puts "var POPUP_HEIGHT=110;"
+        puts "var POPUP_WIDTH =410;"
+        puts "this.gatewaysListbox = new UI.ListBox()"
+        puts "  .setPosition(100,10)"
+        puts "  .setWidth(POPUP_WIDTH - 130);"
+        
+        puts "this.roamingCheckbox = new UI.Checkbox()"
+        puts "  .setText(translateKey('dialogSettingsBidcosRFIFaceAssignmentLblNullify'))"
+        puts "  .setPosition(100,40)"
+        puts "  .setWidth(POPUP_WIDTH - 130)"
+        puts "  .setIsChecked(this.roaming);"
+
+        puts "homematic('Interface.listBidcosInterfaces', {'interface': '$HMRFIdentifier'}, function(interfaceStatus) {"
+        puts "  if (interfaceStatus) {"
+        puts "    for (var i = 0; i < interfaceStatus.length; i++) {"
+        puts "      if (interfaceStatus\[i\].isDefault) {"
+        puts "       var defaultGateway = {type:interfaceStatus\[i\].type, userName:'$HMRFIdentifier',serialNumber:interfaceStatus\[i\].address};"
+        puts "        this.gatewaysListbox.add({name: translateKey('dialogSettingsBidcosRFIFaceAssignmentLblStandard'), value: defaultGateway});"
+        puts "      }"
+        puts "    }"
+        puts "  }"
+        puts "});"
+
+        puts "this.gateways = \[\];"
+        puts "var bHasCustomName=false;"
+        puts "var InterfaceCellContent = document.getElementById('InterfaceCellContent');"
+        puts "var rfGateways = homematic('BidCoS_RF.getConfigurationRF');"
+        puts "if (rfGateways && rfGateways.interfaces) {"
+        puts "  for (var i = 0, len = rfGateways.interfaces.length; i < len; i++) {"
+        puts "    var gateway = rfGateways.interfaces\[i\];"
+        puts "    var name = (gateway.userName.length > 0) ? gateway.userName: gateway.serialNumber;"
+        puts "    if (InterfaceCellContent) {"
+        puts "      if (gateway.serialNumber === InterfaceCellContent.innerHTML) {"
+        puts          "bHasCustomName=true;"
+        puts          "InterfaceCellContent.innerHTML = name.escapeHTML();"
+        puts "      }"
+        puts "    }"
+        puts "    this.gateways.push({name: name, value: gateway});"
+        puts "  }"
+        puts "} else {"
+        puts "  var InterfaceCell = document.getElementById('InterfaceCell');"
+        puts "  if (InterfaceCell) InterfaceCell.innerHTML = '$HMRFIdentifier';"
+        puts "}"
+        puts "if (InterfaceCellContent && bHasCustomName === false) { InterfaceCellContent.innerHTML = '$HMRFIdentifier'; }"
+        puts "if (InterfaceCellContent && $dev_descr(ROAMING)) { InterfaceCellContent.innerHTML += '<br/>(ROAMING)'; }"
+        puts "if (this.gateways) {"
+        puts "  this.gateways.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));"
+        puts "  for (var i = 0, len = this.gateways.length; i < len; i++) {"
+        puts "    this.gatewaysListbox.add(this.gateways\[i\]);"
+        puts "  }"
+        puts "}"
+        
+        puts "this.ok = function() { "
+        puts "  var selectedItem = this.gatewaysListbox.getSelectedItem();"
+        puts "  if (!selectedItem) { this.close(); return; }"
+        puts "  var selectedGateway = selectedItem.value;"
+        puts "  var selectedGatewayName = (selectedGateway.userName.length > 0) ? selectedGateway.userName: selectedGateway.serialNumber;"
+        puts "  var result = homematic('Interface.setBidcosInterface', {"
+        puts "   'interface': '$HMRFIdentifier',"
+        puts "   'deviceId': this.addr,"
+        puts "   'interfaceId': selectedGateway.serialNumber,"
+        puts "   'roaming': this.roamingCheckbox.isChecked()"
+        puts "  });"
+        puts "  if (result !== true) { return; }"
+        puts "  if (InterfaceCellContent) {"
+        puts "    InterfaceCellContent.innerHTML = selectedGatewayName.escapeHTML();"
+        puts "     if (this.roamingCheckbox.isChecked()) InterfaceCellContent.innerHTML= InterfaceCellContent.innerHTML+'<br/>(ROAMING)';"
+        puts "  }"
+        puts "  DeviceList.updateInterfaceDisplayName(this.addr, selectedGatewayName);"
+        puts "  close();"      
+        puts "}"    
+
+        puts "this.close = function() { Layer.remove(gwframe.getElement()); }"   
+
+        puts "setGW = function(addr,name,roaming) {"
+        puts "  this.addr = addr;"
+        puts "  this.roaming = roaming;"
+        puts "  this.roamingCheckbox.setIsChecked(roaming);"
+        puts "  gwframe = new UI.Frame()"
+        puts "    .setTitle(translateKey('dialogSettingsBidcosRFIFaceAssignmentTitle')+name)"
+        puts "    .setContentSize(POPUP_WIDTH, POPUP_HEIGHT)"
+        puts "    .setPosition(parseInt((WebUI.getWidth()  - POPUP_WIDTH)  / 2), parseInt((WebUI.getHeight() - POPUP_HEIGHT) / 2))"
+        puts "    .add(new UI.Text().setPosition(10, 10).setText(translateKey('dialogSettingsBidcosRFIFaceAssignmentLblGateway')))"
+        puts "    .add(this.gatewaysListbox)"
+        puts "    .add(this.roamingCheckbox)"
+        puts "    .add(new UI.Button().setPosition(10,  POPUP_HEIGHT - 30).setText(translateKey('btnCancel')).setAction(this.close, this))"
+        puts "    .add(new UI.Button().setPosition(250, POPUP_HEIGHT - 30).setText(translateKey('btnOk'))    .setAction(this.ok,    this));"
+        puts "  Layer.add(gwframe.getElement());"
+        puts "};"
+      }
       if {$redirect_url == "IC_SETPROFILES" || $redirect_url == "IC_LINKPEERLIST"} then { 
         #puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>Programme &amp; Verkn&uuml;pfungen</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>Direkte Verkn&uuml;pfungen</span> &gt; Ger&auml;te- / Kanalparameter einstellen\");"
         puts "  setPath(\"<span onclick='WebUI.enter(LinksAndProgramsPage);'>\"+translateKey('menuProgramsLinksPage')+\"</span> &gt; <span onclick='WebUI.enter(LinkListPage);'>\"+translateKey('submenuDirectLinks')+\"</span> &gt; \" + translateKey('setDeviceAndChannelParams'));"
@@ -62,7 +153,7 @@ proc put_page {} {
       puts "  var s = \"\";"
       puts "  s += \"<table cellspacing='8'>\";"
       puts "  s += \"<tr>\";"
-      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\"+translateKey('footerBtnCancel')+\"</div></td>\";"
+      puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div class='FooterButton' onclick='CloseDeviceParameters();'>\"+translateKey('footerBtnPageBack')+\"</div></td>\";"
       puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonTake' class='FooterButton' onclick='goBack=true; SaveDeviceParameters();'>\"+translateKey('footerBtnTransfer')+\"</div></td>\";"
       puts "  s += \"<td style='text-align:center; vertical-align:middle;'><div id='footerButtonOK' class='FooterButton' onclick='goBack=false; SaveDeviceParameters();'>\"+translateKey('footerBtnOk')+\"</div></td>\";"
       puts "  s += \"</tr>\";"
@@ -392,10 +483,12 @@ proc put_orig_channel_parameter {address ch} {
       set value [format $fvalue $ch_ps($param)]
       set value_tmp $value
       set factor 1
+      set convInt2Float false
   
       if {$unit == "100\%"} {
         set unit "\%"
         set factor 0.01
+        set convInt2Float true
         set f "%.0f"
 
         set min [format $f [expr $min * 100]]
@@ -406,7 +499,7 @@ proc put_orig_channel_parameter {address ch} {
       set PROFILE_PNAME(DESCRIPTION) $param
       if {$param_descr(TYPE) != "ENUM" && $showOption == 0} {
         append s1 "<tr><td><span class=\"stringtable_value\">$dev_descr_sender(TYPE)|$PROFILE_PNAME(DESCRIPTION)</span></td>"
-        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\"></td>"
+        append s1 "<td><input type=\"text\" size=\"10\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\"></td>"
         append s1 "<td>$unit&nbsp;($min-$max)</td>"
         append s1 "<td><input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\"></td>"
       } elseif {$showOption == 1} { 
@@ -440,7 +533,7 @@ proc put_orig_channel_parameter {address ch} {
             append s1 "<option>\${stringTableEnterValue}</option>"
           append s1 "</select>"
           
-          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', $min, $max, $factor, event)\">"
+          append s1 "<input type=\"text\" value=\"$value\" id=\"separate_CHANNEL_$ch\_$i\_tmp\" name='__$param' onblur=\"ProofAndSetValue('separate_CHANNEL_$ch\_$i\_tmp', 'separate_CHANNEL_$ch\_$i', '$min', '$max', $factor, $convInt2Float, event)\">"
           append s1 "<td>$unit&nbsp;($min-$max)</td>"
           append s1 "<input type=\"text\"  value=\"$value_tmp\" id=\"separate_CHANNEL_$ch\_$i\" name='$param' style=\"display:none\";\">"
           append s1 "</td>"
@@ -776,9 +869,9 @@ proc put_channel_parameters {} {
   puts "<table id=\"id_channel_parameters_table\" class=\"parameters_table\" cellspacing=\"0\">"
   
   puts "<colgroup>"
-  puts "  <col style=\"width:20%;\"/>"
-  puts "  <col style=\"width:5%;\" />"
-  puts "  <col style=\"width:75%;\"/>"
+  puts "  <col />"
+  puts "  <col />"
+  puts "  <col />"
   puts "</colgroup>"
 
   puts "<THEAD>"
@@ -1049,7 +1142,7 @@ proc put_channel_parameters {} {
           #end if internalKey 
         }
       } 
-      catch {check_RF_links $dev_descr(TYPE) $iface $ch_descr(ADDRESS) $ch_descr(INDEX) $ch_descr(TYPE) $ise_CHANNELNAMES($iface;$ch_descr(ADDRESS))}
+      catch {check_RF_links $dev_descr(TYPE) $iface $ch_descr(ADDRESS) $ch_descr(INDEX) $ch_descr(TYPE) $ch_name}
       array_clear ch_ps
       destructor
 
@@ -1170,6 +1263,29 @@ proc put_channel_parameters {} {
   puts "</script>"
 }
 
+proc get_user_easylinkmode {} {
+  global sid
+
+  set session [string trim $sid "@" ]
+  
+  set isecmd ""
+  append isecmd "var user=system.GetSessionVarStr('$session');"
+  array set user [rega_script $isecmd]
+  
+  set userid [lindex [split $user(user) ";"] 0]
+  
+  set isecmd ""
+  append isecmd "var easylinkmode = true;"
+  append isecmd "object user = dom.GetObject($userid);"
+  append isecmd "if (user)"
+  append isecmd "{"
+  append isecmd "easylinkmode = user.UserEasyLinkMode();"
+  append isecmd "}"
+  array set result [rega_script $isecmd]  
+  
+  return $result(easylinkmode);
+}
+
 proc put_Header {} {
 
   #cgi_debug -on
@@ -1181,6 +1297,8 @@ proc put_Header {} {
 
   set HmIPIdentifier "HmIP-RF"
   set HmIPWIdentifier "HmIP-Wired"
+  set HMRFIdentifier "BidCos-RF"
+  set HMWIdentifier "BidCos-Wired"
   set type $dev_descr(TYPE)
 
   array set SENTRY ""
@@ -1189,14 +1307,24 @@ proc put_Header {} {
   set SENTRY(IMAGE)       "&nbsp;"
   set SENTRY(DESCRIPTION) $dev_descr(TYPE)
   set SENTRY(ADDRESS)     $address
-  set SENTRY(IFACE)       $iface_descr($iface)
   set SENTRY(FIRMWARE)    "&nbsp;"
 
   if { [catch { set SENTRY(NAME) $ise_CHANNELNAMES($iface;$address)} ] } then {
       set SENTRY(NAME) "$iface"
       append SENTRY(NAME) ".$address"
   }
-
+  if {($iface_descr($iface) == $HMRFIdentifier)} then {
+    set SENTRY(IFACE)       "<table id='InterfaceTable'><tr id='InterfaceTableRow'><td class='CLASS22012' style='border: none !important;' data-name=\"[cgi_quote_html $SENTRY(NAME)]\" onclick=\"setGW('$address',this.getAttribute('data-name'),$dev_descr(ROAMING));\"><div class=\"CLASS21000\" id='InterfaceCellContent'>[cgi_quote_html $dev_descr(INTERFACE)]</div></td></tr></table>"
+  } else {
+    set SENTRY(IFACE)       $iface_descr($iface)
+  }
+  # Interface.restoreConfigToDevice needs admin rights and is only
+  # implemented by rfd (BidCos-RF) and hs485d (BidCos-Wired), not by the HmIP server
+  global REGA_SESSION
+  set SHOWRESTORE 0
+  if {[info exists REGA_SESSION(UPL)] && $REGA_SESSION(UPL) >= 8 && ($iface eq $HMRFIdentifier || $iface eq $HMWIdentifier)} then {
+    set SHOWRESTORE [expr {[get_user_easylinkmode] == "false"}]
+  }
   set SENTRY(IMAGE) "<div id=\"picDiv_thumb\" class=\"CLASS22005\" onmouseover=\"picDivShow(jg_250, '$dev_descr(TYPE)', 250, '-1', this);\" onmouseout=\"picDivHide(jg_250);\"></div>"
   append SENTRY(IMAGE) "<script type=\"text/javascript\">"
   append SENTRY(IMAGE) "var jg_thumb = new jsGraphics(\"picDiv_thumb\");"
@@ -1207,6 +1335,9 @@ proc put_Header {} {
   set SENTRY(FIRMWARE) "<table id=\"id_firmware_table_$address\" class=\"id_firmware_table\" cellspacing=\"0\">"
   #append SENTRY(FIRMWARE) "<tr><td>Version:</td><td class=\"CLASS22006\">$dev_descr(FIRMWARE)</td></tr>"
   append SENTRY(FIRMWARE) "<tr><td>\${lblFirmwareVersion}</td><td id=\"curFwVersion\" class=\"CLASS22006\">$dev_descr(FIRMWARE)</td></tr>"
+  if {$SHOWRESTORE} {
+    set SENTRY(RESTOREDEVPARAMS) "<table><tr><td class=\"CLASS22012\" style='border: none !important;' onclick=\"RestoreDeviceParameters();\"><div class=\"CLASS21000\">Restore<br/>Config</div></td></tr></table>"
+  }
   if {$MODE == "DEVICEPARAMETERS"} then {
     set fw_update_rows ""
     if {($iface != $HmIPIdentifier) && ($iface != $HmIPWIdentifier)} {
@@ -1296,19 +1427,26 @@ proc put_Header {} {
 
   puts "<colgroup>"
   #Name
-  puts "  <col style=\"width:29%;\"/>"
+  puts "  <col />"
   #Typenbezeichnung
-  puts "  <col style=\"width:10%;\"/>"
+  puts "  <col />"
   #Bild
-  puts "  <col style=\"width:1%;\"/>"
+  puts "  <col style=\"width:55px;\"/>"
   #Bezeichnung
-  puts "  <col style=\"width:30%;\"/>"
+  puts "  <col />"
   #SN
-  puts "  <col style=\"width:5%;\"/>"
+  puts "  <col />"
   #Interface
-  puts "  <col style=\"width:5%;\"/>"
-  #Firmware
-  puts "  <col style=\"width:15%;\"/>"
+  puts "  <col />"
+  if {$SHOWRESTORE} {
+    #Firmware
+    puts "  <col />"
+    #Restore Config
+    puts "  <col />"
+  } else {
+    #Firmware
+    puts "  <col />"
+  }
   puts "</colgroup>"
   
   puts "<THEAD>"
@@ -1321,6 +1459,9 @@ proc put_Header {} {
   puts "<TD>\${thSerialNumber}</TD>"
   puts "<TD>\${thInterface}</TD>"
   puts "<TD>\${thFirmware}</TD>"
+  if {$SHOWRESTORE} {
+    puts "<TD>\${thActions}</TD>"
+  }
   puts "</TR>"
   
   puts "</THEAD>"
@@ -1328,13 +1469,16 @@ proc put_Header {} {
   puts "<TBODY>"
       
   puts "<tr>"
-  puts "<td>[cgi_quote_html $SENTRY(NAME)]</td>"
-  puts "<td>$SENTRY(TYPE)</td>"
+  puts "<td class='DeviceListCell'>[cgi_quote_html $SENTRY(NAME)]</td>"
+  puts "<td class='DeviceListCell'>$SENTRY(TYPE)</td>"
   puts "<td id=\"DeviceImage\">$SENTRY(IMAGE)</td>"
-  puts "<td id=\"DeviceDescription\">$SENTRY(DESCRIPTION)</td>"
-  puts "<td>$SENTRY(ADDRESS)</td>"
-  puts "<td>$SENTRY(IFACE)</td>"
+  puts "<td class='DeviceListCell' id=\"DeviceDescription\">$SENTRY(DESCRIPTION)</td>"
+  puts "<td class='DeviceListCell'>$SENTRY(ADDRESS)</td>"
+  puts "<td class='DeviceListCell' id='InterfaceCell'>$SENTRY(IFACE)</td>"
   puts "<td>$SENTRY(FIRMWARE)</td>"
+  if {$SHOWRESTORE} {
+    puts "<td>$SENTRY(RESTOREDEVPARAMS)</td>"
+  }
   puts "</tr>"
 
   puts "</TBODY>"
@@ -1363,7 +1507,7 @@ proc put_NaviButtons {} {
   
   puts "<TR>"
   puts "<td class=\"CLASS22012\" onclick=\"SaveDeviceParameters();\"><div class=\"CLASS21000\">OK</div></td>"
-  puts "<td class=\"CLASS22012\" onclick=\"CloseDeviceParameters();\"><div class=\"CLASS21000\">Abbrechen</div></td>"
+  puts "<td class=\"CLASS22012\" onclick=\"CloseDeviceParameters();\"><div class=\"CLASS21000\">Zur%FCck</div></td>"
   puts "<td class=\"CLASS22013\">&nbsp;</td>"
   puts "</TR>"
 
