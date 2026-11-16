@@ -9,6 +9,25 @@ is published.
 
 ## Unreleased
 
+* system variable values with HTML are shown with their layout again: since
+  3.89.12 the start page kept only simple text formatting, so a value built
+  as a table was shown as one line of text. The values now also keep blocks
+  (`div`, `p`, `pre`, `blockquote`, `center`, `hr`, `h1` to `h6`), lists
+  (`ul`, `ol`, `li`, `dl`, `dt`, `dd`) and tables (`table`, `caption`,
+  `colgroup`, `col`, `thead`, `tbody`, `tfoot`, `tr`, `td`, `th`), the
+  presentational attributes of these elements (`align`, `valign`, `width`,
+  `height`, `bgcolor`, `border`, `cellpadding`, `cellspacing`, `colspan`,
+  `rowspan`, `span`; `color`, `size` and `face` of `font`) and the `style`
+  declarations for colors, fonts, text, spacing, borders and sizes. Scripts,
+  event handlers, images, links, forms, `class`, `id`, positioning and
+  `url()` are still removed. The same rules now apply wherever the WebUI
+  shows the value of a system variable (the system variable list, the
+  favorites and the system variables of a channel under "Status and
+  control"), which showed the value as unfiltered HTML before, so that a
+  value set by one user could run scripts in the browser of another user
+  ([#374](https://github.com/OpenCCU/OpenCCU-Base/pull/374), fixes
+  [OpenCCU/OpenCCU#4749](https://github.com/OpenCCU/OpenCCU/issues/4749),
+  @jens-maus)
 * changing a program condition from a device selection to a system state,
   a time control or an empty selection no longer leaves the channel of the
   previous device selection in the condition (`ConditionChannel()`); it is
