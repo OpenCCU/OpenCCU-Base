@@ -1,11 +1,11 @@
 CODEMIRROR6_VERSION = 6.0.2
-BUNDLED_AT = 2026-11-09T13:03:22Z
+BUNDLED_AT = 2026-11-16T11:20:55Z
 ESBUILD_VERSION = 0.28.2
 PACKAGE @codemirror/autocomplete = 6.20.4
 PACKAGE @codemirror/commands = 6.11.1
 PACKAGE @codemirror/language = 6.13.1
 PACKAGE @codemirror/legacy-modes = 6.5.5
-PACKAGE @codemirror/lint = 6.9.7
+PACKAGE @codemirror/lint = 6.9.8
 PACKAGE @codemirror/search = 6.7.2
 PACKAGE @codemirror/state = 6.7.6
 PACKAGE @codemirror/streamparser = 6.0.0
