@@ -15,6 +15,14 @@ Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
 
+* changing a program condition from a device selection to a system state,
+  a time control or an empty selection no longer leaves the channel of the
+  previous device selection in the condition (`ConditionChannel()`); it is
+  reset when the type of the condition changes and set again when a
+  channel is chosen. Conditions saved before keep their stale channel.
+  ([#371](https://github.com/OpenCCU/OpenCCU-Base/pull/371),
+  fixes [OpenCCU/OpenCCU#3030](https://github.com/OpenCCU/OpenCCU/issues/3030),
+  @MichaelN0815)
 * the help page shows in the HomeMatic-RF (HmRF) block whether a
   BidCos-RF security key is set ("Security Key": `set (index N)` or
   `not set (default key)`), read with `crypttool` from
