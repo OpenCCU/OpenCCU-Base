@@ -27,7 +27,8 @@ is published.
   favorites and the system variables of a channel under "Status and
   control"), which showed the value as unfiltered HTML before, so that a
   value set by one user could run scripts in the browser of another user
-  (fixes [OpenCCU/OpenCCU#4749](https://github.com/OpenCCU/OpenCCU/issues/4749),
+  ([#374](https://github.com/OpenCCU/OpenCCU-Base/pull/374), fixes
+  [OpenCCU/OpenCCU#4749](https://github.com/OpenCCU/OpenCCU/issues/4749),
   @jens-maus)
 
 ## 3.89.12 (2026-11-16)
