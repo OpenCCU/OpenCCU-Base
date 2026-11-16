@@ -7,13 +7,7 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
-## 3.89.12 (2026-11-16)
-
-### Changes
-
-Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
-WebUI before; they describe the function of the patch and what was corrected
-or extended in it.
+## Unreleased
 
 * changing a program condition from a device selection to a system state,
   a time control or an empty selection no longer leaves the channel of the
@@ -23,6 +17,15 @@ or extended in it.
   ([#371](https://github.com/OpenCCU/OpenCCU-Base/pull/371),
   fixes [OpenCCU/OpenCCU#3030](https://github.com/OpenCCU/OpenCCU/issues/3030),
   @MichaelN0815)
+
+## 3.89.12 (2026-11-16)
+
+### Changes
+
+Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
+WebUI before; they describe the function of the patch and what was corrected
+or extended in it.
+
 * the help page shows in the HomeMatic-RF (HmRF) block whether a
   BidCos-RF security key is set ("Security Key": `set (index N)` or
   `not set (default key)`), read with `crypttool` from
