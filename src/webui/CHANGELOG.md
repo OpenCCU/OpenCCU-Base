@@ -11,6 +11,9 @@ is published.
 
 ### Changes
 
+* show the program ID and the last WebUI save time in both program lists
+  (@unbox-digital-printing).
+
 Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
