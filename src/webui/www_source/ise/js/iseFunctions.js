@@ -1376,36 +1376,40 @@ ise.Programs.prototype = {
     };
     new Ajax.Request(url,opts);
   },
-  Restore: function(orig,copy,prevPage)
+  Restore: function(orig,copy,prevPage,notes)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "RestoreProgram";';
     pb += 'string orig = "'+orig+'";';
     pb += 'string copy = "'+copy+'";';
+    if (notes !== undefined) { pb += 'string notes = "'+ReGa.escapeString(notes)+'";'; }
     var opts =
     {
       postBody: ReGa.encode(pb),
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
+        ProgramNotes.clear();
         WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };
     new Ajax.Request(url,opts);
   },
-  CopyToNewProgram: function(id,prevPage)
+  CopyToNewProgram: function(id,prevPage,notes)
   {
     var url = "/esp/programs.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "CopyToNewProgram";';
     pb += 'string id = "'+id+'";';
+    if (notes !== undefined) { pb += 'string notes = "'+ReGa.escapeString(notes)+'";'; }
     var opts =
     {
       postBody: ReGa.encode(pb),
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
+        ProgramNotes.clear();
         WebUI.enter(( prevPage && prevPage === 'control/programs' ) ? ControlProgramsPage : ProgramListPage);
       }
     };

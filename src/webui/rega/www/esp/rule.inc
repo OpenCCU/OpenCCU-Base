@@ -19,6 +19,7 @@
           Write( '<select onchange="DeleteSubRuleSelectChange(this.selectedIndex,'#oR.RuleParentID()#');" class="SelectBox BigFont"><option>${ruleSelectElse}</option><option selected>${ruleSelectElseIf}</option></select>' );
         }
         Write( '</div>' );
+        Write( '<div class="programNote" data-note-kind="r" data-note-id="'#oR.ID()#'"><button type="button" class="programNoteButton" aria-expanded="false" onclick="ProgramNotes.toggle(this);">${programNote}</button><textarea maxlength="2000" aria-label="${programNote}" oninput="ProgramNotes.change(this);"></textarea></div>' );
         integer iRuleCondCount = oR.RuleConditions().Count();
         if( iRuleCondCount > 0 )
         {
@@ -49,6 +50,7 @@
                       Write( '<span id="sico'#oSC.ID()#'">' );
                       #inc("/esp/sico.inc");
                       Write( '</span>' );
+                      Write( '<span class="programNote" data-note-kind="c" data-note-id="'#oSC.ID()#'"><button type="button" class="programNoteButton" aria-expanded="false" onclick="ProgramNotes.toggle(this);">${programNote}</button><textarea maxlength="2000" aria-label="${programNote}" oninput="ProgramNotes.change(this);"></textarea></span>' );
                       Write( ' ' );
                       Write( '<img src="/ise/img/delete.png" class="CLASS02301" onclick="isePrograms.DeleteSingleCondition('#oR.ID()#','#oC.ID()#','#oSC.ID()#');" />' );
                       Write( '</div>' );
@@ -120,6 +122,10 @@
           Write( '<div class="CLASS02300">${ruleActivity} <select onchange="AddSubRuleSelectChange(this.selectedIndex,'#oR.ID()#');" class="SelectBox BigFont"><option selected>${ruleSelectElse}</option><option>${ruleSelectElseIf}</option></select><label><input type="checkbox" '#sChecked#' onclick="isePrograms.SetBreakOnRestart('#oR.ID()#','#oD.ID()#',this.checked);" class="SelectBox">${ruleLblStopAllDelays}</label></div>' );
         }
 
+        if( !oR.ElseIfFlag() )
+        {
+          Write( '<div class="programNote" data-note-kind="r" data-note-id="'#oR.ID()#'"><button type="button" class="programNoteButton" aria-expanded="false" onclick="ProgramNotes.toggle(this);">${programNote}</button><textarea maxlength="2000" aria-label="${programNote}" oninput="ProgramNotes.change(this);"></textarea></div>' );
+        }
         integer iSingleDestCount = oD.DestSingleCount();
         string sSingleDestIndex;
         foreach( sSingleDestIndex, system.GenerateEnum(0, (iSingleDestCount-1)) )
@@ -131,6 +137,7 @@
             Write( '<span id="side'#oSD.ID()#'">' );
             #inc("/esp/side.inc");
             Write( '</span>' );
+            Write( '<span class="programNote" data-note-kind="a" data-note-id="'#oSD.ID()#'"><button type="button" class="programNoteButton" aria-expanded="false" onclick="ProgramNotes.toggle(this);">${programNote}</button><textarea maxlength="2000" aria-label="${programNote}" oninput="ProgramNotes.change(this);"></textarea></span>' );
             Write( ' <img src="/ise/img/delete.png" class="CLASS02301" onclick="isePrograms.DeleteSingleDestination('#oR.ID()#','#oD.ID()#','#oSD.ID()#');" /></div>' );
           }
         }
