@@ -46,6 +46,19 @@
   sVariableGroups = sVariableGroups.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
 %>
 <div id="variableGroupData" data-groups="<% Write(sVariableGroups); %>" style="display:none"></div>
+<select id="variableGroupCatalog" style="display:none">
+<%
+  string sGroupVariableId;
+  foreach(sGroupVariableId, oGroupVariables.EnumEnabledIDs())
+  {
+    object oGroupVariable = dom.GetObject(sGroupVariableId);
+    if (oGroupVariable && (oGroupVariable.IsTypeOf(OT_VARDP) || oGroupVariable.IsTypeOf(OT_ALARMDP)))
+    {
+      WriteLine('<option value="'#oGroupVariable.ID()#'">'#oGroupVariable.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</option>');
+    }
+  }
+%>
+</select>
 <div id="prgcontent">
   <table id="sysvarsListTable" class="tTable tblList CLASS03301 hidden" border="0" cellpadding="0" cellspacing="0" >
     <colgroup>
