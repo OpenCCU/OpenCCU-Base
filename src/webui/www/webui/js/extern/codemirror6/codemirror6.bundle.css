@@ -40,3 +40,27 @@
   z-index: 9999;
   background: #fff;
 }
+
+.cm-rega-completion-button {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .CodeMirror--rega-completion {
+    position: relative;
+  }
+
+  .CodeMirror--rega-completion .cm-editor {
+    height: calc(100% - 28px) !important;
+    margin-top: 28px;
+  }
+
+  .cm-rega-completion-button {
+    display: block;
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    z-index: 1;
+    cursor: pointer;
+  }
+}

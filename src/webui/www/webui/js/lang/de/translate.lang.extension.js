@@ -316,6 +316,7 @@ jQuery.extend(true,langJSON, {
     "dialogScriptExecuterLblInput" : "Eingabe:",
     "dialogScriptExecuterLblOutput" : "Ausgabe:",
     "dialogScriptExecuterBtnExecute" : "Ausf%FChren",
+    "dialogScriptExecuterBtnSuggest" : "Vorschl%E4ge",
     "dialogScriptExecuterBtnClose" : "Schlie%DFen",
     "dialogScriptExecuterHelloWorld" : "Hallo Welt!",
     "deviceAndChannelParamsBtnOpenParamList" : "Parameterliste<br/>%F6ffnen",
