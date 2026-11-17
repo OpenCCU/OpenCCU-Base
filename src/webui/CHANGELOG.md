@@ -9,6 +9,39 @@ is published.
 
 ## Unreleased
 
+* the local teach-in of HmIP devices ("Geräte anlernen", SGTIN and KEY
+  without key server) now ignores blanks, line breaks and other separators
+  of a value copied from the label or an OCR scan, and rejects a SGTIN or
+  KEY of wrong length or with wrong characters with a message. Before, only
+  hyphens were removed: a blank in the KEY of the label gave a wrong key and
+  the device was silently not taught in
+  ([#395](https://github.com/OpenCCU/OpenCCU-Base/pull/395), fixes
+  [OpenCCU/OpenCCU#2715](https://github.com/OpenCCU/OpenCCU/issues/2715),
+  @MichaelN0815)
+* the SGTIN, KEY and serial number fields of the teach-in dialog accept
+  only the characters valid for them while typing or pasting, converted to
+  upper case; blanks and other characters are dropped. In the SGTIN and KEY
+  fields an `O` becomes `0` and an `I` becomes `1`, as these letters are
+  never part of them. SGTIN and KEY are shown with hyphens in the groups of
+  the device label (the hex KEY of the QR code in groups of 4), the caret
+  stays behind the typed character. Pasting the text of the QR code of the
+  label (`EQ01SG…DLK…`) into one of the two fields, or reading it in with a
+  USB scanner with keyboard output, fills both; a help icon
+  next to the KEY field explains the input
+  ([#395](https://github.com/OpenCCU/OpenCCU-Base/pull/395), fixes
+  [OpenCCU/OpenCCU#2715](https://github.com/OpenCCU/OpenCCU/issues/2715),
+  @MichaelN0815)
+* the teach-in of BidCos-RF devices by serial number now ignores blanks
+  and hyphens, converts the serial number to upper case and rejects one that
+  is not 10 letters and digits with a message before anything is sent.
+  Before, a blank or a lower case letter let the teach-in fail after the
+  radio attempts. The temporary security key of the key dialog is now sent
+  URL-encoded, so a `+` or `&` in it no longer changes or cuts it, and the
+  teach-in repeated after entering that key uses the serial number again,
+  which was lost before
+  ([#395](https://github.com/OpenCCU/OpenCCU-Base/pull/395), fixes
+  [OpenCCU/OpenCCU#2715](https://github.com/OpenCCU/OpenCCU/issues/2715),
+  @MichaelN0815)
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.
   ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see
