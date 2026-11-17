@@ -421,7 +421,7 @@
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewProgram();'>"+ translateKey('footerBtnNew') +"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='programListSearch.clear();fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
     //s += "<td  style='text-align:center;' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >Systeminterne Programme<br /><% Write(sInternalBtnText); %>blenden</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >"+translateKey(internalBtnText) +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04906' onclick='new HMScriptExecutor();' >"+translateKey('footerBtnTestScript')+ "</div></td>";
@@ -455,12 +455,14 @@
     jQuery("#ftDesc").focus();
   });
 
+  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'edit', true, function() { updateTable(); });
+
   updateTable = function()
   {
     colorFilterBtns(fltPL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltPL.objPassFilter(arItems[i]))
+      if (!fltPL.objPassFilter(arItems[i]) || !programListSearch.accepts(document.getElementById(arItems[i]['trid'])))
       {
         hide(arItems[i]['trid']);
       }
@@ -469,7 +471,9 @@
         show(arItems[i]['trid']);
       }
     }
+    programListSearch.updateCount();
   };
+  updateTable();
   updateActiveStatus = function(id,active)
   {
     var state = (active === true) ? "" : "Inactive";

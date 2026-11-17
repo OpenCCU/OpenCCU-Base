@@ -162,7 +162,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='programListSearch.clear();fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   setFooter(s);
@@ -180,12 +180,14 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
     jQuery("#ftName").focus();
   });
 
+  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'status', false, function() { updateTable(); });
+
   updateTable = function()
   {
     colorFilterBtns(fltPR);
     for( var i=0; i<arProgs.length; i++ )
     {
-      if( !fltPR.objPassFilter(arProgs[i]) )
+      if( !fltPR.objPassFilter(arProgs[i]) || !programListSearch.accepts(document.getElementById(arProgs[i]['trid'])) )
       {
         hide( arProgs[i]['trid'] );
       }
@@ -194,5 +196,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
         show( arProgs[i]['trid'] );
       }
     }
-  }
+    programListSearch.updateCount();
+  };
+  updateTable();
 </script>
