@@ -169,6 +169,7 @@ HMScriptExecutor = Class.create({
         else
         {
           _this_.m_output.setValue(t.responseText);
+          iseScriptErrorLine.focus(_this_.m_input, code, t.responseText);
         }
       }
     };

@@ -151,6 +151,7 @@ ise/js/functions.js
 ise/js/iseAcousticDisplayReceiver.js
 ise/js/debug_funcs.js
 ise/js/iseFilter.js
+ise/js/iseScriptErrorLine.js
 ise/js/iseButtonsSwitch.js
 ise/js/iseButtonsDimmer.js
 ise/js/iseButtonsDimmerBacklightingReceiver.js
