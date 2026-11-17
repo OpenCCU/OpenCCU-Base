@@ -1,0 +1,27 @@
+<%
+  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+  object oVariables = dom.GetObject(ID_SYSTEM_VARIABLES);
+  if (!oUser || (oUser.UserLevel() != iulAdmin) || !oVariables || !system.IsVar("revision") || !system.IsVar("groups"))
+  {
+    Write("ERR|ACCESS");
+  }
+  else
+  {
+    string current = oVariables.MetaData("webuiVariableGroups");
+    if (current == null) { current = "0|"; }
+    string revision = current.StrValueByIndex("|", 0);
+    string groups = system.GetVar("groups");
+    if ((revision != system.GetVar("revision")) || (groups.Length() > 100000))
+    {
+      Write("ERR|REVISION");
+    }
+    else
+    {
+      integer nextRevision = revision.ToInteger() + 1;
+      string updated = nextRevision # "|" # groups;
+      oVariables.AddMetaData("webuiVariableGroups", updated);
+      oVariables.MetaData("webuiVariableGroups", updated);
+      Write("OK|" # nextRevision);
+    }
+  }
+%>

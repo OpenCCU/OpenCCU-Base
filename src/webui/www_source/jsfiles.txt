@@ -124,6 +124,7 @@ webui/js/pages/systemconfig/creatediagrampage.js
 webui/js/pages/systemconfig/creatediagrampage.js
 webui/js/pages/systemconfig/diagramcontrollistpage.js
 webui/js/pages/systemconfig/creategrouppage.js
+webui/js/pages/systemconfig/variablegrouppage.js
 webui/js/pages/systemconfig/createtestpage.js
 webui/js/pages/systemconfig/devicefirmware.js
 webui/js/pages/systemconfig/DeviceFirmwareInformation.js
@@ -142,6 +143,7 @@ webui/js/homematic.com.js
 # ise
 ise/js/rega.js
 ise/js/iseFunctions.js
+ise/js/iseVariableGroups.js
 ise/js/iseRefresher.js
 ise/js/iseMessageBox.js
 ise/js/iseSubMenuControl.js

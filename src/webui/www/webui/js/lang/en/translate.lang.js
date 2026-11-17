@@ -908,6 +908,18 @@ jQuery.extend(true,langJSON, {
     "programsCreateProgram" : "Programming",
 
     "ruleTmpProgramName" : "New program",
+    "variableGroups" : "System variable groups",
+    "variableGroupCount" : "Variable count",
+    "variableGroupMembers" : "Assigned system variables",
+    "variableGroupNew" : "New system variable group",
+    "variableGroupEdit" : "Edit system variable group",
+    "variableGroupName" : "Group name",
+    "variableGroupToggleAll" : "Expand / collapse groups",
+    "variableGroupDeleteConfirm" : "Delete this group? Variables will remain.",
+    "variableGroupInvalidName" : "Group name is missing or already exists.",
+    "variableGroupSaveFailed" : "Could not save groups.",
+    "variableGroupsDescription1" : "Organize system variables into groups",
+    "variableGroupsDescription2" : "Expand groups in both variable lists",
     "ruleCondition" : "Condition:",
     "ruleConditionIf" : "If...",
 
