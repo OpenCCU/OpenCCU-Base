@@ -6,6 +6,14 @@ gateways (HM-LGW, HMW-LGW) of rfd and hs485d. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh`).
 
+## Unreleased
+
+* add `UnifiedLanCommController::setConnectTimeout()`, which limits the TCP
+  connect to a gateway. Without it (the default, unchanged) the connect to a
+  gateway that does not answer at all waits until the kernel gives up, about
+  127 s. rfd uses it.
+  ([#383](https://github.com/OpenCCU/OpenCCU-Base/issues/383), @hobbyquaker)
+
 ## 1.0.0 (2026-11-02)
 
 * first version with a version string (`version.sh`), returned by
