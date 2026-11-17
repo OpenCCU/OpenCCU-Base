@@ -1279,6 +1279,79 @@ a img {
   margin-left: 15px;
 }
 
+.programGroupRow td
+{
+  border: 1px solid $_(black);
+  background-color: $_(inactiveBackground);
+  color: $_(textColorB);
+}
+
+.programGroupToggle
+{
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+}
+
+.programGroupCount
+{
+  margin-left: 32px;
+}
+
+.programGroupMember td:first-child
+{
+  padding-left: 24px;
+}
+
+.programGroupsEdit
+{
+  table-layout: fixed;
+  width: 100%;
+}
+
+.programGroupsEdit colgroup col:nth-child(-n+3)
+{
+  width: 22%;
+}
+
+.programGroupsEdit colgroup col:nth-child(4)
+{
+  width: 18%;
+}
+
+.programGroupsEdit colgroup col:nth-child(5)
+{
+  width: 16%;
+}
+
+.programGroupClosed
+{
+  display: none !important;
+}
+
+.programGroupDialog
+{
+  width: min(600px, 90vw);
+  max-height: 80vh;
+  background-color: $_(contentBackground);
+  color: $_(textColorB);
+}
+
+.programGroupPicker
+{
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.programGroupPicker label
+{
+  display: block;
+  padding: 3px;
+}
+
 .tHeaderCell
 {
   color: $_(textColorA); /* white */

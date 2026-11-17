@@ -42,6 +42,13 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
   arProgs = new Array();
 </script>
 
+<%
+  object oGroupPrograms = dom.GetObject(ID_PROGRAMS);
+  string sProgramGroups = oGroupPrograms.MetaData("webuiProgramGroups");
+  if (sProgramGroups == null) { sProgramGroups = "0|"; }
+  sProgramGroups = sProgramGroups.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+%>
+<div id="programGroupData" data-groups="<% Write(sProgramGroups); %>" style="display:none"></div>
 <div id="prgcontent" class="j_translate">
   <table id="ProgramListTable" class="tblList tTable CLASS03701" border="0" cellpadding="0" cellspacing="0" >
     <colgroup>
@@ -54,7 +61,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
     <thead>
       <tr class="CLASS03702">
         <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arProgs,'name',true);" >${thName}</div></th>
+        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="if (!ProgramGroups.sort('status')) IseSort(arProgs,'name',true);" >${thName}</div></th>
         <th class="tHeaderCell CLASS03303" >${thDescription}</th>
         <th class="tHeaderCell CLASS03303" >${thActivity}</th>
         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
@@ -166,6 +173,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
   s += "</tr>";
   s += "</table>";
   setFooter(s);
+  ProgramGroups.render('ProgramListTable', 'status');
   
   var mouseOpts =
   {

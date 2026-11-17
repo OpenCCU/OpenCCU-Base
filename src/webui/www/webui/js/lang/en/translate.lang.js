@@ -908,6 +908,18 @@ jQuery.extend(true,langJSON, {
     "programsCreateProgram" : "Programming",
 
     "ruleTmpProgramName" : "New program",
+    "programGroups" : "Program groups",
+    "programGroupCount" : "Program count",
+    "programGroupMembers" : "Assigned programs",
+    "programGroupNew" : "New program group",
+    "programGroupEdit" : "Edit program group",
+    "programGroupName" : "Group name",
+    "programGroupToggleAll" : "Expand / collapse groups",
+    "programGroupDeleteConfirm" : "Delete this group? Programs will remain.",
+    "programGroupInvalidName" : "Group name is missing or already exists.",
+    "programGroupSaveFailed" : "Could not save groups.",
+    "programGroupsDescription1" : "Organize programs into groups",
+    "programGroupsDescription2" : "Expand groups in both program lists",
     "ruleCondition" : "Condition:",
     "ruleConditionIf" : "If...",
 

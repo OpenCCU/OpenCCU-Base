@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* Programs can be assigned to centrally stored groups in a new settings page.
+  Both program lists can expand and collapse these groups while keeping each
+  list's state in the browser tab. (@unbox-digital-printing)
+
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
