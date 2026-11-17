@@ -1,0 +1,117 @@
+/* Optional dark palette for the native WebUI. The original palette stays the default. */
+html.webuiDark {
+  color-scheme: dark;
+  background: #14202d;
+}
+
+.webuiDark body,
+.webuiDark #content {
+  background: #14202d;
+  color: #e5edf5;
+}
+
+.webuiDark #footer {
+  border-color: #596e84;
+}
+
+.webuiDark #webuiThemeToggle[aria-pressed="true"] .MainMenuItemCaption {
+  outline: 2px solid #9bd4ff;
+  outline-offset: -2px;
+}
+
+.webuiDark :is(.tTable, .filterTable, .StatViewTbl, .popupTable,
+  .tBodyCell, .tBodyCellInactive, .tBodyCellCenter, .thCell,
+  .conditionEven, .conditionOdd) {
+  border-color: #596e84;
+}
+
+.webuiDark :is(.tBodyCell, .tBodyCellCenter, .WhiteBkg, .WhiteBkgPic,
+  .CLASS04902, .conditionEven, .conditionEven .Rule) {
+  background-color: #293e50;
+  color: #e5edf5;
+}
+
+.webuiDark :is(.conditionOdd, .conditionOdd .Rule,
+  #tblSettings td, #tblStatus td) {
+  background-color: #3d586f;
+  color: #e5edf5;
+}
+
+.webuiDark :is(.thCell, .tdCellFilter, .CLASS03304, .CLASS03706) {
+  background-color: #526c80;
+  color: #ffffff;
+}
+
+.webuiDark .tBodyCellInactive {
+  background-color: #293e50;
+  color: #a9bbca;
+}
+
+.webuiDark .DeviceListRow_Highlight {
+  background-color: #526c80;
+  color: #ffffff;
+}
+
+.webuiDark :is(.StdButton, .StdButtonBig, .FooterButton,
+  .FilterBtn, .FilterSetButton, .NavButton, .Messages,
+  .CLASS04904, .CLASS02300) {
+  color: #e5edf5;
+}
+
+.webuiDark :is(.StdButton, .StdButtonBig, .FooterButton,
+  .FilterBtn, .FilterSetButton, .NavButton, .Messages) {
+  background: #3b5e7b;
+  border-color: #a1b8ce;
+}
+
+.webuiDark :is(.StdButtonInactive, button:disabled, input:disabled) {
+  background: #374b5d;
+  color: #a9bbca;
+  border-color: #65798b;
+}
+
+.webuiDark :is(input:not([type="checkbox"]):not([type="radio"]),
+  textarea, select, option) {
+  background-color: #172534;
+  color: #f0f5fa;
+  border-color: #8298ae;
+}
+
+.webuiDark input:disabled:not([type="checkbox"]):not([type="radio"]) {
+  background-color: #374b5d;
+  color: #a9bbca;
+}
+
+.webuiDark :is(.MainMenuSubMenu, .MainMenuSubItem,
+  .FilterSubMenu, .FilterBody, .UIFrameContent,
+  .YesNoDialogContentWrapper, .EulaDialogContentWrapper) {
+  background-color: #293e50;
+  color: #e5edf5;
+  border-color: #8298ae;
+}
+
+.webuiDark :is(.MainMenuSubItem_Highlight, .MainMenuSubItem:hover) {
+  background-color: #526c80;
+  color: #ffffff;
+}
+
+.webuiDark :is(.CodeMirror, .cm-editor, .cm-scroller,
+  .cm-content, .cm-gutters) {
+  background-color: #293e50;
+  color: #e5edf5;
+}
+
+.webuiDark a {
+  color: #9bd4ff;
+}
+
+.webuiDark :focus-visible {
+  outline: 2px solid #a5dcff;
+  outline-offset: 2px;
+}
+
+@media print {
+  html.webuiDark { color-scheme: light; }
+  .webuiDark body,
+  .webuiDark #content { background: #ffffff; color: #000000; }
+}
