@@ -81,3 +81,20 @@ html, body {
   color: $_(textColorA); /* white */
   cursor: pointer;
 }
+
+#messagebox.userAccountResizable {
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+#messagebox.userAccountResizable .ui-resizable-se {
+  right: 2px;
+  bottom: 2px;
+  width: 20px;
+  height: 20px;
+  z-index: 10;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 48%, #596e84 50%,
+    #596e84 56%, transparent 58%, transparent 70%, #596e84 72%,
+    #596e84 78%, transparent 80%);
+}

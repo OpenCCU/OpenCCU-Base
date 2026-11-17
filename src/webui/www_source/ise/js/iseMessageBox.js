@@ -37,8 +37,15 @@ iseMessageBox.prototype =
     if(secondary)
     {
       this.secondary = true;
+      var currentBox = jQuery("#messagebox");
+      this.restoreUserAccountResize = currentBox.hasClass("userAccountResizable");
+      if (this.restoreUserAccountResize) {
+        currentBox.resizable("destroy").removeClass("userAccountResizable");
+        currentBox.css({position: "absolute", top: "", left: "50%", margin: ""});
+      }
       this.oldMsgHtml = $("messagebox").innerHTML;
       this.oldMsgWidth = $("messagebox").getWidth();
+      this.oldMsgHeight = $("messagebox").getHeight();
       //$("messagebox").style.width = this.width + "px"; 
     }
     else
@@ -353,13 +360,57 @@ iseMessageBox.prototype =
   {
     if ( $('messagebox') )
     {
+      var box = jQuery("#messagebox");
+      if (box.hasClass("ui-resizable")) { box.resizable("destroy"); }
       $('messagebox').remove();
     }
   },
+  enableUserAccountResize: function(restored)
+  {
+    if (!restored && this.id != ID_USER_ACCOUNT_CONFIG_ADMIN &&
+        this.id != ID_USER_ACCOUNT_CONFIG_USER) { return; }
+    var box = jQuery("#messagebox");
+    if (!box.length || !jQuery.fn.resizable) { return; }
+    var list = box.find("#userSysVarTbl");
+    var originalHeight = box.outerHeight();
+    var originalListHeight = list.length ? list.height() : 0;
+    var availableWidth = Math.max(200, window.innerWidth - 24);
+    var availableHeight = Math.max(180, window.innerHeight - 24);
+    var width = Math.min(box.outerWidth(), availableWidth);
+    var height = Math.min(originalHeight, availableHeight);
+    var listHeight = Math.max(100, originalListHeight + height - originalHeight);
+
+    box.addClass("userAccountResizable").css({
+      position: "fixed",
+      left: Math.max(12, (window.innerWidth - width) / 2) + "px",
+      top: Math.max(12, (window.innerHeight - height) / 2) + "px",
+      margin: "0",
+      width: width + "px",
+      height: height + "px"
+    });
+    if (list.length) { list.height(listHeight); }
+    if (box.hasClass("ui-draggable")) {
+      box.draggable("option", "handle", ".popupTitle");
+    }
+    box.resizable({
+      handles: "se",
+      minWidth: Math.min(360, availableWidth),
+      minHeight: Math.min(320, availableHeight),
+      maxWidth: availableWidth,
+      maxHeight: availableHeight,
+      resize: function(event, ui) {
+        if (list.length) {
+          list.height(Math.max(100, listHeight + ui.size.height - height));
+        }
+      }
+    });
+  },
+
   readaptSize: function()
   {
     if ( $('messagebox') )
     {
+      if (jQuery("#messagebox").hasClass("userAccountResizable")) { return; }
       if ((this.baseId != ID_CHANNEL_LIST))
       {
         var h = $("messagebox").getHeight();
@@ -409,6 +460,7 @@ iseMessageBox.prototype =
         }
         jQuery("#tableContainer").css("max-height",(parseInt(jQuery(window).height() * 0.75)) + "px");
         centerMessageBox();
+        t.enableUserAccountResize();
         iseRefr(true);
         translatePage("#messagebox");
         setTimeout(function() {
@@ -427,7 +479,9 @@ iseMessageBox.prototype =
   
   restorePrevious: function() {
     $("messagebox").innerHTML = this.oldMsgHtml;
-    $("messagebox").setStyle({width: this.oldMsgWidth + "px"});
+    $("messagebox").setStyle({width: this.oldMsgWidth + "px",
+                               height: this.oldMsgHeight + "px"});
+    if (this.restoreUserAccountResize) { this.enableUserAccountResize(true); }
   },
   
   keepAlive: function() {

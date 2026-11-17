@@ -9,6 +9,9 @@ is published.
 
 ## Unreleased
 
+* resize the user account configuration dialog by its visible corner grip, with
+  its initial position kept within the browser window (@unbox-digital-printing).
+
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
