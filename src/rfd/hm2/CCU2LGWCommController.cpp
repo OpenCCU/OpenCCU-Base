@@ -7,6 +7,7 @@
 */
 
 #include <CCU2LGWCommController.h>
+#include <CCU2BidcosRemoteInterface.h>
 #include <LGWPortWrapper.h>
 #include <LanDeviceUtils.h>
 #include <Logger.h>
@@ -24,6 +25,7 @@ using namespace HM2;
 
 CCU2LGWCommController::CCU2LGWCommController(CCU2BidcosRemoteInterface* bidcosRemoteInterface)
 : CCU2CommController(bidcosRemoteInterface)
+, coprocessorInitPending(false)
 {
 	pPortWrapper = new LGWPortWrapper(this);
 }
@@ -62,18 +64,21 @@ bool CCU2LGWCommController::init(const std::string host, const int port, const s
 		LDU::LanDeviceUtils ldUtils;
 		LDU::LanDevice lanDevice;
 		//printf("Searching for HomeMatic Lan Gateway with serial number %s.\n", lgwSerialNumber.c_str());
+		//not found: ip stays empty, the gateway is searched again in the background (see below)
 		bool done = ldUtils.searchDeviceByTypeAndSerial("eQ3-HM-LGW*", desiredSerial, lanDevice);
 		if(!done) {
-			LOG(Logger::LOG_FATAL_ERROR, "CCU2LGWCommController::init(): Could not find HomeMatic Lan Gateway with serial number %s.", desiredSerial.c_str());
-			return false;
+			LOG(Logger::LOG_ERROR, "CCU2LGWCommController::init(): Could not find HomeMatic Lan Gateway with serial number %s.", desiredSerial.c_str());
 		}
-		done = ldUtils.readRuntimeNetworkConfiguration(lanDevice);
-		if(!done) {
-			LOG(Logger::LOG_FATAL_ERROR, "CCU2LGWCommController::init(): Could not determine IP address of HomeMatic Lan Gateway with serial number %s.", desiredSerial.c_str());
-			return false;
+		else {
+			done = ldUtils.readRuntimeNetworkConfiguration(lanDevice);
+			if(!done) {
+				LOG(Logger::LOG_ERROR, "CCU2LGWCommController::init(): Could not determine IP address of HomeMatic Lan Gateway with serial number %s.", desiredSerial.c_str());
+			}
+			else {
+				ip = lanDevice.getRuntimeIPConfiguration().getIPAddress();
+				LOG(Logger::LOG_INFO, "Found HomeMatic Lan Gateway with IP Address %s", ip.c_str());
+			}
 		}
-		ip = lanDevice.getRuntimeIPConfiguration().getIPAddress();
-		LOG(Logger::LOG_INFO, "Found HomeMatic Lan Gateway with IP Address %s", ip.c_str());
 	}
 	else {
 		((LGWPortWrapper*)pPortWrapper)->setHostIPAssignedByUser(true);
@@ -84,12 +89,24 @@ bool CCU2LGWCommController::init(const std::string host, const int port, const s
 	std::string encKeyMD5 = calculateMD5(encKey);
 
 	//Connect
-	bool done = ((LGWPortWrapper*)pPortWrapper)->connect(ip, port, encKeyMD5, desiredSerial);
+	LGWPortWrapper* pLGWPortWrapper = (LGWPortWrapper*)pPortWrapper;
+	bool done = pLGWPortWrapper->connect(ip, port, encKeyMD5, desiredSerial);
 	if(!done) {
-		LOG(Logger::LOG_FATAL_ERROR, "CCU2LGWCommController::init(): Cannot connect to HomeMatic Lan Gateway with serial number %s.", desiredSerial.c_str());
-		return false;
-	}//retry on failure cannot be applied here, because it could block whole rfd,
-	//when connection cannot be established and there are other interfaces
+		if(pLGWPortWrapper->isShutdownRequested()) {
+			return false;
+		}
+		//Keep the interface and retry in the background, as after a connection loss: a gateway that is not there yet,
+		//e.g. one that starts slower than rfd after a power cut, would otherwise be lost until rfd is restarted.
+		//Retrying here would block the whole rfd. The reconnect initializes the coprocessor (reinitCoprocessor())
+		//once the gateway answers; the receiver waits for it.
+		LOG(Logger::LOG_ERROR, "CCU2LGWCommController::init(): Cannot connect to HomeMatic Lan Gateway with serial number %s. Retrying in the background.", desiredSerial.c_str());
+		improvedInitialization = improvedCoproInit;
+		coprocessorInitPending = true;
+		interfaceState = IFSTATE_INIT;
+		pthread_create( &receiveThread, &receiveThreadAttributes, CCU2CommController::receiveThreadFunction, (void*)this);
+		pLGWPortWrapper->asyncReconnect();
+		return true;
+	}
 	done = CCU2CommController::init(csmacaEnabled, improvedCoproInit);
 	if(!done) {
 		((LGWPortWrapper*)pPortWrapper)->Disconnect();
@@ -145,8 +162,20 @@ bool HM2::CCU2LGWCommController::reinitCoprocessor()
 	interfaceState = IFSTATE_REINIT;
 	pthread_mutex_unlock(&mutexBidcosTelegramRequest);
 	bool done = improvedInit();
+	if(done && coprocessorInitPending) {
+		//first connect after a start without the gateway: what init() would have done
+		std::string blVersion;
+		std::string fwVersion;
+		if(readFirmwareVersion(blVersion, fwVersion)) {
+			LOG(Logger::LOG_INFO, "(%s) CCU2LGWCommController::reinitCoprocessor(): Coprocessor Firmware Version is: %s", interfaceSerial.c_str(), fwVersion.c_str());
+			pBidcosRemoteInterfcace->publishFirmwareVersion(fwVersion);
+		}
+	}
 	if(done) {
 		done = restoreConfigToCoprocessor();
+	}
+	if(done) {
+		coprocessorInitPending = false;
 	}
 	return done;
 	/*initCoprocessor();
