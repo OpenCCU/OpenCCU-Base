@@ -13,6 +13,147 @@ WebUI = Singleton.create({
  
   serviceMessageCount: 0, 
 
+  /** Compact navigation, fullscreen and viewport controls for narrow screens. **/
+  createMobileNavigation: function(layer, header, menuBar)
+  {
+    var bar = document.createElement("div");
+    bar.id = "mobileTopbar";
+    var button = document.createElement("button");
+    button.type = "button";
+    button.id = "mobileMenuButton";
+    button.textContent = /^de/i.test(this.USERLANGUAGE) ? "Men\xFC" : "Menu";
+    button.setAttribute("aria-controls", "header menubar");
+    button.setAttribute("aria-expanded", "false");
+    var title = document.createElement("span");
+    title.id = "mobilePageTitle";
+    title.textContent = translateKey("startPage");
+    bar.appendChild(button);
+    bar.appendChild(title);
+    bar.appendChild(this.createMobileZoomSelect());
+    layer.insertBefore(bar, header);
+
+    var fullscreenItem = document.createElement("div");
+    fullscreenItem.id = "mobileFullscreen";
+    fullscreenItem.className = "MainMenuItem_Right";
+    var fullscreenButton = document.createElement("button");
+    fullscreenButton.type = "button";
+    fullscreenButton.className = "MainMenuItemCaption";
+    fullscreenButton.textContent = /^de/i.test(this.USERLANGUAGE) ? "Vollbild an/aus" : "Toggle fullscreen";
+    var enterFullscreen = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen;
+    fullscreenButton.disabled = !enterFullscreen;
+    fullscreenButton.addEventListener("click", function() {
+      var fullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+      var action = fullscreen ? (document.exitFullscreen || document.webkitExitFullscreen) : enterFullscreen;
+      var target = fullscreen ? document : document.documentElement;
+      if (!action) { return; }
+      var request = action.call(target);
+      if (request && request.catch) { request.catch(function() {}); }
+    });
+    function updateFullscreenButton() {
+      fullscreenButton.setAttribute("aria-pressed", String(!!(document.fullscreenElement || document.webkitFullscreenElement)));
+    }
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+    updateFullscreenButton();
+    fullscreenItem.appendChild(fullscreenButton);
+    menuBar.appendChild(fullscreenItem);
+
+    // Keep full-height script dialogs inside the visual viewport when the keyboard opens.
+    function updateMobileViewport() {
+      var viewport = window.visualViewport;
+      document.documentElement.style.setProperty("--mobileViewportHeight", (viewport ? viewport.height : window.innerHeight) + "px");
+      document.documentElement.style.setProperty("--mobileViewportTop", (viewport ? viewport.offsetTop : 0) + "px");
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateMobileViewport);
+      window.visualViewport.addEventListener("scroll", updateMobileViewport);
+    } else {
+      window.addEventListener("resize", updateMobileViewport);
+    }
+    updateMobileViewport();
+
+    function closeMenu() {
+      layer.classList.remove("mobileMenuOpen");
+      button.setAttribute("aria-expanded", "false");
+      Array.prototype.forEach.call(menuBar.querySelectorAll(".MainMenuSubMenu"), function(submenu) {
+        submenu.style.display = "none";
+        submenu.parentNode.removeAttribute("data-mobile-expanded");
+      });
+    }
+    button.addEventListener("click", function() {
+      var open = layer.classList.toggle("mobileMenuOpen");
+      button.setAttribute("aria-expanded", String(open));
+    });
+    menuBar.addEventListener("click", function(event) {
+      if (!window.matchMedia("(max-width: 900px)").matches) { return; }
+      var item = event.target.closest(".MainMenuItem_Left, .MainMenuItem_Right");
+      var submenu = item && item.querySelector(".MainMenuSubMenu");
+      if (submenu && !event.target.closest(".MainMenuSubItem")) {
+        event.preventDefault();
+        event.stopPropagation();
+        var expanded = item.getAttribute("data-mobile-expanded") === "true";
+        submenu.style.display = expanded ? "none" : "block";
+        item.setAttribute("data-mobile-expanded", String(!expanded));
+      }
+    }, true);
+    menuBar.addEventListener("click", function(event) {
+      var target = event.target;
+      var item = target.closest(".MainMenuItem_Left, .MainMenuItem_Right");
+      if (target.closest(".MainMenuSubItem") ||
+          (item && !item.querySelector(".MainMenuSubMenu"))) { closeMenu(); }
+    });
+    layer.addEventListener("click", function(event) {
+      if (layer.classList.contains("mobileMenuOpen") &&
+          !event.target.closest("#mobileTopbar, #header, #menubar")) { closeMenu(); }
+    });
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && layer.classList.contains("mobileMenuOpen")) {
+        closeMenu();
+        button.focus();
+      }
+    });
+  },
+
+  /** Create a size selector shared by content and the two script dialogs. **/
+  createMobileZoomSelect: function()
+  {
+    var select = document.createElement("select");
+    select.className = "mobileZoomSelect";
+    select.setAttribute("aria-label", /^de/i.test(this.USERLANGUAGE) ? "Darstellungsgr\xF6\xDFe" : "Display size");
+    [["0.8", "80 %"], ["1", "100 %"], ["1.2", "120 %"]].forEach(function(entry) {
+      var option = document.createElement("option");
+      option.value = entry[0];
+      option.textContent = entry[1];
+      select.appendChild(option);
+    });
+    var value = "1";
+    try { value = localStorage.getItem("webuiMobileZoom") || "1"; } catch (ignore) {}
+    if (!/^(0\.8|1|1\.2)$/.test(value)) { value = "1"; }
+    select.value = value;
+    document.documentElement.style.setProperty("--mobileZoom", value);
+    select.addEventListener("change", function() {
+      document.documentElement.style.setProperty("--mobileZoom", select.value);
+      Array.prototype.forEach.call(document.querySelectorAll(".mobileZoomSelect"), function(other) {
+        other.value = select.value;
+      });
+      try { localStorage.setItem("webuiMobileZoom", select.value); } catch (ignore) {}
+    });
+    ["pointerdown", "mousedown", "touchstart"].forEach(function(type) {
+      select.addEventListener(type, function(event) { event.stopPropagation(); });
+    });
+    return select;
+  },
+
+  updateMobileTitle: function()
+  {
+    var title = document.getElementById("mobilePageTitle");
+    var path = document.getElementById("PagePath");
+    if (title && path) {
+      var parts = path.textContent.split(">");
+      title.textContent = parts[parts.length - 1].trim() || translateKey("startPage");
+    }
+  },
+
   initialize: function()
   {
     this.STATIC_HEIGHT = this.HEADER_HEIGHT + this.MENUBAR_HEIGHT + this.FOOTER_HEIGHT + this.BOTTOM_HEIGHT;
@@ -209,6 +350,7 @@ WebUI = Singleton.create({
         jQuery("#AlarmServiceMsg").show();
         MainMenu.create($("menubar"));
       }
+      this.createMobileNavigation(layer0, header, menuBar);
 
       //    MainMenu.show();
       //    mainMenu = createMainMenu($("menubar"));

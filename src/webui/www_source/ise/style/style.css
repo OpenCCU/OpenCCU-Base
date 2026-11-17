@@ -1632,3 +1632,241 @@ div.caption  { display: table-caption; }
 .cpButton {
     width:230px;
 }
+
+/* Compact navigation for narrow screens. The native content remains scrollable. */
+#mobileTopbar {
+  display: none;
+}
+
+@media screen and (max-width: 900px) {
+  html, body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .Layer0 {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #mobileTopbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    background: $_(background);
+    color: $_(white);
+  }
+
+  #mobileMenuButton {
+    flex: none;
+    min-height: 32px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  #mobilePageTitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #header, #menubar {
+    display: none;
+  }
+
+  .mobileMenuOpen #header {
+    display: block;
+    position: fixed;
+    z-index: 201;
+    top: 44px;
+    left: 0;
+    width: 100%;
+    height: 132px;
+    overflow: auto;
+    box-sizing: border-box;
+  }
+
+  #header > table > tbody > tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #header > table > colgroup {
+    display: none;
+  }
+
+  #header > table > tbody > tr > td {
+    width: auto;
+  }
+
+  #header .CLASS11101 {
+    flex: 1 1 160px;
+  }
+
+  #header .CLASS11105:has(#AlarmServiceMsg) {
+    flex: 1 1 100%;
+  }
+
+  .mobileMenuOpen #menubar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+    position: fixed;
+    z-index: 200;
+    top: 176px;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 176px);
+    overflow: auto;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  .mobileMenuOpen #menubar:empty {
+    display: none;
+  }
+
+  #menubar > .MainMenuItem_Left,
+  #menubar > .MainMenuItem_Right {
+    float: none;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-width: 0;
+  }
+
+  #menubar .MainMenuItemCaption {
+    min-height: 32px;
+    margin: 0;
+  }
+
+  #menubar .MainMenuSubMenu {
+    position: static;
+    margin: 0;
+    max-height: 45dvh;
+    overflow: auto;
+  }
+
+  #menubar .MainMenuSubItem {
+    min-height: 30px;
+    white-space: normal;
+  }
+
+  #content {
+    width: 100%;
+    min-width: 0;
+    height: calc(100dvh - 99px);
+    box-sizing: border-box;
+    overflow: auto;
+  }
+
+  #footer {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+}
+
+/* Complete the narrow-screen layout around the native navigation. */
+.mobileZoomSelect, #mobileFullscreen { display: none; }
+
+@media screen and (max-width: 900px) {
+  .mobileZoomSelect { display: block; flex: none; max-width: 110px; min-height: 28px; font-size: 12px; }
+  #mobileFullscreen { display: flex; min-width: 0; }
+  #mobileFullscreen button { width: 100%; min-height: 32px; }
+  #content > * { zoom: var(--mobileZoom, 1); }
+
+  #startpage { position: relative !important; display: flex; flex-direction: column; width: 100% !important; height: auto !important; min-height: 0; overflow: visible !important; }
+  #startpage #contentLeft, #startpage #contentRight { position: relative !important; float: none; width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+  #startpage #favView, #startpage #favSelector { height: auto !important; max-height: none !important; }
+
+  #tblSettings, #tblStatus { display: block !important; width: 100% !important; height: auto !important; box-sizing: border-box; padding: 8px; }
+  #tblSettings > div, #tblStatus > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; height: auto !important; }
+  #tblSettings .sysConfigHeight, #tblStatus .sysConfigHeight { display: block; float: none; width: auto !important; min-width: 0; height: auto !important; min-height: 0 !important; box-sizing: border-box; margin: 0 !important; padding: 8px !important; overflow: visible; }
+  #tblSettings .StdTableBtn, #tblStatus .StdTableBtn { width: 100% !important; height: auto !important; min-height: 32px; box-sizing: border-box; white-space: normal; overflow-wrap: anywhere; }
+  #tblSettings ul, #tblStatus ul { margin: 8px 0 0; padding-left: 16px; overflow-wrap: anywhere; }
+
+  /* Script input, output and actions occupy separate viewport rows. */
+  .UIFrame, .YesNoDialog, .YesNoDialogA, #messagebox { left: 2vw !important; top: 2dvh !important; max-width: 96vw !important; max-height: 94dvh !important; box-sizing: border-box; overflow: auto !important; }
+  .DialogLayer:has(.mobileScriptTester) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; }
+  .mobileScriptTester, #messagebox.mobileScriptProgram { position: fixed !important; left: 0 !important; top: var(--mobileViewportTop, 0px) !important; width: 100vw !important; height: var(--mobileViewportHeight, 100dvh) !important; max-width: none !important; max-height: none !important; margin: 0 !important; overflow: hidden !important; }
+  .mobileScriptTester .UIFrameTitle { position: relative !important; inset: auto !important; display: flex; align-items: center; justify-content: space-between; width: 100% !important; height: 32px !important; cursor: default; }
+  .mobileScriptTester .UIFrameContent { position: absolute !important; left: 0 !important; top: 32px !important; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: 32px minmax(0, 3fr) 24px minmax(0, 2fr) 40px; width: 100% !important; height: calc(100% - 32px) !important; overflow: hidden !important; box-sizing: border-box; padding-bottom: env(safe-area-inset-bottom); }
+  .mobileScriptInputLabel { grid-area: 1 / 1 / 2 / 3; }
+  .mobileScriptInput { grid-area: 2 / 1 / 3 / 3; }
+  .mobileScriptOutputLabel { grid-area: 3 / 1 / 4 / 3; }
+  .mobileScriptOutput { grid-area: 4 / 1 / 5 / 3; }
+  .mobileScriptRun { grid-area: 5 / 1 / 6 / 2; }
+  .mobileScriptClose { grid-area: 5 / 2 / 6 / 3; }
+  .mobileScriptTester .UIButton { position: relative !important; left: auto !important; top: auto !important; width: auto !important; height: 34px !important; margin: 2px; }
+  .mobileScriptTester .UIButtonText { position: static !important; width: 100% !important; height: 100% !important; line-height: 32px !important; }
+  .mobileScriptTester .CodeMirror, .mobileScriptProgram .CodeMirror { width: 100% !important; height: 100% !important; min-width: 0; min-height: 0; font-size: calc(16px * var(--mobileZoom, 1)); }
+
+  #messagebox.mobileScriptProgram { display: flex; flex-direction: column; }
+  .mobileScriptProgram > .popupTitle, .mobileScriptProgram > .popupControls { flex: none; }
+  .mobileScriptProgram > .popupTitle { display: flex; align-items: center; justify-content: space-between; min-height: 32px; }
+  .mobileScriptProgram > div:has(.popupTableScript) { flex: 1; min-height: 0; overflow: hidden; }
+  .mobileScriptProgram .popupTableScript, .mobileScriptProgram .popupTableScript > tbody { display: flex; flex-direction: column; width: 100% !important; height: 100%; }
+  .mobileScriptProgram .popupTableScript tr { display: flex; min-height: 0; }
+  .mobileScriptProgram .popupTableScript tr:has(#scrinp) { flex: 3 1 0; }
+  .mobileScriptProgram .popupTableScript tr:has(#scrout) { flex: 2 1 0; }
+  .mobileScriptProgram .popupTableScript td:has(#scrinp), .mobileScriptProgram .popupTableScript td:has(#scrout) { display: block; flex: 1; min-width: 0; min-height: 0; width: 100%; padding: 0; }
+  .mobileScriptProgram .popupControls table { width: 100%; }
+  .mobileScriptProgram .popupControls td { width: 50%; }
+  .mobileScriptProgram .popupControls .StdButton { width: auto; min-height: 32px; margin: 3px; }
+
+  input:not([type=checkbox]):not([type=radio]):not([type=hidden]), select, textarea { font-size: 16px; }
+}
+
+@media screen and (max-width: 420px) {
+  #tblSettings > div, #tblStatus > div { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media screen and (max-width: 900px) {
+  #contentLeft, #contentRight { height: auto !important; max-width: 100%; box-sizing: border-box; }
+  #contentRight { width: 100% !important; border-left: 0; overflow: auto; }
+  #footer { height: auto !important; min-height: 42px; max-height: 20dvh; padding-bottom: env(safe-area-inset-bottom); }
+  #footer > table { width: max-content; min-width: 100%; border-spacing: 4px; }
+  .FooterButton { height: auto !important; min-height: 30px; box-sizing: border-box; }
+  #ProgramListTable { min-width: 780px; }
+  #maintable, #navbar > table { width: 100%; table-layout: fixed; }
+  #navbar img { max-width: 100%; height: auto; }
+  .MainMenuSubMenu { max-width: 96vw; max-height: 40dvh; overflow: auto; box-sizing: border-box; }
+  .MainMenuSubItem { min-height: 30px; white-space: normal; }
+  .YesNoDialogContentWrapper, .YesNoDialogContentWrapperA { max-height: 65dvh; overflow: auto; }
+  .CodeMirror-hints { max-width: 92vw; max-height: 35dvh; overflow: auto; }
+  #LoginMask { max-width: calc(100vw - 20px); }
+  #login_content { width: 100% !important; max-width: 100%; overflow: auto; }
+}
+
+@media screen and (max-width: 900px) {
+  #header #AlarmServiceMsg { width: 100%; table-layout: auto; border-spacing: 0; }
+  #header #AlarmServiceMsg tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+  #header #AlarmServiceMsg td { width: auto; min-width: 0; padding: 0 !important; }
+  #header #AlarmServiceMsg .Messages, #header #AlarmServiceMsg .NavButton { width: 100% !important; white-space: normal; overflow-wrap: anywhere; }
+  #header #PagePath { white-space: normal; overflow-wrap: anywhere; }
+  #menubar > #menuStartPage { order: 0; }
+  #menubar > #menuControlPage { order: 1; }
+  #menubar > #menuProgramsLinksPage { order: 2; }
+  #menubar > #menuSettingsPage { order: 3; }
+  #menubar > #menuNewDevicesPage { order: 4; }
+  #menubar > #menuHelpPage { order: 5; }
+  #menubar > #mobileFullscreen { order: 6; }
+  #menubar .MainMenuItemCaption { min-height: 32px; white-space: normal; }
+  .YesNoDialog, .YesNoDialogA { height: auto !important; min-height: 150px; }
+  .YesNoDialogTitle, .YesNoDialogTitleA,
+  .YesNoDialogContentWrapper, .YesNoDialogContentWrapperA,
+  .YesNoDialogFooter, .YesNoDialogFooterA { position: relative; top: auto; left: auto; width: auto; height: auto; }
+  .YesNoDialogFooter, .YesNoDialogFooterA { display: flex; justify-content: space-between; gap: 10px; padding: 4px; }
+  .YesNoDialog_yesButton, .YesNoDialogA_yesButton,
+  .YesNoDialog_noButton, .YesNoDialogA_noButton { position: static; flex: 0 1 100px; min-height: 40px; }
+  button, input[type=button], input[type=submit], .NavButton, .Messages { min-height: 30px; box-sizing: border-box; }
+  input[type=checkbox], input[type=radio] { width: 16px; height: 16px; vertical-align: middle; }
+}

@@ -736,6 +736,7 @@ setPath = function (path) {
 
     $("PagePath").innerHTML = s;
     translatePage("#PagePath");
+    WebUI.updateMobileTitle();
   }
 };  
 
