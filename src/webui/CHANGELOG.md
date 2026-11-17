@@ -10,7 +10,8 @@ is published.
 ## Unreleased
 
 * jump to the reported line when ReGa finds a syntax error in the script editor
-  or script test dialog (@unbox-digital-printing).
+  or script test dialog
+  ([#378](https://github.com/OpenCCU/OpenCCU-Base/pull/378), @unbox-digital-printing).
 
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
