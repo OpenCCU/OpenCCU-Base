@@ -16,6 +16,7 @@ import {lineNumbers, highlightActiveLineGutter} from "@codemirror/view";
 import {StreamLanguage} from "@codemirror/language";
 import {clike} from "@codemirror/legacy-modes/mode/clike";
 import {tags} from "@lezer/highlight";
+import {regaCompletion} from "./regaCompletion.js";
 
 function wordSet(value) {
   const words = Array.isArray(value) ? value.join(" ") : value;
@@ -305,7 +306,7 @@ function fromTextArea(textarea, options = {}) {
     search({top: false}),
     bracketMatching(),
     closeBrackets(),
-    autocompletion({override: [completeAnyWord]}),
+    autocompletion({override: [options.mode === "text/x-rega" && !options.readOnly ? regaCompletion : completeAnyWord]}),
     syntaxHighlighting(defaultHighlightStyle),
     syntaxHighlighting(REGA_HIGHLIGHT_STYLE),
     EditorView.lineWrapping,

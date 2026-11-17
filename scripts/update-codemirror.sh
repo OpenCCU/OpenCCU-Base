@@ -66,6 +66,7 @@ if [[ "${FORCE}" != "1" && "${CURRENT_PACKAGES}" == "$(cat "${TMP_DIR}/packages.
 fi
 
 cp -f "${ENTRY_FILE}" "${TMP_DIR}/entry.js"
+cp -f "${REPO_ROOT}/scripts/codemirror6/regaCompletion.js" "${TMP_DIR}/regaCompletion.js"
 npx esbuild "${TMP_DIR}/entry.js" \
   --bundle \
   --format=iife \
