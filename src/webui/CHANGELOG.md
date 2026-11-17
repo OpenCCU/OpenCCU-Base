@@ -41,6 +41,9 @@ is published.
 
 ### Changes
 
+* drag favorite lists and their entries to a new position using handles next
+  to the position numbers (@unbox-digital-printing).
+
 Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
 or extended in it.
