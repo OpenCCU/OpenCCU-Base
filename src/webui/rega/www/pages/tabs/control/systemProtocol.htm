@@ -62,25 +62,25 @@ ResetGAC();
       <td class="tdCellFilter CLASS03001" >
         <div id="btnFilterDate" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterDateSub" style="display:none">
-          <input id="ftDate" type="text" size="15" class="CLASS03002"/>
-          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftDate', FIL_DATE);updateTable();$('btnFilterDateSub').hide();" >${filterSet}</div>
-          <div class='FilterSetButton' onclick="$('btnFilterDateSub').hide();">${filterClose}</div>
+          <input id="ftDate" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetDateBtn', 'ftCancelDateBtn')" type="text" size="15" class="CLASS03002"/>
+          <div id="ftSetDateBtn" class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftDate', FIL_DATE);updateTable();$('btnFilterDateSub').hide();" >${filterSet}</div>
+          <div id="ftCancelDateBtn" class='FilterSetButton' onclick="$('btnFilterDateSub').hide();">${filterClose}</div>
         </div>
       </td>
       <td class="tdCellFilter CLASS03001" >
         <div id="btnFilterTime" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterTimeSub" style="display:none">
-          <input id="ftTime" type="text" size="15" class="CLASS03002"/>
-          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftTime', FIL_TIME);updateTable();$('btnFilterTimeSub').hide();" >${filterSet}</div>
-          <div class='FilterSetButton' onclick="$('btnFilterTimeSub').hide();">${filterClose}</div>
+          <input id="ftTime" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetTimeBtn', 'ftCancelTimeBtn')" type="text" size="15" class="CLASS03002"/>
+          <div id="ftSetTimeBtn" class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftTime', FIL_TIME);updateTable();$('btnFilterTimeSub').hide();" >${filterSet}</div>
+          <div id="ftCancelTimeBtn" class='FilterSetButton' onclick="$('btnFilterTimeSub').hide();">${filterClose}</div>
         </div>
       </td>
       <td class="tdCellFilter CLASS03001" >
         <div id="btnFilterName" class="FilterBtn">${thFilter}</div>
         <div class="FilterSubMenu" id="btnFilterNameSub" style="display:none">
-          <input id="ftName" type="text" size="15" class="CLASS03002"/>
-          <div class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
-          <div class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
+          <input id="ftName" onkeypress="iseSFilterCheckEnterEsc(event.keyCode, 'ftSetNameBtn', 'ftCancelNameBtn')" type="text" size="15" class="CLASS03002"/>
+          <div id="ftSetNameBtn" class='FilterSetButton CLASS03003' onclick="setSFilter(fltPROT, 'ftName', FIL_NAME);updateTable();$('btnFilterNameSub').hide();" >${filterSet}</div>
+          <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide();">${filterClose}</div>
         </div>
       </td>
       <td class="tdCellFilter CLASS03006" >&nbsp;</td>
