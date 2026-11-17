@@ -477,13 +477,18 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 				if(!hostIPWasAssignedByUser) {
 					hostIP = lanDev.getRuntimeIPConfiguration().getIPAddress();
 				}
+				//Connect the new controller before taking mutexULCCommController: connect() blocks until the
+				//gateway answers or the kernel gives up, about 2 minutes for a gateway that drops the SYN, and
+				//IsConnected() waits for this mutex - every listBidcosInterfaces, and the RPC server with it.
+				//RX/TX is blocked, so nothing uses the new controller before it replaces the old one.
+				UnifiedLanCommController* newController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
+				newController->setEncryptionKey(this->encKey);
+				newController->setDesiredSerial(configuredSerial);
+				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
+				reconnected = newController->connect();
 				pthread_mutex_lock(&mutexULCCommController);
 				UnifiedLanCommController* oldController = pCommController;
-				pCommController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
-				pCommController->setEncryptionKey(this->encKey);
-				pCommController->setDesiredSerial(configuredSerial);
-				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
-				reconnected = pCommController->connect();
+				pCommController = newController;
 				if(reconnected) {
 					pEncryption = pCommController->getTCPEncryption();
 					if(pEncryption == NULL) {
