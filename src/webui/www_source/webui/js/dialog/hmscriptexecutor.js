@@ -74,6 +74,7 @@ HMScriptExecutor = Class.create({
       lineWrapping: true,
       lineNumbers: true,
       foldGutter: true,
+      completionButtonLabel: translateKey("dialogScriptExecuterBtnSuggest"),
       indentUnit: 2,
       tabSize: 2,
       indentWithTabs: false,

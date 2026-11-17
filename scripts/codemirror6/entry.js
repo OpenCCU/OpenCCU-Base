@@ -344,6 +344,18 @@ function fromTextArea(textarea, options = {}) {
   });
   const view = new EditorView({state, parent: host});
 
+  if (options.mode === "text/x-rega" && !options.readOnly && options.completionButtonLabel) {
+    host.classList.add("CodeMirror--rega-completion");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "cm-rega-completion-button";
+    button.textContent = options.completionButtonLabel;
+    button.addEventListener("pointerdown", (event) => event.stopPropagation());
+    button.addEventListener("mousedown", (event) => event.stopPropagation());
+    button.addEventListener("click", () => { view.focus(); startCompletion(view); });
+    host.appendChild(button);
+  }
+
   adapter = {
     view,
     options: {
