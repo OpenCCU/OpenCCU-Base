@@ -17,9 +17,38 @@ var ProgramGroups = (function() {
         revision: separator < 0 ? '0' : raw.substr(0, separator),
         next: Number(data.next) || 0,
         groups: Array.isArray(data.groups) ? data.groups : [],
-        assignments: data.assignments && typeof data.assignments === 'object' ? data.assignments : {}
+        assignments: data.assignments && typeof data.assignments === 'object' ? data.assignments : {},
+        assignmentNames: data.assignmentNames && typeof data.assignmentNames === 'object' ? data.assignmentNames : {}
       };
-    } catch (e) { return {revision:'0', next:0, groups:[], assignments:{}}; }
+    } catch (e) { return {revision:'0', next:0, groups:[], assignments:{}, assignmentNames:{}}; }
+  }
+
+  // Reconnect an object after its internal ID changes, only when its name is unique.
+  function reconcile(objects) {
+    var byName = {};
+    objects.forEach(function(object) {
+      if (!byName[object.name]) { byName[object.name] = []; }
+      byName[object.name].push(object.id);
+    });
+    var savedNames = {};
+    Object.keys(current.assignmentNames).forEach(function(id) {
+      var name = current.assignmentNames[id];
+      if (!savedNames[name]) { savedNames[name] = []; }
+      savedNames[name].push(id);
+    });
+    Object.keys(current.assignments).forEach(function(oldId) {
+      if (objects.some(function(object) { return object.id === oldId; })) { return; }
+      var name = current.assignmentNames[oldId];
+      if (name && byName[name] && byName[name].length === 1 && savedNames[name].length === 1) {
+        var newId = byName[name][0];
+        if (!current.assignments[newId]) {
+          current.assignments[newId] = current.assignments[oldId];
+          current.assignmentNames[newId] = name;
+          delete current.assignments[oldId];
+          delete current.assignmentNames[oldId];
+        }
+      }
+    });
   }
 
   function storageKey() { return 'webui.programGroups.' + view; }
@@ -111,7 +140,15 @@ var ProgramGroups = (function() {
   }
 
   function save(previous) {
-    var data = encodeURIComponent(JSON.stringify({next:current.next, groups:current.groups, assignments:current.assignments}));
+    var catalogNames = {};
+    catalog.forEach(function(program) { catalogNames[program.id] = program.name; });
+    Object.keys(current.assignments).forEach(function(id) {
+      if (catalogNames[id]) { current.assignmentNames[id] = catalogNames[id]; }
+    });
+    Object.keys(current.assignmentNames).forEach(function(id) {
+      if (!current.assignments[id]) { delete current.assignmentNames[id]; }
+    });
+    var data = encodeURIComponent(JSON.stringify({next:current.next, groups:current.groups, assignments:current.assignments, assignmentNames:current.assignmentNames}));
     var body = 'string action = "SaveProgramGroups";';
     body += 'string revision = "' + ReGa.escapeString(current.revision) + '";';
     body += 'string groups = "' + ReGa.escapeString(data) + '";';
@@ -225,6 +262,10 @@ var ProgramGroups = (function() {
       table = document.getElementById(id);
       view = kind;
       current = read(document.getElementById('programGroupData'));
+      catalog = Array.prototype.map.call(document.querySelectorAll('#programGroupCatalog option'), function(option) {
+        return {id:option.value, name:option.textContent};
+      });
+      reconcile(catalog);
       loadState();
       arrange();
       table.classList.toggle('programGroupsEdit', kind === 'edit' && current.groups.length > 0);
@@ -253,6 +294,7 @@ var ProgramGroups = (function() {
       catalog = Array.prototype.map.call(document.querySelectorAll('#programGroupCatalog option'), function(option) {
         return {id:option.value, name:option.textContent};
       });
+      reconcile(catalog);
       managerRows();
     },
     create: function() { edit('0'); }

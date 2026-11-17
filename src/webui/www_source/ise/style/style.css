@@ -1282,8 +1282,8 @@ a img {
 .programGroupRow td
 {
   border: 1px solid $_(black);
-  background-color: $_(inactiveBackground);
-  color: $_(textColorB);
+  background-color: $_(clickable);
+  color: $_(textColorA);
 }
 
 .programGroupToggle
