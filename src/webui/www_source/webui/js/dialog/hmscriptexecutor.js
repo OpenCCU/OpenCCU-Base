@@ -36,7 +36,7 @@ HMScriptExecutor = Class.create({
       .add(new UI.Text()
         .setStyle('margin-left: 5px')
         .setHtml('<b>' + translateKey("dialogScriptExecuterLblInput") + '</b>')
-        .setClass("")
+        .setClass("mobileScriptInputLabel")
       )
       .add(new UI.Textarea()
         .setID("code")
@@ -46,7 +46,7 @@ HMScriptExecutor = Class.create({
       .add(new UI.Text()
         .setStyle('margin-left: 5px')
         .setHtml('<b>' + translateKey("dialogScriptExecuterLblOutput") + '</b>')
-        .setClass("")
+        .setClass("mobileScriptOutputLabel")
       )
       .add(new UI.Textarea()
         .setID("output")
@@ -63,7 +63,14 @@ HMScriptExecutor = Class.create({
         .setAction(this.close, this)
       );
       
-    this.m_layer.appendChild(this.m_frame.getElement());
+    // Give the native frame stable regions for the narrow-screen grid.
+    var frameElement = this.m_frame.getElement();
+    frameElement.classList.add("mobileScriptTester");
+    frameElement.querySelector(".UIFrameTitle").appendChild(WebUI.createMobileZoomSelect());
+    var buttons = frameElement.querySelectorAll(".UIFrameContent > .UIButton");
+    buttons[0].classList.add("mobileScriptRun");
+    buttons[1].classList.add("mobileScriptClose");
+    this.m_layer.appendChild(frameElement);
     Layer.add(this.m_layer);
 
     this.m_input = CCUCodeMirror6.fromTextArea(document.getElementById('code'), {
@@ -117,6 +124,7 @@ HMScriptExecutor = Class.create({
                   }}
     });
     this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
+    this.m_input.view.dom.closest(".CodeMirror").classList.add("mobileScriptInput");
 
     this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
       mode: "default",
@@ -125,6 +133,7 @@ HMScriptExecutor = Class.create({
       lineNumbers: false
     });
     this.m_output.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.4));
+    this.m_output.view.dom.closest(".CodeMirror").classList.add("mobileScriptOutput");
   },
 
   run: function()

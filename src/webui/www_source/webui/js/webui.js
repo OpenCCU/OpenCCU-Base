@@ -13,6 +13,7 @@ WebUI = Singleton.create({
  
   serviceMessageCount: 0, 
 
+  /** Compact navigation, fullscreen and viewport controls for narrow screens. **/
   createMobileNavigation: function(layer, header, menuBar)
   {
     var bar = document.createElement("div");
@@ -28,7 +29,48 @@ WebUI = Singleton.create({
     title.textContent = translateKey("startPage");
     bar.appendChild(button);
     bar.appendChild(title);
+    bar.appendChild(this.createMobileZoomSelect());
     layer.insertBefore(bar, header);
+
+    var fullscreenItem = document.createElement("div");
+    fullscreenItem.id = "mobileFullscreen";
+    fullscreenItem.className = "MainMenuItem_Right";
+    var fullscreenButton = document.createElement("button");
+    fullscreenButton.type = "button";
+    fullscreenButton.className = "MainMenuItemCaption";
+    fullscreenButton.textContent = /^de/i.test(this.USERLANGUAGE) ? "Vollbild an/aus" : "Toggle fullscreen";
+    var enterFullscreen = document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen;
+    fullscreenButton.disabled = !enterFullscreen;
+    fullscreenButton.addEventListener("click", function() {
+      var fullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+      var action = fullscreen ? (document.exitFullscreen || document.webkitExitFullscreen) : enterFullscreen;
+      var target = fullscreen ? document : document.documentElement;
+      if (!action) { return; }
+      var request = action.call(target);
+      if (request && request.catch) { request.catch(function() {}); }
+    });
+    function updateFullscreenButton() {
+      fullscreenButton.setAttribute("aria-pressed", String(!!(document.fullscreenElement || document.webkitFullscreenElement)));
+    }
+    document.addEventListener("fullscreenchange", updateFullscreenButton);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+    updateFullscreenButton();
+    fullscreenItem.appendChild(fullscreenButton);
+    menuBar.appendChild(fullscreenItem);
+
+    // Keep full-height script dialogs inside the visual viewport when the keyboard opens.
+    function updateMobileViewport() {
+      var viewport = window.visualViewport;
+      document.documentElement.style.setProperty("--mobileViewportHeight", (viewport ? viewport.height : window.innerHeight) + "px");
+      document.documentElement.style.setProperty("--mobileViewportTop", (viewport ? viewport.offsetTop : 0) + "px");
+    }
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateMobileViewport);
+      window.visualViewport.addEventListener("scroll", updateMobileViewport);
+    } else {
+      window.addEventListener("resize", updateMobileViewport);
+    }
+    updateMobileViewport();
 
     function closeMenu() {
       layer.classList.remove("mobileMenuOpen");
@@ -70,6 +112,36 @@ WebUI = Singleton.create({
         button.focus();
       }
     });
+  },
+
+  /** Create a size selector shared by content and the two script dialogs. **/
+  createMobileZoomSelect: function()
+  {
+    var select = document.createElement("select");
+    select.className = "mobileZoomSelect";
+    select.setAttribute("aria-label", /^de/i.test(this.USERLANGUAGE) ? "Darstellungsgr\xF6\xDFe" : "Display size");
+    [["0.8", "80 %"], ["1", "100 %"], ["1.2", "120 %"]].forEach(function(entry) {
+      var option = document.createElement("option");
+      option.value = entry[0];
+      option.textContent = entry[1];
+      select.appendChild(option);
+    });
+    var value = "1";
+    try { value = localStorage.getItem("webuiMobileZoom") || "1"; } catch (ignore) {}
+    if (!/^(0\.8|1|1\.2)$/.test(value)) { value = "1"; }
+    select.value = value;
+    document.documentElement.style.setProperty("--mobileZoom", value);
+    select.addEventListener("change", function() {
+      document.documentElement.style.setProperty("--mobileZoom", select.value);
+      Array.prototype.forEach.call(document.querySelectorAll(".mobileZoomSelect"), function(other) {
+        other.value = select.value;
+      });
+      try { localStorage.setItem("webuiMobileZoom", select.value); } catch (ignore) {}
+    });
+    ["pointerdown", "mousedown", "touchstart"].forEach(function(type) {
+      select.addEventListener(type, function(event) { event.stopPropagation(); });
+    });
+    return select;
   },
 
   updateMobileTitle: function()

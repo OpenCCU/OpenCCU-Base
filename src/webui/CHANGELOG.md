@@ -9,8 +9,8 @@ is published.
 
 ## Unreleased
 
-* show a compact, accessible navigation menu and scrollable content on narrow
-  WebUI screens
+* show compact navigation, responsive overview cards and script dialogs on
+  narrow WebUI screens, with display sizing and a fullscreen control
   ([#379](https://github.com/OpenCCU/OpenCCU-Base/pull/379), @unbox-digital-printing).
 
 * system variable values with HTML are shown with their layout again: since

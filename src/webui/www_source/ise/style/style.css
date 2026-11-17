@@ -1773,3 +1773,75 @@ div.caption  { display: table-caption; }
     overflow-x: auto;
   }
 }
+
+/* Complete the narrow-screen layout around the native navigation. */
+.mobileZoomSelect, #mobileFullscreen { display: none; }
+
+@media screen and (max-width: 900px) {
+  .mobileZoomSelect { display: block; flex: none; max-width: 110px; min-height: 28px; font-size: 12px; }
+  #mobileFullscreen { display: flex; min-width: 0; }
+  #mobileFullscreen button { width: 100%; min-height: 32px; }
+  #content > * { zoom: var(--mobileZoom, 1); }
+
+  #startpage { position: relative !important; display: flex; flex-direction: column; width: 100% !important; height: auto !important; min-height: 0; overflow: visible !important; }
+  #startpage #contentLeft, #startpage #contentRight { position: relative !important; float: none; width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+  #startpage #favView, #startpage #favSelector { height: auto !important; max-height: none !important; }
+
+  #tblSettings, #tblStatus { display: block !important; width: 100% !important; height: auto !important; box-sizing: border-box; padding: 8px; }
+  #tblSettings > div, #tblStatus > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; height: auto !important; }
+  #tblSettings .sysConfigHeight, #tblStatus .sysConfigHeight { display: block; float: none; width: auto !important; min-width: 0; height: auto !important; min-height: 0 !important; box-sizing: border-box; margin: 0 !important; padding: 8px !important; overflow: visible; }
+  #tblSettings .StdTableBtn, #tblStatus .StdTableBtn { width: 100% !important; height: auto !important; min-height: 32px; box-sizing: border-box; white-space: normal; overflow-wrap: anywhere; }
+  #tblSettings ul, #tblStatus ul { margin: 8px 0 0; padding-left: 16px; overflow-wrap: anywhere; }
+
+  /* Script input, output and actions occupy separate viewport rows. */
+  .UIFrame, .YesNoDialog, .YesNoDialogA, #messagebox { left: 2vw !important; top: 2dvh !important; max-width: 96vw !important; max-height: 94dvh !important; box-sizing: border-box; overflow: auto !important; }
+  .DialogLayer:has(.mobileScriptTester) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100dvh !important; }
+  .mobileScriptTester, #messagebox.mobileScriptProgram { position: fixed !important; left: 0 !important; top: var(--mobileViewportTop, 0px) !important; width: 100vw !important; height: var(--mobileViewportHeight, 100dvh) !important; max-width: none !important; max-height: none !important; margin: 0 !important; overflow: hidden !important; }
+  .mobileScriptTester .UIFrameTitle { position: relative !important; inset: auto !important; display: flex; align-items: center; justify-content: space-between; width: 100% !important; height: 32px !important; cursor: default; }
+  .mobileScriptTester .UIFrameContent { position: absolute !important; left: 0 !important; top: 32px !important; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: 32px minmax(0, 3fr) 24px minmax(0, 2fr) 40px; width: 100% !important; height: calc(100% - 32px) !important; overflow: hidden !important; box-sizing: border-box; padding-bottom: env(safe-area-inset-bottom); }
+  .mobileScriptInputLabel { grid-area: 1 / 1 / 2 / 3; }
+  .mobileScriptInput { grid-area: 2 / 1 / 3 / 3; }
+  .mobileScriptOutputLabel { grid-area: 3 / 1 / 4 / 3; }
+  .mobileScriptOutput { grid-area: 4 / 1 / 5 / 3; }
+  .mobileScriptRun { grid-area: 5 / 1 / 6 / 2; }
+  .mobileScriptClose { grid-area: 5 / 2 / 6 / 3; }
+  .mobileScriptTester .UIButton { position: relative !important; left: auto !important; top: auto !important; width: auto !important; height: 34px !important; margin: 2px; }
+  .mobileScriptTester .UIButtonText { position: static !important; width: 100% !important; height: 100% !important; line-height: 32px !important; }
+  .mobileScriptTester .CodeMirror, .mobileScriptProgram .CodeMirror { width: 100% !important; height: 100% !important; min-width: 0; min-height: 0; font-size: calc(16px * var(--mobileZoom, 1)); }
+
+  #messagebox.mobileScriptProgram { display: flex; flex-direction: column; }
+  .mobileScriptProgram > .popupTitle, .mobileScriptProgram > .popupControls { flex: none; }
+  .mobileScriptProgram > .popupTitle { display: flex; align-items: center; justify-content: space-between; min-height: 32px; }
+  .mobileScriptProgram > div:has(.popupTableScript) { flex: 1; min-height: 0; overflow: hidden; }
+  .mobileScriptProgram .popupTableScript, .mobileScriptProgram .popupTableScript > tbody { display: flex; flex-direction: column; width: 100% !important; height: 100%; }
+  .mobileScriptProgram .popupTableScript tr { display: flex; min-height: 0; }
+  .mobileScriptProgram .popupTableScript tr:has(#scrinp) { flex: 3 1 0; }
+  .mobileScriptProgram .popupTableScript tr:has(#scrout) { flex: 2 1 0; }
+  .mobileScriptProgram .popupTableScript td:has(#scrinp), .mobileScriptProgram .popupTableScript td:has(#scrout) { display: block; flex: 1; min-width: 0; min-height: 0; width: 100%; padding: 0; }
+  .mobileScriptProgram .popupControls table { width: 100%; }
+  .mobileScriptProgram .popupControls td { width: 50%; }
+  .mobileScriptProgram .popupControls .StdButton { width: auto; min-height: 32px; margin: 3px; }
+
+  input:not([type=checkbox]):not([type=radio]):not([type=hidden]), select, textarea { font-size: 16px; }
+}
+
+@media screen and (max-width: 420px) {
+  #tblSettings > div, #tblStatus > div { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media screen and (max-width: 900px) {
+  #contentLeft, #contentRight { height: auto !important; max-width: 100%; box-sizing: border-box; }
+  #contentRight { width: 100% !important; border-left: 0; overflow: auto; }
+  #footer { height: auto !important; min-height: 42px; max-height: 20dvh; padding-bottom: env(safe-area-inset-bottom); }
+  #footer > table { width: max-content; min-width: 100%; border-spacing: 4px; }
+  .FooterButton { height: auto !important; min-height: 30px; box-sizing: border-box; }
+  #ProgramListTable { min-width: 780px; }
+  #maintable, #navbar > table { width: 100%; table-layout: fixed; }
+  #navbar img { max-width: 100%; height: auto; }
+  .MainMenuSubMenu { max-width: 96vw; max-height: 40dvh; overflow: auto; box-sizing: border-box; }
+  .MainMenuSubItem { min-height: 30px; white-space: normal; }
+  .YesNoDialogContentWrapper, .YesNoDialogContentWrapperA { max-height: 65dvh; overflow: auto; }
+  .CodeMirror-hints { max-width: 92vw; max-height: 35dvh; overflow: auto; }
+  #LoginMask { max-width: calc(100vw - 20px); }
+  #login_content { width: 100% !important; max-width: 100%; overflow: auto; }
+}

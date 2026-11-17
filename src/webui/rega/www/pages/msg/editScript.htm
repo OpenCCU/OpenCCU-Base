@@ -58,6 +58,12 @@
 <script type="text/javascript">
 
   var frameHeight = <% Write(system.GetVar("frameHeight")) %>;
+  // Keep the program script dialog within the mobile viewport.
+  var scriptBox = document.getElementById('scrinp').closest('#messagebox');
+  if (scriptBox) {
+    scriptBox.classList.add('mobileScriptProgram');
+    scriptBox.querySelector('.popupTitle').appendChild(WebUI.createMobileZoomSelect());
+  }
   var editor_code = CodeMirror.fromTextArea(document.getElementById('scrinp'), {
     mode: "text/x-rega",
     autofocus: true,
