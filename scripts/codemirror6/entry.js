@@ -16,6 +16,7 @@ import {lineNumbers, highlightActiveLineGutter} from "@codemirror/view";
 import {StreamLanguage} from "@codemirror/language";
 import {clike} from "@codemirror/legacy-modes/mode/clike";
 import {tags} from "@lezer/highlight";
+import {regaIndentGuides} from "./regaIndentGuides.js";
 
 function wordSet(value) {
   const words = Array.isArray(value) ? value.join(" ") : value;
@@ -327,7 +328,7 @@ function fromTextArea(textarea, options = {}) {
     extensions.push(EditorState.readOnly.of(true), EditorView.editable.of(false));
   }
   if (options.mode === "text/x-rega") {
-    extensions.push(REGA_LANGUAGE, foldService.of(foldReGaBraces));
+    extensions.push(REGA_LANGUAGE, foldService.of(foldReGaBraces), regaIndentGuides(options));
   }
 
   let adapter = null;
