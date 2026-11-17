@@ -25,4 +25,5 @@ webui/css/euladialog.css
 webui/css/bidcosrf.css
 webui/css/ui.css
 webui/css/x_style.css
+webui/css/theme.css
 

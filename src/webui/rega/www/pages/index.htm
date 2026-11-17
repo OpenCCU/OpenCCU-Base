@@ -73,6 +73,13 @@
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/main.min.css" />
     <link rel="stylesheet" type="text/css" href="/webui/css/extern/hmBootstrap.css" />
     <link id="idCss" rel="stylesheet" type="text/css" href="/webui/style.cgi" />
+    <script type="text/javascript">
+      try {
+        if (localStorage.getItem("webui-theme") === "dark") {
+          document.documentElement.classList.add("webuiDark");
+        }
+      } catch (e) {}
+    </script>
 
     <script type="text/javascript">
 

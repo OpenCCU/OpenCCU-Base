@@ -13,6 +13,47 @@ WebUI = Singleton.create({
  
   serviceMessageCount: 0, 
 
+  createThemeToggle: function(menuBar)
+  {
+    var item = document.createElement("div");
+    item.id = "webuiThemeToggle";
+    item.className = "MainMenuItem_Right";
+    item.setAttribute("role", "button");
+    item.setAttribute("tabindex", "0");
+    var caption = document.createElement("div");
+    caption.className = "MainMenuItemCaption";
+    caption.textContent = /^de/i.test(this.USERLANGUAGE) ? "Theme wechseln" : "Toggle theme";
+    item.appendChild(caption);
+    menuBar.appendChild(item);
+
+    function showTheme() {
+      var dark = document.documentElement.classList.contains("webuiDark");
+      item.setAttribute("aria-pressed", String(dark));
+      var german = /^de/i.test(WebUI.USERLANGUAGE);
+      item.title = dark ? (german ? "Dunkles Theme" : "Dark theme") :
+                          (german ? "Helles Theme" : "Light theme");
+    }
+    function toggleTheme() {
+      var dark = document.documentElement.classList.toggle("webuiDark");
+      try { localStorage.setItem("webui-theme", dark ? "dark" : "light"); } catch (e) {}
+      showTheme();
+    }
+    item.addEventListener("click", toggleTheme);
+    item.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleTheme();
+      }
+    });
+    window.addEventListener("storage", function(event) {
+      if (event.key === "webui-theme") {
+        document.documentElement.classList.toggle("webuiDark", event.newValue === "dark");
+        showTheme();
+      }
+    });
+    showTheme();
+  },
+
   initialize: function()
   {
     this.STATIC_HEIGHT = this.HEADER_HEIGHT + this.MENUBAR_HEIGHT + this.FOOTER_HEIGHT + this.BOTTOM_HEIGHT;
@@ -208,6 +249,7 @@ WebUI = Singleton.create({
       if (!forceUpdate) {
         jQuery("#AlarmServiceMsg").show();
         MainMenu.create($("menubar"));
+        this.createThemeToggle(menuBar);
       }
 
       //    MainMenu.show();

@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* switch between the original and a dark WebUI palette from the main menu; the
+  choice is remembered in each browser
+  ([#381](https://github.com/OpenCCU/OpenCCU-Base/pull/381), @unbox-digital-printing).
+
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
