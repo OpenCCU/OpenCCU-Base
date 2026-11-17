@@ -34,6 +34,9 @@ protected:
 
 private:
 	std::string calculateMD5(const std::string& s);
+	/** \brief True while the coprocessor of a gateway that was not there at init() has not been initialized.
+	 * \details Set by init(), used and cleared by reinitCoprocessor() in the reconnect thread.*/
+	bool coprocessorInitPending;
 
 };
 

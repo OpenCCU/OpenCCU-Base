@@ -11,6 +11,15 @@ version and date with the next version bump (`version.sh` and
 
 ## Unreleased
 
+* fix a LAN gateway (HM-LGW) that is not reachable when rfd starts being
+  given up for good: rfd dropped the interface when its first connection
+  failed, so a gateway that starts slower than rfd, e.g. after a power cut,
+  stayed away until rfd was restarted, and with the gateway as its only
+  interface rfd exited. A gateway that does not answer at all kept rfd's
+  start waiting for about 127 s. rfd now keeps the interface and connects it
+  in the background with the usual reconnect, and gives up a connection
+  attempt after 10 s.
+  (fixes [#383](https://github.com/OpenCCU/OpenCCU-Base/issues/383), @hobbyquaker)
 * fix rfd's RPC server hanging for about two minutes at a time while a LAN
   gateway (HM-LGW) does not answer at all, e.g. switched off or unplugged:
   every reconnect attempt held a lock that `listBidcosInterfaces` waits for,

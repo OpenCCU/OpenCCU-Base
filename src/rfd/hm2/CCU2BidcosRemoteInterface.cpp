@@ -24,6 +24,7 @@ CCU2BidcosRemoteInterface::CCU2BidcosRemoteInterface(const InterfaceSubType& ifS
 : BidcosInterface()
 , pCommController(NULL)
 , dataRate(DATA_RATE_10k)
+, pendingRFAddress(0)
 {
 	aesKeys.currentKeyIndex = 0;
 	aesKeys.previousKeyIndex = 0;
@@ -111,8 +112,14 @@ bool CCU2BidcosRemoteInterface::StartInterface(int bidcos_address)
 	LOG(Logger::LOG_DEBUG, "CCU2BidcosRemoteInterface::StartInterface(): addr=%s", toDebugHexStr( convertBidcosAddressToBigEndianString( bidcos_address ) ).c_str() );
 	//Remote: Set bidcos address at coprocessor before switching the interface to ACTIVE
 	std::string addrStr = convertBidcosAddressToBigEndianString(bidcos_address);
+	//Pending until it is set: a LAN gateway that is not connected yet gets it when its coprocessor is restored
+	//(republishAllDevices()). Stored before the send, so a restore running meanwhile either sees it or runs before the
+	//send, and a failed send leaves it for the next restore.
+	pendingRFAddress = bidcos_address;
 	bool done = pCommController->sendBidcosRequest( BIDCOSCMD_SET_RF_ADDRESS, addrStr );
 	if(done) {
+		int expected = bidcos_address;
+		pendingRFAddress.compare_exchange_strong(expected, 0);
 		pCommController->startReceiver();
 	}
 	return done;
@@ -339,8 +346,11 @@ bool CCU2BidcosRemoteInterface::Init(std::map<std::string, std::string>& params)
 		return false;
 	}
 	if(retVal) {
-		//Set interface clock
-		retVal = SetInterfaceClockBySystemTime();
+		//Set interface clock. A LAN gateway that is not connected yet (CCU2LGWCommController::init() retries in the
+		//background) gets it when its coprocessor is restored.
+		if((type.compare("HMLGW2") != 0) || IsConnected()) {
+			retVal = SetInterfaceClockBySystemTime();
+		}
 	}
 	return retVal;
 }
@@ -491,6 +501,15 @@ bool CCU2BidcosRemoteInterface::SetInterfaceClock(const unsigned int utcSeconds,
 }
 bool CCU2BidcosRemoteInterface::republishAllDevices()
 {
+	//BidCoS address StartInterface() could not set (a LAN gateway that was not connected); it stays pending until a
+	//restore is complete, so a failed restore sends it again with the next one (SET_RF_ADDRESS is idempotent)
+	const int rfAddress = pendingRFAddress.load();
+	if(rfAddress != 0) {
+		if(!pCommController->sendBidcosRequest( BIDCOSCMD_SET_RF_ADDRESS, convertBidcosAddressToBigEndianString( rfAddress ) )) {
+			LOG(Logger::LOG_ERROR, "CCU2BidcosRemoteInterface::republishAllDevices(): Could not set the BidCoS address.");
+			return false;
+		}
+	}
 	//Set user keys (workaround for Copro 1.0.11 key problem after (re-)starting app)
 	bool retVal = SetAesKeyUser(aesKeys.currentKeyIndex, aesKeys.currentKey, aesKeys.previousKeyIndex, aesKeys.previousKey);
 
@@ -512,6 +531,11 @@ bool CCU2BidcosRemoteInterface::republishAllDevices()
 			LOG(Logger::LOG_ERROR, "CCU2BidcosRemoteInterface::republishAllDevices(): Could not republish device with address %d(dec) to coprocessor.",devices.at(i));
 			retVal = false;
 		}
+	}
+	if(retVal && rfAddress != 0) {
+		//unless StartInterface() stored another one meanwhile
+		int expected = rfAddress;
+		pendingRFAddress.compare_exchange_strong(expected, 0);
 	}
 	return retVal;
 }
