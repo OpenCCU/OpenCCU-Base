@@ -50,12 +50,36 @@
   arSysVars = new Array();
   
   DivSort = function(colName)
-  { 
+  {
+    if (VariableGroups.isGrouped('edit')) {
+      if (colName == 'name') { VariableGroups.sort('edit'); }
+      return;
+    }
     IseSort(arSysVars,colName,true);
   }
   
   
 </script>
+<%
+  object oGroupVariables = dom.GetObject(ID_SYSTEM_VARIABLES);
+  string sVariableGroups = oGroupVariables.MetaData("webuiVariableGroups");
+  if (sVariableGroups == null) { sVariableGroups = "0|"; }
+  sVariableGroups = sVariableGroups.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+%>
+<div id="variableGroupData" data-groups="<% Write(sVariableGroups); %>" style="display:none"></div>
+<select id="variableGroupCatalog" style="display:none">
+<%
+  string sGroupVariableId;
+  foreach(sGroupVariableId, oGroupVariables.EnumEnabledIDs())
+  {
+    object oGroupVariable = dom.GetObject(sGroupVariableId);
+    if (oGroupVariable && (oGroupVariable.IsTypeOf(OT_VARDP) || oGroupVariable.IsTypeOf(OT_ALARMDP)))
+    {
+      WriteLine('<option value="'#oGroupVariable.ID()#'">'#oGroupVariable.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</option>');
+    }
+  }
+%>
+</select>
 <div id="svOffset" style="display:none"></div>
 <table id="sysVars" cellspacing="0" cellpadding="0" class="tTable" style="display:none">
 <colgroup>
@@ -473,4 +497,5 @@
   };
   translatePage("#sysVars");
   jQuery("#sysVars").show();
+  VariableGroups.render('sysVars', 'edit');
 </script>

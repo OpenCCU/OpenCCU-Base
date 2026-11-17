@@ -1,0 +1,37 @@
+<%
+  system.SetSessionVar("sessionTAB", "variablegroups");
+  object oVariables = dom.GetObject(ID_SYSTEM_VARIABLES);
+  string sGroups = oVariables.MetaData("webuiVariableGroups");
+  if (sGroups == null) { sGroups = "0|"; }
+  sGroups = sGroups.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+%>
+<script type="text/javascript">
+  setPath(translateKey("menuSettingsPage") + " &gt; " + translateKey("variableGroups"));
+</script>
+<h2 id="variableGroupHeading">${variableGroups}</h2>
+<div id="variableGroupData" data-groups="<% Write(sGroups); %>" style="display:none"></div>
+<select id="variableGroupCatalog" style="display:none">
+<%
+  string sID;
+  foreach(sID, oVariables.EnumEnabledIDs())
+  {
+    object oVariable = dom.GetObject(sID);
+    if (oVariable && (oVariable.IsTypeOf(OT_VARDP) || oVariable.IsTypeOf(OT_ALARMDP)))
+    {
+      WriteLine('<option value="'#oVariable.ID()#'">'#oVariable.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</option>');
+    }
+  }
+%>
+</select>
+<table id="variableGroupManager" class="tTable">
+  <thead><tr><th class="thCell">${thName}</th><th class="thCell">${variableGroupCount}</th><th class="thCell">${variableGroupMembers}</th><th class="thCell">${thAction}</th></tr></thead>
+  <tbody></tbody>
+</table>
+<script type="text/javascript">
+  translatePage('#variableGroupHeading');
+  translatePage('#variableGroupManager');
+  VariableGroups.manager();
+  var groupFooter = '<table><tr><td><div class="FooterButton" onclick="WebUI.goBack();">' + translateKey('footerBtnPageBack') + '</div></td>';
+  groupFooter += '<td><div class="FooterButton" onclick="VariableGroups.create();">' + translateKey('footerBtnNew') + '</div></td></tr></table>';
+  document.getElementById('footer').innerHTML = groupFooter;
+</script>

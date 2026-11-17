@@ -1279,6 +1279,58 @@ a img {
   margin-left: 15px;
 }
 
+.variableGroupRow td
+{
+  border: 1px solid $_(black);
+  background-color: $_(clickable);
+  color: $_(textColorA);
+}
+
+.variableGroupToggle
+{
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: left;
+}
+
+.variableGroupCount
+{
+  margin-left: 32px;
+}
+
+.variableGroupMember td:first-child
+{
+  padding-left: 24px;
+}
+
+.variableGroupClosed
+{
+  display: none !important;
+}
+
+.variableGroupDialog
+{
+  width: min(600px, 90vw);
+  max-height: 80vh;
+  background-color: $_(contentBackground);
+  color: $_(textColorB);
+}
+
+.variableGroupPicker
+{
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.variableGroupPicker label
+{
+  display: block;
+  padding: 3px;
+}
+
 .tHeaderCell
 {
   color: $_(textColorA); /* white */
