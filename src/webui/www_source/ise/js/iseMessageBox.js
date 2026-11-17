@@ -189,12 +189,12 @@ iseMessageBox.prototype =
       case ID_USER_ACCOUNT_CONFIG_ADMIN:
         this.setTitle(translateKey("dialogUserAccountTitle")/*"Benutzerkonto - Konfiguration"*/);
         this.addToPostBody( 'integer userid = '+this.type+';' );
-        this.setWidth(800);
+        this.setWidth(Math.min(800, Math.max(240, window.innerWidth - 24)));
         this.setFile( "/pages/msg/userAccountConfigAdmin.htm" );
         break;   
       case ID_USER_ACCOUNT_CONFIG_USER:
         this.setTitle(translateKey("dialogUserAccountTitle")/*"Benutzerkonto - Konfiguration" */);
-        this.setWidth(1000);
+        this.setWidth(Math.min(1000, Math.max(240, window.innerWidth - 24)));
         this.setFile( "/pages/msg/userAccountConfigUser.htm" );
         break;
       case ID_AUTO_LOGIN_CONFIG:
