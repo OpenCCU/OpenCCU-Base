@@ -1456,3 +1456,31 @@ function ::ShowNonVisiblePrograms()
     system.SetSessionVar("sessionSNVPRG","1");
   }
 }
+
+
+! Save the complete program group catalog on the programs collection.
+function ::SaveProgramGroups()
+{
+  object oUser = dom.GetObject(system.GetSessionVar("sessionUserID"));
+  object oPrograms = dom.GetObject(ID_PROGRAMS);
+  if (!oUser || (oUser.UserLevel() != iulAdmin) || !oPrograms || !system.IsVar("revision") || !system.IsVar("groups"))
+  {
+    Write("ERR|ACCESS");
+    return;
+  }
+  string current = oPrograms.MetaData("webuiProgramGroups");
+  if (current == null) { current = "0|"; }
+  string revision = current.StrValueByIndex("|", 0);
+  string groups = system.GetVar("groups");
+  if ((revision != system.GetVar("revision")) || (groups.Length() > 100000))
+  {
+    Write("ERR|REVISION");
+    return;
+  }
+  integer nextRevision = revision.ToInteger() + 1;
+  string updated = nextRevision # "|" # groups;
+  oPrograms.AddMetaData("webuiProgramGroups", updated);
+  oPrograms.MetaData("webuiProgramGroups", updated);
+  Write("OK|" # nextRevision);
+  return;
+}

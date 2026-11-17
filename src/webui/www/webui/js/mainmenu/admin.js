@@ -33,6 +33,7 @@
     {id: "submenuDeviceInbox", action: function() { ConfigData.check(function() { WebUI.enter(NewDeviceListPage); }); } },
     {id: "submenuFunction"             , action: function() { ConfigData.check(function() { WebUI.enter(FunctionListPage); }); }  },
     {id: "submenuCreateGroups"     , action: function() { ConfigData.check(function() { WebUI.enter(CreateGroupPage); } );  } },
+    {id: "programGroups"           , action: function() { WebUI.enter(ProgramGroupPage); } },
     {id: "submenuRooms"               , action: function() { ConfigData.check(function() { WebUI.enter(RoomListPage); }); }      },
 
     //{id: "submenuCreateTestPage"     , action: function() { ConfigData.check(function() { WebUI.enter(CreateTestPage); } );  } },
