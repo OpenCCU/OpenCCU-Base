@@ -1845,3 +1845,28 @@ div.caption  { display: table-caption; }
   #LoginMask { max-width: calc(100vw - 20px); }
   #login_content { width: 100% !important; max-width: 100%; overflow: auto; }
 }
+
+@media screen and (max-width: 900px) {
+  #header #AlarmServiceMsg { width: 100%; table-layout: auto; border-spacing: 0; }
+  #header #AlarmServiceMsg tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+  #header #AlarmServiceMsg td { width: auto; min-width: 0; padding: 0 !important; }
+  #header #AlarmServiceMsg .Messages, #header #AlarmServiceMsg .NavButton { width: 100% !important; white-space: normal; overflow-wrap: anywhere; }
+  #header #PagePath { white-space: normal; overflow-wrap: anywhere; }
+  #menubar > #menuStartPage { order: 0; }
+  #menubar > #menuControlPage { order: 1; }
+  #menubar > #menuProgramsLinksPage { order: 2; }
+  #menubar > #menuSettingsPage { order: 3; }
+  #menubar > #menuNewDevicesPage { order: 4; }
+  #menubar > #menuHelpPage { order: 5; }
+  #menubar > #mobileFullscreen { order: 6; }
+  #menubar .MainMenuItemCaption { min-height: 32px; white-space: normal; }
+  .YesNoDialog, .YesNoDialogA { height: auto !important; min-height: 150px; }
+  .YesNoDialogTitle, .YesNoDialogTitleA,
+  .YesNoDialogContentWrapper, .YesNoDialogContentWrapperA,
+  .YesNoDialogFooter, .YesNoDialogFooterA { position: relative; top: auto; left: auto; width: auto; height: auto; }
+  .YesNoDialogFooter, .YesNoDialogFooterA { display: flex; justify-content: space-between; gap: 10px; padding: 4px; }
+  .YesNoDialog_yesButton, .YesNoDialogA_yesButton,
+  .YesNoDialog_noButton, .YesNoDialogA_noButton { position: static; flex: 0 1 100px; min-height: 40px; }
+  button, input[type=button], input[type=submit], .NavButton, .Messages { min-height: 30px; box-sizing: border-box; }
+  input[type=checkbox], input[type=radio] { width: 16px; height: 16px; vertical-align: middle; }
+}
