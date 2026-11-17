@@ -10,7 +10,8 @@ is published.
 ## Unreleased
 
 * show a compact, accessible navigation menu and scrollable content on narrow
-  WebUI screens (@unbox-digital-printing).
+  WebUI screens
+  ([#379](https://github.com/OpenCCU/OpenCCU-Base/pull/379), @unbox-digital-printing).
 
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
