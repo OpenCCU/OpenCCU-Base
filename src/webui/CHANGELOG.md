@@ -9,6 +9,11 @@ is published.
 
 ## Unreleased
 
+* the date, time and name filters of the system protocol are applied with
+  Enter, as the filters of the other lists already are.
+  ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see
+  [OpenCCU/OpenCCU#3150](https://github.com/OpenCCU/OpenCCU/issues/3150),
+  @MichaelN0815)
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
