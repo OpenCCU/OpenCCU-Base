@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* search both program lists across selected columns and keep each search and
+  program status filter when returning from the editor
+  ([#377](https://github.com/OpenCCU/OpenCCU-Base/pull/377), @unbox-digital-printing).
+
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks

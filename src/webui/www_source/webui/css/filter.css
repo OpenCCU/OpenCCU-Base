@@ -84,3 +84,36 @@
   vertical-align:middle;
   cursor:pointer;
 }
+
+.programListSearch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+}
+
+.programListSearch input[type="search"] {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.programListSearch details {
+  position: relative;
+}
+
+.programListSearch details label {
+  display: block;
+  white-space: nowrap;
+}
+
+.programListSearch details[open] {
+  background: $_(inactiveBackground);
+  border: 1px solid $_(black);
+  padding: 3px;
+}
+
+.programListSearchCount {
+  min-width: 4em;
+  text-align: right;
+}
