@@ -13,6 +13,75 @@ WebUI = Singleton.create({
  
   serviceMessageCount: 0, 
 
+  createMobileNavigation: function(layer, header, menuBar)
+  {
+    var bar = document.createElement("div");
+    bar.id = "mobileTopbar";
+    var button = document.createElement("button");
+    button.type = "button";
+    button.id = "mobileMenuButton";
+    button.textContent = /^de/i.test(this.USERLANGUAGE) ? "Men\xFC" : "Menu";
+    button.setAttribute("aria-controls", "header menubar");
+    button.setAttribute("aria-expanded", "false");
+    var title = document.createElement("span");
+    title.id = "mobilePageTitle";
+    title.textContent = translateKey("startPage");
+    bar.appendChild(button);
+    bar.appendChild(title);
+    layer.insertBefore(bar, header);
+
+    function closeMenu() {
+      layer.classList.remove("mobileMenuOpen");
+      button.setAttribute("aria-expanded", "false");
+      Array.prototype.forEach.call(menuBar.querySelectorAll(".MainMenuSubMenu"), function(submenu) {
+        submenu.style.display = "none";
+        submenu.parentNode.removeAttribute("data-mobile-expanded");
+      });
+    }
+    button.addEventListener("click", function() {
+      var open = layer.classList.toggle("mobileMenuOpen");
+      button.setAttribute("aria-expanded", String(open));
+    });
+    menuBar.addEventListener("click", function(event) {
+      if (!window.matchMedia("(max-width: 900px)").matches) { return; }
+      var item = event.target.closest(".MainMenuItem_Left, .MainMenuItem_Right");
+      var submenu = item && item.querySelector(".MainMenuSubMenu");
+      if (submenu && !event.target.closest(".MainMenuSubItem")) {
+        event.preventDefault();
+        event.stopPropagation();
+        var expanded = item.getAttribute("data-mobile-expanded") === "true";
+        submenu.style.display = expanded ? "none" : "block";
+        item.setAttribute("data-mobile-expanded", String(!expanded));
+      }
+    }, true);
+    menuBar.addEventListener("click", function(event) {
+      var target = event.target;
+      var item = target.closest(".MainMenuItem_Left, .MainMenuItem_Right");
+      if (target.closest(".MainMenuSubItem") ||
+          (item && !item.querySelector(".MainMenuSubMenu"))) { closeMenu(); }
+    });
+    layer.addEventListener("click", function(event) {
+      if (layer.classList.contains("mobileMenuOpen") &&
+          !event.target.closest("#mobileTopbar, #header, #menubar")) { closeMenu(); }
+    });
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && layer.classList.contains("mobileMenuOpen")) {
+        closeMenu();
+        button.focus();
+      }
+    });
+  },
+
+  updateMobileTitle: function()
+  {
+    var title = document.getElementById("mobilePageTitle");
+    var path = document.getElementById("PagePath");
+    if (title && path) {
+      var parts = path.textContent.split(">");
+      title.textContent = parts[parts.length - 1].trim() || translateKey("startPage");
+    }
+  },
+
   initialize: function()
   {
     this.STATIC_HEIGHT = this.HEADER_HEIGHT + this.MENUBAR_HEIGHT + this.FOOTER_HEIGHT + this.BOTTOM_HEIGHT;
@@ -209,6 +278,7 @@ WebUI = Singleton.create({
         jQuery("#AlarmServiceMsg").show();
         MainMenu.create($("menubar"));
       }
+      this.createMobileNavigation(layer0, header, menuBar);
 
       //    MainMenu.show();
       //    mainMenu = createMainMenu($("menubar"));

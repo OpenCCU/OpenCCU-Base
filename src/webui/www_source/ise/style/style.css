@@ -1632,3 +1632,144 @@ div.caption  { display: table-caption; }
 .cpButton {
     width:230px;
 }
+
+/* Compact navigation for narrow screens. The native content remains scrollable. */
+#mobileTopbar {
+  display: none;
+}
+
+@media screen and (max-width: 900px) {
+  html, body {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .Layer0 {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #mobileTopbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 44px;
+    padding: 4px 8px;
+    box-sizing: border-box;
+    background: $_(background);
+    color: $_(white);
+  }
+
+  #mobileMenuButton {
+    flex: none;
+    min-height: 32px;
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  #mobilePageTitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #header, #menubar {
+    display: none;
+  }
+
+  .mobileMenuOpen #header {
+    display: block;
+    position: fixed;
+    z-index: 201;
+    top: 44px;
+    left: 0;
+    width: 100%;
+    height: 132px;
+    overflow: auto;
+    box-sizing: border-box;
+  }
+
+  #header > table > tbody > tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #header > table > colgroup {
+    display: none;
+  }
+
+  #header > table > tbody > tr > td {
+    width: auto;
+  }
+
+  #header .CLASS11101 {
+    flex: 1 1 160px;
+  }
+
+  #header .CLASS11105:has(#AlarmServiceMsg) {
+    flex: 1 1 100%;
+  }
+
+  .mobileMenuOpen #menubar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3px;
+    position: fixed;
+    z-index: 200;
+    top: 176px;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 176px);
+    overflow: auto;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  .mobileMenuOpen #menubar:empty {
+    display: none;
+  }
+
+  #menubar > .MainMenuItem_Left,
+  #menubar > .MainMenuItem_Right {
+    float: none;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-width: 0;
+  }
+
+  #menubar .MainMenuItemCaption {
+    min-height: 32px;
+    margin: 0;
+  }
+
+  #menubar .MainMenuSubMenu {
+    position: static;
+    margin: 0;
+    max-height: 45dvh;
+    overflow: auto;
+  }
+
+  #menubar .MainMenuSubItem {
+    min-height: 30px;
+    white-space: normal;
+  }
+
+  #content {
+    width: 100%;
+    min-width: 0;
+    height: calc(100dvh - 99px);
+    box-sizing: border-box;
+    overflow: auto;
+  }
+
+  #footer {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+}
