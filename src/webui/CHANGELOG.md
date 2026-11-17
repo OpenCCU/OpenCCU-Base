@@ -11,7 +11,7 @@ is published.
 
 * Program branches, conditions and activities can now have info text in the
   native program editor. The text is saved with the program and stays with its
-  item when the editor saves a new copy. (@unbox-digital-printing)
+  item when the editor saves a new copy. ([#386](https://github.com/OpenCCU/OpenCCU-Base/pull/386), @unbox-digital-printing)
 
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
