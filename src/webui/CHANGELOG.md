@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* The native ReGa script editors suggest functions, methods, local variables,
+  devices, channels and system variables while typing. Ambiguous object names
+  insert the unique object ID. ([#389](https://github.com/OpenCCU/OpenCCU-Base/pull/389), @unbox-digital-printing)
+
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
   as a table was shown as one line of text. The values now also keep blocks
