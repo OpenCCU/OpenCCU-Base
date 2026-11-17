@@ -11,7 +11,7 @@ is published.
 
 * System variables can be assigned to centrally stored groups in a new
   settings page. Both variable lists can expand and collapse these groups while
-  keeping each list's state in the browser tab. (@unbox-digital-printing)
+  keeping each list's state in the browser tab. ([#388](https://github.com/OpenCCU/OpenCCU-Base/pull/388), @unbox-digital-printing)
 
 * system variable values with HTML are shown with their layout again: since
   3.89.12 the start page kept only simple text formatting, so a value built
