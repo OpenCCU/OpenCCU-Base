@@ -1010,6 +1010,12 @@ function ::RestoreProgram()
         Write( oOrig.Name() );
       }
       oOrig.ProgramUpdate();
+      ! Store notes after ProgramCopyTo so new internal rule IDs do not affect them.
+      if( system.IsVar("notes") )
+      {
+        oOrig.AddMetaData("webuiProgramNotes", system.GetVar("notes"));
+        oOrig.MetaData("webuiProgramNotes", system.GetVar("notes"));
+      }
       oOrig.Active(isActive);
     }
   }
@@ -1029,6 +1035,11 @@ function ::CopyToNewProgram()
       dom.CheckName(oCopy.Name(), &sUniqueName, oCopy.ID() );
       oCopy.Name( sUniqueName );
       Write( oCopy.ProgramUpdate() );
+      if( system.IsVar("notes") )
+      {
+        oCopy.AddMetaData("webuiProgramNotes", system.GetVar("notes"));
+        oCopy.MetaData("webuiProgramNotes", system.GetVar("notes"));
+      }
       oCopy.Active(true);
     }
   }

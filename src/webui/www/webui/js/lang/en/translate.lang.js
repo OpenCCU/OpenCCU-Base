@@ -908,6 +908,10 @@ jQuery.extend(true,langJSON, {
     "programsCreateProgram" : "Programming",
 
     "ruleTmpProgramName" : "New program",
+    "programNote" : "Info text",
+    "programNoteShowAll" : "Expand / collapse all info texts",
+    "programNoteLoading" : "The program is still loading. Please save again.",
+    "programNoteTooLong" : "An info text may contain at most 2000 characters.",
     "ruleCondition" : "Condition:",
     "ruleConditionIf" : "If...",
 

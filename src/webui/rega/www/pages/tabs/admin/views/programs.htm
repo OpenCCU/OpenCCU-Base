@@ -980,15 +980,20 @@
   };
   CancelProgramEdit = function(copy)
   {
+    ProgramNotes.clear();
     isePrograms.Delete(copy, '<% Write(prevPage); %>');
   };
   SaveProgramEdit = function(orig,copy)
   {
-    setTimeout( "isePrograms.Restore("+orig+","+copy+", '<% Write(prevPage); %>')", 500 );
+    var notes = ProgramNotes.serialize();
+    if (notes === null) { return; }
+    setTimeout(function() { isePrograms.Restore(orig, copy, '<% Write(prevPage); %>', notes); }, 500);
   };
   CopyToNewProgram = function(copy)
   {
-    setTimeout( "isePrograms.CopyToNewProgram("+copy+", '<% Write(prevPage); %>')", 500 );
+    var notes = ProgramNotes.serialize();
+    if (notes === null) { return; }
+    setTimeout(function() { isePrograms.CopyToNewProgram(copy, '<% Write(prevPage); %>', notes); }, 500);
   };
   AddSubRuleSelectChange = function(idx,rid)
   {
@@ -1032,6 +1037,7 @@
   {
     iseRefr(true);
     TranslatePrgRulePage();
+    ProgramNotes.refresh();
   };
   ReloadSingleDestination = function(sdid)
   {
@@ -1047,6 +1053,7 @@
   {
     iseRefr(true);
     TranslatePrgRulePage();
+    ProgramNotes.refresh();
   };
   ReloadSingleCondition = function(scid)
   {
@@ -1084,6 +1091,8 @@
       }
       $('prgrulecontent').innerHTML += res;
       TranslatePrgRulePage();
+      if (sLastRule == "true") { ProgramNotes.init(<% Write(oPrg.ID()); %>); }
+      else { ProgramNotes.refresh(); }
     }
   };
   ReloadRuleCallback = function(t)
@@ -1091,6 +1100,7 @@
     if(dbg)alert( t.responseText );
     iseRefr(true);
     TranslatePrgRulePage();
+    ProgramNotes.refresh();
   };
   ReloadRule = function(rid)
   {
@@ -1162,6 +1172,16 @@
       </tr>
       <tr>
         <td colspan="5">
+          <div id="programNotesData" style="display:none" data-notes="<%
+            string sNotes = oOrigPrg.MetaData("webuiProgramNotes");
+            if (sNotes != null) {
+              sNotes = sNotes.Replace("&", "&amp;");
+              sNotes = sNotes.Replace("<", "&lt;").Replace(">", "&gt;");
+              sNotes = sNotes.Replace("\"", "&quot;");
+              Write(sNotes);
+            }
+          %>"></div>
+          <button type="button" class="programNoteAll j_translate" aria-pressed="false" onclick="ProgramNotes.toggleAll(this);">${programNoteShowAll}</button>
           <div id="prgrulecontent"></div>
         </td>
       </tr>
