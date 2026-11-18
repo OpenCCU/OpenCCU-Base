@@ -36,6 +36,10 @@
 using namespace HM2;
 using namespace ulc;
 
+//Limit of a TCP connect to the gateway: without it, connect() to a gateway that does not answer at all (switched off,
+//unplugged, the SYN dropped) blocks until the kernel gives up, about 2 minutes - at rfd's start the whole start.
+static const unsigned int LGW_CONNECT_TIMEOUT_MS = 10000;
+
 LGWPortWrapper::LGWPortWrapper(CCU2LGWCommController* pCCU2CommController)
 : CCU2PortWrapper()
 , pCommController(NULL)
@@ -220,6 +224,7 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 	if(pCommController == NULL) {
 		pCommController = new UnifiedLanCommController(hostIP, port);
 		pCommController->setEncryptionKey(encKey);
+		pCommController->setConnectTimeout(LGW_CONNECT_TIMEOUT_MS);
 	}
 	else if((hostIP.compare(this->hostIP) != 0) || (port != this->port))
 	{
@@ -227,13 +232,15 @@ bool LGWPortWrapper::connect(const std::string& hostIP, const unsigned int port,
 		pCommController = NULL;
 		pCommController = new UnifiedLanCommController(hostIP, port);
 		pCommController->setEncryptionKey(encKey);
+		pCommController->setConnectTimeout(LGW_CONNECT_TIMEOUT_MS);
 	}
 	this->hostIP = hostIP;
 	this->port = port;
 	this->encKey = encKey;
 	this->configuredSerial = desiredSerial;
 	pCommController->setDesiredSerial(configuredSerial);
-	bool connected = pCommController->connect();
+	//no host IP: the gateway was not found by its serial, the reconnect searches for it
+	bool connected = !hostIP.empty() && pCommController->connect();
 	const std::string reportedSerial = pCommController->getSerial();
 	if(configuredSerial.empty()) {
 		configuredSerial = reportedSerial;
@@ -477,13 +484,19 @@ void LGWPortWrapper::reconnectImpl(bool reconnectAlreadyPending)
 				if(!hostIPWasAssignedByUser) {
 					hostIP = lanDev.getRuntimeIPConfiguration().getIPAddress();
 				}
+				//Connect the new controller before taking mutexULCCommController: connect() blocks until the
+				//gateway answers or the kernel gives up, about 2 minutes for a gateway that drops the SYN, and
+				//IsConnected() waits for this mutex - every listBidcosInterfaces, and the RPC server with it.
+				//RX/TX is blocked, so nothing uses the new controller before it replaces the old one.
+				UnifiedLanCommController* newController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
+				newController->setEncryptionKey(this->encKey);
+				newController->setDesiredSerial(configuredSerial);
+				newController->setConnectTimeout(LGW_CONNECT_TIMEOUT_MS);
+				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
+				reconnected = newController->connect();
 				pthread_mutex_lock(&mutexULCCommController);
 				UnifiedLanCommController* oldController = pCommController;
-				pCommController = new UnifiedLanCommController(hostIP, port);//if this fails, ulcController does not have serial!
-				pCommController->setEncryptionKey(this->encKey);
-				pCommController->setDesiredSerial(configuredSerial);
-				LOG(Logger::LOG_DEBUG, "LGWPortWrapper::reconnect(): Perform connect.");
-				reconnected = pCommController->connect();
+				pCommController = newController;
 				if(reconnected) {
 					pEncryption = pCommController->getTCPEncryption();
 					if(pEncryption == NULL) {
@@ -626,6 +639,7 @@ void* LGWPortWrapper::keepAliveThreadFunction(void* param)
 	UnifiedLanCommController keepAliveConnection(pThis->hostIP, 2001);
 	keepAliveConnection.setEncryptionKey(pThis->encKey);
 	keepAliveConnection.setDesiredSerial(pThis->configuredSerial);
+	keepAliveConnection.setConnectTimeout(LGW_CONNECT_TIMEOUT_MS);
 	bool done = keepAliveConnection.connect();
 	if(done) {
 		ldu::TCPEncryption* pKeepAliveEncryption = keepAliveConnection.getTCPEncryption();

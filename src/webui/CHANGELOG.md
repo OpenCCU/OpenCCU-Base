@@ -7,6 +7,41 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the date, time and name filters of the system protocol are applied with
+  Enter, as the filters of the other lists already are.
+  ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see
+  [OpenCCU/OpenCCU#3150](https://github.com/OpenCCU/OpenCCU/issues/3150),
+  @MichaelN0815)
+* system variable values with HTML are shown with their layout again: since
+  3.89.12 the start page kept only simple text formatting, so a value built
+  as a table was shown as one line of text. The values now also keep blocks
+  (`div`, `p`, `pre`, `blockquote`, `center`, `hr`, `h1` to `h6`), lists
+  (`ul`, `ol`, `li`, `dl`, `dt`, `dd`) and tables (`table`, `caption`,
+  `colgroup`, `col`, `thead`, `tbody`, `tfoot`, `tr`, `td`, `th`), the
+  presentational attributes of these elements (`align`, `valign`, `width`,
+  `height`, `bgcolor`, `border`, `cellpadding`, `cellspacing`, `colspan`,
+  `rowspan`, `span`; `color`, `size` and `face` of `font`) and the `style`
+  declarations for colors, fonts, text, spacing, borders and sizes. Scripts,
+  event handlers, images, links, forms, `class`, `id`, positioning and
+  `url()` are still removed. The same rules now apply wherever the WebUI
+  shows the value of a system variable (the system variable list, the
+  favorites and the system variables of a channel under "Status and
+  control"), which showed the value as unfiltered HTML before, so that a
+  value set by one user could run scripts in the browser of another user
+  ([#374](https://github.com/OpenCCU/OpenCCU-Base/pull/374), fixes
+  [OpenCCU/OpenCCU#4749](https://github.com/OpenCCU/OpenCCU/issues/4749),
+  @jens-maus)
+* changing a program condition from a device selection to a system state,
+  a time control or an empty selection no longer leaves the channel of the
+  previous device selection in the condition (`ConditionChannel()`); it is
+  reset when the type of the condition changes and set again when a
+  channel is chosen. Conditions saved before keep their stale channel.
+  ([#371](https://github.com/OpenCCU/OpenCCU-Base/pull/371),
+  fixes [OpenCCU/OpenCCU#3030](https://github.com/OpenCCU/OpenCCU/issues/3030),
+  @MichaelN0815)
+
 ## 3.89.12 (2026-11-16)
 
 ### Changes

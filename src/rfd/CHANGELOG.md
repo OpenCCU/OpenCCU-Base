@@ -9,6 +9,26 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and
 `generated-rfd-version.h`).
 
+## Unreleased
+
+* fix a LAN gateway (HM-LGW) that is not reachable when rfd starts being
+  given up for good: rfd dropped the interface when its first connection
+  failed, so a gateway that starts slower than rfd, e.g. after a power cut,
+  stayed away until rfd was restarted, and with the gateway as its only
+  interface rfd exited. A gateway that does not answer at all kept rfd's
+  start waiting for about 127 s. rfd now keeps the interface and connects it
+  in the background with the usual reconnect, and gives up a connection
+  attempt after 10 s.
+  (fixes [#383](https://github.com/OpenCCU/OpenCCU-Base/issues/383), @hobbyquaker)
+* fix rfd's RPC server hanging for about two minutes at a time while a LAN
+  gateway (HM-LGW) does not answer at all, e.g. switched off or unplugged:
+  every reconnect attempt held a lock that `listBidcosInterfaces` waits for,
+  and with it every RPC call behind it, until the kernel gave up on the
+  connection after about 127 s. The WebUI, the logic layer and the add-ons
+  became sluggish for as long as the gateway stayed away. The connection is
+  now made without holding that lock.
+  (fixes [#375](https://github.com/OpenCCU/OpenCCU-Base/issues/375), @hobbyquaker)
+
 ## 2.7.0 (2026-11-16)
 
 * add the option `-v` / `--version`, which prints the version of rfd and the

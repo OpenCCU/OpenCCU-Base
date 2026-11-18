@@ -12,6 +12,7 @@
 #include <BidcosInterface.h>
 #include <TripleBurstInterface.h>
 #include <vector>
+#include <atomic>
 
 namespace HM2 {
 
@@ -195,6 +196,8 @@ private:
 
 	CCU2CommController* pCommController;
 	DataRate_t dataRate;
+	/** \brief BidCoS address from StartInterface() not yet set at the coprocessor (a LAN gateway not connected yet), 0 for none.*/
+	std::atomic<int> pendingRFAddress;
 
 	class AESKeyData {
 	public:

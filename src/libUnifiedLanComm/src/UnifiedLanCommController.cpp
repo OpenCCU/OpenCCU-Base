@@ -166,6 +166,13 @@ void UnifiedLanCommController::disconnect()
 	disconnect(true);
 }
 
+//----------------------------------------------------------------------------------------------
+
+void UnifiedLanCommController::setConnectTimeout(const unsigned int msTimeout)
+{
+	connection.setConnectTimeout(msTimeout);
+}
+
 
 //----------------------------------------------------------------------------------------------
 

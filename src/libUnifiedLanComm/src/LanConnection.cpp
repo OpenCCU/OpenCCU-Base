@@ -23,6 +23,8 @@ using namespace ulc;
 #	include <netinet/in.h>
 #	include <arpa/inet.h>
 #	include <poll.h>
+#	include <fcntl.h>
+#	include <time.h>
 #   include <unistd.h>
 #	define closesocket(x) close(x)
 #   define SOCKET_SEND_FLAGS MSG_NOSIGNAL
@@ -52,6 +54,7 @@ LanConnection::LanConnection(const std::string& hostIP, const int port)
 ,port(port)
 ,connectionClosing(false)
 ,inSelect(false)
+,connectTimeoutMs(0)
 {
 	#ifdef WIN32
 	WORD wVersionRequested;
@@ -103,7 +106,61 @@ bool LanConnection::connect()
 		LOG(Logger::LOG_ERROR, "LanConnection::connect(): Cannot create socket.");
 		return false;
 	}
+#ifndef WIN32
+	int retIVal = -1;
+	if(connectTimeoutMs > 0) {
+		//Connect non-blocking and wait for the result at most connectTimeoutMs: for a host that does not answer at all
+		//(switched off, unplugged, the SYN dropped) a blocking connect() returns only when the kernel gives up.
+		const int flags = fcntl(sock, F_GETFL, 0);
+		if(flags != -1 && fcntl(sock, F_SETFL, flags | O_NONBLOCK) != -1) {
+			retIVal = ::connect(sock, (struct sockaddr*)&socketAddress, sizeof(struct sockaddr));
+			if(retIVal != 0 && errno == EINPROGRESS) {
+				struct pollfd pfd;
+				pfd.fd = sock;
+				pfd.events = POLLOUT;
+				pfd.revents = 0;
+				//a signal interrupts poll(): wait only for the rest of connectTimeoutMs
+				struct timespec startTime;
+				clock_gettime(CLOCK_MONOTONIC, &startTime);
+				int remainingMs = (int)connectTimeoutMs;
+				int nEvents;
+				while(true) {
+					nEvents = poll(&pfd, 1, remainingMs);
+					if(nEvents >= 0 || errno != EINTR) {
+						break;
+					}
+					struct timespec now;
+					clock_gettime(CLOCK_MONOTONIC, &now);
+					const long elapsedMs = (now.tv_sec - startTime.tv_sec) * 1000L + (now.tv_nsec - startTime.tv_nsec) / 1000000L;
+					if(elapsedMs >= (long)connectTimeoutMs) {
+						nEvents = 0;
+						break;
+					}
+					remainingMs = (int)((long)connectTimeoutMs - elapsedMs);
+				}
+				if(nEvents == 1) {
+					int soError = 0;
+					socklen_t soErrorLength = sizeof(soError);
+					if(getsockopt(sock, SOL_SOCKET, SO_ERROR, &soError, &soErrorLength) == 0 && soError == 0) {
+						retIVal = 0;
+					}
+				}
+				else if(nEvents == 0) {
+					LOG(Logger::LOG_DEBUG, "LanConnection::connect(): No answer from %s:%d within %u ms.", hostIP.c_str(), port, connectTimeoutMs);
+				}
+			}
+			//back to blocking: send() and receive() expect a blocking socket
+			if(fcntl(sock, F_SETFL, flags) == -1) {
+				retIVal = -1;
+			}
+		}
+	}
+	else {
+		retIVal = ::connect(sock, (struct sockaddr*)&socketAddress, sizeof(struct sockaddr));
+	}
+#else
 	int retIVal = ::connect(sock, (struct sockaddr*)&socketAddress, sizeof(struct sockaddr));//Visual Studio does not compile without ::
+#endif
 	//LOG(Logger::LOG_ALL, "LanConnection::connect(): Opened socket %d", sock);
 	if(retIVal != 0) {
 		LOG(Logger::LOG_ALL, "LanConnection::connect - failed closing socket");
@@ -115,6 +172,13 @@ bool LanConnection::connect()
 	pthread_mutex_unlock(&sockMutex);
 	LOG(Logger::LOG_ALL, "LanConnection::connect done");
 	return true;
+}
+
+//-----------------------------------------------------------------------------------------------
+
+void LanConnection::setConnectTimeout(const unsigned int msTimeout)
+{
+	connectTimeoutMs = msTimeout;
 }
 
 //-----------------------------------------------------------------------------------------------

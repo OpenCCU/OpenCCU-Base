@@ -50,6 +50,10 @@ public:
 	bool connect();
 	void disconnect();
 	bool isConnected();
+	/** \brief Limits the TCP connect of connect() to msTimeout milliseconds.
+	 * \details 0 (the default): the connect blocks until the gateway answers or the operating system gives up,
+	 * about 2 minutes for a gateway that does not answer at all.*/
+	void setConnectTimeout(const unsigned int msTimeout);
 
 	bool send(const std::string& data);
 	bool receive(std::string& data);

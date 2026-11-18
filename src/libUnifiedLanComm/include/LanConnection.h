@@ -60,6 +60,9 @@ protected:
 
 	/** \brief Connects to remote host.*/
 	bool connect();//It's protected to ensure that only UnifiedCommController has access.
+	/** \brief Limits connect() to msTimeout milliseconds. 0 (the default): connect() blocks until the remote host
+	 * answers or the operating system gives up.*/
+	void setConnectTimeout(const unsigned int msTimeout);
 	/** \brief Disconnects from remote host.*/
 	void disconnect();//It's protected to ensure that only UnifiedCommController has access.
 private:
@@ -72,6 +75,8 @@ private:
 
 	bool connectionClosing;
 	bool inSelect;
+	/** \brief Limit of connect() in milliseconds, 0 for none.*/
+	unsigned int connectTimeoutMs;
 
 	/** \brief List of LanConnectionListener*/
 	std::vector<LanConnectionListener*> lanConnectionListener;
