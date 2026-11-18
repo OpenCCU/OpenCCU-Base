@@ -11,7 +11,7 @@ is published.
 
 * sort both program lists by name, description, program ID or last saved
   time. Programs without a recorded save time stay at the end when sorting
-  by that column. (@unbox-digital-printing)
+  by that column. ([#394](https://github.com/OpenCCU/OpenCCU-Base/pull/394), @unbox-digital-printing)
 
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.
