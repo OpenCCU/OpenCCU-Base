@@ -130,15 +130,15 @@
               string trId = "program"#o.ID();
               WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
               string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
-              WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
-              WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
-              WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
+              WriteLine( '<td id="'#trId#'_name" data-search-column="name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
+              WriteLine( '<td id="'#trId#'_info" data-search-column="description" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
+              WriteLine( '<td id="'#trId#'_cond" data-search-column="condition" class="tBodyCell'#sInactive#'">' );
               object oPrgID = o.ID();
               string sRet = "";
               Call( "/esp/programs.fn::WriteConditionText()" );
               Write (sRet);
               WriteLine( '</td>' );
-              WriteLine( '<td id="'#trId#'_dest" class="tBodyCell'#sInactive#'">' );
+              WriteLine( '<td id="'#trId#'_dest" data-search-column="activity" class="tBodyCell'#sInactive#'">' );
               string sRet = "";
               Call( "/esp/programs.fn::WriteDestinationText()" );
               Write(sRet);
@@ -202,6 +202,8 @@
                 Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                 Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                 Write("tmp['trid'] = '"#trId#"';");
+                if (o.Active()) { Write("tmp.active = true;"); }
+                else { Write("tmp.active = false;"); }
                 Write("arItems[arItems.length] = tmp;");
                 Write("Cursor.set(Cursor.NORMAL);");
               Write("</script>");
@@ -231,15 +233,15 @@
                 string trId = "program"#o.ID();
                 string sInactive = ""; if( !o.Active() ) { sInactive = "Inactive"; }
                 WriteLine( '<tr id="'#trId#'" class="CLASS04901">' );
-                WriteLine( '<td id="'#trId#'_name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
-                WriteLine( '<td id="'#trId#'_info" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
-                WriteLine( '<td id="'#trId#'_cond" class="tBodyCell'#sInactive#'">' );
+                WriteLine( '<td id="'#trId#'_name" data-search-column="name" class="tBodyCell'#sInactive#'">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
+                WriteLine( '<td id="'#trId#'_info" data-search-column="description" class="tBodyCell'#sInactive#'">'#o.PrgInfo()#'</td>' );
+                WriteLine( '<td id="'#trId#'_cond" data-search-column="condition" class="tBodyCell'#sInactive#'">' );
                 object oPrgID = o.ID();
                 string sRet = "";
                 Call( "/esp/programs.fn::WriteConditionText()" );
                 Write (sRet);
                 WriteLine( '</td>' );
-                WriteLine( '<td id="'#trId#'_dest" class="tBodyCell'#sInactive#'">' );
+                WriteLine( '<td id="'#trId#'_dest" data-search-column="activity" class="tBodyCell'#sInactive#'">' );
                 string sRet = "";
                 Call( "/esp/programs.fn::WriteDestinationText()" );
                 Write(sRet);
@@ -303,6 +305,8 @@
                   Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['trid'] = '"#trId#"';");
+                  if (o.Active()) { Write("tmp.active = true;"); }
+                  else { Write("tmp.active = false;"); }
                   Write("arItems[arItems.length] = tmp;");
                   Write("Cursor.set(Cursor.NORMAL);");
                 Write("</script>");
@@ -421,7 +425,7 @@
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack();'>"+ translateKey('footerBtnPageBack') +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewProgram();'>"+ translateKey('footerBtnNew') +"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='programListSearch.clear();fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='programListSearch.clear(false);fltPL.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
     //s += "<td  style='text-align:center;' valign='middle'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >Systeminterne Programme<br /><% Write(sInternalBtnText); %>blenden</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowNonVisiblePrograms();' >"+translateKey(internalBtnText) +"</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04906' onclick='new HMScriptExecutor();' >"+translateKey('footerBtnTestScript')+ "</div></td>";
@@ -455,32 +459,38 @@
     jQuery("#ftDesc").focus();
   });
 
-  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'edit', true, function() { updateTable(); });
+  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'edit', true, function() { updateTable(); },
+    iseProgramListFilter.programColumns(true));
 
   updateTable = function()
   {
+    var shown = 0;
     colorFilterBtns(fltPL);
     for (var i = 0; i < arItems.length; i++)
     {
-      if (!fltPL.objPassFilter(arItems[i]) || !programListSearch.accepts(document.getElementById(arItems[i]['trid'])))
+      if (!fltPL.objPassFilter(arItems[i]) || !programListSearch.accepts(document.getElementById(arItems[i]['trid']), arItems[i]))
       {
         hide(arItems[i]['trid']);
       }
       else
       {
         show(arItems[i]['trid']);
+        shown++;
       }
     }
-    programListSearch.updateCount();
+    programListSearch.setCount(shown, arItems.length);
   };
   updateTable();
   updateActiveStatus = function(id,active)
   {
+    var item = arItems.find(function(program) { return program.id === String(id); });
+    if (item) { item.active = active; }
     var state = (active === true) ? "" : "Inactive";
     jQuery("#program" + id + "_name").attr("class", "tBodyCell" + state);
     jQuery("#program" + id + "_info").attr("class", "tBodyCell" + state);
     jQuery("#program" + id + "_cond").attr("class", "tBodyCell" + state);
     jQuery("#program" + id + "_dest").attr("class", "tBodyCell" + state);
+    updateTable();
   };
   translatePage("#ProgramListTable");
   jQuery("#ProgramListTable").removeClass("hidden");
