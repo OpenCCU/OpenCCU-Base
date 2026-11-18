@@ -416,7 +416,7 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS05207' onclick='iseProgramListFilter.clearList(&quot;sysVars&quot;);fltSYV.clearFilters();reloadPage();' >${footerBtnResetFilter}</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='newSysVar()'>${footerBtnNew}</div></td>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalSysVars()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
@@ -471,6 +471,8 @@
       if (result == YesNoDialog.RESULT_YES) { DeleteObject(_id_); }
     });    
   };
-  translatePage("#sysVars");
+  translatePage("#sysVars", function() {
+    iseProgramListFilter.attach("sysVars", "edit-variables", [0, 1, 2, 3, 4, 5], arSysVars);
+  });
   jQuery("#sysVars").show();
 </script>

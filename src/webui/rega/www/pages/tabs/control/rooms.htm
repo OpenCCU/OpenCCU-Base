@@ -162,7 +162,9 @@
   }
   
   filterOptions = new iseFilter();
-  translatePage("#tblRoomNames");
+  translatePage("#tblRoomNames", function() {
+    iseProgramListFilter.attach("tblRoomNames", "room-names", [0], arItems);
+  });
 </script>
 
 <script type="text/javascript">
@@ -184,7 +186,7 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='fltRM.clearFilters();updateRoomTable();fltHR.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td style='text-align: center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='iseProgramListFilter.clearList(&quot;tblRoomNames&quot;);iseProgramListFilter.clearList(&quot;tblHRoomChannels&quot;);fltRM.clearFilters();updateRoomTable();fltHR.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   

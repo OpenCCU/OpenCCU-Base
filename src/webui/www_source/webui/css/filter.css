@@ -117,3 +117,7 @@
   min-width: 4em;
   text-align: right;
 }
+
+tr[data-live-filter-hidden] {
+  display: none !important;
+}

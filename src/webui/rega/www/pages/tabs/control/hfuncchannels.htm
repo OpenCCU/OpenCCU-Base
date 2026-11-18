@@ -277,6 +277,7 @@
   jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
 
   translatePage("#tblHFuncChannels", function () {
+    iseProgramListFilter.attach("tblHFuncChannels", "hfuncchannels", [0, 2, 3], arChns);
     jQuery("[name='hssType']").each(function(index, elm) {
       var chText = jQuery(elm).text();
       if (chText.indexOf("chType_") == -1) {

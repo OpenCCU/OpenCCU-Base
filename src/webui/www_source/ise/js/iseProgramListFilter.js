@@ -1,15 +1,20 @@
 /**
- * Live search for the two native program lists. The list templates call this
- * helper while rendering and keep their existing server-side filters intact.
+ * Live search shared by native list templates and their existing filters.
  */
 iseProgramListFilter = {
-  create: function(table, view, showStatus, refresh) {
+  filters: new WeakMap(),
+
+  /** Create and restore the toolbar for a single list. */
+  create: function(table, view, showStatus, refresh, columns) {
+    var defaults = columns || [0, 1, 2, 3];
     var key = 'iseProgramListFilter_' + view;
     var saved = {};
     try { saved = JSON.parse(sessionStorage.getItem(key)) || {}; } catch (e) {}
     var state = {
       query: typeof saved.query === 'string' ? saved.query : '',
-      columns: Array.isArray(saved.columns) ? saved.columns : [0, 1, 2, 3],
+      columns: Array.isArray(saved.columns) ? saved.columns.filter(function(index) {
+        return defaults.indexOf(index) !== -1;
+      }) : defaults.slice(),
       status: showStatus && /^(active|inactive)$/.test(saved.status) ? saved.status : 'all'
     };
     var toolbar = document.createElement('div');
@@ -19,16 +24,29 @@ iseProgramListFilter = {
     search.value = state.query;
     search.placeholder = translateKey('thFilter');
     search.setAttribute('aria-label', translateKey('thFilter'));
+    var german = /^de/i.test(getLang());
+    var clear = document.createElement('button');
+    clear.type = 'button';
+    clear.className = 'StdButton';
+    clear.textContent = german ? 'Suche leeren' : 'Clear search';
+    clear.onclick = function() {
+      search.value = '';
+      state.query = '';
+      changed();
+      search.focus();
+    };
+    var indicator = document.createElement('span');
+    indicator.textContent = german ? 'Filter aktiv' : 'Filter active';
     var count = document.createElement('span');
     count.className = 'programListSearchCount';
     count.setAttribute('role', 'status');
     var choices = document.createElement('details');
     var summary = document.createElement('summary');
-    summary.textContent = translateKey('thFilter');
+    summary.textContent = german ? 'Spalten ausw\xE4hlen' : 'Choose columns';
     choices.appendChild(summary);
     var headers = table.rows[0].cells;
-    for (var i = 0; i < Math.min(headers.length - 1, 4); i++) {
-      (function(index) {
+    defaults.forEach(function(index) {
+        if (!headers[index]) { return; }
         var label = document.createElement('label');
         var checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -44,13 +62,11 @@ iseProgramListFilter = {
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(' ' + headers[index].textContent.trim()));
         choices.appendChild(label);
-      })(i);
-    }
+    });
     var status;
     if (showStatus) {
       status = document.createElement('select');
       status.setAttribute('aria-label', translateKey('lblActiv'));
-      var german = translateKey('submenuPrograms') === 'Programme';
       (german ? [['all', 'Alle Programme'], ['active', 'Nur aktive Programme'],
         ['inactive', 'Nur deaktivierte Programme']] :
         [['all', 'All programs'], ['active', 'Active programs'],
@@ -63,12 +79,21 @@ iseProgramListFilter = {
       status.value = state.status;
       status.onchange = function() { state.status = status.value; changed(); };
     }
+    function updateControls() {
+      clear.disabled = !state.query;
+      indicator.hidden = !state.query.trim() && state.status === 'all' &&
+        state.columns.length === defaults.length;
+    }
     function changed() {
+      updateControls();
       try { sessionStorage.setItem(key, JSON.stringify(state)); } catch (e) {}
       refresh();
     }
+    updateControls();
     search.oninput = function() { state.query = search.value; changed(); };
     toolbar.appendChild(search);
+    toolbar.appendChild(clear);
+    toolbar.appendChild(indicator);
     if (status) { toolbar.appendChild(status); }
     toolbar.appendChild(count);
     toolbar.appendChild(choices);
@@ -90,6 +115,9 @@ iseProgramListFilter = {
         }).join(' ').toLocaleLowerCase();
         return terms.every(function(term) { return content.indexOf(term) !== -1; });
       },
+      setCount: function(shown, total) {
+        count.textContent = shown + ' / ' + total;
+      },
       updateCount: function() {
         var rows = Array.prototype.filter.call(table.rows, function(row) {
           return /^(program|pr)\d+$/.test(row.id);
@@ -100,7 +128,7 @@ iseProgramListFilter = {
       clear: function() {
         state.query = '';
         state.status = 'all';
-        state.columns = [0, 1, 2, 3];
+        state.columns = defaults.slice();
         search.value = '';
         if (status) { status.value = 'all'; }
         Array.prototype.forEach.call(choices.querySelectorAll('input'), function(input) {
@@ -109,6 +137,57 @@ iseProgramListFilter = {
         changed();
       }
     };
+    this.filters.set(table, filter);
     return filter;
+  },
+
+  /** Clear the live search from the existing footer reset action. */
+  clearList: function(id) {
+    var filter = this.filters.get(document.getElementById(id));
+    if (filter) { filter.clear(); }
+  },
+
+  /** Apply live search without changing native visibility or group state. */
+  attach: function(id, view, columns, items) {
+    var table = document.getElementById(id);
+    if (!table || this.filters.has(table)) { return; }
+    var entries = items.map(function(item) {
+      return {
+        row: document.getElementById(item.trid),
+        control: document.getElementById(item.ctrlId || '')
+      };
+    }).filter(function(entry) {
+      return entry.row && entry.row.closest('table') === table;
+    });
+    if (!entries.length) { return; }
+
+    function refresh() {
+      var total = 0;
+      var shown = 0;
+      entries.forEach(function(entry) {
+        var matches = filter.accepts(entry.row);
+        entry.row.toggleAttribute('data-live-filter-hidden', !matches);
+        if (entry.control && entry.control.closest('table') === table) {
+          entry.control.toggleAttribute('data-live-filter-hidden', !matches);
+        }
+      });
+      entries.forEach(function(entry) {
+        if (!entry.row.hidden && entry.row.style.display !== 'none' &&
+            !entry.row.classList.contains('hidden')) {
+          total++;
+          if (entry.row.getClientRects().length) { shown++; }
+        }
+      });
+      filter.setCount(shown, total);
+    }
+
+    var filter = this.create(table, view, false, refresh, columns);
+    // Native controls and group toggles can update the same rows after render.
+    // Search visibility uses its own attribute, excluded from the observer.
+    var observer = new MutationObserver(refresh);
+    observer.observe(table, {subtree: true, childList: true, characterData: true,
+      attributes: true, attributeFilter: ['style', 'class', 'hidden']});
+    table.addEventListener('change', refresh);
+    refresh();
   }
 };

@@ -156,7 +156,9 @@
   }
   
   // filterOptions = new iseFilter();
-  translatePage("#tblFunctionNames");
+  translatePage("#tblFunctionNames", function() {
+    iseProgramListFilter.attach("tblFunctionNames", "function-names", [0], arItems);
+  });
 </script>
 
 <script type="text/javascript">
@@ -178,7 +180,7 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='fltFN.clearFilters();updateFuncTable();fltHF.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04005' onclick='iseProgramListFilter.clearList(&quot;tblFunctionNames&quot;);iseProgramListFilter.clearList(&quot;tblHFuncChannels&quot;);fltFN.clearFilters();updateFuncTable();fltHF.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   

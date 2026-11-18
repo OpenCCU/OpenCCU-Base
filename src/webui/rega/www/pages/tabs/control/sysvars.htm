@@ -140,7 +140,7 @@ var s = "";
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03306' onclick='iseProgramListFilter.clearList(&quot;sysvarsListTable&quot;);fltVR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   
@@ -161,6 +161,8 @@ var s = "";
       }
     }
   };
-  translatePage("#sysvarsListTable");
+  translatePage("#sysvarsListTable", function() {
+    iseProgramListFilter.attach("sysvarsListTable", "status-variables", [0, 1, 2, 3], arItems);
+  });
   jQuery("#sysvarsListTable").removeClass("hidden");
 </script>

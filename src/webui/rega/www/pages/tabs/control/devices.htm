@@ -262,7 +262,7 @@
   s += "<table cellspacing='8'>";
   s += "<tr>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey("footerBtnPageBack")+"</div></td>";
-  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
+  s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03911' onclick='iseProgramListFilter.clearList(&quot;tblFunctionNames&quot;);iseProgramListFilter.clearList(&quot;tblHDeviChannel&quot;);fltDL.clearFilters();updateDevTable();fltHD.clearFilters();updateTable();clearInputLeft();'>"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS04905' onclick='ShowInternalDeviceChannels()'>"+translateKey(internalBtnText)+"</div></td>";
   s += "</tr>";
   s += "</table>";
@@ -332,6 +332,8 @@
   {
     document.getElementById("ftDevName").value = "";
   };
-  translatePage("#contentLeft");
+  translatePage("#contentLeft", function() {
+    iseProgramListFilter.attach("tblFunctionNames", "device-names", [0], arItems);
+  });
   jQuery("#contentLeft").removeClass("hidden");
 </script> 

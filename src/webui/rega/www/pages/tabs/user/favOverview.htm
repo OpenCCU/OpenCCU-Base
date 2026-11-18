@@ -401,7 +401,7 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>${footerBtnPageBack}</div></td>";
-    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS06413' onclick='fltFO.clearFilters();updateTable();'>${footerBtnResetFilter}</div></td>";
+    s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS06413' onclick='iseProgramListFilter.clearList(&quot;tblFavs&quot;);fltFO.clearFilters();updateTable();'>${footerBtnResetFilter}</div></td>";
     s += "<td style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='NewFavoriteList();'>${footerBtnNew}</div></td>";
   s += "</tr>";
   s += "</table>";
@@ -492,7 +492,9 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
   }
   %>
 
-  translatePage("#tblFavs, #tblNoFavs");
+  translatePage("#tblFavs, #tblNoFavs", function() {
+    iseProgramListFilter.attach("tblFavs", "favorite-lists", [0, 1, 2, 3, 4, 5, 6], arFavs);
+  });
 
   // Set the minimum length of the filter text to 10 chars
   // Otherwise the filter buttons are not centered
