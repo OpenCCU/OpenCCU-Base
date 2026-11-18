@@ -1998,7 +1998,129 @@ ise.User.prototype =
     new Ajax.Updater("userSysVarTbl", url, opts);
   },
   
+  /** Save a drop and replace the table with the order confirmed by the CCU. */
+  MoveSysVarRelative: function(container, row, uid, source, target, after) {
+    var self = this;
+    this.savingSysVarOrder = true;
+    var body = "string action = 'UserMoveSysVarRelative';" +
+      "integer userId = " + uid + ";" +
+      "integer svId = " + source + ";" +
+      "integer svTargetId = " + target + ";" +
+      "integer svAfter = " + (after ? 1 : 0) + ";";
+    new Ajax.Request("/esp/system.htm?sid=" + SessionId, {
+      postBody: ReGa.encode(body),
+      onComplete: function(response) {
+        self.savingSysVarOrder = false;
+        if (!row.isConnected || !container.contains(row)) { return; }
+        var html = response.responseText.trim();
+        if (response.status !== 200 || !/^<table\s/.test(html)) {
+          window.alert(translateKey("lblUserSysVarDragFailed"));
+          self.buildSysVarTable(uid);
+          return;
+        }
+        var scrollTop = container.scrollTop;
+        container.innerHTML = html;
+        translatePage("#userSysVarTbl");
+        container.scrollTop = scrollTop;
+      }
+    });
+  },
+
+  /** Track a single pointer drag without moving rows before the save succeeds. */
+  StartSysVarDrag: function(event, handle, uid) {
+    if (event.button !== 0 || this.sysVarDrag || this.savingSysVarOrder) { return; }
+    var row = handle.closest("tr[data-user-sysvar]");
+    var container = document.getElementById("userSysVarTbl");
+    if (!row || !container || !container.contains(row)) { return; }
+    var source = row.getAttribute("data-user-sysvar");
+    var validId = /^[1-9][0-9]*$/;
+    if (!validId.test(uid) || !validId.test(source)) { return; }
+
+    event.preventDefault();
+    var self = this;
+    var pointerId = event.pointerId;
+    var y = event.clientY;
+    var x = event.clientX;
+    var started = false;
+    var target = null;
+    var after = false;
+    var frame = null;
+    this.sysVarDrag = true;
+    handle.setPointerCapture(pointerId);
+
+    function locate() {
+      if (target) { target.classList.remove("sysVarDropBefore", "sysVarDropAfter"); }
+      target = null;
+      var hit = document.elementFromPoint(x, y);
+      var candidate = hit && hit.closest("tr[data-user-sysvar]");
+      if (!candidate || candidate === row || candidate.parentNode !== row.parentNode) { return; }
+      var bounds = candidate.getBoundingClientRect();
+      after = y >= bounds.top + bounds.height / 2;
+      target = candidate;
+      target.classList.add(after ? "sysVarDropAfter" : "sysVarDropBefore");
+    }
+
+    function scroll() {
+      if (!row.isConnected) { finish(); return; }
+      if (started) {
+        var bounds = container.getBoundingClientRect();
+        if (x >= bounds.left && x <= bounds.right && y >= bounds.top - 24 && y <= bounds.bottom + 24) {
+          var delta = y < bounds.top + 24 ? -10 : y > bounds.bottom - 24 ? 10 : 0;
+          var previous = container.scrollTop;
+          container.scrollTop += delta;
+          if (previous !== container.scrollTop) { locate(); }
+        }
+      }
+      frame = window.requestAnimationFrame(scroll);
+    }
+
+    function move(e) {
+      if (e.pointerId !== pointerId) { return; }
+      x = e.clientX;
+      y = e.clientY;
+      if (!started && Math.abs(y - event.clientY) > 5) {
+        started = true;
+        row.classList.add("sysVarDragging");
+      }
+      if (started) { locate(); }
+    }
+
+    function finish(e) {
+      if (e && e.pointerId !== pointerId) { return; }
+      if (e && e.type === "pointerup" && started) { move(e); }
+      var targetId = target && target.getAttribute("data-user-sysvar");
+      if (target) { target.classList.remove("sysVarDropBefore", "sysVarDropAfter"); }
+      row.classList.remove("sysVarDragging");
+      window.cancelAnimationFrame(frame);
+      handle.removeEventListener("pointermove", move);
+      handle.removeEventListener("pointerup", finish);
+      handle.removeEventListener("pointercancel", finish);
+      handle.removeEventListener("lostpointercapture", finish);
+      document.removeEventListener("keydown", escape);
+      if (handle.hasPointerCapture(pointerId)) { handle.releasePointerCapture(pointerId); }
+      self.sysVarDrag = false;
+      if (e && e.type === "pointerup" && started && validId.test(targetId) && row.isConnected) {
+        self.MoveSysVarRelative(container, row, uid, source, targetId, after);
+      }
+    }
+
+    function escape(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        finish();
+      }
+    }
+    handle.addEventListener("pointermove", move);
+    handle.addEventListener("pointerup", finish);
+    handle.addEventListener("pointercancel", finish);
+    handle.addEventListener("lostpointercapture", finish);
+    document.addEventListener("keydown", escape);
+    frame = window.requestAnimationFrame(scroll);
+  },
+
   MoveSysVar: function(uid, svId, dir) {
+    if (this.savingSysVarOrder) { return; }
     var url = "/esp/system.htm?sid=" + SessionId;
     var pb = "string action = 'UserMoveSysVarBuildTable';";
     pb += "integer userId = "+ uid +";";
