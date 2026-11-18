@@ -678,6 +678,20 @@ a img {
   font-weight: normal;
 }
 
+.programListSortButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  min-height: 2.25em;
+  padding: 0 0.5em;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
 .Sort
 {
   cursor: pointer;
