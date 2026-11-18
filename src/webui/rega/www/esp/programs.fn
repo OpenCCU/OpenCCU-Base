@@ -1705,6 +1705,22 @@ function ::DnDFingerprint()
   return;
 }
 
+! Answers in bDnDScope whether oWork is the program the editor of this session works on: the editor
+! copy of a saved program, or a new program that is not saved yet. A new program is edited in place,
+! so the session knows it as original and as copy at once and it has no editor copy.
+! Caller declares: object oWork, boolean bDnDScope.
+function ::DnDScopeOk()
+{
+  bDnDScope = true;
+  if( !oWork.IsTypeOf( OT_PROGRAM ) ) { bDnDScope = false; }
+  if( oWork.ID().ToString() != system.GetSessionVar("sessionPRGID").ToString() ) { bDnDScope = false; }
+  if( oWork.ProgramCopyID() == ID_ERROR )
+  {
+    if( oWork.ID().ToString() != system.GetSessionVar("sessionORIGPRGID").ToString() ) { bDnDScope = false; }
+  }
+  return;
+}
+
 ! Reorders conditions (kind "conds"), condition groups ("groups") or activities ("acts")
 ! in the editor copy of the program. perm holds the old positions in the new order
 ! ("2,0,1" = old third entry first). expected is the order the browser shows; the call is
@@ -1732,6 +1748,7 @@ function ::DnDReorder()
     integer iDnDIdx = 0;
     string sDnDItem = "";
     boolean bValid = true;
+    boolean bDnDScope = false;
     boolean bFound = false;
     string sTok;
     string sOrder = "";
@@ -1767,9 +1784,8 @@ function ::DnDReorder()
     }
     if( bValid )
     {
-      if( !oWork.IsTypeOf( OT_PROGRAM ) ) { bValid = false; }
-      if( oWork.ProgramCopyID() == ID_ERROR ) { bValid = false; }
-      if( oWork.ID().ToString() != system.GetSessionVar("sessionPRGID").ToString() ) { bValid = false; }
+      Call("/esp/programs.fn::DnDScopeOk()");
+      if( !bDnDScope ) { bValid = false; }
       if( !bValid ) { sResult = "ERR|scope"; }
     }
 
@@ -1933,8 +1949,10 @@ function ::DnDReorderBranches()
     string sRecA = "";
     string sRecB = "";
     boolean bValid = true;
+    boolean bDnDScope = false;
     boolean bCommitted = false;
     boolean bFailed = false;
+    boolean bReadBackDiff = false;
     string sNewRules = "";
     string sFailCode = "failed";
     string sBorTok = "";
@@ -1962,9 +1980,8 @@ function ::DnDReorderBranches()
     }
     if( bValid )
     {
-      if( !oWork.IsTypeOf( OT_PROGRAM ) ) { bValid = false; }
-      if( oWork.ProgramCopyID() == ID_ERROR ) { bValid = false; }
-      if( oWork.ID().ToString() != system.GetSessionVar("sessionPRGID").ToString() ) { bValid = false; }
+      Call("/esp/programs.fn::DnDScopeOk()");
+      if( !bDnDScope ) { bValid = false; }
       if( !bValid ) { sResult = "ERR|scope"; }
     }
     if( bValid )
@@ -2168,41 +2185,42 @@ function ::DnDReorderBranches()
       }
       dom.DeleteObject( oStage.ID() );
 
-      if( !bCommitted )
+      ! Read the editor copy again and compare every branch, the ELSE branch included. If the commit
+      ! failed, the editor copy must still equal the reference, the CCU does not guarantee that.
+      iI = 0;
+      while( iI <= iN )
       {
-        ! Nothing was written to the editor copy.
-        sResult = "ERR|" # sFailCode;
+        iSrc = iI;
+        if( (iI < iN) && bCommitted )
+        {
+          sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
+          iSrc = sDnDItem.ToInteger();
+        }
+        oDnDChainStart = oRef.Rule();
+        iDnDIdx = iSrc;
+        Call("/esp/programs.fn::DnDFpOf()");
+        sFpA = sDnDFp;
+        oDnDChainStart = oWork.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDFpOf()");
+        if( sDnDFp != sFpA ) { bReadBackDiff = true; }
+        Call("/esp/programs.fn::DnDNthRule()");
+        if( oDnDNth )
+        {
+          if( sNewRules != "" ) { sNewRules = sNewRules # ","; }
+          sNewRules = sNewRules # oDnDNth.ID().ToString();
+        }
+        iI = iI + 1;
+      }
+      if( bReadBackDiff )
+      {
+        if( bCommitted ) { sResult = "POSTFAIL|unconfirmed"; }
+        else { sResult = "POSTFAIL|" # sFailCode; }
       }
       else
       {
-        ! Read the editor copy again and compare every branch, the ELSE branch included.
-        iI = 0;
-        while( iI <= iN )
-        {
-          iSrc = iI;
-          if( iI < iN )
-          {
-            sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
-            iSrc = sDnDItem.ToInteger();
-          }
-          oDnDChainStart = oRef.Rule();
-          iDnDIdx = iSrc;
-          Call("/esp/programs.fn::DnDFpOf()");
-          sFpA = sDnDFp;
-          oDnDChainStart = oWork.Rule();
-          iDnDIdx = iI;
-          Call("/esp/programs.fn::DnDFpOf()");
-          if( sDnDFp != sFpA ) { bFailed = true; }
-          Call("/esp/programs.fn::DnDNthRule()");
-          if( oDnDNth )
-          {
-            if( sNewRules != "" ) { sNewRules = sNewRules # ","; }
-            sNewRules = sNewRules # oDnDNth.ID().ToString();
-          }
-          iI = iI + 1;
-        }
-        if( bFailed ) { sResult = "POSTFAIL|unconfirmed"; }
-        else { sResult = "OK|" # oWork.ID().ToString() # "|" # oWork.Rule().ID().ToString() # "|" # sNewRules; }
+        if( bCommitted ) { sResult = "OK|" # oWork.ID().ToString() # "|" # oWork.Rule().ID().ToString() # "|" # sNewRules; }
+        else { sResult = "ERR|" # sFailCode; }
       }
       dom.DeleteObject( oRef.ID() );
     }

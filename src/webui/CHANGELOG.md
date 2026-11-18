@@ -53,12 +53,15 @@ or extended in it.
 * the program editor can sort the program logic by drag and drop: whole
   IF and ELSE IF branches, condition groups, conditions and activities. The
   terminal ELSE branch keeps its position, conditions and activities stay in
-  their own group and area. The CCU sorts the editor copy of the program
-  (`DnDReorder` and `DnDReorderBranches` in `esp/programs.fn`), reads the
-  result back and compares it before it reports success. Based on the
-  sorting of the EnhancedWebUI add-on; replaces
-  [#326](https://github.com/OpenCCU/OpenCCU-Base/pull/326)
-  (@unbox-digital-printing, @MichaelN0815)
+  their own group and area. Conditions and condition groups can only be
+  sorted in a list whose operators are all the same (all AND or all OR). The
+  CCU sorts the editor copy of the program (`DnDReorder` and
+  `DnDReorderBranches` in `esp/programs.fn`), reads the result back and
+  compares it before it reports success. Based on the sorting of the
+  EnhancedWebUI add-on
+  ([#397](https://github.com/OpenCCU/OpenCCU-Base/pull/397), replaces
+  [#326](https://github.com/OpenCCU/OpenCCU-Base/pull/326),
+  @unbox-digital-printing, @MichaelN0815)
 * the help page shows in the HomeMatic-RF (HmRF) block whether a
   BidCos-RF security key is set ("Security Key": `set (index N)` or
   `not set (default key)`), read with `crypttool` from

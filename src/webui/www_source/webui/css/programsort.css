@@ -35,3 +35,4 @@ body.RuleSortDragMode, body.RuleSortDragMode * { cursor: grabbing !important; us
 /* The empty ELSE part gets the other block colour, as the next block of the alternating colouring would. */
 .conditionEven.RuleSortBranchRail:has(.RuleSortEmptyElse) { background-image: linear-gradient(to bottom, transparent calc(100% - var(--ruleSortTailHeight, 0px)), $_(programOdd) calc(100% - var(--ruleSortTailHeight, 0px))); }
 .conditionOdd.RuleSortBranchRail:has(.RuleSortEmptyElse) { background-image: linear-gradient(to bottom, transparent calc(100% - var(--ruleSortTailHeight, 0px)), $_(programEven) calc(100% - var(--ruleSortTailHeight, 0px))); }
+.RuleSortRetry { margin-left: 8px; cursor: pointer; text-decoration: underline; color: #3b7ddd; }

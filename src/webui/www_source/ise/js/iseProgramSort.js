@@ -11,6 +11,11 @@
   if (win.iseProgramSortInstalled) { return; }
   win.iseProgramSortInstalled = true;
   var ruleSort = {};
+  // After a click on OK or Save as new program the editor starts the save 500 ms later and leaves the page
+  // when the request ends, so sorting stays locked until then. This is only the way out if no save starts.
+  var SAVE_LOCK_MS = 30000;
+  // Longest wait for the reload of the rules after a sorting.
+  var RELOAD_TIMEOUT_MS = 15000;
   var scanPending = false;
   // Schedules a scan of the editor, its DOM is replaced asynchronously.
   function schedule() {
@@ -36,10 +41,6 @@
 
   var S = ruleSort.state = {
     container: null,      
-    origId: '',           
-    settled: false,
-    settleTimer: null,
-    seenRules: {},
     sortChanged: false,
     busy: false,
     poisoned: false,
@@ -47,7 +48,10 @@
     reloads: null,
     awaitingReload: false,
     reloadGeneration: 0,
-    copyId: '',
+    saveLocked: false,
+    saveTimer: null,
+    reloadTimer: null,
+    retry: null,
     generation: 0,
     model: null
   };
@@ -58,18 +62,18 @@
     if(container&&win.ResizeObserver){S.branchSizer=new win.ResizeObserver(schedule);S.branchSizer.observe(container);}
     S.generation++;
     S.container = container;
-    S.origId = '';
-    S.settled = false;
-    S.seenRules = {};
     S.sortChanged = false;
     S.busy = false;
     S.poisoned = false;
     S.loadingRules = null;
     S.reloads = null;
     S.awaitingReload = false;
-    S.copyId = '';
     S.model = null;
-    if (S.settleTimer) { win.clearTimeout(S.settleTimer); S.settleTimer = null; }
+    S.saveLocked = false;
+    S.retry = null;
+    if (S.saveTimer) { win.clearTimeout(S.saveTimer); S.saveTimer = null; }
+    disarmReloadTimer();
+    removeRetry();
   }
 
   // Reads the program structure rendered by the original editor.
@@ -219,9 +223,6 @@
     st.textContent = msg;
     st.title = msg || '';   
     st.className = 'RuleSortStatus' + (bad ? ' RuleSortBad' : '');
-    if (msg && !bad && msg !== sortNotice()) {
-      win.setTimeout(function () { if (st.isConnected && st.textContent === msg) { setStatus(''); } }, 4000);
-    }
   }
   ruleSort.setStatus = setStatus;
 
@@ -238,31 +239,18 @@
     if (S.awaitingReload) {
       // Native ReloadRule calls replace the DOM asynchronously. Wait until all responses finish.
       if (S.reloads && Object.keys(S.reloads).length) { return; }
-      S.awaitingReload = false; S.busy = false;
+      S.awaitingReload = false; S.busy = false; S.retry = null;
+      disarmReloadTimer();
+      setStatus(sortNotice());
     }
     if (S.loadingRules) {
       var actual = m.rules.map(function (r) { return r.rid; }).join(',');
       if (actual !== S.loadingRules.join(',')) { return; }
       S.loadingRules = null;
-      S.busy = false;
-
+      S.busy = false; S.retry = null;
+      disarmReloadTimer();
+      setStatus(sortNotice());
     }
-
-    if (!S.origId) {
-      var okBtn = $('[onclick*="SaveProgramEdit("]');
-      var mm = okBtn && /SaveProgramEdit\(\s*(\d+)\s*,\s*(\d+)\s*\)/.exec(attr(okBtn, 'onclick'));
-      if (mm) { S.origId = mm[1]; S.copyId = mm[2]; }
-    }
-
-    m.rules.forEach(function (r) {
-      if (!S.seenRules[r.rid]) {
-        S.seenRules[r.rid] = true;
-        if (!S.settled) {
-          if (S.settleTimer) { win.clearTimeout(S.settleTimer); }
-          S.settleTimer = win.setTimeout(function () { S.settled = true; }, 2000);
-        }
-      }
-    });
 
     branchList(m).forEach(function (r) {
       if (!r.el.querySelector(':scope > .RuleSortBranchBar')) { buildBranchBar(r); }
@@ -295,11 +283,43 @@
     return perm.every(function (v, i) { return v === i; });
   }
 
+  // Watches the reload of the rules after a sorting.
+  function armReloadTimer() {
+    disarmReloadTimer();
+    S.reloadTimer = win.setTimeout(reloadFailed, RELOAD_TIMEOUT_MS);
+  }
+  function disarmReloadTimer() {
+    if (S.reloadTimer) { win.clearTimeout(S.reloadTimer); S.reloadTimer = null; }
+  }
+  function removeRetry() {
+    var r = doc.getElementById('RuleSortRetry');
+    if (r && r.parentNode) { r.parentNode.removeChild(r); }
+  }
+  // The reload failed. The sorting is done on the CCU, so only the reading is offered again.
+  function reloadFailed() {
+    disarmReloadTimer();
+    var tb = doc.getElementById('RuleSortToolbar');
+    if (!tb || !S.retry) { return; }
+    setStatus(tr('ruleSortReloadFailed'), true);
+    removeRetry();
+    var link = el('span', 'RuleSortRetry', tr('ruleSortReloadRetry'));
+    link.id = 'RuleSortRetry';
+    link.addEventListener('click', function () {
+      var again = S.retry;
+      removeRetry();
+      setStatus(tr('ruleSortReloading'));
+      if (again) { again(); }
+    });
+    tb.appendChild(link);
+  }
+
   // Reloads the affected branches with the original editor.
   function reloadRules(rids) {
     if(!rids.length){return;}
     S.busy=true;S.awaitingReload=true;S.reloadGeneration=S.generation;S.reloads={};
     rids.forEach(function(rid){S.reloads[rid]=true;});
+    S.retry = function () { reloadRules(rids); };
+    armReloadTimer();
     rids.forEach(function (rid) {
       if (typeof win.ReloadRule === 'function') { win.ReloadRule(rid); }
     });
@@ -336,7 +356,7 @@
 
   // Lets the CCU apply the new order to the editor copy.
   function request(cont, perm) {
-    if (S.busy || S.poisoned) { return; }
+    if (S.busy || S.poisoned || S.saveLocked) { return; }
     var generation = S.generation;
     var permText = perm.join(',');
     var expected = cont.items.map(function (it) { return it.id; }).join(',');
@@ -367,11 +387,10 @@
             setStatus(tr('ruleSortIncomplete'), true);
             return;
           }
-          S.settled = true;
           S.loadingRules = newIds;
           S.busy = true;
-          S.container.innerHTML = '';
-          win.LoadRule(fields[1], fields[2]);
+          S.retry = function () { S.container.innerHTML = ''; armReloadTimer(); win.LoadRule(fields[1], fields[2]); };
+          S.retry();
         } else {
           var previousItems = cont.items;
           cont.items = perm.map(function (index) { return previousItems[index]; });
@@ -387,7 +406,7 @@
       } else {
         if (kind === 'UNKNOWN') { S.poisoned = true; }
         reloadRules(affected);
-        setStatus(tr('ruleSortNotMoved') + (kind === 'ERR' ? errText(text) : tr('ruleSortErr_unknown')), true);
+        setStatus(kind === 'ERR' ? tr('ruleSortNotMoved') + errText(text) : tr('ruleSortErr_unknown'), true);
       }
     });
   }
@@ -421,7 +440,7 @@
   }
 
   D.start = function (handle, x, y) {
-    if (S.busy || S.poisoned || handle.classList.contains('RuleSortLocked')) { return false; }
+    if (S.busy || S.poisoned || S.saveLocked || handle.classList.contains('RuleSortLocked')) { return false; }
     var cont = containerFor(handle);
     if (!cont || cont.items.length < 2) { return false; }
     var id = attr(handle, 'data-rulesort-id');
@@ -530,16 +549,24 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       setStatus(S.poisoned ? tr('ruleSortSaveBlockedUnconfirmed') : tr('ruleSortSaveBlockedBusy'), true);
+    } else if (button && S.container) {
+      // The editor saves 500 ms later, a sorting must not start in between.
+      S.saveLocked = true;
+      if (S.saveTimer) { win.clearTimeout(S.saveTimer); }
+      S.saveTimer = win.setTimeout(function () { S.saveLocked = false; S.saveTimer = null; }, SAVE_LOCK_MS);
     }
   }, true);
 
   if (win.Ajax && win.Ajax.Responders) {
     win.Ajax.Responders.register({ onComplete: function (request) {
-      if (!S.awaitingReload || S.reloadGeneration !== S.generation ||
-          String(request.url || '').indexOf('/esp/programs.htm') < 0) { return; }
+      if (String(request.url || '').indexOf('/esp/programs.htm') < 0) { return; }
       var body = String(request.options && request.options.postBody || '');
       try { body = win.unescape(body); } catch (ignored) {}
+      var failed = !request.transport || request.transport.status !== 200;
+      if (body.indexOf('"LoadRule"') >= 0 && S.loadingRules && failed) { reloadFailed(); return; }
+      if (!S.awaitingReload || S.reloadGeneration !== S.generation) { return; }
       if (body.indexOf('"ReloadRule"') < 0) { return; }
+      if (failed) { reloadFailed(); return; }
       var match = /string rid\s*=\s*"(\d+)"/.exec(body);
       if (match && S.reloads) { delete S.reloads[match[1]]; schedule(); }
     }});
