@@ -55,13 +55,12 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
     </colgroup>
     <thead>
       <tr class="CLASS03702">
-        <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-        <th class="CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arProgs,'name',true);" >${thName}</div></th>
-        <th class="tHeaderCell CLASS03303" >${thDescription}</th>
+        <th class="CLASS03302"><button type="button" class="programListSortButton" data-program-sort="name"><span>${thName}</span><span aria-hidden="true"></span></button></th>
+        <th class="tHeaderCell CLASS03303"><button type="button" class="programListSortButton" data-program-sort="desc"><span>${thDescription}</span><span aria-hidden="true"></span></button></th>
         <th class="tHeaderCell CLASS03303" >${thActivity}</th>
         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
-        <th class="tHeaderCell CLASS03303">${thProgramId}</th>
-        <th class="tHeaderCell CLASS03303">${thProgramLastSaved}</th>
+        <th class="tHeaderCell CLASS03303"><button type="button" class="programListSortButton" data-program-sort="id"><span>${thProgramId}</span><span aria-hidden="true"></span></button></th>
+        <th class="tHeaderCell CLASS03303"><button type="button" class="programListSortButton" data-program-sort="savedAt"><span>${thProgramLastSaved}</span><span aria-hidden="true"></span></button></th>
         <th class="tHeaderCell CLASS03303" ><div><span>${thAction}</span><img src="/ise/img/help.png" style="cursor: pointer; width:24px; height:24px; vertical-align:middle;" role="button" tabindex="0" data-aria-key="HelpTitle" onclick="MessageBox.show(translateKey('HelpTitle'), translateKey('actionStatusControlLblStartHelp'), '', 400, 250);"></div></th>
       </tr>
     </thead>
@@ -141,7 +140,9 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                   Write("var tmp = new Object();");
                   Write("tmp['id'] = '"#o.ID()#"';");
                   Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+                  Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['trid'] = '"#trId#"';");
+                  Write("tmp.savedAt = "#o.MetaData("webuiLastSaved").ToInteger()#";");
                   Write("arProgs[arProgs.length] = tmp;");
                   Write("</script>");
                 }
@@ -203,4 +204,5 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
       }
     }
   }
+  iseProgramListSort.bind(document.getElementById("ProgramListTable"), "status", arProgs);
 </script>

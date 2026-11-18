@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* sort both program lists by name, description, program ID or last saved
+  time. Programs without a recorded save time stay at the end when sorting
+  by that column. (@unbox-digital-printing)
+
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.
   ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see

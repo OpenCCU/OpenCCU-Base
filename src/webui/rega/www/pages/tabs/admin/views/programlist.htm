@@ -67,13 +67,12 @@
     <col style="width:250px;" />
   </colgroup>
     <tr>
-      <%string sCssName="Sort"; if(firstSort||(system.GetSessionVar("sessionLS")=="name")){sCssName="SortSelected";} %>
-      <td class="thCell CLASS03302"><div id="name" class="<%Write(sCssName); %>" onclick="IseSort(arItems,'name',true);">${thName}</div></td>
-      <td class="thCell CLASS04900" >${thDescription}</td>
+      <td class="thCell CLASS03302" role="columnheader"><button type="button" class="programListSortButton" data-program-sort="name"><span>${thName}</span><span aria-hidden="true"></span></button></td>
+      <td class="thCell CLASS04900" role="columnheader"><button type="button" class="programListSortButton" data-program-sort="desc"><span>${thDescription}</span><span aria-hidden="true"></span></button></td>
       <td class="thCell CLASS04900" >${thCondition}</td>
       <td class="thCell CLASS04900" >${thActivity}</td>
-      <td class="thCell CLASS04900">${thProgramId}</td>
-      <td class="thCell CLASS04900">${thProgramLastSaved}</td>
+      <td class="thCell CLASS04900" role="columnheader"><button type="button" class="programListSortButton" data-program-sort="id"><span>${thProgramId}</span><span aria-hidden="true"></span></button></td>
+      <td class="thCell CLASS04900" role="columnheader"><button type="button" class="programListSortButton" data-program-sort="savedAt"><span>${thProgramLastSaved}</span><span aria-hidden="true"></span></button></td>
       <td class="thCell CLASS04900" >${thAction}</td>
     </tr>
   <tbody>
@@ -210,6 +209,7 @@
                 Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                 Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                 Write("tmp['trid'] = '"#trId#"';");
+                Write("tmp.savedAt = "#o.MetaData("webuiLastSaved").ToInteger()#";");
                 Write("arItems[arItems.length] = tmp;");
                 Write("Cursor.set(Cursor.NORMAL);");
               Write("</script>");
@@ -313,6 +313,7 @@
                   Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['desc'] = '"#o.PrgInfo().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
                   Write("tmp['trid'] = '"#trId#"';");
+                  Write("tmp.savedAt = "#o.MetaData("webuiLastSaved").ToInteger()#";");
                   Write("arItems[arItems.length] = tmp;");
                   Write("Cursor.set(Cursor.NORMAL);");
                 Write("</script>");
@@ -492,4 +493,5 @@
   };
   translatePage("#ProgramListTable");
   jQuery("#ProgramListTable").removeClass("hidden");
+  iseProgramListSort.bind(document.getElementById("ProgramListTable"), "edit", arItems);
 </script>
