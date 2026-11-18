@@ -1103,6 +1103,8 @@ jQuery.extend(true,langJSON, {
       "Bei einem Wechsel des Sensors werden die bisher erfassten Verbrauchswerte (heute, gestern usw.) zur%FCck auf 0 gesetzt.<br/><br/>" +
       "Sollten Sie die Sensorsuche ohne angeschlossenen Sensor gestartet haben, schlie%DFen Sie einen Sensor an und f%FChren Sie einen Werksreset des Energiemessger%E4ts durch.<br/><br/>" ,
 
+    "lblUserSysVarDragHint" : "Zum Sortieren die Zeile am Griff ziehen oder die Pfeiltasten verwenden. Die Reihenfolge wird ohne Best%E4tigung (OK) sofort gespeichert.",
+    "lblUserSysVarDragFailed" : "Die Reihenfolge konnte nicht gespeichert werden.",
     "lblSysVarMoveUp" : "Nach oben verschieben",
     "lblSysVarMoveDown" : "Nach unten verschieben",
 

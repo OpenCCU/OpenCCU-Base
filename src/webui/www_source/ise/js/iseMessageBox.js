@@ -240,7 +240,7 @@ iseMessageBox.prototype =
 
     if (this.draggable) {
       jQuery("#messagebox").draggable({
-        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
+        cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line,.userSysVarDragGrip"
       });
     }
 

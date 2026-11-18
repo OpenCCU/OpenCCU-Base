@@ -1508,7 +1508,7 @@ function ::BuildUserSvTable() {
     if (sysvar) 
     {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
-      WriteLine("<tr id='"#trid#"'>");
+      WriteLine("<tr id='"#trid#"' data-user-sysvar='"#sysvar.ID()#"'>");
         WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
         WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
         
@@ -1556,11 +1556,13 @@ function ::BuildUserSvTable() {
         WriteLine("</td>");
         WriteLine("<td class='WhiteBkg CLASS02110'>");
           if (system.GetVar("userId") != 0) {
+            WriteLine("<div class='userSysVarOrderControls'>");
+            WriteLine("<span class='userSysVarDragGrip' aria-hidden='true' onpointerdown='iseUser.StartSysVarDrag(event, this, "#system.GetVar("userId").ToInteger()#");'>&#9776;</span>");
             !WriteLine("<table class='CLASS02108'>");                                                                                        
             WriteLine("<table role='presentation'>");
               WriteLine("<tr><td class='tSysvarMoveUp' role='button' tabindex='0' data-aria-key='lblSysVarMoveUp' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", -1);'></td></tr>");                   
               WriteLine("<tr><td class='tSysvarMoveDown' role='button' tabindex='0' data-aria-key='lblSysVarMoveDown' onclick='iseUser.MoveSysVar("#userId#", "#tmp#", 1);'></td></tr>");                  
-            WriteLine("</table>");
+            WriteLine("</table></div>");
           }
         WriteLine("</td>");  
       WriteLine("</tr>");
@@ -1608,6 +1610,50 @@ function ::UserMoveSysVarBuildTable() {
   }                                                                                                 
   return;                                                                                                        
 } 
+
+! Move a shared system variable relative to another member of the same account.
+function ::UserMoveSysVarRelative()
+{
+  object actor = dom.GetObject(system.GetSessionVar("sessionUserID"));
+  integer userId = system.GetVar("userId").ToInteger();
+  if (!actor) { return; }
+  if ((actor.UserLevel() == iulGuest) || (actor.UserLevel() == iulNone)) { return; }
+  if ((userId != actor.ID()) && (actor.UserLevel() != iulAdmin)) { return; }
+
+  object user = dom.GetObject(userId);
+  if (!user) { return; }
+  if (!user.IsTypeOf(OT_USER)) { return; }
+
+  integer source = system.GetVar("svId").ToInteger();
+  integer target = system.GetVar("svTargetId").ToInteger();
+  integer after = system.GetVar("svAfter").ToInteger();
+  if ((source <= 0) || (target <= 0) || (source == target) || (after < 0) || (after > 1)) { return; }
+
+  object shared = user.UserSharedObjects();
+  integer sourceIndex = -1;
+  integer targetIndex = -1;
+  integer index = 0;
+  string member;
+  foreach (member, shared.EnumIDs())
+  {
+    if (member.ToInteger() == source) { sourceIndex = index; }
+    if (member.ToInteger() == target) { targetIndex = index; }
+    index = index + 1;
+  }
+  if ((sourceIndex < 0) || (targetIndex < 0)) { return; }
+
+  ! Adjust the insertion index for removing the source before reinsertion.
+  integer destination = targetIndex + after;
+  if (sourceIndex < destination) { destination = destination - 1; }
+  integer step = 1;
+  if (sourceIndex > destination) { step = -1; }
+  while (sourceIndex != destination)
+  {
+    if (!shared.MoveObject(source, step)) { return; }
+    sourceIndex = sourceIndex + step;
+  }
+  Call("system.fn::BuildUserSvTable()");
+}
 
 ! [alPC], [alPDA]
 function ::setAutoLogin() {

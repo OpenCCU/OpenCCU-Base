@@ -9,6 +9,9 @@ is published.
 
 ## Unreleased
 
+* reorder home page system variables by dragging their handles in the user
+  account dialog. The order is saved immediately. (@unbox-digital-printing)
+
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.
   ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see
