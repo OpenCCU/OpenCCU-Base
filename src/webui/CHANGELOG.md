@@ -7,7 +7,7 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
-## Unreleased
+## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.

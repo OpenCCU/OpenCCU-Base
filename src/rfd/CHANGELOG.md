@@ -9,7 +9,7 @@ Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh` and
 `generated-rfd-version.h`).
 
-## Unreleased
+## 2.7.1 (2026-11-18)
 
 * fix a LAN gateway (HM-LGW) that is not reachable when rfd starts being
   given up for good: rfd dropped the interface when its first connection

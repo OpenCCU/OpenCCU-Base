@@ -6,7 +6,7 @@ gateways (HM-LGW, HMW-LGW) of rfd and hs485d. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 version and date with the next version bump (`version.sh`).
 
-## Unreleased
+## 1.1.0 (2026-11-18)
 
 * add `UnifiedLanCommController::setConnectTimeout()`, which limits the TCP
   connect to a gateway. Without it (the default, unchanged) the connect to a
