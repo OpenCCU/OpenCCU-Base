@@ -477,7 +477,7 @@ function ::UpdateUI()
       sSysVarVal = sSysVarVal.Replace("<", "\\x3C");
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
       ! use javascript string literal char (`) to ensure proper char escaping;
-      ! the value may contain HTML, of which only simple text formatting is kept
+      ! the value may contain HTML, of which only the formatting is kept
       WriteLine("  $('SYSVAR_" # svId # "').innerHTML = sanitizeSysVarHtml(translateSysVarValue(`" # sSysVarVal # "`));");
       WriteLine("}");
     }    
@@ -1712,6 +1712,16 @@ function ::getSysVarValAsString()
     sSysVarVal = sSysVarVal.Replace("\r", "<br/>");
     sSysVarVal = sSysVarVal.Replace("\n", "<br/>");
   }
+}
+
+! Writes sSysVarVal, the value of getSysVarValAsString(), as a placeholder
+! with the HTML-escaped value in data-sysvar-value. The value of a string
+! system variable may contain HTML: sanitizeSysVarHtml() keeps only its
+! formatting, and showSysVarValues() shows the result in the parent element
+! of the placeholder, so the caller writes it into an element of its own.
+function ::writeSysVarVal()
+{
+  Write( '<span data-sysvar-value="' # sSysVarVal.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('"', "&quot;") # '"></span>' );
 }
 
 ! [cId]

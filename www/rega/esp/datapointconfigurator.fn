@@ -1769,7 +1769,9 @@ function ::CreateUnknown()
                         boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
                         boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
                         Call( "/esp/system.fn::getSysVarValAsString()" );
-                        WriteLine( sSysVarVal );
+                        Write( '<span>' );
+                        Call( "/esp/system.fn::writeSysVarVal()" );
+                        WriteLine( '</span>' );
                       }
                     }
                     else
@@ -1873,7 +1875,9 @@ function ::CreateSysVar()
       object cObjTmp = cObj;
       Call( "/esp/system.fn::getSysVarValAsString()" );
   
-      WriteLine( '<span id="sysvs'#cObj.ID()#'" class="CLASS02535">'#sSysVarVal#'</span>' );
+      Write( '<span id="sysvs'#cObj.ID()#'" class="CLASS02535">' );
+      Call( "/esp/system.fn::writeSysVarVal()" );
+      WriteLine( '</span>' );
     WriteLine( '</div>' );
   WriteLine( '</td>' );
   return;
@@ -1910,7 +1914,9 @@ function ::CreateSysVars()
             boolean bSysVar = ( bLogic || bList || bNumber || bAlarm || bString);
             Call( "/esp/system.fn::getSysVarValAsString()" );
         
-            WriteLine( '<span class="CLASS02535">'#sSysVarVal#'</span>' );
+            Write( '<span class="CLASS02535">' );
+            Call( "/esp/system.fn::writeSysVarVal()" );
+            WriteLine( '</span>' );
           WriteLine( '</div>' );
         WriteLine( '</td>' );
         if( (i%2) ) { WriteLine( '</tr><tr>' ); }
