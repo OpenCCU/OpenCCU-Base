@@ -36630,35 +36630,145 @@ function hsvToRgb(h, s, v) {
   return { r: r * 255, g: g * 255, b: b * 255 };
 };
 /**
- * Returns the value of a system variable as HTML that keeps only simple text
- * formatting. The values of the system variables shown on the start page may
- * contain HTML (line breaks become <br/>), but can be set by other users, so
- * they must not run scripts or load content.
+ * Returns the value of a system variable as HTML that keeps only text
+ * formatting and structure. The values of string system variables may contain
+ * HTML (line breaks become <br/>), but can be set by other users, so they
+ * must not run scripts or load content.
  *
- * Kept: br, b, strong, i, em, u, s, small, sub, sup, span and font. font keeps
- * only its color attribute, span only a color in its style attribute. Other
- * elements are removed but keep their text; the content of script, style and
- * similar elements is removed as well. All other attributes are removed.
+ * Kept: text formatting (br, b, strong, i, em, u, s, strike, del, ins, mark,
+ * small, big, sub, sup, tt, code, span, font), blocks (div, p, pre,
+ * blockquote, center, hr, h1 to h6), lists (ul, ol, li, dl, dt, dd) and
+ * tables (table, caption, colgroup, col, thead, tbody, tfoot, tr, td, th).
+ * Of their attributes only the presentational ones are kept, each with a
+ * checked value (e.g. align, width, colspan, bgcolor; color, size and face of
+ * font), and the declarations of style that set a harmless property (colors,
+ * fonts, text, spacing, borders, sizes) to a value without url(), escapes or
+ * other functions than rgb() and hsl(). Other elements are removed but keep
+ * their text; the content of script, style and similar elements is removed as
+ * well. All other attributes (event handlers, class, id, href, src, ...) are
+ * removed.
  */
 sanitizeSysVarHtml = function(html) {
-  var allowed = {BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, SMALL: 1, SUB: 1, SUP: 1, SPAN: 1, FONT: 1},
+  var allowed = {BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, STRIKE: 1, DEL: 1, INS: 1, MARK: 1,
+      SMALL: 1, BIG: 1, SUB: 1, SUP: 1, TT: 1, CODE: 1, SPAN: 1, FONT: 1,
+      DIV: 1, P: 1, PRE: 1, BLOCKQUOTE: 1, CENTER: 1, HR: 1, H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1,
+      UL: 1, OL: 1, LI: 1, DL: 1, DT: 1, DD: 1,
+      TABLE: 1, CAPTION: 1, COLGROUP: 1, COL: 1, THEAD: 1, TBODY: 1, TFOOT: 1, TR: 1, TD: 1, TH: 1},
+    isVoid = {BR: 1, HR: 1, COL: 1},
     dropWithContent = {SCRIPT: 1, STYLE: 1, IFRAME: 1, FRAME: 1, FRAMESET: 1, OBJECT: 1, EMBED: 1, APPLET: 1,
       NOSCRIPT: 1, NOEMBED: 1, NOFRAMES: 1, TEMPLATE: 1, TEXTAREA: 1, TITLE: 1, SELECT: 1, XMP: 1,
       SVG: 1, MATH: 1, HEAD: 1},
     reColor = /^(#[0-9a-f]{3,8}|[a-z]+|rgba?\([0-9\s.,%]+\)|hsla?\([0-9\s.,%deg]+\))$/i,
+    reCount = /^\d{1,3}$/,
+    reSize = /^\d{1,4}%?$/,
+    // the attributes kept besides style, and the values they may have
+    attrValues = {
+      align: /^(left|right|center|justify)$/i,
+      valign: /^(top|middle|bottom|baseline)$/i,
+      bgcolor: reColor,
+      color: reColor,
+      face: /^[a-z0-9 ,\-]{1,100}$/i,
+      size: /^[+\-]?\d$/,
+      width: reSize,
+      height: reSize,
+      border: reCount,
+      cellpadding: reCount,
+      cellspacing: reCount,
+      colspan: reCount,
+      rowspan: reCount,
+      span: reCount
+    },
+    tableSection = ["align", "valign", "bgcolor", "height"],
+    tableCell = ["align", "valign", "bgcolor", "width", "height", "colspan", "rowspan"],
+    column = ["span", "width", "align", "valign"],
+    block = ["align"],
+    elementAttrs = {
+      FONT: ["color", "size", "face"],
+      TABLE: ["align", "bgcolor", "border", "cellpadding", "cellspacing", "width", "height"],
+      THEAD: tableSection, TBODY: tableSection, TFOOT: tableSection, TR: tableSection,
+      TD: tableCell, TH: tableCell,
+      COLGROUP: column, COL: column,
+      DIV: block, P: block, CAPTION: block, H1: block, H2: block, H3: block, H4: block, H5: block, H6: block,
+      HR: ["align", "width"]
+    },
+    // the style properties kept: none of them positions the element outside
+    // of its place or loads content
+    reStyleProperty = new RegExp("^(color|background-color|opacity|"
+      + "font|font-(family|size|style|weight|variant)|"
+      + "text-(align|decoration|transform|indent)|vertical-align|line-height|"
+      + "letter-spacing|word-spacing|white-space|word-break|word-wrap|overflow-wrap|"
+      + "(padding|margin)(-(top|right|bottom|left))?|"
+      + "border(-(top|right|bottom|left))?(-(width|style|color))?|border-(collapse|spacing|radius)|"
+      + "(min-|max-)?(width|height)|display|table-layout|empty-cells|caption-side|list-style-type)$"),
+    // no quotes, backslashes, slashes, colons or exclamation marks: neither
+    // url(...), escapes, comments nor !important can be written
+    reStyleValue = /^[a-z0-9\s.,%#()+\-]{1,200}$/i,
+    reStyleFunction = /([a-z\-]*)\s*\(/gi,
     doc = null;
 
   var escapeText = function(text) {
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   };
 
-  var validColor = function(color) {
-    color = (color == null) ? "" : String(color).replace(/^\s+|\s+$/g, "");
-    return reColor.test(color) ? color : null;
+  var trim = function(text) {
+    return (text == null) ? "" : String(text).replace(/^\s+|\s+$/g, "");
+  };
+
+  var validStyleValue = function(value) {
+    var match;
+    // no negative values, which could move the content over other elements
+    if (!reStyleValue.test(value) || /(^|[\s,(])-/.test(value)) {
+      return false;
+    }
+    reStyleFunction.lastIndex = 0;
+    while ((match = reStyleFunction.exec(value)) !== null) {
+      if (!/^(rgba?|hsla?)$/i.test(match[1])) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  var sanitizeStyle = function(style) {
+    var parts = trim(style).split(";"), out = [], i, pos, property, value;
+    for (i = 0; i < parts.length; i++) {
+      pos = parts[i].indexOf(":");
+      if (pos < 1) {
+        continue;
+      }
+      property = trim(parts[i].substring(0, pos)).toLowerCase();
+      value = trim(parts[i].substring(pos + 1)).replace(/\s+/g, " ");
+      if (reStyleProperty.test(property) && validStyleValue(value)) {
+        out.push(property + ":" + value);
+      }
+    }
+    return out.join(";");
+  };
+
+  var attributes = function(node, name) {
+    var names = elementAttrs[name] || [], out = "", i, value;
+    for (i = 0; i < names.length; i++) {
+      value = node.getAttribute(names[i]);
+      if (value == null) {
+        continue;
+      }
+      value = trim(value);
+      if (attrValues[names[i]].test(value)) {
+        out += " " + names[i] + '="' + escapeText(value) + '"';
+      }
+    }
+    value = node.getAttribute("style");
+    if (value != null) {
+      value = sanitizeStyle(value);
+      if (value !== "") {
+        out += ' style="' + escapeText(value) + '"';
+      }
+    }
+    return out;
   };
 
   var walk = function(node) {
-    var out = "", child, name, tag, attr, color, match;
+    var out = "", child, name, tag;
     for (child = node.firstChild; child; child = child.nextSibling) {
       if (child.nodeType === 3) {
         out += escapeText(child.nodeValue);
@@ -36675,25 +36785,12 @@ sanitizeSysVarHtml = function(html) {
         out += walk(child);
         continue;
       }
-      if (name === "BR") {
-        out += "<br/>";
+      tag = name.toLowerCase();
+      if (isVoid[name]) {
+        out += "<" + tag + attributes(child, name) + "/>";
         continue;
       }
-      attr = "";
-      if (name === "FONT") {
-        color = validColor(child.getAttribute("color"));
-        if (color) {
-          attr = ' color="' + escapeText(color) + '"';
-        }
-      } else if (name === "SPAN") {
-        match = /(?:^|;)\s*color\s*:\s*([^;]*)/i.exec(child.getAttribute("style") || "");
-        color = match ? validColor(match[1]) : null;
-        if (color) {
-          attr = ' style="color:' + escapeText(color) + '"';
-        }
-      }
-      tag = name.toLowerCase();
-      out += "<" + tag + attr + ">" + walk(child) + "</" + tag + ">";
+      out += "<" + tag + attributes(child, name) + ">" + walk(child) + "</" + tag + ">";
     }
     return out;
   };
@@ -36726,17 +36823,38 @@ translateSysVarValue = function(value) {
 };
 
 /**
- * Shows the system variable values of the start page, which startpage.htm
- * writes HTML-escaped into data-sysvar-value, in their table cells.
+ * Shows the values of system variables, which the pages write HTML-escaped
+ * into data-sysvar-value (startpage.htm, esp/system.fn::writeSysVarVal()),
+ * in the parent elements of these placeholders.
  */
 showSysVarValues = function(root) {
-  jQuery(root || document).find("[data-sysvar-value]").each(function() {
+  var show = function() {
     var cell = this.parentNode;
     if (cell) {
       cell.innerHTML = sanitizeSysVarHtml(translateSysVarValue(this.getAttribute("data-sysvar-value")));
     }
-  });
+  };
+  root = jQuery(root || document);
+  root.filter("[data-sysvar-value]").each(show);
+  root.find("[data-sysvar-value]").each(show);
 };
+
+// The pages with system variable values are loaded in many ways (Ajax.Updater,
+// popups, channel loaders), so the values are shown as soon as their
+// placeholders are inserted into the document.
+if (typeof MutationObserver != "undefined") {
+  new MutationObserver(function(mutations) {
+    var i, j, nodes;
+    for (i = 0; i < mutations.length; i++) {
+      nodes = mutations[i].addedNodes;
+      for (j = 0; j < nodes.length; j++) {
+        if (nodes[j].nodeType === 1) {
+          showSysVarValues(nodes[j]);
+        }
+      }
+    }
+  }).observe(document.documentElement, {childList: true, subtree: true});
+}
 /**
  * Keyboard operation of elements that act as buttons (role="button" and
  * tabindex="0"). Elements without visible text name the translation key of
