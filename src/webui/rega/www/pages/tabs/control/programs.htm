@@ -94,18 +94,18 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                   string trId = "pr"#o.ID();
                   WriteLine( '<tr id="'#trId#'" class="CLASS03702">' );
                   if (oUser.UserLevel() == iulAdmin) {
-                    WriteLine( '<td class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';"><span role="button" tabindex="0">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</span></td>' );
+                    WriteLine( '<td data-search-column="name" class="tBodyCell CLASS03905" onclick="EditProgram('#o.ID()#');" onmouseover="this.className=\'tBodyCell DeviceListRow_Highlight\';" onmouseout="this.className=\'tBodyCell CLASS03905\';"><span role="button" tabindex="0">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</span></td>' );
                   } else {
-                    WriteLine( '<td class="tBodyCell">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
+                    WriteLine( '<td data-search-column="name" class="tBodyCell">'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'</td>' );
                   }
-                  WriteLine( '<td class="tBodyCell">'#o.PrgInfo()#'</td>' );
+                  WriteLine( '<td data-search-column="description" class="tBodyCell">'#o.PrgInfo()#'</td>' );
                   object oPrgID = o.ID();
-                  WriteLine( '<td class="tBodyCell">' );
+                  WriteLine( '<td data-search-column="activity" class="tBodyCell">' );
                   string sRet = "";
                   Call( "/esp/programs.fn::WriteDestinationText()" );
                   Write( sRet );
                   WriteLine( '</td>' );
-                  WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">' );
+                  WriteLine( '<td data-search-column="lastExecution" class="tBodyCell"><span id="tmc'#o.ID()#'">' );
                   var dtLastExecuteTime = o.ProgramLastExecuteTime();
                   if( dtLastExecuteTime == 0 )
                   {
@@ -162,7 +162,7 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
   s += "<table cellspacing='8'>";
   s += "<tr>";
     s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton' onclick='WebUI.goBack()'>"+translateKey('footerBtnPageBack')+"</div></td>";
-    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='programListSearch.clear();fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
+    s += "<td  style='text-align:center; vertical-align: middle;'><div class='FooterButton CLASS03703' onclick='programListSearch.clear(false);fltPR.clearFilters();updateTable();' >"+translateKey('footerBtnResetFilter')+"</div></td>";
   s += "</tr>";
   s += "</table>";
   setFooter(s);
@@ -180,23 +180,26 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
     jQuery("#ftName").focus();
   });
 
-  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'status', false, function() { updateTable(); });
+  programListSearch = iseProgramListFilter.create(document.getElementById('ProgramListTable'), 'status', false, function() { updateTable(); },
+    iseProgramListFilter.programColumns(false));
 
   updateTable = function()
   {
+    var shown = 0;
     colorFilterBtns(fltPR);
     for( var i=0; i<arProgs.length; i++ )
     {
-      if( !fltPR.objPassFilter(arProgs[i]) || !programListSearch.accepts(document.getElementById(arProgs[i]['trid'])) )
+      if( !fltPR.objPassFilter(arProgs[i]) || !programListSearch.accepts(document.getElementById(arProgs[i]['trid']), arProgs[i]) )
       {
         hide( arProgs[i]['trid'] );
       }
       else
       {
         show( arProgs[i]['trid'] );
+        shown++;
       }
     }
-    programListSearch.updateCount();
+    programListSearch.setCount(shown, arProgs.length);
   };
   updateTable();
 </script>

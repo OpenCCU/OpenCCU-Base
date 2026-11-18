@@ -83,18 +83,18 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
   </colgroup>
   <tr>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="pos"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'pos',true);" >${thPosition}</div></th>
+    <th data-live-filter-key="thPosition" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'pos',true);" >${thPosition}</div></th>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'name',true);" >${thName}</div></th>
-    <th class="thCell CLASS02803"><div class="pt11">${thDescription}</div></th>
+    <th data-live-filter-key="thName" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'name',true);" >${thName}</div></th>
+    <th data-live-filter-key="thDescription" class="thCell CLASS02803"><div class="pt11">${thDescription}</div></th>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="unit"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>"  onclick="IseSort(arFavs,'unit',true);" >${thNumberOfColumns}</div></th>
+    <th data-live-filter-key="thNumberOfColumns" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>"  onclick="IseSort(arFavs,'unit',true);" >${thNumberOfColumns}</div></th>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="colpos"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'colpos',true);">${thAlignmentOfColumns}</div></th>
+    <th data-live-filter-key="thAlignmentOfColumns" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'colpos',true);">${thAlignmentOfColumns}</div></th>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="namepos"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'namepos',true);">${thPosOfNameField}</div></th>
+    <th data-live-filter-key="thPosOfNameField" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'namepos',true);">${thPosOfNameField}</div></th>
     <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="users"){sCssName="SortSelected";} %>
-    <th class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'users',true);">${thUser}</div></th>
+    <th data-live-filter-key="thUser" class="thCell CLASS02803"><div class="pt11 <%Write(sCssName);%>" onclick="IseSort(arFavs,'users',true);">${thUser}</div></th>
     <th class="thCell CLASS02803"><div class="pt11">${thAction}</div></th>
   </tr>
   <tr>
@@ -493,7 +493,7 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
   %>
 
   translatePage("#tblFavs, #tblNoFavs", function() {
-    iseProgramListFilter.attach("tblFavs", "favorite-lists", [0, 1, 2, 3, 4, 5, 6], arFavs);
+    iseProgramListFilter.attach("tblFavs", "favorite-lists", arFavs);
   });
 
   // Set the minimum length of the filter text to 10 chars

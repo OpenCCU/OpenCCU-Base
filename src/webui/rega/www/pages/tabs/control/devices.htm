@@ -26,7 +26,7 @@
                   <col style="width:20%;"/>
                 </colgroup>
                 <tr>
-                  <th>${thName}</th>
+                  <th data-live-filter-key="thName">${thName}</th>
                   <th>${thPicture}</th>
                 </tr>
                 <tbody>
@@ -333,7 +333,7 @@
     document.getElementById("ftDevName").value = "";
   };
   translatePage("#contentLeft", function() {
-    iseProgramListFilter.attach("tblFunctionNames", "device-names", [0], arItems);
+    iseProgramListFilter.attach("tblFunctionNames", "device-names", arItems);
   });
   jQuery("#contentLeft").removeClass("hidden");
 </script> 

@@ -70,16 +70,16 @@
 </colgroup>
 <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thName}</div></th>
+  <th data-live-filter-key="thName" class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="DivSort('name');">${thName}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="desc"){sCssName="SortSelected";} %>
-  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('desc');">${thDescription}</div></th>
+  <th data-live-filter-key="thDescription" class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('desc');">${thDescription}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="type"){sCssName="SortSelected";} %>
-  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('type');">${thTypeOfVariable}</div></th>
-  <th class="thCell">${thValues}</th>
+  <th data-live-filter-key="thTypeOfVariable" class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('type');">${thTypeOfVariable}</div></th>
+  <th data-live-filter-key="thValues" class="thCell">${thValues}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="unit"){sCssName="SortSelected";} %>
-  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('unit');">${thUnit}</div></th>
+  <th data-live-filter-key="thUnit" class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('unit');">${thUnit}</div></th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="chn"){sCssName="SortSelected";} %>
-  <th class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('chn');">${thCannelMapping}</div></th>
+  <th data-live-filter-key="thCannelMapping" class="thCell CLASS05200"><div id="name" class="pt11 <%Write(sCssName);%>" onclick="DivSort('chn');">${thCannelMapping}</div></th>
   <th class="thCell">${thAction}</th>
   <th class="thCell">${thLink}</th>
 </tr>
@@ -472,7 +472,7 @@
     });    
   };
   translatePage("#sysVars", function() {
-    iseProgramListFilter.attach("sysVars", "edit-variables", [0, 1, 2, 3, 4, 5], arSysVars);
+    iseProgramListFilter.attach("sysVars", "edit-variables", arSysVars);
   });
   jQuery("#sysVars").show();
 </script>

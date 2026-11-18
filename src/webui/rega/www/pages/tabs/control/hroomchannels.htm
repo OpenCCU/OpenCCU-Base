@@ -59,11 +59,11 @@
   </colgroup>
   <tr>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="name"){sCssName="SortSelected";} %>
-  <th><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
+  <th data-live-filter-key="thName"><div id="name" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'name',true);">${thName}</div></th>
   <th>${thPicture}</th>
   <%string sCssName="Sort"; if(system.GetSessionVar("sessionLS")=="func"){sCssName="SortSelected";} %>
-  <th><div id="func" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'func',true);">${thFunc}</div></th>
-  <th>${thLastChange}</th>
+  <th data-live-filter-key="thFunc"><div id="func" class="pt11 <%Write(sCssName); %>" onclick="IseSort(arChns,'func',true);">${thFunc}</div></th>
+  <th data-live-filter-key="thLastChange">${thLastChange}</th>
   <th>${thControl}</th>
   </tr>
   
@@ -279,7 +279,7 @@
   jQuery("[name='attention']").data('powertip', '<div>'+translateKey("lblSeeServiceMessage")+'</div>').powerTip();
 
   translatePage("#tblHRoomChannels", function () {
-    iseProgramListFilter.attach("tblHRoomChannels", "hroomchannels", [0, 2, 3], arChns);
+    iseProgramListFilter.attach("tblHRoomChannels", "hroomchannels", arChns);
     jQuery("[name='hssType']").each(function(index, elm) {
       var chText = jQuery(elm).text();
       if (chText.indexOf("chType_") == -1) {
