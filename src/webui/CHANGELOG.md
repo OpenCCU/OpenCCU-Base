@@ -11,7 +11,7 @@ is published.
 
 * search system variables, favorite lists, devices, channels, rooms and functions
   across selected columns and keep each search in the browser tab.
-  (@unbox-digital-printing)
+  ([#393](https://github.com/OpenCCU/OpenCCU-Base/pull/393), @unbox-digital-printing)
 
 * search both program lists across selected columns and keep each search and
   program status filter when returning from the editor
