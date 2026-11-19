@@ -6,6 +6,18 @@ is only provided as a binary. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 OpenCCU-Base release they are part of when it is published.
 
+## Unreleased
+
+* update `HMIPServer.jar` to the build of 2026-11-19 (build 6182, version
+  1.5.2-SNAPSHOT) from eQ-3. A client that registers again on
+  `VirtualDevices` with `init` (or deregisters) no longer leaves its HTTP
+  client with one thread and its file descriptors behind, so a client that
+  re-registers periodically no longer brings the server to "Too many open
+  files" after some days
+  ([#399](https://github.com/OpenCCU/OpenCCU-Base/pull/399),
+  [homematicip#18](https://github.com/homematicip/OpenCCU-Base/pull/18),
+  [#36](https://github.com/OpenCCU/OpenCCU-Base/issues/36), @cn-eq3).
+
 ## 3.89.12 (2026-11-16)
 
 * update `HMIPServer.jar` to version 1.5.2-SNAPSHOT (build 6140 of
