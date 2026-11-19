@@ -154,3 +154,44 @@ progress[value] {
 progress::-moz-progress-bar { background: #3678c9; }
 progress::-webkit-progress-value { background: #3678c9; }
 
+
+/* Enhanced WebUI Basis: expired-session response inside the page content. */
+.session-message-surface {
+  display: grid !important;
+  place-items: center !important;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+  background: #edf2f6;
+  overflow: auto;
+}
+.session-message-surface:not(#content) {
+  min-height: 50vh;
+  height: auto;
+}
+.session-message-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  padding: 28px;
+  text-align: center;
+  background: white;
+  color: #253d50;
+  border: 1px solid #c3d1dd;
+  border-radius: 7px;
+  font: 20px/1.5 Arial, sans-serif;
+}
+.session-message-card .session-message-continue {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 140px;
+  padding: 12px 20px;
+  background: #215f91;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+}
