@@ -849,6 +849,10 @@ jQuery.extend(true,langJSON, {
     "dialogNewDevicesError2" : "Searching " + HMIdentifier.en.BidCosWired + " devices failed.",
     "dialogNewDevicesError3" : "The temporary security key could not be set.",
     "dialogNewDevicesError4" : HMIdentifier.en.BidCosRF + " teach-in mode could not be activated.",
+    "dialogNewDevicesErrorBidCosInvalidSerial" : "The serial number is incomplete or too long. It must have 10 characters.",
+    "dialogNewDevicesErrorHmIPInvalidSgtin" : "The SGTIN is incomplete or too long. It must have 24 characters.",
+    "tooltipHmIPTeachInQrCode" : "Type in KEY (26 characters) &amp; SGTIN regardless of capitalization and without hyphens.<br/>Alternatively, insert the QR code into the empty field with a USB scanner or paste it from the clipboard. The fields are then filled in correctly with KEY (32 characters) &amp; SGTIN.",
+    "dialogNewDevicesErrorHmIPInvalidKey" : "The KEY is invalid. It must have 26 characters as on the device label or 32 characters as in the QR code.",
 
     "dialogNewDevicesErrorSecKeyTitle" : "Teach-in devices - confirmation prompt",
     "dialogNewDevicesErrorSecKeyLbl1" : "You have tried to teach-in the device by entering the serial number. This operation could not be performed.",
