@@ -321,6 +321,8 @@ or extended in it.
   channel, and the alarm and service entries of the event log, are also
   escaped for JavaScript now, as they broke on an apostrophe or a quote.
   ([#315](https://github.com/OpenCCU/OpenCCU-Base/pull/315); refs
+  [OpenCCU/OpenCCU#4632](https://github.com/OpenCCU/OpenCCU/issues/4632),
+  @jens-maus)
 * fix the translation of pages decoding %-escapes like `%3C` in names and
   other texts next to a translation placeholder, so that they could be
   rendered as HTML. Only the translations themselves are decoded now. Unknown
@@ -837,7 +839,9 @@ or extended in it.
   [OpenCCU/OpenCCU#4361](https://github.com/OpenCCU/OpenCCU/issues/4361),
   @jens-maus)
 * fix the type label of the HmIP-PS-A, which was shown as "HMIP-PS-A" (from
-  eQ-3). (@cn-eq3)
+  eQ-3).
+  ([homematicip#15](https://github.com/homematicip/OpenCCU-Base/pull/15),
+  @cn-eq3)
 * show HTML system variable values in the user favorites on the start page
   as HTML also after they are updated, and stop quotes in values from
   breaking the update. The escaping was corrected so that backslashes in

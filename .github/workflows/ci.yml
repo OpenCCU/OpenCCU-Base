@@ -239,3 +239,27 @@ jobs:
 
       - name: Check ReGa scripts in bin/
         run: python3 tests/test-hm-scripts.py -v
+
+  changelog-links:
+    name: Changelog links
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Code
+        # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Test the changelog link check
+        run: python3 tests/test-changelog-links.py -v
+
+      # every new or reworded changelog entry must link its pull request,
+      # issue or commit, which the release notes show for the entry
+      - name: Check the links of new changelog entries
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: python3 scripts/check-changelog-links.py "${BASE_SHA}" HEAD
