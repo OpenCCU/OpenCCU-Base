@@ -30,6 +30,8 @@ node --test tests/webui/test-rega-escapestring.js      # WebUI ReGa.escapeString
 node --test tests/webui/test-translate.js               # WebUI translateString() tests
 node --test tests/webui/test-programs-else-rule.js     # WebUI program editor ELSE rule tests
 python3 tests/test-hm-scripts.py                       # bin/hm_* equal src/webui/rega/bin/hm_*
+python3 tests/test-changelog-links.py                  # changelog link check tests
+python3 scripts/check-changelog-links.py origin/main   # new changelog entries link their change
 ```
 
 Always pass `-DDEPLOY_TO_REPO=OFF` (or use the `Makefile`), otherwise the build
@@ -92,11 +94,15 @@ what you could and could not test.
   changes, in the style of the existing entries: what was wrong or what is
   new, written for users, with links to the pull request and the fixed
   issue, and the GitHub user names of its human authors at the end of that
-  parenthesis (`([#1](…), fixes [#2](…), @a, @b)`; `(@a)` for an entry
-  without links): the author of the pull request and the human co-authors
-  of its commits. Never name bots, AI
-  agents or language models (e.g. `Copilot`, `github-actions[bot]`); for a
-  pull request opened by one, name the human who requested it. A change of
+  parenthesis (`([#1](…), fixes [#2](…), @a, @b)`): the author of the pull
+  request and the human co-authors of its commits. Every entry links at
+  least one pull request, issue or commit on GitHub in that final
+  parenthesis (a change from another repository links its pull request
+  there, e.g. `[homematicip#15](…)`, or its commit); CI checks this for
+  every new or reworded entry with `scripts/check-changelog-links.py`.
+  Never name bots, AI agents or language models (e.g. `Copilot`,
+  `github-actions[bot]`); for a pull request opened by one, name the human
+  who requested it. A change of
   a library goes into the library's changelog, not into those of the
   programs using it. A version bump renames `## Unreleased` to
   `## <version> (<date>)`; for `webui`, `devicetypes` and `hmipserver`, which
