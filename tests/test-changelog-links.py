@@ -80,6 +80,7 @@ class ChangelogLinksTest(unittest.TestCase):
         # adding an author or renaming the section keeps an entry known
         self.commit({"src/rfd/CHANGELOG.md":
                      OLD.replace("@a).", "@a, @b).")
+                        .replace("link. (@a)", "link. (@a, @b)")
                         .replace("2.7.0 (2026-11-01)", "2.7.0 (2026-11-02)")})
         result = self.check()
         self.assertEqual(result.returncode, 0, result.stdout)
