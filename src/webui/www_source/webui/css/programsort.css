@@ -1,0 +1,38 @@
+.RuleSortHandle { display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; min-width:22px; min-height:22px; margin:0 5px 0 0; padding:2px 4px; color:#305979; background:#eaf1f7; border:1px solid #aabecf; border-radius:3px; vertical-align:middle; cursor:grab; user-select:none; touch-action:none; }
+.RuleSortHandle::before { content:"\2261"; font-size:17px; line-height:17px; }
+.RuleSortHandle:hover { background:#d7e8f6; border-color:#729cbd; }
+.RuleSortHandle.RuleSortGroupHandle::before { content:""; }
+.RuleSortHandle.RuleSortLocked::before { content:"\1f512"; font-size:11px; }
+.RuleSortToolbar { height: 40px; box-sizing: border-box; overflow: hidden; margin: 4px 0 6px 0; padding: 3px 6px; font-size: 12px; color: #555; background: #f3f3f3; border: 1px solid #ddd; border-radius: 3px; display: flex; align-items: center; gap: 14px; }
+.RuleSortToolbar label { cursor: pointer; }
+.RuleSortStatus { flex: 1 1 auto; min-width: 0; max-height: 31px; overflow: hidden; line-height: 15px; color: #2a7d2a; }
+.RuleSortStatus.RuleSortBad { color: #b3261e; font-weight: bold; }
+
+.RuleSortBranchBar > .RuleSortHandle::before { width:14px; flex-basis:14px; }
+.RuleSortGroupHandle::before { margin-right:5px; }
+.RuleSortHandle.RuleSortLocked { color:#65798b; background:#eef2f5; border-color:#a4b1bd; cursor:not-allowed; }
+.RuleSortGroupBar { margin:0 0 5px; border-bottom:1px dashed #94aabd; padding-bottom:3px; }
+.RuleSortGroupHandle { width:auto; font-size:11px; letter-spacing:0; padding:0 7px; }
+body.RuleSortDragMode, body.RuleSortDragMode * { cursor: grabbing !important; user-select: none !important; }
+
+.RuleSortBranchRail { position:relative; padding-left:36px!important; box-sizing:border-box; }
+.RuleSortBranchBar { position:absolute; left:2px; top:3px; bottom:3px; width:29px; box-sizing:border-box; margin:0; padding:2px; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:11px; color:#234866; background:#edf3f8; border:1px solid #b5c7d6; border-radius:3px; }
+.RuleSortBranchBar > .RuleSortHandle { flex:0 0 24px; width:24px; height:24px; margin:0; font-size:21px; }
+.RuleSortBranchBar > .RuleSortLocked { flex-basis:16px; height:16px; font-size:14px; }
+.RuleSortBranchLabel { flex:1 1 auto; min-height:0; overflow:hidden; writing-mode:vertical-rl; text-orientation:mixed; transform:rotate(180deg); white-space:nowrap; text-align:center; font-weight:bold; letter-spacing:.04em; }
+.RuleSortBranchBar:has(> .RuleSortLocked) > .RuleSortBranchLabel { font-size:9px; letter-spacing:0; }
+
+
+.RuleSortDragging { opacity: .45; }
+.RuleSortDropBefore { box-shadow: 0 -3px 0 0 #3b7ddd; }
+.RuleSortDropAfter { box-shadow: 0 3px 0 0 #3b7ddd; }
+.RuleSortBranchRail.RuleSortDropAfter{box-shadow:none}
+.RuleSortBranchRail.RuleSortDropAfter::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:3px;z-index:2;background:#3b7ddd;pointer-events:none}
+.RuleSortBranchRail.RuleSortDropAfter:has(.RuleSortEmptyElse)::after{bottom:var(--ruleSortTailHeight,0px)}
+.RuleSortDropInvalid { outline: 2px dashed #c0392b; outline-offset: -2px; }
+.RuleSortGhost { position: fixed; z-index: 100000; pointer-events: none; padding: 2px 8px; font-size: 12px; color: #fff; background: #3b7ddd; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+.RuleSortGhostBad { background: #c0392b; }
+/* The empty ELSE part gets the other block colour, as the next block of the alternating colouring would. */
+.conditionEven.RuleSortBranchRail:has(.RuleSortEmptyElse) { background-image: linear-gradient(to bottom, transparent calc(100% - var(--ruleSortTailHeight, 0px)), $_(programOdd) calc(100% - var(--ruleSortTailHeight, 0px))); }
+.conditionOdd.RuleSortBranchRail:has(.RuleSortEmptyElse) { background-image: linear-gradient(to bottom, transparent calc(100% - var(--ruleSortTailHeight, 0px)), $_(programEven) calc(100% - var(--ruleSortTailHeight, 0px))); }
+.RuleSortRetry { margin-left: 8px; cursor: pointer; text-decoration: underline; color: #3b7ddd; }

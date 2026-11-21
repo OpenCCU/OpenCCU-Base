@@ -1456,3 +1456,780 @@ function ::ShowNonVisiblePrograms()
     system.SetSessionVar("sessionSNVPRG","1");
   }
 }
+
+! ---------------------------------------------------------------------------
+! Drag and drop sorting in the program editor.
+! Sorts conditions, condition groups, activities and IF / ELSE IF branches of
+! the editor copy of a program. The terminal ELSE branch keeps its position.
+! ReGa functions take no parameters: the caller declares the variables a
+! helper function uses, the helper reads and writes them. All helper
+! variables are prefixed with sDnD / iDnD / oDnD.
+! ---------------------------------------------------------------------------
+
+! Returns the item iDnDIdx (0-based) of the list sDnDList in sDnDItem.
+! The items are separated by sDnDSep, which is either "," or ";".
+! Caller declares: string sDnDList, string sDnDSep, integer iDnDIdx, string sDnDItem.
+function ::DnDNthItem()
+{
+  string sDnDTok;
+  integer iDnDPos = 0;
+  sDnDItem = "";
+  if( sDnDSep == ";" )
+  {
+    foreach( sDnDTok, sDnDList.Split(";") )
+    {
+      if( iDnDPos == iDnDIdx ) { sDnDItem = sDnDTok; }
+      iDnDPos = iDnDPos + 1;
+    }
+  }
+  else
+  {
+    foreach( sDnDTok, sDnDList.Split(",") )
+    {
+      if( iDnDPos == iDnDIdx ) { sDnDItem = sDnDTok; }
+      iDnDPos = iDnDPos + 1;
+    }
+  }
+  return;
+}
+
+! Returns rule number iDnDIdx (0-based) of the rule chain starting at oDnDChainStart in oDnDNth.
+! Caller declares: object oDnDChainStart, integer iDnDIdx, object oDnDNth.
+function ::DnDNthRule()
+{
+  object oDnDCur = oDnDChainStart;
+  integer iDnDRPos = 0;
+  while( iDnDRPos < iDnDIdx )
+  {
+    if( oDnDCur ) { oDnDCur = oDnDCur.RuleSubRule(); }
+    iDnDRPos = iDnDRPos + 1;
+  }
+  oDnDNth = oDnDCur;
+  return;
+}
+
+! Converts a ReGa ID list (EnumIDs, tab separated) from sDnDEnumIn into the comma separated form sDnDEnumOut.
+! Caller declares: string sDnDEnumIn, string sDnDEnumOut.
+function ::DnDEnumToCsv()
+{
+  string sDnDEnumTok;
+  sDnDEnumOut = "";
+  foreach( sDnDEnumTok, sDnDEnumIn )
+  {
+    if( sDnDEnumOut != "" ) { sDnDEnumOut = sDnDEnumOut # ","; }
+    sDnDEnumOut = sDnDEnumOut # sDnDEnumTok;
+  }
+  return;
+}
+
+! Reads (sDnDOp "enum"), removes ("remove") or adds ("add") the entry sDnDId of a list.
+! sDnDKind selects the list of the object iDnDOwner: "groups" = condition groups of a rule,
+! "conds" = single conditions of a group, "acts" = activities of a destination.
+! "enum" returns the IDs as comma separated list in sDnDOut. Only the list membership
+! changes, the objects stay intact.
+! Caller declares: string sDnDKind, integer iDnDOwner, string sDnDOp, string sDnDId, string sDnDOut,
+! string sDnDEnumIn, string sDnDEnumOut.
+function ::DnDListOp()
+{
+  if( sDnDKind == "groups" )
+  {
+    if( sDnDOp == "enum" ) { sDnDEnumIn = dom.GetObject(iDnDOwner).RuleConditions().EnumIDs(); }
+    if( sDnDOp == "remove" ) { dom.GetObject(iDnDOwner).RuleConditions().Remove(sDnDId); }
+    if( sDnDOp == "add" ) { dom.GetObject(iDnDOwner).RuleConditions().Add(sDnDId); }
+  }
+  if( sDnDKind == "conds" )
+  {
+    if( sDnDOp == "enum" ) { sDnDEnumIn = dom.GetObject(iDnDOwner).CndSingleConditions().EnumIDs(); }
+    if( sDnDOp == "remove" ) { dom.GetObject(iDnDOwner).CndSingleConditions().Remove(sDnDId); }
+    if( sDnDOp == "add" ) { dom.GetObject(iDnDOwner).CndSingleConditions().Add(sDnDId); }
+  }
+  if( sDnDKind == "acts" )
+  {
+    if( sDnDOp == "enum" ) { sDnDEnumIn = dom.GetObject(iDnDOwner).DestSingleDestinations().EnumIDs(); }
+    if( sDnDOp == "remove" ) { dom.GetObject(iDnDOwner).DestSingleDestinations().Remove(sDnDId); }
+    if( sDnDOp == "add" ) { dom.GetObject(iDnDOwner).DestSingleDestinations().Add(sDnDId); }
+  }
+  if( sDnDOp == "enum" )
+  {
+    Call("/esp/programs.fn::DnDEnumToCsv()");
+    sDnDOut = sDnDEnumOut;
+  }
+  return;
+}
+
+! Checks a permutation: sDnDPerm must hold every position 0..n-1 exactly once, sDnDIds is a comma
+! separated list of n (at least 2) integers. Returns bDnDOk and the number of entries in iDnDCount.
+! Caller declares: string sDnDIds, string sDnDPerm, boolean bDnDOk, integer iDnDCount.
+function ::DnDCheckPerm()
+{
+  string sDnDPTok;
+  integer iDnDPN = 0;
+  integer iDnDPOcc = 0;
+  integer iDnDPWant = 0;
+  bDnDOk = true;
+  iDnDCount = 0;
+  foreach( sDnDPTok, sDnDIds.Split(",") )
+  {
+    iDnDCount = iDnDCount + 1;
+    if( sDnDPTok.ToInteger().ToString() != sDnDPTok ) { bDnDOk = false; }
+  }
+  if( iDnDCount < 2 ) { bDnDOk = false; }
+  foreach( sDnDPTok, sDnDPerm.Split(",") )
+  {
+    iDnDPN = iDnDPN + 1;
+    if( sDnDPTok.ToInteger().ToString() != sDnDPTok ) { bDnDOk = false; }
+    if( sDnDPTok.ToInteger() < 0 ) { bDnDOk = false; }
+    if( sDnDPTok.ToInteger() >= iDnDCount ) { bDnDOk = false; }
+  }
+  if( iDnDPN != iDnDCount ) { bDnDOk = false; }
+  if( bDnDOk )
+  {
+    while( iDnDPWant < iDnDCount )
+    {
+      iDnDPOcc = 0;
+      foreach( sDnDPTok, sDnDPerm.Split(",") )
+      {
+        if( sDnDPTok == iDnDPWant.ToString() ) { iDnDPOcc = iDnDPOcc + 1; }
+      }
+      if( iDnDPOcc != 1 ) { bDnDOk = false; }
+      iDnDPWant = iDnDPWant + 1;
+    }
+  }
+  return;
+}
+
+! Fingerprint of rule number iDnDIdx (0-based) of the chain starting at oDnDChainStart in sDnDFp,
+! "NONE" when the chain has no such rule.
+! Caller declares: object oDnDChainStart, integer iDnDIdx, object oDnDNth, object oDnDFpRule, string sDnDFp.
+function ::DnDFpOf()
+{
+  Call("/esp/programs.fn::DnDNthRule()");
+  oDnDFpRule = oDnDNth;
+  sDnDFp = "NONE";
+  if( oDnDFpRule )
+  {
+    Call("/esp/programs.fn::DnDFingerprint()");
+  }
+  return;
+}
+
+! Removes (sDnDLMode "remove") or adds ("add") the condition groups and activities of one branch record
+! to / from the rule oDnDLRule. A record is "x" followed by comma separated IDs (sDnDLG groups, sDnDLA
+! activities). Mode "bor" only sets the restart flag sDnDLB ("1" or "0").
+! Caller declares: object oDnDLRule, string sDnDLG, string sDnDLA, string sDnDLB, string sDnDLMode.
+function ::DnDRuleLists()
+{
+  string sDnDLTok;
+  string sDnDLCsv;
+  string sDnDLRes;
+  boolean bDnDLBor;
+  boolean bDnDLRes;
+  sDnDLCsv = "";
+  if( sDnDLG.Length() > 1 ) { sDnDLCsv = sDnDLG.Substr(1, sDnDLG.Length() - 1); }
+  foreach( sDnDLTok, sDnDLCsv.Split(",") )
+  {
+    if( sDnDLMode == "remove" ) { sDnDLRes = oDnDLRule.RuleConditions().Remove( sDnDLTok ); }
+    if( sDnDLMode == "add" ) { sDnDLRes = oDnDLRule.RuleConditions().Add( sDnDLTok ); }
+  }
+  sDnDLCsv = "";
+  if( sDnDLA.Length() > 1 ) { sDnDLCsv = sDnDLA.Substr(1, sDnDLA.Length() - 1); }
+  foreach( sDnDLTok, sDnDLCsv.Split(",") )
+  {
+    if( sDnDLMode == "remove" ) { sDnDLRes = oDnDLRule.RuleDestination().DestSingleDestinations().Remove( sDnDLTok ); }
+    if( sDnDLMode == "add" ) { sDnDLRes = oDnDLRule.RuleDestination().DestSingleDestinations().Add( sDnDLTok ); }
+  }
+  if( sDnDLMode == "bor" )
+  {
+    if( sDnDLB == "1" ) { bDnDLBor = true; } else { bDnDLBor = false; }
+    bDnDLRes = oDnDLRule.RuleDestination().BreakOnRestart( bDnDLBor );
+  }
+  return;
+}
+
+! Fingerprint of a complete branch (conditions, time modules, activities) without object IDs.
+! Caller declares: object oDnDFpRule (the branch), string sDnDFp (result).
+function ::DnDFingerprint()
+{
+  string sDnDFg;
+  string sDnDFs;
+  string sDnDFa;
+  string sDnDDelay;
+  object oDnDFc;
+  object oDnDFsc;
+  object oDnDFtm;
+  object oDnDFad;
+  sDnDFp = oDnDFpRule.ElseIfFlag().ToString() # oDnDFpRule.RuleDestination().BreakOnRestart().ToString();
+  sDnDFp = sDnDFp # oDnDFpRule.RuleConditions().Count().ToString() # ":";
+  foreach( sDnDFg, oDnDFpRule.RuleConditions().EnumIDs() )
+  {
+    oDnDFc = dom.GetObject( sDnDFg );
+    sDnDFp = sDnDFp # oDnDFc.CndOperatorType().ToString() # oDnDFc.CndSingleCount().ToString() # ":";
+    foreach( sDnDFs, oDnDFc.CndSingleConditions().EnumIDs() )
+    {
+      oDnDFsc = dom.GetObject( sDnDFs );
+      sDnDFp = sDnDFp # oDnDFsc.ConditionChannel().ToString().Length() # ":" # oDnDFsc.ConditionChannel().ToString() # oDnDFsc.LeftValType().ToString().Length() # ":" # oDnDFsc.LeftValType().ToString() # oDnDFsc.ConditionType().ToString().Length() # ":" # oDnDFsc.ConditionType().ToString() # oDnDFsc.ConditionType2().ToString().Length() # ":" # oDnDFsc.ConditionType2().ToString() # oDnDFsc.RightVal1ValType().ToString().Length() # ":" # oDnDFsc.RightVal1ValType().ToString() # oDnDFsc.RightVal2ValType().ToString().Length() # ":" # oDnDFsc.RightVal2ValType().ToString() # oDnDFsc.RightVal2().ToString().Length() # ":" # oDnDFsc.RightVal2().ToString() # oDnDFsc.OperatorType().ToString().Length() # ":" # oDnDFsc.OperatorType().ToString() # oDnDFsc.NegateCondition().ToString().Length() # ":" # oDnDFsc.NegateCondition().ToString();
+      if( (oDnDFsc.LeftValType() == ivtCurrentDate) && (oDnDFsc.RightVal1ValType() == ivtObjectId) )
+      {
+        oDnDFtm = dom.GetObject( oDnDFsc.RightVal1() );
+        if( oDnDFtm )
+        {
+          sDnDFp = sDnDFp # oDnDFtm.TimerType().ToString().Length() # ":" # oDnDFtm.TimerType().ToString() # oDnDFtm.Time().ToString().Length() # ":" # oDnDFtm.Time().ToString() # oDnDFtm.CalDuration().ToString().Length() # ":" # oDnDFtm.CalDuration().ToString() # oDnDFtm.CalRepeatTime().ToString().Length() # ":" # oDnDFtm.CalRepeatTime().ToString() # oDnDFtm.Weekdays().ToString().Length() # ":" # oDnDFtm.Weekdays().ToString() # oDnDFtm.Period().ToString().Length() # ":" # oDnDFtm.Period().ToString() # oDnDFtm.CalRepetitionValue().ToString().Length() # ":" # oDnDFtm.CalRepetitionValue().ToString() # oDnDFtm.Begin().ToString().Length() # ":" # oDnDFtm.Begin().ToString() # oDnDFtm.End().ToString().Length() # ":" # oDnDFtm.End().ToString() # oDnDFtm.CalRepetitionCount().ToString().Length() # ":" # oDnDFtm.CalRepetitionCount().ToString() # oDnDFtm.SunOffsetType().ToString().Length() # ":" # oDnDFtm.SunOffsetType().ToString();
+        }
+        else
+        {
+          sDnDFp = sDnDFp # "MISSING_TIMER";
+        }
+      }
+      else
+      {
+        sDnDFp = sDnDFp # oDnDFsc.LeftVal().ToString().Length() # ":" # oDnDFsc.LeftVal().ToString() # oDnDFsc.RightVal1().ToString().Length() # ":" # oDnDFsc.RightVal1().ToString();
+      }
+    }
+  }
+  sDnDFp = sDnDFp # oDnDFpRule.RuleDestination().DestSingleCount().ToString() # ":";
+  foreach( sDnDFa, oDnDFpRule.RuleDestination().DestSingleDestinations().EnumIDs() )
+  {
+    oDnDFad = dom.GetObject( sDnDFa );
+    sDnDFp = sDnDFp # oDnDFad.DestinationChannel().ToString().Length() # ":" # oDnDFad.DestinationChannel().ToString() # oDnDFad.DestinationDP().ToString().Length() # ":" # oDnDFad.DestinationDP().ToString() # oDnDFad.DestinationParam().ToString().Length() # ":" # oDnDFad.DestinationParam().ToString() # oDnDFad.DestinationValueType().ToString().Length() # ":" # oDnDFad.DestinationValueType().ToString() # oDnDFad.DestinationValue().ToString().Length() # ":" # oDnDFad.DestinationValue().ToString() # oDnDFad.DestinationValueParamType().ToString().Length() # ":" # oDnDFad.DestinationValueParamType().ToString();
+    if( oDnDFad.DestinationValueParamType() == ivtDelay )
+    {
+      ! Only the time of day belongs to a delay; the date may change when the program is copied.
+      sDnDDelay = oDnDFad.DestinationValueParam().ToString().Substr(11,8);
+      sDnDFp = sDnDFp # sDnDDelay.Length() # ":" # sDnDDelay;
+    }
+    else
+    {
+      sDnDFp = sDnDFp # oDnDFad.DestinationValueParam().ToString().Length() # ":" # oDnDFad.DestinationValueParam().ToString();
+    }
+  }
+  return;
+}
+
+! Answers in bDnDScope whether oWork is the program the editor of this session works on: the editor
+! copy of a saved program, or a new program that is not saved yet. A new program is edited in place,
+! so the session knows it as original and as copy at once and it has no editor copy.
+! Caller declares: object oWork, boolean bDnDScope.
+function ::DnDScopeOk()
+{
+  bDnDScope = true;
+  if( !oWork.IsTypeOf( OT_PROGRAM ) ) { bDnDScope = false; }
+  if( oWork.ID().ToString() != system.GetSessionVar("sessionPRGID").ToString() ) { bDnDScope = false; }
+  if( oWork.ProgramCopyID() == ID_ERROR )
+  {
+    if( oWork.ID().ToString() != system.GetSessionVar("sessionORIGPRGID").ToString() ) { bDnDScope = false; }
+  }
+  return;
+}
+
+! Reorders conditions (kind "conds"), condition groups ("groups") or activities ("acts")
+! in the editor copy of the program. perm holds the old positions in the new order
+! ("2,0,1" = old third entry first). expected is the order the browser shows; the call is
+! refused when the CCU holds a different order. Answers "OK" or "ERR|code" (nothing changed)
+! or "POSTFAIL|code" (the result could not be confirmed, the editor copy must be discarded).
+function ::DnDReorder()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  string sResult = "ERR|invalid";
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("kind")) && (system.IsVar("rid")) && (system.IsVar("owner")) && (system.IsVar("expected")) && (system.IsVar("perm")) )
+  {
+    string sDnDKind = system.GetVar("kind");
+    string sRid = system.GetVar("rid");
+    string sOwner = system.GetVar("owner");
+    string sExpected = system.GetVar("expected");
+    string sPerm = system.GetVar("perm");
+    integer iDnDOwner = 0;
+    string sDnDOp = "";
+    string sDnDId = "";
+    string sDnDOut = "";
+    string sDnDEnumIn = "";
+    string sDnDEnumOut = "";
+    string sDnDList = "";
+    string sDnDSep = ",";
+    integer iDnDIdx = 0;
+    string sDnDItem = "";
+    boolean bValid = true;
+    boolean bDnDScope = false;
+    boolean bFound = false;
+    string sTok;
+    string sOrder = "";
+    string sLastOp = "";
+    string sCurOp = "";
+    integer iN = 0;
+    string sDnDIds = "";
+    string sDnDPerm = "";
+    boolean bDnDOk = false;
+    integer iDnDCount = 0;
+    object oRule;
+    object oWork;
+    object oEntry;
+
+    if( (sDnDKind != "groups") && (sDnDKind != "conds") && (sDnDKind != "acts") ) { bValid = false; }
+    if( (sRid.ToInteger().ToString() != sRid) || (sOwner.ToInteger().ToString() != sOwner) ) { bValid = false; }
+    sDnDIds = sExpected;
+    sDnDPerm = sPerm;
+    Call("/esp/programs.fn::DnDCheckPerm()");
+    if( !bDnDOk ) { bValid = false; }
+    iN = iDnDCount;
+
+    ! The rule must belong to the editor copy of this session.
+    if( bValid )
+    {
+      oRule = dom.GetObject( sRid.ToInteger() );
+      if( !oRule ) { bValid = false; }
+    }
+    if( bValid )
+    {
+      oWork = dom.GetObject( oRule.RuleProgramID() );
+      if( !oWork ) { bValid = false; }
+    }
+    if( bValid )
+    {
+      Call("/esp/programs.fn::DnDScopeOk()");
+      if( !bDnDScope ) { bValid = false; }
+      if( !bValid ) { sResult = "ERR|scope"; }
+    }
+
+    ! The list owner must belong to the rule.
+    if( bValid )
+    {
+      iDnDOwner = sOwner.ToInteger();
+      if( sDnDKind == "groups" )
+      {
+        if( iDnDOwner != oRule.ID() ) { bValid = false; }
+      }
+      if( sDnDKind == "conds" )
+      {
+        foreach( sTok, oRule.RuleConditions().EnumIDs() )
+        {
+          if( sTok == sOwner ) { bFound = true; }
+        }
+        if( !bFound ) { bValid = false; }
+      }
+      if( sDnDKind == "acts" )
+      {
+        if( iDnDOwner != oRule.RuleDestination().ID() ) { bValid = false; }
+      }
+    }
+
+    ! The browser must show the order the CCU holds.
+    if( bValid )
+    {
+      sDnDOp = "enum";
+      Call("/esp/programs.fn::DnDListOp()");
+      if( sDnDOut != sExpected )
+      {
+        bValid = false;
+        sResult = "ERR|stale";
+      }
+    }
+
+    ! Moving entries with different AND/OR operators would change the meaning of the program.
+    if( bValid )
+    {
+      if( sDnDKind != "acts" )
+      {
+        foreach( sTok, sExpected.Split(",") )
+        {
+          oEntry = dom.GetObject( sTok.ToInteger() );
+          if( !oEntry ) { bValid = false; }
+          else
+          {
+            if( sDnDKind == "groups" ) { sCurOp = oEntry.CndOperatorType().ToString(); }
+            else { sCurOp = oEntry.OperatorType().ToString(); }
+            if( sLastOp != "" )
+            {
+              if( sLastOp != sCurOp ) { bValid = false; sResult = "ERR|mixed"; }
+            }
+            sLastOp = sCurOp;
+          }
+        }
+      }
+    }
+
+    if( bValid )
+    {
+      ! New order: the entry at old position perm[k] goes to position k.
+      foreach( sTok, sPerm.Split(",") )
+      {
+        sDnDList = sExpected;
+        sDnDSep = ",";
+        iDnDIdx = sTok.ToInteger();
+        Call("/esp/programs.fn::DnDNthItem()");
+        if( sOrder != "" ) { sOrder = sOrder # ","; }
+        sOrder = sOrder # sDnDItem;
+      }
+      foreach( sTok, sExpected.Split(",") )
+      {
+        sDnDOp = "remove";
+        sDnDId = sTok;
+        Call("/esp/programs.fn::DnDListOp()");
+      }
+      foreach( sTok, sOrder.Split(",") )
+      {
+        sDnDOp = "add";
+        sDnDId = sTok;
+        Call("/esp/programs.fn::DnDListOp()");
+      }
+      sDnDOp = "enum";
+      Call("/esp/programs.fn::DnDListOp()");
+      if( sDnDOut == sOrder )
+      {
+        sResult = "OK";
+      }
+      else
+      {
+        ! Best effort rollback when ReGa refused a change.
+        foreach( sTok, sOrder.Split(",") )
+        {
+          sDnDOp = "remove";
+          sDnDId = sTok;
+          Call("/esp/programs.fn::DnDListOp()");
+        }
+        foreach( sTok, sExpected.Split(",") )
+        {
+          sDnDOp = "add";
+          sDnDId = sTok;
+          Call("/esp/programs.fn::DnDListOp()");
+        }
+        sDnDOp = "enum";
+        Call("/esp/programs.fn::DnDListOp()");
+        if( sDnDOut == sExpected ) { sResult = "ERR|failed"; }
+        else { sResult = "POSTFAIL|rollback"; }
+      }
+    }
+  }
+  Write( sResult );
+  return;
+}
+
+! Reorders whole IF / ELSE IF branches. rids lists the IDs of all conditional branches in their current
+! order, perm the old positions in the new order. The branches are moved through a temporary native
+! copy of the program (the native copy re-parents objects and time modules). The terminal ELSE branch
+! stays where it is. A second, untouched copy serves as reference for the comparison of the result.
+! Answers "OK|programID|firstRuleID|ruleIDs" or "ERR|code" (nothing changed) or "POSTFAIL|code"
+! (the result could not be confirmed, the editor copy must be discarded).
+function ::DnDReorderBranches()
+{
+  object oUser = dom.GetObject( system.GetSessionVar("sessionUserID") );
+  string sResult = "ERR|invalid";
+  if( (oUser.UserLevel() == iulAdmin) && (system.IsVar("rids")) && (system.IsVar("perm")) )
+  {
+    string sRids = system.GetVar("rids");
+    string sPerm = system.GetVar("perm");
+    string sDnDIds = "";
+    string sDnDPerm = "";
+    boolean bDnDOk = false;
+    integer iDnDCount = 0;
+    string sDnDList = "";
+    string sDnDSep = ",";
+    integer iDnDIdx = 0;
+    string sDnDItem = "";
+    string sDnDEnumIn = "";
+    string sDnDEnumOut = "";
+    object oDnDChainStart;
+    object oDnDNth;
+    object oDnDFpRule;
+    string sDnDFp = "";
+    object oDnDLRule;
+    string sDnDLG = "";
+    string sDnDLA = "";
+    string sDnDLB = "";
+    string sDnDLMode = "";
+    object oWork;
+    object oStage;
+    object oRef;
+    object oRule;
+    integer iOrigCopy = 0;
+    integer iN = 0;
+    integer iI = 0;
+    integer iSrc = 0;
+    string sFpA = "";
+    string sFpB = "";
+    string sRecG = "";
+    string sRecA = "";
+    string sRecB = "";
+    boolean bValid = true;
+    boolean bDnDScope = false;
+    boolean bCommitted = false;
+    boolean bFailed = false;
+    boolean bReadBackDiff = false;
+    string sNewRules = "";
+    string sFailCode = "failed";
+    string sBorTok = "";
+
+    sDnDIds = sRids;
+    sDnDPerm = sPerm;
+    Call("/esp/programs.fn::DnDCheckPerm()");
+    if( !bDnDOk ) { bValid = false; }
+    iN = iDnDCount;
+
+    ! All branches must belong to the editor copy of this session and form the start of its rule chain.
+    if( bValid )
+    {
+      sDnDList = sRids;
+      sDnDSep = ",";
+      iDnDIdx = 0;
+      Call("/esp/programs.fn::DnDNthItem()");
+      oRule = dom.GetObject( sDnDItem.ToInteger() );
+      if( !oRule ) { bValid = false; }
+    }
+    if( bValid )
+    {
+      oWork = dom.GetObject( oRule.RuleProgramID() );
+      if( !oWork ) { bValid = false; }
+    }
+    if( bValid )
+    {
+      Call("/esp/programs.fn::DnDScopeOk()");
+      if( !bDnDScope ) { bValid = false; }
+      if( !bValid ) { sResult = "ERR|scope"; }
+    }
+    if( bValid )
+    {
+      oDnDChainStart = oWork.Rule();
+      iI = 0;
+      while( iI < iN )
+      {
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        sDnDList = sRids;
+        Call("/esp/programs.fn::DnDNthItem()");
+        if( !oDnDNth ) { bValid = false; }
+        else
+        {
+          if( oDnDNth.ID().ToString() != sDnDItem ) { bValid = false; }
+          if( !oDnDNth.ElseIfFlag() ) { bValid = false; }
+        }
+        iI = iI + 1;
+      }
+      ! The rule behind the last branch is either missing or the terminal ELSE.
+      iDnDIdx = iN;
+      Call("/esp/programs.fn::DnDNthRule()");
+      if( oDnDNth )
+      {
+        if( oDnDNth.ElseIfFlag() ) { bValid = false; }
+      }
+      if( !bValid ) { sResult = "ERR|stale"; }
+    }
+
+    if( bValid )
+    {
+      iOrigCopy = oWork.ProgramCopyID();
+      oStage = oWork.ProgramCopyTo();
+      oWork.ProgramCopyID( iOrigCopy );
+      oRef = oWork.ProgramCopyTo();
+      oWork.ProgramCopyID( iOrigCopy );
+      if( (!oStage) || (!oRef) )
+      {
+        bValid = false;
+        sResult = "ERR|copy";
+      }
+    }
+
+    ! Both copies must match the editor copy, the ELSE branch included.
+    if( bValid )
+    {
+      iI = 0;
+      while( iI <= iN )
+      {
+        iDnDIdx = iI;
+        oDnDChainStart = oWork.Rule();
+        Call("/esp/programs.fn::DnDFpOf()");
+        sFpA = sDnDFp;
+        oDnDChainStart = oStage.Rule();
+        Call("/esp/programs.fn::DnDFpOf()");
+        if( sDnDFp != sFpA ) { bValid = false; }
+        oDnDChainStart = oRef.Rule();
+        Call("/esp/programs.fn::DnDFpOf()");
+        if( sDnDFp != sFpA ) { bValid = false; }
+        iI = iI + 1;
+      }
+      if( !bValid ) { sResult = "ERR|copy"; }
+    }
+
+    if( bValid )
+    {
+      oStage.Active( false );
+      ! Records of the staged branches: "x" followed by the IDs, one record per branch.
+      iI = 0;
+      while( iI < iN )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        sDnDEnumIn = oDnDNth.RuleConditions().EnumIDs();
+        Call("/esp/programs.fn::DnDEnumToCsv()");
+        if( iI > 0 ) { sRecG = sRecG # ";"; sRecA = sRecA # ";"; sRecB = sRecB # ";"; }
+        sRecG = sRecG # "x" # sDnDEnumOut;
+        sDnDEnumIn = oDnDNth.RuleDestination().DestSingleDestinations().EnumIDs();
+        Call("/esp/programs.fn::DnDEnumToCsv()");
+        sRecA = sRecA # "x" # sDnDEnumOut;
+        if( oDnDNth.RuleDestination().BreakOnRestart() ) { sRecB = sRecB # "1"; } else { sRecB = sRecB # "0"; }
+        iI = iI + 1;
+      }
+      ! Take the entries out of every staged branch.
+      iI = 0;
+      while( iI < iN )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        sDnDList = sRecG; sDnDSep = ";"; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()"); sDnDLG = sDnDItem;
+        sDnDList = sRecA; Call("/esp/programs.fn::DnDNthItem()"); sDnDLA = sDnDItem;
+        sDnDLMode = "remove";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      oDnDChainStart = oStage.Rule();
+      ! Put them back in the new order: branch k receives the entries of old branch perm[k].
+      iI = 0;
+      while( iI < iN )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
+        iSrc = sDnDItem.ToInteger();
+        sDnDList = sRecG; sDnDSep = ";"; iDnDIdx = iSrc; Call("/esp/programs.fn::DnDNthItem()"); sDnDLG = sDnDItem;
+        sDnDList = sRecA; Call("/esp/programs.fn::DnDNthItem()"); sDnDLA = sDnDItem;
+        sDnDList = sRecB; Call("/esp/programs.fn::DnDNthItem()"); sDnDLB = sDnDItem;
+        sDnDLMode = "add";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      ! The restart flags are set in a loop of their own, after all entries are in place.
+      iI = 0;
+      foreach( sBorTok, sPerm.Split(",") )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        iSrc = sBorTok.ToInteger();
+        sDnDList = sRecB; sDnDSep = ";"; iDnDIdx = iSrc; Call("/esp/programs.fn::DnDNthItem()"); sDnDLB = sDnDItem;
+        sDnDLG = ""; sDnDLA = "";
+        sDnDLMode = "bor";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      oDnDChainStart = oStage.Rule();
+      ! Every sorted branch must equal the reference branch it stands for.
+      iI = 0;
+      while( iI < iN )
+      {
+        sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
+        iSrc = sDnDItem.ToInteger();
+        oDnDChainStart = oRef.Rule();
+        iDnDIdx = iSrc;
+        Call("/esp/programs.fn::DnDFpOf()");
+        sFpA = sDnDFp;
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDFpOf()");
+        if( sDnDFp != sFpA )
+        {
+          if( !bFailed ) { sFailCode = "fp"; }
+          bFailed = true;
+        }
+        iI = iI + 1;
+      }
+      if( !bFailed )
+      {
+        bCommitted = oStage.ProgramCopyTo( oWork.ID() );
+        oWork.ProgramCopyID( iOrigCopy );
+        if( !bCommitted ) { bFailed = true; sFailCode = "commit"; }
+      }
+      ! Restore the staged lists before the temporary program is deleted.
+      iI = 0;
+      while( iI < iN )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
+        iSrc = sDnDItem.ToInteger();
+        sDnDList = sRecG; sDnDSep = ";"; iDnDIdx = iSrc; Call("/esp/programs.fn::DnDNthItem()"); sDnDLG = sDnDItem;
+        sDnDList = sRecA; Call("/esp/programs.fn::DnDNthItem()"); sDnDLA = sDnDItem;
+        sDnDLMode = "remove";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      iI = 0;
+      while( iI < iN )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        sDnDList = sRecG; sDnDSep = ";"; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()"); sDnDLG = sDnDItem;
+        sDnDList = sRecA; Call("/esp/programs.fn::DnDNthItem()"); sDnDLA = sDnDItem;
+        sDnDLMode = "add";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      iI = 0;
+      foreach( sBorTok, sRecB.Split(";") )
+      {
+        oDnDChainStart = oStage.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDNthRule()");
+        oDnDLRule = oDnDNth;
+        sDnDLB = sBorTok;
+        sDnDLG = ""; sDnDLA = "";
+        sDnDLMode = "bor";
+        Call("/esp/programs.fn::DnDRuleLists()");
+        iI = iI + 1;
+      }
+      dom.DeleteObject( oStage.ID() );
+
+      ! Read the editor copy again and compare every branch, the ELSE branch included. If the commit
+      ! failed, the editor copy must still equal the reference, the CCU does not guarantee that.
+      iI = 0;
+      while( iI <= iN )
+      {
+        iSrc = iI;
+        if( (iI < iN) && bCommitted )
+        {
+          sDnDList = sPerm; sDnDSep = ","; iDnDIdx = iI; Call("/esp/programs.fn::DnDNthItem()");
+          iSrc = sDnDItem.ToInteger();
+        }
+        oDnDChainStart = oRef.Rule();
+        iDnDIdx = iSrc;
+        Call("/esp/programs.fn::DnDFpOf()");
+        sFpA = sDnDFp;
+        oDnDChainStart = oWork.Rule();
+        iDnDIdx = iI;
+        Call("/esp/programs.fn::DnDFpOf()");
+        if( sDnDFp != sFpA ) { bReadBackDiff = true; }
+        Call("/esp/programs.fn::DnDNthRule()");
+        if( oDnDNth )
+        {
+          if( sNewRules != "" ) { sNewRules = sNewRules # ","; }
+          sNewRules = sNewRules # oDnDNth.ID().ToString();
+        }
+        iI = iI + 1;
+      }
+      if( bReadBackDiff )
+      {
+        if( bCommitted ) { sResult = "POSTFAIL|unconfirmed"; }
+        else { sResult = "POSTFAIL|" # sFailCode; }
+      }
+      else
+      {
+        if( bCommitted ) { sResult = "OK|" # oWork.ID().ToString() # "|" # oWork.Rule().ID().ToString() # "|" # sNewRules; }
+        else { sResult = "ERR|" # sFailCode; }
+      }
+      dom.DeleteObject( oRef.ID() );
+    }
+    else
+    {
+      if( oStage ) { dom.DeleteObject( oStage.ID() ); }
+      if( oRef ) { dom.DeleteObject( oRef.ID() ); }
+    }
+  }
+  Write( sResult );
+  return;
+}
