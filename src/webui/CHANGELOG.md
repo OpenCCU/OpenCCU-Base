@@ -7,6 +7,11 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the HmIP-WSS valve is visible in device controls by default, with open and
+  close buttons, position feedback, and translated status and service messages.
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with

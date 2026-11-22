@@ -152,6 +152,21 @@
             sEnumUserIDs = sEnumUserInternalIDs;
           }
         }
+        ! Show the water stop valve even when system-internal channels are hidden.
+        if (device.HssType() == "HmIP-WSS") {
+          string valveId;
+          foreach(valveId, device.Channels().EnumIDs()) {
+            object valveChannel = dom.GetObject(valveId);
+            if (valveChannel && (valveChannel.ChnNumber() == 2) && (valveChannel.HssType() == "VALVE_ACTUATOR_RECEIVER")) {
+              string listedIds = "\t"#sEnumUserIDs#"\t";
+              string valveEntry = "\t"#valveId#"\t";
+              if (listedIds.Find(valveEntry) == -1) {
+                if (sEnumUserIDs != "") { sEnumUserIDs = sEnumUserIDs#"\t"; }
+                sEnumUserIDs = sEnumUserIDs#valveId;
+              }
+            }
+          }
+        }
         string tmp;
         foreach(tmp, sEnumUserIDs) {
           object chn = dom.GetObject(tmp);
