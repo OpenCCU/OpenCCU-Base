@@ -7,6 +7,23 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the program list no longer changes the programs it shows: it set an
+  invalid comparison or trigger of the first condition of a program to a
+  default when the list was shown. After a channel is selected for a
+  condition or an activity in the program editor, the first entry shown
+  for the new channel is now saved once the condition or activity is shown
+  again, instead of after a fixed delay, which could save the entry of the
+  previous channel. Together with ReGaHss R1.00.0388.0270, which corrects
+  the invalid settings of a condition or activity when its data point or
+  system variable is changed, this fixes programs which only triggered
+  once, never or on the wrong value after they were edited.
+  ([#406](https://github.com/OpenCCU/OpenCCU-Base/pull/406), see
+  [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775),
+  [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776),
+  @jens-maus)
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with
