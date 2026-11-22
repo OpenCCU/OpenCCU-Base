@@ -1613,6 +1613,16 @@ function ::CreateUnknown()
                   bHideValue = true;
                 }
                 sTitle = web.webKeyFromStringTable( sLongKey );
+                if (!sTitle.Length() && bHideValue && ((cObj.HssType() == "VALVE_ACTUATOR_RECEIVER") || (cObj.HssType() == "WATER_FLOW_TRANSMITTER") || (cObj.HssType() == "WATER_PRESSURE_TRANSMITTER")))
+                {
+                  ! Let channels with a translated parameter name show unlisted status codes.
+                  string sStatusTitle = web.webKeyFromStringTable(cObj.HssType()#"|"#oDP.HSSID());
+                  if (sStatusTitle.Length())
+                  {
+                    sTitle = sStatusTitle;
+                    bHideValue = false;
+                  }
+                }
                 if( !sTitle.Length() )
                 {
                   sTitle = web.webKeyFromStringTable( sShortKey );
@@ -1753,9 +1763,35 @@ function ::CreateUnknown()
                     {
                       if( (bStatusOnly) && (!bIsSysVar) && (sLastControlName == ""))
                       {
-                        string sDivider = "";
-                        if( oDP.ValueUnit() == "100%" ) { sDivider = "/100"; }
-                        WriteLine( "<input size='6' value='"#sValue#"' onblur='setDpState("#oDP.ID()#", value"#sDivider#")' />"#sSpace#sValueUnit );
+                        boolean bWaterStopLevel = false;
+                        if( bChannel && (cObj.HssType() == "VALVE_ACTUATOR_RECEIVER") && (oDP.HSSID() == "LEVEL") )
+                        {
+                          object oValveDevice = dom.GetObject(cObj.Device());
+                          if( oValveDevice )
+                          {
+                            bWaterStopLevel = (oValveDevice.HssType() == "HmIP-WSS");
+                          }
+                        }
+
+                        if( bWaterStopLevel )
+                        {
+                          var valveLevel = oDP.Value();
+                          string valvePosition = "${lblUnknown}";
+                          if (valveLevel.Type() == "real")
+                          {
+                            if (valveLevel == 1.0) { valvePosition = "${lblPosOpen}"; }
+                            if (valveLevel == 0.0) { valvePosition = "${lblPosClosed}"; }
+                          }
+                          WriteLine(valvePosition);
+                          WriteLine("<br><button type='button' onclick='setDpState("#oDP.ID()#", 1)'>${lblOpen}</button>");
+                          WriteLine("<button type='button' onclick='setDpState("#oDP.ID()#", 0)'>${btnGarageClose}</button>");
+                        }
+                        else
+                        {
+                          string sDivider = "";
+                          if( oDP.ValueUnit() == "100%" ) { sDivider = "/100"; }
+                          WriteLine( "<input size='6' value='"#sValue#"' onblur='setDpState("#oDP.ID()#", value"#sDivider#")' />"#sSpace#sValueUnit );
+                        }
                       }
                       else
                       {

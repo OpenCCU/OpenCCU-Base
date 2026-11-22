@@ -2341,3 +2341,15 @@ TYPICAL_PARTICLE_SIZE	${stringTableTypicalParticelSize}
 TYPICAL_PARTICLE_SIZE_STATUS=NORMAL	${stringTableTypicalParticelSize} ${lblStatus} ${lblNormal}
 TYPICAL_PARTICLE_SIZE_STATUS=UNKNOWN	${stringTableTypicalParticelSize} ${lblStatus} ${lblUnknown}
 TYPICAL_PARTICLE_SIZE_STATUS=OVERFLOW	${stringTableTypicalParticelSize} ${lblStatus} ${lblOverflow}
+VALVE_ACTUATOR_RECEIVER|LEVEL	${stringTableWssValvePosition}
+VALVE_ACTUATOR_RECEIVER|LEVEL_STATUS=0	${stringTableWssValvePositionNormal}
+VALVE_ACTUATOR_RECEIVER|PROCESS	${stringTableWssProcess}
+VALVE_ACTUATOR_RECEIVER|SECTION	${stringTableWssSection}
+VALVE_ACTUATOR_RECEIVER|SECTION_STATUS	${stringTableWssSectionStatus}
+VALVE_ACTUATOR_RECEIVER|VACATION_MODE_STATE=FALSE	${stringTableWssVacationOff}
+VALVE_ACTUATOR_RECEIVER|VACATION_MODE_STATE=TRUE	${stringTableWssVacationOn}
+WATER_FLOW_TRANSMITTER|WATER_FLOW_STATUS	${stringTableWssFlowStatus}
+WATER_PRESSURE_TRANSMITTER|WATER_PRESSURE	${stringTableWssPressure}
+WATER_PRESSURE_TRANSMITTER|WATER_PRESSURE_STATUS	${stringTableWssPressureStatus}
+MAINTENANCE|ERROR_NOT_RECHARGEABLE_BATTERY	${stringTableWssNonRechargeableBattery}
+MAINTENANCE|ERROR_CAN_BUS	${stringTableWssCanBusError}
