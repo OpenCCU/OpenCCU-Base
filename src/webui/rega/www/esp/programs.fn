@@ -327,9 +327,11 @@ function ::WriteConditionText()
                       sValueUnit = "";
                     }
                     
+                    ! (the list only shows the program: an invalid comparison is shown
+                    ! like the program editor shows it, the program is not changed,
+                    ! see OpenCCU/OpenCCU#4775)
                     if( (iCT1 != 1) && (iCT1 != 5) && (iCT1 != 6) && (iCT1 != 8) && (iCT1 != 9) && (iCT1 != 10) && (iCT1 != 11) && (iCT1 != 12) )
                     {
-                      oSC.ConditionType(6);
                       iCT1 = 6;
                     }
 
@@ -359,9 +361,10 @@ function ::WriteConditionText()
                   boolean bAction = ( oLV.ValueSubType() == istAction );
                   if( !bAction )
                   {
-                    if( (iCT2 != 15) && (oSC.ConditionType2() != 13) && (oSC.ConditionType2() != 4) )
+                    ! (shown like the program editor shows it, the program is not changed)
+                    if( (iCT2 != 15) && (iCT2 != 13) && (iCT2 != 4) )
                     {
-                      oSC.ConditionType2(4);
+                      iCT2 = 4;
                     }
                     !if( iCT2 == 13 ) {sCT = 'auslösen auf Aktualisierung';}
                     if( iCT2 == 13 ) {sCT = '${ruleConditionSelectTriggerWhenUpdated}';}
@@ -417,9 +420,10 @@ function ::WriteConditionText()
                   string sTm = "";
                   Call("/esp/system.fn::TmToString()");
                   sRet = sRet#' '#sTm;                
-                  if( (iCT2 != 15) && (oSC.ConditionType2() != 13) )
+                  ! (shown like the program editor shows it, the program is not changed)
+                  if( (iCT2 != 15) && (iCT2 != 13) )
                   {
-                    oSC.ConditionType2(13);
+                    iCT2 = 13;
                   }
                   !if( iCT2 == 13 ) {sRet = sRet#' auslösen zu Zeitpunkten';}
                   if( iCT2 == 13 ) {sRet = sRet#' ${ruleConditionSelectTriggerOnTime}';}

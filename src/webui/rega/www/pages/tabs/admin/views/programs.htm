@@ -887,12 +887,14 @@
     {
       if (result) {
         window.setTimeout(function() {
-          iseSingleDestination.SetChannel(scid, result);
-          // Necessary for the COMBINED_PARAMETER
-          window.setTimeout(function () {
+          // once the activity of the new channel is shown, save its first data
+          // point and value shown (and the COMBINED_PARAMETER), which SetChannel
+          // does not set (a fixed delay saved the previous ones if the activity
+          // was not shown again by then, see OpenCCU/OpenCCU#4776)
+          iseSingleDestination.SetChannel(scid, result, function () {
             jQuery("#setDestinationDPSelectChange" + scid).change();
             jQuery("#prgStringOptionValue"+scid).change();
-          }, 750);
+          });
         },500);
       }
     };
@@ -907,10 +909,13 @@
       if (result) {
 
         window.setTimeout(function() {
-          iseSingleCondition.SetChannel(scid, result);
-          window.setTimeout(function() {
+          // once the condition of the new channel is shown, save its first entry
+          // shown, which SetChannel does not set (a fixed delay saved the one of
+          // the previous channel if the condition was not shown again by then,
+          // see OpenCCU/OpenCCU#4775)
+          iseSingleCondition.SetChannel(scid, result, function() {
             jQuery("#selectConditionWhen" + scid).change();
-          },250);
+          });
         },500);
       }
     };
@@ -1033,14 +1038,18 @@
     iseRefr(true);
     TranslatePrgRulePage();
   };
-  ReloadSingleDestination = function(sdid)
+  // onReloaded (optional): called once the activity is shown again
+  ReloadSingleDestination = function(sdid, onReloaded)
   {
     iseRefr(false);
     var url = "/esp/side.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "ReloadSiDe";';
     pb += 'string id = "'+sdid+'";';
-    var opts = { postBody: pb, onComplete: ReloadSiDeCallback };
+    var opts = { postBody: pb, onComplete: function(t) {
+      ReloadSiDeCallback(t);
+      if (onReloaded) { onReloaded(); }
+    } };
     new Ajax.Updater("side"+sdid,url,opts);
   };
   ReloadSiCoCallback = function(t)
@@ -1048,14 +1057,18 @@
     iseRefr(true);
     TranslatePrgRulePage();
   };
-  ReloadSingleCondition = function(scid)
+  // onReloaded (optional): called once the condition is shown again
+  ReloadSingleCondition = function(scid, onReloaded)
   {
     iseRefr(true);
     var url = "/esp/sico.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "ReloadSiCo";';
     pb += 'string id = "'+scid+'";';
-    var opts = { postBody: pb, onComplete: ReloadSiCoCallback };
+    var opts = { postBody: pb, onComplete: function(t) {
+      ReloadSiCoCallback(t);
+      if (onReloaded) { onReloaded(); }
+    } };
     new Ajax.Updater("sico"+scid,url,opts);
   };
   LoadRuleCallback = function(t)
