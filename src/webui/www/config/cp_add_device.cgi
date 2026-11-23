@@ -159,7 +159,7 @@ proc putSectionBidCosRF {} {
           append html "<tr>"
             append html "<td>\${dialogNewDevicesBidCosRFLbl4}</td>"
             append html "<td>"
-              append html "<input id='text_serial' size='28' name='serial'>"
+              append html "<input id='text_serial' style='width: 100%; box-sizing: border-box;' name='serial' oninput='filterTeachInInput(this, TEACHIN_FIELD_BIDCOS_SERIAL, event);'>"
             append html "</td>"
 
             append html "<td>"
@@ -277,8 +277,9 @@ proc putSectionHMIP {} {
                 append html "<td style='text-align: right'>"
                   append html "<span>\${lblTeachInKEY}</span>"
                 append html "</td>"
-                append html "<td>"
-                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
+                append html "<td style='white-space: nowrap;'>"
+                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:360px' placeholder='XXXXX-XXXXX-XXXXX-XXXXX-XXXXXX' oninput='filterTeachInInput(this, TEACHIN_FIELD_HMIP_KEY, event);'>"
+                  append html "<img class='j_hmIPTeachInQrCodeHelp' src='/ise/img/help.png' height='24' width='24' style='vertical-align: middle; margin-left: 5px; cursor: help;'>"
                 append html "</td>"
               append html "</tr>"
 
@@ -287,7 +288,7 @@ proc putSectionHMIP {} {
                   append html "<span>\${lblTeachInSGTIN}</span>"
                 append html "</td>"
                 append html "<td>"
-                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px' oninput='let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);'>"
+                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:360px' placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX' oninput='filterTeachInInput(this, TEACHIN_FIELD_HMIP_SGTIN, event);'>"
                 append html "</td>"
               append html "</tr>"
 
@@ -379,8 +380,9 @@ proc putSectionHMIPWired {} {
                 append html "<td style='text-align: right'>"
                   append html "<span>\${lblTeachInKEY}</span>"
                 append html "</td>"
-                append html "<td>"
-                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:390px'>"
+                append html "<td style='white-space: nowrap;'>"
+                  append html "<input id='keyHmIPLocal_$iFace' type='text' style='width:360px' placeholder='XXXXX-XXXXX-XXXXX-XXXXX-XXXXXX' oninput='filterTeachInInput(this, TEACHIN_FIELD_HMIP_KEY, event);'>"
+                  append html "<img class='j_hmIPTeachInQrCodeHelp' src='/ise/img/help.png' height='24' width='24' style='vertical-align: middle; margin-left: 5px; cursor: help;'>"
                 append html "</td>"
               append html "</tr>"
 
@@ -389,7 +391,7 @@ proc putSectionHMIPWired {} {
                   append html "<span>\${lblTeachInSGTIN}</span>"
                 append html "</td>"
                 append html "<td>"
-                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:390px;'>"
+                  append html "<input id='serialHmIPLocal_$iFace' type='text' style='width:360px;' placeholder='XXXX-XXXX-XXXX-XXXX-XXXX-XXXX' oninput='filterTeachInInput(this, TEACHIN_FIELD_HMIP_SGTIN, event);'>"
                 append html "</td>"
               append html "</tr>"
 
@@ -498,6 +500,252 @@ puts "</div>"
 
     puts "var url = \"$env(SCRIPT_NAME)?sid=\" + SessionId;"
     puts "var installTimerHmIP = 0;"
+    puts {
+      // Input of the teach-in dialog: allowed characters, normalization and
+      // validation of the HmIP SGTIN/KEY and the BidCos-RF serial number
+      /**
+       * SGTIN and KEY of a HmIP device as the local teach-in expects them: the
+       * SGTIN as 24 hex digits, the KEY as 32 hex digits or as 26 digits of the
+       * eQ-3 Base32 alphabet (HMIP_KEY_CHARS of convertHmIPKeyBase32ToBase16 in ic_common.js).
+       * 26 Base32 digits carry 130 bits, so the first digit of a 128 bit key is 0-7.
+       */
+      HMIP_SGTIN_LENGTH = 24;
+      HMIP_KEY_HEX_LENGTH = 32;
+      HMIP_KEY_BASE32_LENGTH = 26;
+      HMIP_HEX_DIGITS = /^[0-9A-F]+$/;
+      HMIP_KEY_BASE32_DIGITS = /^[0-7][0-9A-CE-HJ-NP-UW-Z]*$/;
+
+      /**
+       * Serial number of a BidCos-RF device as the teach-in by serial number
+       * expects it: 10 upper case letters and digits (the CONFIG_SERIAL field of
+       * the rfd frame has a fixed length of 10 bytes)
+       */
+      BIDCOS_SERIAL_LENGTH = 10;
+      BIDCOS_SERIAL_CHARS = /^[0-9A-Z]+$/;
+
+      /**
+       * Converts to upper case and removes everything but digits and letters, e.g.
+       * hyphens, blanks and line breaks of a value copied from a label or OCR scan
+       * @param value
+       */
+      normalizeTeachInValue = function(value) {
+        // strip first: toUpperCase() turns some letters into A-Z (e.g. "\u00df" into "SS")
+        return String(value).replace(/[^0-9A-Za-z]/g, "").toUpperCase();
+      };
+
+      /**
+       * Input fields of the teach-in dialog: characters that cannot be typed
+       * (the KEY field allows hex and Base32; eQ-3 Base32 has no D, I, O, V,
+       * hex needs the D) and the groups the value is shown in, separated by
+       * TEACHIN_GROUP_SEPARATOR, like on the device label. The KEY is shown
+       * like the label up to its Base32 length, longer only as hex (e.g. the
+       * KEY of the QR code). Length and exact format are checked on submit.
+       */
+      TEACHIN_GROUP_SEPARATOR = "-";
+      TEACHIN_GROUPS_HMIP_SGTIN = [4, 4, 4, 4, 4, 4];
+      TEACHIN_GROUPS_HMIP_KEY_BASE32 = [5, 5, 5, 5, 6];
+      TEACHIN_GROUPS_HMIP_KEY_HEX = [4, 4, 4, 4, 4, 4, 4, 4];
+      TEACHIN_FIELD_HMIP_SGTIN = {
+        invalidChars: /[^0-9A-F]/g,
+        groups: function(length) { return TEACHIN_GROUPS_HMIP_SGTIN; },
+        qrCode: true
+      };
+      TEACHIN_FIELD_HMIP_KEY = {
+        invalidChars: /[^0-9A-HJ-NP-UW-Z]/g,
+        groups: function(length) {
+          return (length > HMIP_KEY_BASE32_LENGTH) ? TEACHIN_GROUPS_HMIP_KEY_HEX : TEACHIN_GROUPS_HMIP_KEY_BASE32;
+        },
+        qrCode: true
+      };
+      TEACHIN_FIELD_BIDCOS_SERIAL = {
+        invalidChars: /[^0-9A-Z]/g,
+        groups: null,
+        qrCode: false
+      };
+
+      /**
+       * Letters typed for the digit they look like. Replaced only in a field
+       * where the letter itself is invalid (SGTIN and KEY), so a BidCos serial
+       * number keeps its O and I.
+       */
+      TEACHIN_LOOKALIKE_DIGITS = {'O': '0', 'I': '1'};
+      TEACHIN_LOOKALIKE_LETTERS = new RegExp("[" + Object.keys(TEACHIN_LOOKALIKE_DIGITS).join("") + "]", "g");
+
+      /**
+       * Content of the QR code of a HmIP device label (after
+       * normalizeTeachInValue): "EQ01", "SG" + SGTIN, "DLK" + KEY as hex
+       */
+      HMIP_QR_CODE = /^EQ01SG([0-9A-F]{24})DLK([0-9A-F]{32})$/;
+      // the same as template, "H" for a hex digit (to recognize a scan in progress)
+      HMIP_QR_CODE_TEMPLATE = "EQ01SG" + "H".repeat(HMIP_SGTIN_LENGTH) + "DLK" + "H".repeat(HMIP_KEY_HEX_LENGTH);
+      HMIP_TEACHIN_SGTIN_ID = "serialHmIPLocal_";
+      HMIP_TEACHIN_KEY_ID = "keyHmIPLocal_";
+
+      /**
+       * Returns the value without invalid characters of the field, in upper
+       * case; an invalid O or I becomes 0 or 1 (TEACHIN_LOOKALIKE_DIGITS)
+       * @param value
+       * @param field one of the TEACHIN_FIELD_* descriptions
+       */
+      cleanTeachInValue = function(value, field) {
+        var isInvalid = function(c) { return c.replace(field.invalidChars, "") == ""; };
+        return normalizeTeachInValue(value)
+          .replace(TEACHIN_LOOKALIKE_LETTERS, function(c) { return isInvalid(c) ? TEACHIN_LOOKALIKE_DIGITS[c] : c; })
+          .replace(field.invalidChars, "");
+      };
+
+      /**
+       * Returns the cleaned value in the groups of the field; characters beyond
+       * the last group stay in it (the length is checked on submit)
+       * @param cleaned value of cleanTeachInValue()
+       * @param field one of the TEACHIN_FIELD_* descriptions
+       */
+      formatTeachInValue = function(cleaned, field) {
+        var groups = field.groups ? field.groups(cleaned.length) : [],
+          parts = [],
+          pos = 0;
+        for (var i = 0; (i < groups.length - 1) && (pos + groups[i] < cleaned.length); i++) {
+          parts.push(cleaned.substr(pos, groups[i]));
+          pos += groups[i];
+        }
+        parts.push(cleaned.substr(pos));
+        return parts.join(TEACHIN_GROUP_SEPARATOR);
+      };
+
+      /**
+       * Position in the formatted value behind its count-th character
+       * (separators not counted)
+       */
+      teachInCaretPosition = function(formatted, count) {
+        var pos = 0;
+        while ((count > 0) && (pos < formatted.length)) {
+          if (formatted.charAt(pos) != TEACHIN_GROUP_SEPARATOR) {
+            count--;
+          }
+          pos++;
+        }
+        return pos;
+      };
+
+      /**
+       * True while the value can be the beginning of the QR code content, e.g.
+       * while a scanner with keyboard output types it character by character
+       * @param value value of normalizeTeachInValue()
+       */
+      isHmIPQrCodePrefix = function(value) {
+        if ((value.length == 0) || (value.length > HMIP_QR_CODE_TEMPLATE.length)) {
+          return false;
+        }
+        for (var i = 0; i < value.length; i++) {
+          var expected = HMIP_QR_CODE_TEMPLATE.charAt(i);
+          if ((expected == "H") ? !HMIP_HEX_DIGITS.test(value.charAt(i)) : (expected != value.charAt(i))) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      /**
+       * If the value is the content of the QR code of a HmIP label, fills
+       * the SGTIN and KEY field of the interface and returns true
+       * @param input SGTIN or KEY input element, id HMIP_TEACHIN_*_ID + interface
+       */
+      fillHmIPTeachInFromQrCode = function(input) {
+        var qrCode = HMIP_QR_CODE.exec(normalizeTeachInValue(input.value)),
+          iFace = input.id.substr(input.id.indexOf("_") + 1);
+        if (qrCode == null) {
+          return false;
+        }
+        var sgtinInput = document.getElementById(HMIP_TEACHIN_SGTIN_ID + iFace),
+          keyInput = document.getElementById(HMIP_TEACHIN_KEY_ID + iFace);
+        sgtinInput.value = formatTeachInValue(qrCode[1], TEACHIN_FIELD_HMIP_SGTIN);
+        keyInput.value = formatTeachInValue(qrCode[2], TEACHIN_FIELD_HMIP_KEY);
+        sgtinInput.teachInCleaned = qrCode[1];
+        keyInput.teachInCleaned = qrCode[2];
+        input.setSelectionRange(input.value.length, input.value.length);
+        return true;
+      };
+
+      /**
+       * oninput handler of the teach-in fields: removes invalid characters
+       * (TEACHIN_FIELD_*), converts to upper case and shows the value in the
+       * groups of the label, keeping the caret behind the same character, so
+       * typing and pasting work alike. A deleted separator deletes the
+       * character next to it, otherwise it would only reappear. Pasting the
+       * QR code content into the SGTIN or KEY field fills both, as does
+       * a scanner typing it into the empty field.
+       * @param input input element
+       * @param field one of the TEACHIN_FIELD_* descriptions
+       * @param event input event (for inputType), may be missing
+       */
+      filterTeachInInput = function(input, field, event) {
+        if (field.qrCode && fillHmIPTeachInFromQrCode(input)) {
+          return;
+        }
+        var normalized = normalizeTeachInValue(input.value);
+        if (field.qrCode && isHmIPQrCodePrefix(normalized)) {
+          // QR code content typed by a scanner, not complete yet: filtering now
+          // would drop its letters, so it could never be recognized
+          input.value = normalized;
+          input.teachInCleaned = undefined;
+          return;
+        }
+        var value = input.value,
+          inputType = event ? event.inputType : "",
+          cleaned = cleanTeachInValue(value, field),
+          cleanCaret = cleanTeachInValue(value.slice(0, input.selectionStart), field).length;
+
+        if ((cleaned === input.teachInCleaned) &&
+            ((inputType == "deleteContentBackward") || (inputType == "deleteContentForward"))) {
+          var at = (inputType == "deleteContentBackward") ? cleanCaret - 1 : cleanCaret;
+          if ((at >= 0) && (at < cleaned.length)) {
+            cleaned = cleaned.slice(0, at) + cleaned.slice(at + 1);
+            cleanCaret = at;
+          }
+        }
+        input.teachInCleaned = cleaned;
+
+        var formatted = formatTeachInValue(cleaned, field);
+        if (formatted != value) {
+          var newCaret = teachInCaretPosition(formatted, cleanCaret);
+          input.value = formatted;
+          input.setSelectionRange(newCaret, newCaret);
+        }
+      };
+
+      /**
+       * Returns the serial number of a BidCos-RF device or null if it is invalid
+       * @param value
+       */
+      getBidCosTeachInSerial = function(value) {
+        var serial = normalizeTeachInValue(value);
+        return (serial.length == BIDCOS_SERIAL_LENGTH && BIDCOS_SERIAL_CHARS.test(serial)) ? serial : null;
+      };
+
+      /**
+       * Returns the SGTIN as 24 hex digits or null if the value is no valid SGTIN
+       * @param value
+       */
+      getHmIPTeachInSgtin = function(value) {
+        var sgtin = normalizeTeachInValue(value);
+        return (sgtin.length == HMIP_SGTIN_LENGTH && HMIP_HEX_DIGITS.test(sgtin)) ? sgtin : null;
+      };
+
+      /**
+       * Returns the KEY as 32 hex digits or null if the value is no valid KEY
+       * @param value KEY as 32 hex digits or 26 eQ-3 Base32 digits
+       */
+      getHmIPTeachInKey = function(value) {
+        var key = normalizeTeachInValue(value);
+        if (key.length == HMIP_KEY_HEX_LENGTH && HMIP_HEX_DIGITS.test(key)) {
+          return key;
+        }
+        if (key.length == HMIP_KEY_BASE32_LENGTH && HMIP_KEY_BASE32_DIGITS.test(key)) {
+          return convertHmIPKeyBase32ToBase16(key);
+        }
+        return null;
+      };
+    }
     puts {
       update_new_device_count = function() {
         var pb = "action=get_new_device_count";
@@ -614,7 +862,24 @@ puts "</div>"
         }
       };
 
-      hmip_install_mode_start = function(interface, mode) {
+      // SGTIN and KEY of the local teach-in, or null after a message if one is invalid
+      hmip_local_teachin_values = function(iFace) {
+        var devAddress = getHmIPTeachInSgtin(jQuery("#serialHmIPLocal_" + iFace).val()),
+         devKey = getHmIPTeachInKey(jQuery("#keyHmIPLocal_" + iFace).val());
+
+        if (devAddress == null) {
+          alert(translateKey("dialogNewDevicesErrorHmIPInvalidSgtin"));
+          return null;
+        }
+        if (devKey == null) {
+          alert(translateKey("dialogNewDevicesErrorHmIPInvalidKey"));
+          return null;
+        }
+        return {'address': devAddress, 'key': devKey};
+      };
+
+      // localValues: SGTIN and KEY of hmip_local_teachin_values() for mode "local"
+      hmip_install_mode_start = function(interface, mode, localValues) {
         var devAddress = "",
          devKey = "",
          devKeyMode = "",
@@ -623,9 +888,8 @@ puts "</div>"
          var iFace = interface;
 
         if (mode == "local") {
-          devAddress = jQuery("#serialHmIPLocal_" + iFace).val().replace(/-/g,"").toUpperCase();
-          devKey = jQuery("#keyHmIPLocal_" + iFace).val().replace(/-/g,"").toUpperCase();
-          devKey = (devKey.length < 32) ? convertHmIPKeyBase32ToBase16(devKey) : devKey;
+          devAddress = localValues.address;
+          devKey = localValues.key;
           devKeyMode = 'LOCAL';
 
           homematic('Interface.setInstallModeHMIP',{
@@ -654,7 +918,17 @@ puts "</div>"
 
       hmip_install_mode = function(interface, mode) {
 
-        var iFace = interface;
+        var iFace = interface,
+          localValues = null;
+
+        // SGTIN and KEY are checked once, before anything is stopped; the
+        // start uses these values, not the fields when the STOP returns
+        if (mode == "local") {
+          localValues = hmip_local_teachin_values(iFace);
+          if (localValues == null) {
+            return;
+          }
+        }
 
         if(jQuery("body").data("BidCos-RF")) {
           rf_install_mode(false);
@@ -670,11 +944,11 @@ puts "</div>"
             'key' : '',
             'keymode' : ''
             }, function() {
-              hmip_install_mode_start(iFace, mode);
+              hmip_install_mode_start(iFace, mode, localValues);
             }
           );
         } else {
-          hmip_install_mode_start(iFace,mode);
+          hmip_install_mode_start(iFace, mode, localValues);
         }
       };
 
@@ -717,9 +991,14 @@ puts "</div>"
     }
     puts {
       rf_serial = function() {
+        var serial = getBidCosTeachInSerial(document.getElementById("text_serial").value);
+        if (serial == null) {
+          alert(translateKey("dialogNewDevicesErrorBidCosInvalidSerial"));
+          return;
+        }
         hmip_install_mode_stop();
         var pb = "action=rf_serial&";
-        pb += "serial="+document.getElementById("text_serial").value;
+        pb += "serial="+encodeURIComponent(serial);
         Cursor.set(Cursor.WAIT);
         var opts = {
           postBody: pb,
@@ -734,10 +1013,10 @@ puts "</div>"
               if(cp_addev_updater)cp_adddev_updater.stop();
               dlgPopup.hide();
               dlgPopup.setWidth(400);
-              dlgPopup.LoadFromFile(url, "action=put_key_dialog&serial="+document.getElementById("text_serial").value+"&with_serial=1");
+              dlgPopup.LoadFromFile(url, "action=put_key_dialog&serial="+encodeURIComponent(serial)+"&with_serial=1");
             } else {
               //alert("BidCoS-RF Anlernen mit Seriennummer "+document.getElementById("text_serial").value+ unescape(" fehlgeschlagen. Bitte %FCberpr%FCfen Sie die Seriennummer."));
-              alert(translateKey("dialogNewDevicesError1a")+document.getElementById("text_serial").value+ translateKey("dialogNewDevicesError1b"));
+              alert(translateKey("dialogNewDevicesError1a")+serial+ translateKey("dialogNewDevicesError1b"));
             }
           },
           onFailure: function(transport) {
@@ -802,12 +1081,30 @@ puts "</div>"
         }
       }        
     }
+    # Teach-in by serial number repeated after the security key dialog
+    # (serial=...&call_js=rf_serial()): put the serial number back into its
+    # field, only if it is a valid one (BIDCOS_SERIAL_LENGTH letters and digits)
+    if {[regexp {^[A-Z0-9]{10}$} $serial]} {
+      puts "jQuery('#text_serial').val('$serial');"
+    }
     catch {
       import call_js
       puts "$call_js;"
     }
 
     puts "translatePage('#messagebox');"
+
+    puts {
+      // Tooltip of the help icon next to the HmIP KEY field (local teach-in).
+      // Only after translatePage(): it rewrites the cells of the dialog and so
+      // replaces the elements, the tooltip of an element set before is lost.
+      jQuery(".j_hmIPTeachInQrCodeHelp").each(function() {
+        // #powerTip does not wrap (white-space: nowrap), the text needs a width
+        jQuery(this).data('powertip', "<div style='white-space: normal; width: 350px;'>" + translateKey("tooltipHmIPTeachInQrCode") + "</div>");
+        jQuery(this).powerTip({placement: 'sw', followMouse: false});
+      });
+    }
+
     puts "dlgPopup.readaptSize();"
 
   }
@@ -891,7 +1188,7 @@ proc action_put_key_dialog {} {
     puts {
       try_again = function() {
         var pb = "action=set_temp_key&";
-        pb += "key="+document.getElementById("text_aes_key").value;
+        pb += "key="+encodeURIComponent(document.getElementById("text_aes_key").value.trim());
         var opts = {
           postBody: pb,
           sendXML: false,
