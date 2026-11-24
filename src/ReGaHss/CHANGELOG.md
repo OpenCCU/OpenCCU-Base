@@ -11,6 +11,63 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0270 (2026-11-24)
+
+* fix the modified flag of the object model being set again shortly after it
+  was saved: an inactive program with a time module was deactivated again at
+  each trigger by a data point or system variable of its conditions, which
+  updated the timers and set the modified flag each time, even though its
+  time modules were already disabled, so that `dom.IsDOMModified()` stayed
+  true and the object model was saved again and again. Only enabled time
+  modules are now disabled (and the timers updated). Activating or
+  deactivating a program with `Active()` now sets the modified flag if the
+  state changes, also for a program without a time module.
+  (cf. [OpenCCU/OpenCCU#4791](https://github.com/OpenCCU/OpenCCU/issues/4791))
+* mark the error page of an invalid or expired session for the WebUI, which
+  loads it into its content area: the message is wrapped in an element with
+  the id `sessionInvalid` (styled by the WebUI), and the message and the
+  link have the keys of their translations (`sessionInvalid`,
+  `sessionInvalidLogin`) as name, so that the WebUI can show them in its
+  language. The message now reads "Die Sitzung ist ungültig oder
+  abgelaufen!" (was "Sitzung ungültig oder abgelaufen!") and the link "Neu
+  anmelden" (was "Weiter"); its target and the status of the page are
+  unchanged, as are the other error pages.
+  (cf. [OpenCCU/OpenCCU-Base#415](https://github.com/OpenCCU/OpenCCU-Base/pull/415))
+* add a warning at the start of ReGaHss for each condition and activity of a
+  program with settings which are invalid for its data point, system
+  variable or time module, e.g. left by editing the program in an earlier
+  version (see the entry below): the comparison or trigger of a condition,
+  the index of an entry of a value list or a number outside of the range
+  of a system variable. The warning names the program, the condition or
+  activity and the invalid setting; the settings are not corrected, as
+  this could change what the program does. A condition on a key press is
+  not reported, as it is evaluated like a new one.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776))
+* fix programs which no longer worked correctly after a condition or an
+  activity was edited: changing the data point or system variable of a
+  condition kept its trigger and comparison, e.g. "on change" after a key
+  was selected (the program was only executed at the first key press),
+  "greater than" after a logic value was selected (the condition was met
+  by the other value) or the index of an entry of another value list
+  (never met), and changing the system variable of an activity kept the
+  value, e.g. the index of an entry of another value list or a number
+  outside of the range of the new system variable. The settings of a
+  condition (LeftVal(), LeftValType()) and of an activity (DestinationDP())
+  now correct the values which are invalid for the new data point or system
+  variable, in the WebUI as well as in scripts, and keep the valid ones.
+  Changing the kind of a condition (device, system variable, time) resets
+  its trigger and comparison.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776))
+* fix a program with a condition on a key press (or another data point of
+  an action, e.g. the timer event of a CUxD timer) only being executed at
+  the first key press, or never: the condition kept the trigger ("on
+  change") or the comparison (e.g. "in the range of") of a data point or
+  system variable selected before in the WebUI, which is not shown for a
+  key. A condition on a key press is now always evaluated like a new one
+  (each key press triggers the program, whatever the trigger and the
+  comparison of the condition are), which also repairs existing programs.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4422](https://github.com/OpenCCU/OpenCCU/issues/4422))
+
 ## R1.00.0388.0269 (2026-11-11)
 
 * fix the setters BreakOnRestart(value) of a rule destination and
