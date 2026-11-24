@@ -72,7 +72,8 @@ input[type=checkbox], input[type=radio] {
   /* padding: 4px; */
 }
 
-.colorGradient {
+.colorGradient,
+#sessionInvalid a {
   /*background-image:url(/ise/img/gradientButton25px.png) !important;*/
   /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
   background-image: var(--btnGradient) !important;
@@ -399,7 +400,8 @@ a img {
 }
 
 /* Standard-Button (z.B. Benutzernamen bei Login) */
-.Button {
+.Button,
+#sessionInvalid a {
   background-color: $_(clickable);
   /*background-image:url(/ise/img/gradientButton50px.png) !important;*/
   /*background-image: linear-gradient(to bottom, white 40%, gray) !important;*/
