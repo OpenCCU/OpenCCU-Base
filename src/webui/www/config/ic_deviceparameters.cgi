@@ -975,6 +975,7 @@ proc put_channel_parameters {} {
         || ([string equal $ch_paramid "dw_controller_color_virt_ch_master"] == 1)
         || ([string equal $ch_paramid "dw_controller_brightness_ch_master"] == 1)
         || ([string equal $ch_paramid "dw_controller_brightness_virt_ch_master"] == 1)
+        || ([string equal $ch_paramid "hb_sw_tp_ch_master"] == 1)
         } {
          setInternalDeviceKey $ch_paramid
         }
@@ -993,7 +994,8 @@ proc put_channel_parameters {} {
         global receiver_address sender_address dev_descr_sender 
         set sender_address $ch_address
         set receiver_address $ch_address
-        incr counter
+        #incr counter
+        set counter [lindex [split $ch_descr(ADDRESS) ":"] 1]
         
         # internal key unlocked in xml-file?
         if {![catch {array set intKey [xmlrpc $iface_url($iface) getParamset [list string $dev_descr(ADDRESS)] [list string MASTER]]}]} {

@@ -7,6 +7,18 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the homebrew devices of the
+  [JP-HB-Devices addon](https://github.com/jp112sdl/JP-HB-Devices-addon)
+  (86 device types such as HB-UNI-Sen-*, HB-UNI-SenAct-*, HB-OU-*, HB-RC-*,
+  HB-LC-* and HB-DIS-EP-*) are supported without the addon: their device
+  images and descriptions, channel controls, settings and link pages,
+  translations and the program editor conditions are now part of the WebUI.
+  The info and error buttons of the addon in the header and its `jp.*` API
+  methods are not taken over.
+  ([#XXX](https://github.com/OpenCCU/OpenCCU-Base/pull/XXX), @jp112sdl)
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with

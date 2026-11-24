@@ -101,6 +101,43 @@
       ReloadSingleDestination(sdid);
     };
   };  
+  
+  // HB-RC-6-PBU-LED
+  ChangeHBRC6LEDValue = function(sdid)
+  {
+    iseSingleDestination.reload = false;
+    dlgResult = "";
+    CreatePopup(ID_SET_HBRC6LED_MODE, "X:"+sdid);
+    PopupClose = function()
+    {
+      dlgPopup.hide();
+      ReloadSingleDestination(sdid);
+    };
+  };
+  // HB-OU-RGBW-LED-FX
+  ChangeHBOURGBWLEDFXValue = function(sdid)
+  {
+    iseSingleDestination.reload = false;
+    dlgResult = "";
+    CreatePopup(ID_SET_HBOURGBWLEDFX_MODE, "X:"+sdid);
+    PopupClose = function()
+    {
+      dlgPopup.hide();
+      ReloadSingleDestination(sdid);
+    };
+  };
+  // MP3 HB Funkgong
+  ChangeHBOUCFMValue = function(sdid)
+  {
+    iseSingleDestination.reload = false;
+    dlgResult = "";
+    CreatePopup(ID_SET_HBOUCFM_MODE, "X:"+sdid);
+    PopupClose = function()
+    {
+      dlgPopup.hide();
+      ReloadSingleDestination(sdid);
+    };
+  };
 
   // Heating thermostate
   SetPartyMode = function(elm) {
@@ -162,6 +199,9 @@
       case "ACOUSTIC_DIS-EP":
         elm = jQuery("#ePaperAcousticDisplay" + regaDialogID);
         break;
+      case "DIS-EP42BW":
+        elm = jQuery("#setHbStatusDisplayEPaper" + regaDialogID);
+        break;
     }
 
     jQuery(elm).prop("disabled", true);
@@ -198,6 +238,19 @@
             conInfo(cfgString);
             inputElm.val(cfgString); //.change();
             encodeStringStatusDisplay(inputElm.prop("id"));
+            inputElm.change();
+          }
+        }, "html");
+      } else if (mode == "DIS-EP42BW") {
+         statusDisplayDialog = new HbStatusDisplayDialogEPaper(translateKey("statusDisplayDialogTitle"), htmlContent, jQuery(inputElm).val(), function (result) {
+          jQuery(elm).prop("disabled", false);
+          if (result == 1) {
+            conInfo("SetStatusDisplay: Yes pressed");
+            var inputElm = jQuery(elm).prev();
+            var cfgString = this.getConfigString();
+            conInfo(cfgString);
+            inputElm.val(cfgString); //.change();
+            encodeStringStatusDisplay(inputElm.prop("id"),false, '0x7e');
             inputElm.change();
           }
         }, "html");
