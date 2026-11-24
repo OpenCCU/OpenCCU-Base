@@ -7,6 +7,16 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the message of an invalid or expired session ("Sitzung ungültig oder
+  abgelaufen!") is shown centered in the content area like the login mask,
+  with "Weiter" as a WebUI button. It needs a ReGaHss that marks the message
+  with the id `sessionInvalid`; with an older ReGaHss the message is shown as
+  before.
+  ([#368](https://github.com/OpenCCU/OpenCCU-Base/pull/368),
+  @unbox-digital-print, @MichaelN0815)
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with
