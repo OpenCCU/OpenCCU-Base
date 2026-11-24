@@ -9,6 +9,10 @@ is published.
 
 ## 3.89.13 (2026-11-18)
 
+* sort both program lists by name, description, program ID or last saved
+  time. Programs without a recorded save time stay at the end when sorting
+  by that column. ([#394](https://github.com/OpenCCU/OpenCCU-Base/pull/394), @unbox-digital-printing)
+
 * the date, time and name filters of the system protocol are applied with
   Enter, as the filters of the other lists already are.
   ([#385](https://github.com/OpenCCU/OpenCCU-Base/pull/385), see
@@ -45,6 +49,9 @@ is published.
 ## 3.89.12 (2026-11-16)
 
 ### Changes
+
+* show the program ID and the last WebUI save time in both program lists
+  (@unbox-digital-printing).
 
 Entries marked "OpenCCU patch NNNN" were an OpenCCU rootfs patch of the
 WebUI before; they describe the function of the patch and what was corrected
