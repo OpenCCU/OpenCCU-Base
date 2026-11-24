@@ -50,8 +50,8 @@ function load(page, lang) {
     loadTextResource: () => {},
     HMIdentifier: { de: { x: 1 }, en: { x: 1 } },
     langJSON: {
-      de: { sessionInvalid: 'Die Sitzung ist ung%FCltig oder abgelaufen!', forward: 'Weiter zur Startseite' },
-      en: { sessionInvalid: 'The session is invalid or expired', forward: 'Forward to start page' },
+      de: { sessionInvalid: 'Die Sitzung ist ung%FCltig oder abgelaufen!', sessionInvalidLogin: 'Neu anmelden' },
+      en: { sessionInvalid: 'The session is invalid or expired', sessionInvalidLogin: 'Log in again' },
     },
     jQuery,
   };
@@ -62,8 +62,8 @@ function load(page, lang) {
 // The error page of ReGaHss: message and link with the German texts.
 function sessionInvalidPage() {
   return [
-    element('SPAN', 'sessionInvalid', 'Sitzung ungültig oder abgelaufen!\r\n'),
-    element('A', 'forward', 'Weiter', { href: '/index.htm' }),
+    element('SPAN', 'sessionInvalid', 'Die Sitzung ist ungültig oder abgelaufen!\r\n'),
+    element('A', 'sessionInvalidLogin', 'Neu anmelden', { href: '/index.htm' }),
   ];
 }
 
@@ -71,7 +71,7 @@ test('translates the message and the link into English', () => {
   const page = sessionInvalidPage();
   load(page, 'en').context.translateSessionInvalid();
   assert.equal(page[0].textContent, 'The session is invalid or expired');
-  assert.equal(page[1].textContent, 'Forward to start page');
+  assert.equal(page[1].textContent, 'Log in again');
   assert.equal(page[1].getAttribute('href'), '/index.htm');
 });
 
@@ -79,7 +79,7 @@ test('translates the message and the link into German (decoded)', () => {
   const page = sessionInvalidPage();
   load(page, 'de').context.translateSessionInvalid();
   assert.equal(page[0].textContent, 'Die Sitzung ist ungültig oder abgelaufen!');
-  assert.equal(page[1].textContent, 'Weiter zur Startseite');
+  assert.equal(page[1].textContent, 'Neu anmelden');
 });
 
 test('does nothing without the error page', () => {

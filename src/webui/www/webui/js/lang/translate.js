@@ -164,7 +164,7 @@ function translateJSTemplate(container) {
 /**
  * Translates the error page of ReGaHss for an invalid or expired session,
  * which the WebUI loads into its content area: its message and link carry the
- * keys of their translations as name ("sessionInvalid", "forward"), see
+ * keys of their translations as name ("sessionInvalid", "sessionInvalidLogin"), see
  * translateJSTemplate(). Without the page (or with an older ReGaHss, which
  * does not mark it) nothing is changed.
  */
