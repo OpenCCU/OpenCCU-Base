@@ -11,11 +11,13 @@ is published.
 
 * the message of an invalid or expired session ("Sitzung ungültig oder
   abgelaufen!") is shown centered in the content area like the login mask,
-  with "Weiter" as a WebUI button. It needs a ReGaHss that marks the message
-  with the id `sessionInvalid`; with an older ReGaHss the message is shown as
-  before.
-  ([#368](https://github.com/OpenCCU/OpenCCU-Base/pull/368),
-  @unbox-digital-print, @MichaelN0815)
+  with the link to the start page as a WebUI button, and in the language of
+  the WebUI. It needs a ReGaHss (R1.00.0388.0270 or newer) that marks the
+  message with the id `sessionInvalid` and the keys of its translations;
+  with an older ReGaHss the message is shown as before.
+  ([#415](https://github.com/OpenCCU/OpenCCU-Base/pull/415),
+  [#368](https://github.com/OpenCCU/OpenCCU-Base/pull/368),
+  @unbox-digital-print, @MichaelN0815, @jens-maus)
 
 ## 3.89.13 (2026-11-18)
 
