@@ -9,6 +9,10 @@ getGatewayStatus = function()
 var globalLGWTypeMap = {};
 var globalLGWTypes = {LANIF : "Lan Interface", HMWLGW : "HMWLGW", HMLGW2 : "HMLGW2"};
 var globalGWClasses = {RF : "RF", Wired : "Wired"};
+// BidCos LAN gateway serial numbers always have 10 characters (an OpenCCU used as LGW strips its serial to 10 characters).
+var globalLGWSerialPattern = /^[A-Z0-9]{10}$/i;
+// HmIP device address (14 hex digits) or SGTIN (24 hex digits) as printed on HmIP devices, e.g. the access point HmIP-HAP.
+var globalHmIPSerialPattern = /^([0-9A-F]{14}|[0-9A-F]{24})$/i;
 
 BidcosRfPage =
 {
@@ -679,6 +683,25 @@ BidcosRfPage =
   {
     return this.m_defaultGateway;
   }
+};
+
+/**
+ * @fn checkGatewaySerial
+ * @brief Prueft die Seriennummer eines LAN Gateways und zeigt bei ungueltiger Eingabe einen Hinweis an
+ * @param serial Seriennummer aus dem Dialog
+ * @return true, wenn die Seriennummer gueltig ist
+ **/
+BidcosRfPage.checkGatewaySerial = function(serial)
+{
+  var value = (typeof serial == "string") ? serial : "";
+  if (globalLGWSerialPattern.test(value)) { return true; }
+
+  var errorKey = "dialogSettingsBidCosRFSerialErrorLength";
+  if (globalHmIPSerialPattern.test(value.replace(/[\s-]/g, ""))) {
+    errorKey = "dialogSettingsBidCosRFSerialErrorHmIP";
+  }
+  MessageBox.show(translateKey("dialogSettingsBidCosRFSerialErrorTitle"), translateKey(errorKey), null, 400, 120);
+  return false;
 };
 
 BidcosRfPage.Gateway = function()
@@ -1364,6 +1387,8 @@ BidcosRfPage.EditGatewayDialog = Class.create({
    **/
   ok: function()
   {
+    // keep the dialog open if the serial number is not a LAN gateway serial number
+    if (!BidcosRfPage.checkGatewaySerial(this.getSerial())) { return; }
     if (this.m_action) { this.m_action(this); }
     this.close();
   },
@@ -1795,6 +1820,8 @@ BidcosRfPage.AddGatewayDialog = Class.create({
    **/
   ok: function()
   {
+    // keep the dialog open if the serial number is not a LAN gateway serial number
+    if (!BidcosRfPage.checkGatewaySerial(this.getSerial())) { return; }
     if (this.m_action) { this.m_action(this); }
     this.close();
   },

@@ -7,6 +7,19 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the LAN gateway configuration no longer accepts serial numbers that cannot
+  belong to a BidCos LAN gateway: the add and edit dialogs only take serial
+  numbers with 10 letters and digits. A Homematic IP device such as the
+  access point HmIP-HAP, entered with its HmIP address, was written to the
+  rfd configuration as LAN gateway, which rfd could not connect to and the
+  watchdog reported as disconnected; the dialogs now point to teaching in
+  such devices instead. Existing entries are not changed.
+  ([#416](https://github.com/OpenCCU/OpenCCU-Base/pull/416), see
+  [homematic-forum.de](https://homematic-forum.de/forum/viewtopic.php?p=869130#p869129),
+  @MichaelN0815)
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with
