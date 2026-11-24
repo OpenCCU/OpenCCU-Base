@@ -162,6 +162,19 @@ function translateJSTemplate(container) {
 }
 
 /**
+ * Translates the error page of ReGaHss for an invalid or expired session,
+ * which the WebUI loads into its content area: its message and link carry the
+ * keys of their translations as name ("sessionInvalid", "sessionInvalidLogin"), see
+ * translateJSTemplate(). Without the page (or with an older ReGaHss, which
+ * does not mark it) nothing is changed.
+ */
+function translateSessionInvalid() {
+  if (jQuery("#sessionInvalid").length > 0) {
+    translateJSTemplate("#sessionInvalid");
+  }
+}
+
+/**
  * Translates an attribute of a given element.
  * This can e. g. be useful for translating tooltips
  * @param elemSelector {string} jQuery selector like ".class" of "#id"

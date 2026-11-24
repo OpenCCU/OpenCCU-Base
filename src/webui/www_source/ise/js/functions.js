@@ -314,6 +314,12 @@ updateContentCurrentPage = function()
 updateContentLoaded = function()
 {
   iseRefr(true);
+  // the error page of ReGaHss for an invalid or expired session is shown in
+  // the language of the WebUI (see translateSessionInvalid() in translate.js)
+  if( typeof translateSessionInvalid == "function" )
+  {
+    translateSessionInvalid();
+  }
   var keepsLock = (updateContentPending !== null);
   if( !keepsLock )
   {
