@@ -771,7 +771,7 @@ function ::CreateBWTHSwitchState() {
 
   object oChannel = dom.GetObject(chnId);
   string chAddress = oChannel.Address();
-  string devAddress = chnAddress.StrValueByIndex(":",0);
+  string devAddress = chAddress.StrValueByIndex(":",0);
   string ch8Address = devAddress#":8";
 
   boolean valveState = false;
@@ -794,7 +794,7 @@ function ::CreateBWTHSwitchState() {
     WriteLine("state = "#valveState#",");
     WriteLine("lblValveState = translateKey('stringTableValveStateNotAvailable');");
 
-    WriteLine("if (parseInt(chn8Description.HEATING_VALVE_TYPE) == 0) {" );
+    WriteLine("if (chn8Description && parseInt(chn8Description.HEATING_VALVE_TYPE) == 0) {" );
 
       WriteLine("if (state == true) {");
         WriteLine("lblValveState = translateKey('stringTableValveStateTrue');");
@@ -802,7 +802,7 @@ function ::CreateBWTHSwitchState() {
         WriteLine("lblValveState = translateKey('stringTableValveStateFalse');");
       WriteLine("}");
 
-    WriteLine("} else if (parseInt(chn8Description.HEATING_VALVE_TYPE) == 1) {");
+    WriteLine("} else if (chn8Description && parseInt(chn8Description.HEATING_VALVE_TYPE) == 1) {");
 
       WriteLine("if (state == true) {");
         WriteLine("lblValveState = translateKey('stringTableValveStateFalse');");

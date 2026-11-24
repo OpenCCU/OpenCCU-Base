@@ -7,6 +7,18 @@ The WebUI has no version of its own: changes not yet released are collected
 under `Unreleased` and get the OpenCCU-Base release they are part of when it
 is published.
 
+## Unreleased
+
+* the switch channel 10 of an HmIP-BWTH in a room or function view now reads
+  the valve type of its own device: it used the channel address of the
+  heating control shown before it, so the valve state stayed empty and, if
+  that was no HmIP device (e.g. a heating group), a script error left all
+  following heating controls of the page without values. A missing valve
+  type no longer stops the page.
+  ([#417](https://github.com/OpenCCU/OpenCCU-Base/pull/417), fixes
+  [OpenCCU/OpenCCU#4787](https://github.com/OpenCCU/OpenCCU/issues/4787),
+  @bhuertgen)
+
 ## 3.89.13 (2026-11-18)
 
 * the date, time and name filters of the system protocol are applied with
