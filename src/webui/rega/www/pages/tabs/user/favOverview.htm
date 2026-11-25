@@ -163,7 +163,7 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
               if (elem && elem.Visible()) {
                 string divId = "udiv"#tmp;
                   Write("<tr>");
-                    Write("<td  class='CLASS06407 leftAlign jCheckBox'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+                    Write("<td  class='CLASS06407 leftAlign jCheckBox'>"#elem.Name().HtmlEncode()#"</td>");
                     Write("<td  class='CLASS06407'><input type='checkbox' id='uf"#elem.ID()#"'/></td>");
                   Write("</tr>");
               }
@@ -215,9 +215,9 @@ Bitte w&auml;hlen Sie "Neu", um einen Favoriten anzulegen.</td>
             if( !sInfo.Length() ) { sInfo = "${lblWithoutDescription}"; }
 
             ! Escape the user-defined name and description for HTML and JavaScript output
-            string sNameHtml = sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
-            string sInfoHtml = sInfo.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
-            string sJsName = oFav.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+            string sNameHtml = sName.HtmlEncode();
+            string sInfoHtml = sInfo.HtmlEncode();
+            string sJsName = oFav.Name().JsEncode();
             
             string sColumnCount = oFav.FavColumnCount().ToString();
             if( sColumnCount == "0" ) { sColumnCount = "${lblAuto}"; }

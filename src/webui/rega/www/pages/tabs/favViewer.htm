@@ -26,7 +26,7 @@
   if( obj )
   {
     string sName = obj.Name();
-    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#']");' );
+    WriteLine('conInfo("Object '#obj.ID()#', Name = ['#sName.JsEncode()#']");' );
   }
   
 
@@ -36,7 +36,7 @@
     WriteLine('conInfo("ID_FAVORITES ok");');
   }
   %>
-  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n"));%>');
+  var path = "<span>"+translateKey('menuControlPage')+"</span> &gt; "+translateKey('submenuFavorites')+" &gt; " + translateString('<% Write(sName.HtmlEncode().JsEncode());%>');
   setPath(path);
 </script>
 

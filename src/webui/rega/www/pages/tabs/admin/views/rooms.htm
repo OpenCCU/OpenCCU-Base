@@ -65,7 +65,7 @@
               
               Write("tmp = new Object();");
               Write("tmp['id'] = "#o3.ID()#";");
-              Write("tmp['name'] = '"#o3.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+              Write("tmp['name'] = '"#o3.Name().JsEncode()#"';");
               
               integer devId = o3.Device();
               if (devId != ID_ERROR)
@@ -102,7 +102,7 @@
                 functions = functions # objTmp.Name() # "<br />";
               }
               
-              Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';"); !functions
+              Write("tmp['func'] = '"#functions.JsEncode()#"';"); !functions
               Write("arCObj[arCObj.length] = tmp;");
             }
           }
@@ -129,7 +129,7 @@
   {  
     Write("arR[arR.length] = "#tmp#";");
     Write("arRObj['"#tmp#"'] = new Object();");
-    Write("arRObj['"#tmp#"']['room'] = '"#obj.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+    Write("arRObj['"#tmp#"']['room'] = '"#obj.Name().JsEncode()#"';");
     Write("arRObj['"#tmp#"']['id'] = '"#tmp#"';");
     Write("arRObj['"#tmp#"']['flt'] = true;");
     Write("arRObj['"#tmp#"']['exp'] = false;");
@@ -137,7 +137,7 @@
    
     object o = dom.GetObject(tmp);    
     Write("tmpRoom = new Object();");
-    Write("tmpRoom['room'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+    Write("tmpRoom['room'] = '"#o.Name().JsEncode()#"';");
     Write("tmpRoom['id'] = '"#tmp#"';");
     Write("tmpRoom['flt'] = true;");
     Write("tmpRoom['exp'] = false;");
@@ -299,7 +299,7 @@ arSortRObj[arSortRObj.length] = tmpRoom;
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS04111'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+                  Write("<td  class='CLASS04111'>"#elem.Name().HtmlEncode()#"</td>");
                   Write("<td  class='CLASS04111'><input type='checkbox' id='ff"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -355,7 +355,7 @@ if ( oUser )
       Write("</script>");
       Write("</td>"); 
       
-      Write("<td id='rn"#elem.ID()#"' class='WhiteBkg DeviceListCell' onclick='textEdit(id, "#elem.ID()#", false, textEditCallback);'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>"); !Raum
+      Write("<td id='rn"#elem.ID()#"' class='WhiteBkg DeviceListCell' onclick='textEdit(id, "#elem.ID()#", false, textEditCallback);'>"#elem.Name().HtmlEncode()#"</td>"); !Raum
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Name
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Typenbezeichnung
       Write("<td class='GrayBkg DeviceListCell'></td>"); !Bild

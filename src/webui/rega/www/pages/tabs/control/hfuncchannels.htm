@@ -92,7 +92,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03806'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+                  Write("<td  class='CLASS03806'>"#elem.Name().HtmlEncode()#"</td>");
                   Write("<td  class='CLASS03806'><input type='checkbox' id='hr"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -162,7 +162,7 @@
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().HtmlEncode()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
             if( oUser && oUser.UserLevel() == iulAdmin ) {
@@ -187,7 +187,7 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
+              rooms = rooms # objTmp.Name().HtmlEncode() # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);
@@ -229,8 +229,8 @@
             Write("chn = new Object();");
             Write("chn['id'] = '"#chn.ID()#"';");
             Write("chn['ctrlId'] = '"#sCtrlId#"';");
-            Write("chn['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
-            Write("chn['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+            Write("chn['name'] = '"#chn.Name().JsEncode()#"';");
+            Write("chn['room'] = '"#rooms.JsEncode()#"';");
             Write("chn['fltOpts'] = new Object();");
             Write("chn['fltOpts']['rooms'] = '"#roomIDs#"';");
             Write("chn['trid'] = '"#trId#"';");

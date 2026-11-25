@@ -42,9 +42,7 @@
       if( bOK )
       {
         oCCName = oCC.Name();
-        oCCName = oCCName.Replace("&", "&amp;");
-        oCCName = oCCName.Replace("<", "&lt;");
-        oCCName = oCCName.Replace(">", "&gt;");
+        oCCName = oCCName.HtmlEncode();
         Write( ' <b class="CLASS02201" onclick="ShowChannelChooser2('#oSC.ID()#');">'#oCCName#'</b>' );
       }
       else
@@ -59,9 +57,7 @@
       if( bOK )
       {
         oLVName = oLV.Name();
-        oLVName = oLVName.Replace("&", "&amp;");
-        oLVName = oLVName.Replace("<", "&lt;");
-        oLVName = oLVName.Replace(">", "&gt;");
+        oLVName = oLVName.HtmlEncode();
         Write( ' <b class="CLASS02201" onclick="ShowSysVarChooser('#oSC.ID()#');">'#oLVName#'</b>' );
       }
       else
@@ -91,7 +87,7 @@
         !Write("<i>bei</i>");
         !Write("<i>${ruleConditionLblWhen}</i>");
 !        Write("<input type='text' onblur='javascript:alert(\"blur\");' class='SelectBox' />");
-        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("'", "&#39;") # "' class='SelectBox' />");
+        Write("<input type='text' onblur='iseSingleCondition.SetRightValue(" # oSC.ID() # ",this.value);' value='" # iRV1.ToString().HtmlEncode() # "' class='SelectBox' />");
 
       }
 
@@ -156,9 +152,7 @@
                         }
                       }
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                      sValue = sValue.Replace("&", "&amp;");
-                      sValue = sValue.Replace("<", "&lt;");
-                      sValue = sValue.Replace(">", "&gt;");
+                      sValue = sValue.HtmlEncode();
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -191,9 +185,7 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                    sValue = sValue.Replace("&", "&amp;");
-                    sValue = sValue.Replace("<", "&lt;");
-                    sValue = sValue.Replace(">", "&gt;");
+                    sValue = sValue.HtmlEncode();
                     Write( sValue );
 
                     Write( '</option>' );
@@ -221,9 +213,7 @@
                       }
 
                       Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                      sValue = sValue.Replace("&", "&amp;");
-                      sValue = sValue.Replace("<", "&lt;");
-                      sValue = sValue.Replace(">", "&gt;");
+                      sValue = sValue.HtmlEncode();
                       Write( sValue );
                       Write( '</option>' );
                     }
@@ -253,9 +243,7 @@
                       }
                     }
                     Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                    sValue = sValue.Replace("&", "&amp;");
-                    sValue = sValue.Replace("<", "&lt;");
-                    sValue = sValue.Replace(">", "&gt;");
+                    sValue = sValue.HtmlEncode();
                     Write( sValue );
                     Write( '</option>' );
                   }
@@ -281,9 +269,7 @@
                   }
                 }
                 Call("/esp/functions.fn::getSpecialTranslationPrgCond()");
-                sValue = sValue.Replace("&", "&amp;");
-                sValue = sValue.Replace("<", "&lt;");
-                sValue = sValue.Replace(">", "&gt;");
+                sValue = sValue.HtmlEncode();
                 Write( sValue );
                 Write( '</option>' );
               }
@@ -308,9 +294,7 @@
             sVLValue = web.webGetValueFromList( oLV.ValueList(), sVLKey );
             if( iRV1 == sVLKey ) { sSelected = " selected"; } else { sSelected = ""; }
             Write( '<option value="'#oLV.ID()#':'#sVLKey#'"'#sSelected#'>' );
-            sVLValue = sVLValue.Replace("&", "&amp;");
-            sVLValue = sVLValue.Replace("<", "&lt;");
-            sVLValue = sVLValue.Replace(">", "&gt;");
+            sVLValue = sVLValue.HtmlEncode();
             Write( sVLValue );
             Write( '</option>' );
           }
@@ -320,17 +304,13 @@
           if( iRV1 == 0 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':0"'#sSelected#'>' );
           string sValueName0 = oLV.ValueName0();
-          sValueName0 = sValueName0.Replace("&", "&amp;");
-          sValueName0 = sValueName0.Replace("<", "&lt;");
-          sValueName0 = sValueName0.Replace(">", "&gt;");
+          sValueName0 = sValueName0.HtmlEncode();
           Write( sValueName0 );
           Write( '</option>' );
           if( iRV1 == 1 ) { sSelected = " selected"; } else { sSelected = ""; }
           Write( '<option value="'#oLV.ID()#':1"'#sSelected#'>' );
           string sValueName1 = oLV.ValueName1();
-          sValueName1 = sValueName1.Replace("&", "&amp;");
-          sValueName1 = sValueName1.Replace("<", "&lt;");
-          sValueName1 = sValueName1.Replace(">", "&gt;");
+          sValueName1 = sValueName1.HtmlEncode();
           Write( sValueName1 );
           Write( '</option>' );
         }
@@ -358,7 +338,7 @@
         }
         string sCT = "";
         ! the unit is HTML: keep its character references (e.g. &#176;C of CUxD)
-        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
+        string sValueUnit = oLV.ValueUnit().HtmlEncodeKeepEntities();
         if( sValueUnit == "100%" )
         {
           sValueUnit = "%";
