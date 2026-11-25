@@ -17,12 +17,6 @@ const WWW = path.join(__dirname, '..', '..', 'src', 'webui', 'www');
 const SOURCE = path.join(WWW, 'config', 'easymodes', 'js', 'ic_translate.js');
 const EASYMODES = path.join(WWW, 'config', 'easymodes');
 const ESCAPE = /%[0-9A-Fa-f]{2}/;
-// Tables which cannot be loaded for reasons unrelated to the decoding: the
-// last entry of these files is not followed by a comma.
-const BROKEN = new Set([
-  'BLIND_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_RAIN_QUANTITY.txt',
-  'BLIND_VIRTUAL_RECEIVER/COND_SWITCH_TRANSMITTER_WIND_DIRECTION.txt',
-]);
 
 function loadTranslate() {
   const context = {
@@ -105,7 +99,6 @@ test('getLangInfo() leaves no %XX escapes in any easymode table', () => {
     const genericEscaped = ESCAPE.test(fs.readFileSync(path.join(dir, 'GENERIC.txt'), 'latin1'));
     for (const file of fs.readdirSync(dir)) {
       if (!file.endsWith('.txt') || file === 'GENERIC.txt') continue;
-      if (BROKEN.has(`${actor}/${file}`)) continue;
       const sender = file.slice(0, -4);
       if (!genericEscaped && !ESCAPE.test(fs.readFileSync(path.join(dir, file), 'latin1'))) continue;
       T.failures.length = 0;
