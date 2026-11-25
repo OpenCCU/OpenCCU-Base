@@ -11,6 +11,43 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0271 (2026-11-25)
+
+* add `system.DeleteSessionVar(name)`, which deletes a session variable
+  (returns true if it existed), and `system.ListSessionVars()`, which
+  returns the names of the session variables (sorted, separated by tabs, so
+  that they can be iterated with `foreach`). The scripts of programs,
+  alarms and mappings share their session variables; a remote request
+  (`/rega.exe`, e.g. "Skript testen" of the WebUI) now also gets, sets and
+  deletes them (`SetSessionVar()`, `GetSessionVar()`, `IsSessionVar()`,
+  `DeleteSessionVar()`, `ListSessionVars()`), so that they can be checked
+  there. With `ScriptVariableScope=global` (default) only the variables set
+  with `system.SetSessionVar()` are session variables: a remote request
+  neither gets nor changes the other variables of the scripts of the
+  programs. A session variable set by a remote request is kept after the
+  request (before, it only existed for the request, which still has it as
+  its own variable, too); an array, XML or persistent object is kept as
+  text. The pages of the WebUI keep their own session variables (named
+  `session...`) with the session of the WebUI as before and do not get the
+  ones of the programs; `DeleteSessionVar()` also removes them from the
+  session (not `sessionId`, `sessionUserID` and `sessionUserName`), and
+  `ListSessionVars()` returns their names.
+  (cf. [OpenCCU/OpenCCU#4485](https://github.com/OpenCCU/OpenCCU/issues/4485))
+* add the string methods `HtmlEncode()`, `HtmlEncodeKeepEntities()` and
+  `JsEncode()`, which replace the chains of `Replace()` calls the WebUI
+  uses to escape texts. `HtmlEncode()` encodes `&`, `<`, `>`, `"` and `'`
+  as `&amp;`, `&lt;`, `&gt;`, `&quot;` and `&#39;`, so that the text can be
+  written into HTML text and quoted attribute values.
+  `HtmlEncodeKeepEntities()` does the same, but keeps the character
+  references a text already contains (e.g. `&#176;`, `&#xB0;`, `&deg;`),
+  for texts like units which are written as HTML. `JsEncode()` encodes `\`,
+  `'`, `"`, `<`, `>`, `&` and the control characters (e.g. line breaks) as
+  `\xNN`, so that the text can be written into a JavaScript string literal
+  in single or double quotes, both in a `<script>` element and in an event
+  handler attribute such as `onclick`. Like for `Replace()`, a result longer
+  than 32 MiB ends the script with a script runtime error.
+  (cf. [OpenCCU/OpenCCU-Base#419](https://github.com/OpenCCU/OpenCCU-Base/pull/419))
+
 ## R1.00.0388.0270 (2026-11-24)
 
 * fix the modified flag of the object model being set again shortly after it
