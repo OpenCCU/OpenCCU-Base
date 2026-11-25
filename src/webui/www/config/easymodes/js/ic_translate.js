@@ -27,6 +27,34 @@ getPathPNAME = function(actor, language) {
   return result;
 };
 
+/**
+ * Decodes URL-style escaped Latin-1 characters (e.g. "%FC" -> "\u00fc")
+ * in all string values of the given localization table.
+ * Several easymode localization files store umlauts as "%XX" sequences.
+ * Those strings are inserted into the page via TrimPath/innerHTML without
+ * any further decoding, which results in e.g. "T%FCr %F6ffnen" being shown.
+ * Only "%" followed by exactly two hex digits is decoded, so literal "%"
+ * characters stay untouched. Already decoded strings are not changed, so
+ * existing unescape() calls on localized values keep working.
+ * @param {Array} loc The localization table (e.g. localized)
+ */
+decodeLocalized = function(loc)
+{
+  var tbl = (loc && loc[0]) ? loc[0] : null,
+    re = /%([0-9A-Fa-f]{2})/g,
+    key;
+
+  if (tbl == null) return;
+
+  for (key in tbl) {
+    if (tbl.hasOwnProperty(key) && (typeof tbl[key] == "string") && (tbl[key].indexOf("%") != -1)) {
+      tbl[key] = tbl[key].replace(re, function(match, hex) {
+        return String.fromCharCode(parseInt(hex, 16));
+      });
+    }
+  }
+};
+
 getLangInfo = function(sender, actor)
 {
   var language = getLang();
@@ -97,6 +125,7 @@ getLangInfo = function(sender, actor)
     
      var dummy = "\"dummy\" : \"dummy\"}]" ; 
     localized = eval(set_description.concat(set_pname).concat(generic).concat(dummy));
+    decodeLocalized(localized);
 };
 
 getLangInfo_Special = function(file)
@@ -124,6 +153,7 @@ getLangInfo_Special = function(file)
 
     //localized = eval(set_Special);
     jQuery.extend(true, localized, eval(set_Special));
+    decodeLocalized(localized);
   }
 };
 

@@ -37,7 +37,7 @@
         if( oFav )
         {
           i = i + 1;
-           string sInfo = oFav.EnumInfo();
+           string sInfo = oFav.EnumInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             if( !sInfo.Length() ) { sInfo = "${lblWithoutDescription}"; }
               string sName = oFav.Name();
               Write('<td>');

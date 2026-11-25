@@ -18,6 +18,23 @@ is published.
   the start page of the guest user shows names of favorites containing `&`,
   `<` or `>` correctly instead of escaped twice.
   ([#420](https://github.com/OpenCCU/OpenCCU-Base/pull/420), @jens-maus)
+* the profiles of direct links show umlauts instead of escape
+  sequences such as "T%FCr %F6ffnen" ("Tür öffnen"), e.g. in the profile
+  list and description of a door lock, the access receivers, the virtual
+  receivers of switch, dimmer and blind actuators and the names of their
+  parameters.
+  ([#422](https://github.com/OpenCCU/OpenCCU-Base/pull/422), @jens-maus)
+* the description of a favorite is shown as text on the favorites page and
+  the guest start page: markup in it was interpreted by the browser, as it
+  was written into the page without escaping.
+  ([#421](https://github.com/OpenCCU/OpenCCU-Base/pull/421), @jens-maus)
+* the link profile pages of several senders showed no texts because
+  their localization table could not be read: the German tables of the
+  rain quantity and wind direction senders of blind actuators and 12
+  English tables (e.g. humidity, rain drop and wind speed senders, the
+  heat demand pump senders of the MIOB and the virtual key of dual white
+  lights) contained a missing or doubled comma or a broken string.
+  ([#423](https://github.com/OpenCCU/OpenCCU-Base/pull/423), @jens-maus)
 * units of data points and system variables that contain a character
   reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
   entered as the unit of a system variable, are shown as the character
