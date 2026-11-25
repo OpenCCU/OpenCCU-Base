@@ -9,6 +9,15 @@ is published.
 
 ## Unreleased
 
+* names, descriptions, units and values are escaped with the new string
+  methods of ReGaHss R1.00.0388.0271 instead of chains of `Replace()`
+  calls, which the WebUI therefore requires. Units show every character
+  reference they contain as the character, e.g. `m&sup2;` as "m²". The unit
+  field of the system variable dialog shows the unit as stored (e.g.
+  `&deg;C` instead of "°C"), so saving the dialog no longer changes it, and
+  the start page of the guest user shows names of favorites containing `&`,
+  `<` or `>` correctly instead of escaped twice.
+  ([#420](https://github.com/OpenCCU/OpenCCU-Base/pull/420), @jens-maus)
 * units of data points and system variables that contain a character
   reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
   entered as the unit of a system variable, are shown as the character
