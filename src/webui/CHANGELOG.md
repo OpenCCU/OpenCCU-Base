@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* the description of a favorite is shown as text on the favorites page and
+  the guest start page: markup in it was interpreted by the browser, as it
+  was written into the page without escaping.
+  ([#421](https://github.com/OpenCCU/OpenCCU-Base/pull/421), @jens-maus)
 * units of data points and system variables that contain a character
   reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
   entered as the unit of a system variable, are shown as the character
