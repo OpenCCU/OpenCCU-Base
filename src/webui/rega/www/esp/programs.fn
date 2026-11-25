@@ -306,6 +306,8 @@ function ::WriteConditionText()
                     sValueUnit = sValueUnit.Replace("&", "&amp;");
                     sValueUnit = sValueUnit.Replace("<", "&lt;");
                     sValueUnit = sValueUnit.Replace(">", "&gt;");
+                    ! the unit is HTML: keep its character references (e.g. &#176;C of CUxD)
+                    sValueUnit = sValueUnit.Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
                     if( sValueUnit == "100%")
                     {
                       sValueUnit = "%";
@@ -787,7 +789,7 @@ function ::WriteDestinationText()
                       if (iV < 1 && oDP.ValueUnit() == "%") {
                         iV = iV * 100;
                       }
-                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
 
                     }
                     if (oDP.ValueSubType() == istChar8859)

@@ -505,13 +505,13 @@
 
                   if (showGenericElem) {
                     Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="A SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                    Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
+                    Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;") );
                     Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
                   }
 
                 } else {
                   Write( '<input id="valSD_'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValueMinMax('#oSD.ID()#',this.value,\''#sUnit.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\r", "\\r").Replace("\n", "\\n").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'\','#oDP.ValueMin()#','#oDP.ValueMax()#');" />' );
-                  Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") );
+                  Write( sUnit.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;") );
 
                   ! Hide the notepad for e. g. HmIP-WSC
                   if ((oCH.HssType().Find(servoVirtualReceiver) == -1) || (oDP.HSSID().Find("RAMP_TIME") == -1)) {
@@ -992,7 +992,7 @@
         if (oDP.ValueSubType() == istChar8859)
         {
           Write( ' <input type="text" class="SelectBox" size="32" value="'#oSD.DestinationValue().ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="SetSysVarDestStrValue('#oSD.ID()#',this.value);" /> ' );
-          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;")#" " );
         }
         if( oDP.ValueSubType() == istGeneric )
         {
@@ -1002,7 +1002,7 @@
             percVal = oSD.DestinationValue() * 100;
           }
           Write( ' <input id="source'#oSD.ID()#'" type="text" class="SelectBox" size="6" value="'#percVal.ToString(2)#'" onchange="ConvertValueToPercent('#oSD.ID()#');" /> ' );
-          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#" " );
+          Write( oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;")#" " );
           !Write( '<span class="CLASS02401" onclick="ChangeDestinationValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
         }
         if( oDP.ValueSubType() == istEnum )

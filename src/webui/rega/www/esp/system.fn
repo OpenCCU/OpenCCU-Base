@@ -1544,7 +1544,7 @@ function ::BuildUserSvTable() {
         if (sysvar.ValueSubType() == istChar8859) { }
         WriteLine("</td>");
         
-        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;")#"</td>");
         WriteLine("<td class='WhiteBkg'>");
           WriteLine("<div class='CLASS02108' ");
           if (system.GetVar("userId") != 0)  {
@@ -1672,7 +1672,7 @@ function ::getSysVarValAsString()
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
     }
   }
   
@@ -1688,7 +1688,7 @@ function ::getSysVarValAsString()
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
     }
   }
   

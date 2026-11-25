@@ -61,7 +61,7 @@ function ::WriteDPText()
         }
         if( to.ValueUnit() != "" )
         {
-          sRet=sRet#" "#to.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+          sRet=sRet#" "#to.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
           if( btoNumber )
           {
             sRet = sRet # ")";
