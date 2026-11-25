@@ -9,6 +9,12 @@ is published.
 
 ## Unreleased
 
+* the profiles of direct links show umlauts instead of escape
+  sequences such as "T%FCr %F6ffnen" ("Tür öffnen"), e.g. in the profile
+  list and description of a door lock, the access receivers, the virtual
+  receivers of switch, dimmer and blind actuators and the names of their
+  parameters.
+  ([#422](https://github.com/OpenCCU/OpenCCU-Base/pull/422), @jens-maus)
 * units of data points and system variables that contain a character
   reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
   entered as the unit of a system variable, are shown as the character
