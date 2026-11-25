@@ -9,6 +9,13 @@ is published.
 
 ## Unreleased
 
+* the link profile pages of several senders showed no texts because
+  their localization table could not be read: the German tables of the
+  rain quantity and wind direction senders of blind actuators and 12
+  English tables (e.g. humidity, rain drop and wind speed senders, the
+  heat demand pump senders of the MIOB and the virtual key of dual white
+  lights) contained a missing or doubled comma or a broken string.
+  ([#423](https://github.com/OpenCCU/OpenCCU-Base/pull/423), @jens-maus)
 * units of data points and system variables that contain a character
   reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
   entered as the unit of a system variable, are shown as the character
