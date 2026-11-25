@@ -47,9 +47,7 @@ function ::WriteConditionText()
                   if( bOK )
                   {
                     string sCCName = oCC.Name();
-                    sCCName = sCCName.Replace("&", "&amp;");
-                    sCCName = sCCName.Replace("<", "&lt;");
-                    sCCName = sCCName.Replace(">", "&gt;");
+                    sCCName = sCCName.HtmlEncode();
                     sRet = sRet#" "#sCCName;
                   }
                   else
@@ -63,9 +61,7 @@ function ::WriteConditionText()
                   if( bOK )
                   {
                     string sLVName = oLV.Name();
-                    sLVName = sLVName.Replace("&", "&amp;");
-                    sLVName = sLVName.Replace("<", "&lt;");
-                    sLVName = sLVName.Replace(">", "&gt;");
+                    sLVName = sLVName.HtmlEncode();
                     sRet = sRet#" "#sLVName;
                   }
                   else
@@ -93,17 +89,13 @@ function ::WriteConditionText()
                       if( iRV1 == 0 )
                       {
                         string sVN0 = oLV.ValueName0();
-                        sVN0 = sVN0.Replace("&", "&amp;");
-                        sVN0 = sVN0.Replace("<", "&lt;");
-                        sVN0 = sVN0.Replace(">", "&gt;");
+                        sVN0 = sVN0.HtmlEncode();
                         sRet = sRet#' '#sVN0#' ';
                       }
                       if( iRV1 == 1 )
                       {
                         string sVN1 = oLV.ValueName1();
-                        sVN1 = sVN1.Replace("&", "&amp;");
-                        sVN1 = sVN1.Replace("<", "&lt;");
-                        sVN1 = sVN1.Replace(">", "&gt;");
+                        sVN1 = sVN1.HtmlEncode();
                         sRet = sRet#' '#sVN1#' ';
                       }
                     }
@@ -163,9 +155,7 @@ function ::WriteConditionText()
                                       }
                                     }
                                     !Write( "<script>conInfo('- ist Integer und Enum -- sDP:"#sDP#" "#sVLKey#" "#iRV1#"');</script>" );
-                                    sValue = sValue.Replace("&", "&amp;");
-                                    sValue = sValue.Replace("<", "&lt;");
-                                    sValue = sValue.Replace(">", "&gt;");
+                                    sValue = sValue.HtmlEncode();
                                     sRet = sRet#' '#sValue;
                                   }
                                 }
@@ -193,9 +183,7 @@ function ::WriteConditionText()
                                     }
                                   }
                                   Call("/esp/functions.fn::getSpecialBinaryTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
+                                  sValue = sValue.HtmlEncode();
                                   sRet = sRet#' '#sValue;
                                 }
                                 if( (oDP.ID() == iLV) && (iRV1 == false) ) 
@@ -216,9 +204,7 @@ function ::WriteConditionText()
                                     }
                                   }
                                   Call("/esp/functions.fn::getSpecialBinaryTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
+                                  sValue = sValue.HtmlEncode();
                                   sRet = sRet#' '#sValue;
                                 }
                                 !Write( "<script>conInfo('- ist binär und Action, RV1="#iRV1#" -- RV2="#iRV2#"');</script>" );
@@ -247,9 +233,7 @@ function ::WriteConditionText()
                                   }
                                   !Write( "<script>conInfo('- ist was anderes -- sDP:"#sDP#" Typ:"#iRV1T#" ');</script>" );
                                   Call("/esp/functions.fn::getSpecialIntegerTranslation()");
-                                  sValue = sValue.Replace("&", "&amp;");
-                                  sValue = sValue.Replace("<", "&lt;");
-                                  sValue = sValue.Replace(">", "&gt;");
+                                  sValue = sValue.HtmlEncode();
                                   sRet = sRet#' '#sValue;
                                 }
                               }
@@ -303,11 +287,8 @@ function ::WriteConditionText()
 
                     string sCT = "";
                     string sValueUnit = oLV.ValueUnit();
-                    sValueUnit = sValueUnit.Replace("&", "&amp;");
-                    sValueUnit = sValueUnit.Replace("<", "&lt;");
-                    sValueUnit = sValueUnit.Replace(">", "&gt;");
                     ! the unit is HTML: keep its character references (e.g. &#176;C of CUxD)
-                    sValueUnit = sValueUnit.Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
+                    sValueUnit = sValueUnit.HtmlEncodeKeepEntities();
                     if( sValueUnit == "100%")
                     {
                       sValueUnit = "%";
@@ -393,9 +374,7 @@ function ::WriteConditionText()
                   foreach( sVLKey, system.GenerateEnum(0,iVLCount) )
                   {
                     string sVLValue = web.webGetValueFromList( oLV.ValueList(), sVLKey );
-                    sVLValue = sVLValue.Replace("&", "&amp;");
-                    sVLValue = sVLValue.Replace("<", "&lt;");
-                    sVLValue = sVLValue.Replace(">", "&gt;");
+                    sVLValue = sVLValue.HtmlEncode();
                     sRet = sRet#' '#sVLValue;
                   }
                 }
@@ -489,9 +468,7 @@ function ::WriteDestinationText()
                 if( oCH )
                 {
                   string sDestCHName = oCH.Name();
-                  sDestCHName = sDestCHName.Replace("&", "&amp;");
-                  sDestCHName = sDestCHName.Replace("<", "&lt;");
-                  sDestCHName = sDestCHName.Replace(">", "&gt;");
+                  sDestCHName = sDestCHName.HtmlEncode();
                   sRet = sRet#sDestCHName;
                 }
               }
@@ -501,9 +478,7 @@ function ::WriteDestinationText()
                 if( oDP )
                 {
                   string sDestDPName = oDP.Name();
-                  sDestDPName = sDestDPName.Replace("&", "&amp;");
-                  sDestDPName = sDestDPName.Replace("<", "&lt;");
-                  sDestDPName = sDestDPName.Replace(">", "&gt;");
+                  sDestDPName = sDestDPName.HtmlEncode();
                   sRet = sRet#sDestDPName;
                 }
               }
@@ -604,9 +579,7 @@ function ::WriteDestinationText()
                               sValue = sKey;
                             }
                           }
-                          sValue = sValue.Replace("&", "&amp;");
-                          sValue = sValue.Replace("<", "&lt;"); 
-                          sValue = sValue.Replace(">", "&gt;"); 
+                          sValue = sValue.HtmlEncode(); 
                           sRet = sRet#sValue;
                         }
                       }
@@ -640,26 +613,20 @@ function ::WriteDestinationText()
                           if( otmpCH )
                           {
                             string sOtmpName = otmpCH.Name();
-                            sOtmpName = sOtmpName.Replace("&", "&amp;");
-                            sOtmpName = sOtmpName.Replace("<", "&lt;");
-                            sOtmpName = sOtmpName.Replace(">", "&gt;");
+                            sOtmpName = sOtmpName.HtmlEncode();
                             sRet=sRet#" "#sOtmpName;
                           }
                           else
                           {
                             string sOtmpName = otmpDP.Name();
-                            sOtmpName = sOtmpName.Replace("&", "&amp;");
-                            sOtmpName = sOtmpName.Replace("<", "&lt;");
-                            sOtmpName = sOtmpName.Replace(">", "&gt;");
+                            sOtmpName = sOtmpName.HtmlEncode();
                             sRet=sRet#" "#sOtmpName;
                           }
                         }
                         if( iVT == ivtSystemId )
                         {
                           string sOtmpName = otmpDP.Name();
-                          sOtmpName = sOtmpName.Replace("&", "&amp;");
-                          sOtmpName = sOtmpName.Replace("<", "&lt;");
-                          sOtmpName = sOtmpName.Replace(">", "&gt;");
+                          sOtmpName = sOtmpName.HtmlEncode();
                           sRet=sRet#" "#sOtmpName;
                         }
                       }
@@ -743,26 +710,20 @@ function ::WriteDestinationText()
                       if( iV == 0 )
                       {
                         string sDestValName = oDP.ValueName0();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
+                        sDestValName = sDestValName.HtmlEncode();
                         sRet=sRet#" "#sDestValName;
                       }
                       else
                       {
                         string sDestValName = oDP.ValueName1();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
+                        sDestValName = sDestValName.HtmlEncode();
                         sRet=sRet#" "#sDestValName;
                       }
                     }
                     if( oDP.ValueSubType() == istEnum )
                     {
                       string sEnumValName = web.webGetValueFromList(oDP.ValueList(), iV);
-                      sEnumValName = sEnumValName.Replace("&", "&amp;");
-                      sEnumValName = sEnumValName.Replace("<", "&lt;");
-                      sEnumValName = sEnumValName.Replace(">", "&gt;");
+                      sEnumValName = sEnumValName.HtmlEncode();
                       sRet = sRet # " " # sEnumValName;
                     }
                     if( oDP.ValueSubType() == istAlarm )
@@ -770,17 +731,13 @@ function ::WriteDestinationText()
                       if( iV == 0 )
                       {
                         string sDestValName = oDP.ValueName0();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
+                        sDestValName = sDestValName.HtmlEncode();
                         sRet=sRet#" "#sDestValName;
                       }
                       else
                       {
                         string sDestValName = oDP.ValueName1();
-                        sDestValName = sDestValName.Replace("&", "&amp;");
-                        sDestValName = sDestValName.Replace("<", "&lt;");
-                        sDestValName = sDestValName.Replace(">", "&gt;");
+                        sDestValName = sDestValName.HtmlEncode();
                         sRet=sRet#" "#sDestValName;
                       }
                     }
@@ -789,12 +746,12 @@ function ::WriteDestinationText()
                       if (iV < 1 && oDP.ValueUnit() == "%") {
                         iV = iV * 100;
                       }
-                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
+                      sRet=sRet#" "#iV.ToString(2)#" "#oDP.ValueUnit().HtmlEncodeKeepEntities();
 
                     }
                     if (oDP.ValueSubType() == istChar8859)
                     {
-                     sRet = sRet # " " # iV.ToString(2).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                     sRet = sRet # " " # iV.ToString(2).HtmlEncode();
                     }
                   }
                 }
@@ -942,7 +899,7 @@ function ::LoadProgramListXML()
       object o = dom.GetObject( sPID );
       if( o )
       {
-        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" />' );
+        WriteLine( '<program id="'#o.ID()#'" name="'#o.Name().HtmlEncode()#'" />' );
       }
     }
     WriteLine( '</programs>' );

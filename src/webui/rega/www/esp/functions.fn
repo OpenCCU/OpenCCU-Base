@@ -18,22 +18,22 @@ function ::WriteDPText()
         {
           if ( (sValue == "0") || (sValue == "") )
           {
-            sRet=sRet#to.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+            sRet=sRet#to.ValueName0().HtmlEncode();
           }
           else
           {
-            sRet=sRet#to.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+            sRet=sRet#to.ValueName1().HtmlEncode();
           }
         }
         if( btoList ) 
         { 
           if( sValue == "" )
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),0).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),0).HtmlEncode();
           }
           else
           {
-            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+            sRet=sRet#web.webGetValueFromList(to.ValueList(),sValue.ToInteger()).HtmlEncode();
           }
         }
         if( btoNumber ) 
@@ -61,7 +61,7 @@ function ::WriteDPText()
         }
         if( to.ValueUnit() != "" )
         {
-          sRet=sRet#" "#to.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
+          sRet=sRet#" "#to.ValueUnit().HtmlEncodeKeepEntities();
           if( btoNumber )
           {
             sRet = sRet # ")";
@@ -334,7 +334,7 @@ function ::buildFuncOverlay() {
     foreach( tmp, rooms.EnumEnabledIDs() ) {
        object func = dom.GetObject(tmp);
        s = s# "<tr>";
-       s = s# "<td>"# func.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "</td>";
+       s = s# "<td>"# func.Name().HtmlEncode() # "</td>";
        s = s#"<td><input id='chk"#func.ID()#"' type='checkbox' onclick='addFunc(id, "#tmp#")' /></td>";
        s = s# "</tr>";
     }

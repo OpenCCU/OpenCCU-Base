@@ -9,7 +9,7 @@ function ::dcCreateTable()
   {
     WriteLine('<tr>');
       WriteLine('<td class="CLASS02501">');
-      WriteLine('<div class="CLASS02502">' # sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # '</div>');
+      WriteLine('<div class="CLASS02502">' # sName.HtmlEncode() # '</div>');
       WriteLine('<td>');
     WriteLine('</tr>');
   
@@ -1435,16 +1435,16 @@ function ::StringCut()
 
       if( (iCurrCut % iLength) == 0 )
       {
-        sWorkingName = sWorkingName#sName.Substr(iLastCut,iLength).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#'<br />';
+        sWorkingName = sWorkingName#sName.Substr(iLastCut,iLength).HtmlEncode()#'<br />';
         iLastCut = iCurrCut;
       }
     }
-    sWorkingName = sWorkingName#sName.Substr(iLastCut,sName.Length()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#' ';
+    sWorkingName = sWorkingName#sName.Substr(iLastCut,sName.Length()).HtmlEncode()#' ';
     sName = sWorkingName;
   }
   else
   {
-    sName = sName.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+    sName = sName.HtmlEncode();
   }
 }
 
@@ -1624,12 +1624,12 @@ function ::CreateUnknown()
               }
               else
               {
-                sTitle = oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+                sTitle = oDP.Name().HtmlEncode();
               }
             }
             else
             {
-              sTitle = oDP.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+              sTitle = oDP.Name().HtmlEncode();
             }
 
             string sValueUnit = oDP.ValueUnit();
@@ -1793,11 +1793,11 @@ function ::CreateUnknown()
                       {
                         if (oDP.Value())
                         {
-                          WriteLine(oDP.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+                          WriteLine(oDP.ValueName1().HtmlEncode());
                         }
                         else
                         {
-                          WriteLine(oDP.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+                          WriteLine(oDP.ValueName0().HtmlEncode());
                         }
                       }
                     }
@@ -1900,7 +1900,7 @@ function ::CreateSysVars()
 !        if( !(i%2) ) { WriteLine( '<tr>' ); }
         WriteLine( '<td class="CLASS02540">' );
           WriteLine( '<div class="ControlBtnInfo CLASS02538" >' );
-            WriteLine( '<span class="CLASS02534">'#oSV.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#':</span>' );
+            WriteLine( '<span class="CLASS02534">'#oSV.Name().HtmlEncode()#':</span>' );
             
             string sSysVarVal = "";
             object cObjTmp = oSV;

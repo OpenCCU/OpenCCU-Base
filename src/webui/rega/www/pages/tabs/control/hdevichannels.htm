@@ -87,7 +87,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().HtmlEncode()#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -112,7 +112,7 @@
             if (elem) {
               string divId = "rdiv"#tmp;
                 Write("<tr>");
-                  Write("<td  class='CLASS03506'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+                  Write("<td  class='CLASS03506'>"#elem.Name().HtmlEncode()#"</td>");
                   Write("<td  class='CLASS03506'><input type='checkbox' id='hd"#elem.ID()#"'/></td>");
                 Write("</tr>");
             }
@@ -205,7 +205,7 @@
             Call("/pages/tabs/control/function.fn::ShowExtDesc()");
 
             if (showExtDesc == false) {
-              Write(chn.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
+              Write(chn.Name().HtmlEncode()#"<br/><br><span name='hssType' class='hidden'>${chType_"#chn.HssType()#"}</span>");
             }
 
             if( oUser && oUser.UserLevel() == iulAdmin ) {
@@ -230,7 +230,7 @@
             string roomIDs = "";
             foreach(roomTmp, chn.ChnRoom()) {
               object objTmp = dom.GetObject(roomTmp);
-              rooms = rooms # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
+              rooms = rooms # objTmp.Name().HtmlEncode() # "<br />";
               roomIDs = roomIDs # objTmp.ID() # '\t';
             }
             Write(rooms);
@@ -241,7 +241,7 @@
             string funcIDs = "";
             foreach(funcTmp, chn.ChnFunction()) {
               object objTmp = dom.GetObject(funcTmp);
-              functions = functions # objTmp.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # "<br />";
+              functions = functions # objTmp.Name().HtmlEncode() # "<br />";
               funcIDs = funcIDs # objTmp.ID() # '\t';
             }
             Write(functions);
@@ -279,7 +279,7 @@
             Write("</tr>");
             
             Write("<script type='text/javascript'>");
-            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"','"#roomIDs#"', '"#funcIDs#"');");
+            Write("var o = buildObj('"#chn.ID()#"','"#trId#"','"#sCtrlId#"','"#chn.Name().JsEncode()#"','"#rooms.JsEncode()#"','"#functions.JsEncode()#"','"#roomIDs#"', '"#funcIDs#"');");
 
             Write("arChns[arChns.length] = o;");
             Write("if (!fltHD.objPassFilter(o ))");

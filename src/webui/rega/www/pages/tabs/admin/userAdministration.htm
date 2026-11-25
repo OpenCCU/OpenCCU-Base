@@ -145,7 +145,7 @@
         Write("<td style='text-align:center; vertical-align: middle;' class='TblUserAdministration CLASS05303' >")
           Write("<div class='StdButton CLASS05304' onclick='editUser("#user.ID()#")'>${btnEdit}</div>")
           if (system.GetSessionVar('sessionUserID') != user.ID()) {
-            string sDelName = user.Name().Replace("\\", "\\x5C").Replace("'", "\\x27").Replace("\"", "\\x22").Replace("<", "\\x3C").Replace(">", "\\x3E").Replace("&", "\\x26");
+            string sDelName = user.Name().JsEncode();
             Write("<div class='StdButton CLASS05304' onclick='deleteUser("#user.ID()#",\""#sDelName#"\")'>${btnRemove}</div>")
           }
         Write("</td>")
