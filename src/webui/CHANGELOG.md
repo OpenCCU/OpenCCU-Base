@@ -9,6 +9,12 @@ is published.
 
 ## Unreleased
 
+* the profiles of direct links show umlauts instead of escape
+  sequences such as "T%FCr %F6ffnen" ("Tür öffnen"), e.g. in the profile
+  list and description of a door lock, the access receivers, the virtual
+  receivers of switch, dimmer and blind actuators and the names of their
+  parameters.
+  ([#422](https://github.com/OpenCCU/OpenCCU-Base/pull/422), @jens-maus)
 * the description of a favorite is shown as text on the favorites page and
   the guest start page: markup in it was interpreted by the browser, as it
   was written into the page without escaping.
