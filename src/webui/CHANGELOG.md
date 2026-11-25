@@ -9,6 +9,14 @@ is published.
 
 ## Unreleased
 
+* units of data points and system variables that contain a character
+  reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
+  entered as the unit of a system variable, are shown as the character
+  again ("°C", "€") instead of the reference itself in the conditions and
+  activities of the program editor, the program list, the system protocol
+  and the system variable views. Markup in a unit is still shown as text.
+  (fixes [OpenCCU/OpenCCU#4790](https://github.com/OpenCCU/OpenCCU/issues/4790),
+  @jens-maus)
 * the program list no longer changes the programs it shows: it set an
   invalid comparison or trigger of the first condition of a program to a
   default when the list was shown. After a channel is selected for a

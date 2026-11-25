@@ -357,7 +357,8 @@
           Write( '</select> ');
         }
         string sCT = "";
-        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+        ! the unit is HTML: keep its character references (e.g. &#176;C of CUxD)
+        string sValueUnit = oLV.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("&amp;#", "&#").Replace("&amp;deg;", "&deg;").Replace("&amp;euro;", "&euro;");
         if( sValueUnit == "100%" )
         {
           sValueUnit = "%";
