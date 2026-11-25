@@ -9,6 +9,10 @@ is published.
 
 ## Unreleased
 
+* the description of a favorite is shown as text on the favorites page and
+  the guest start page: markup in it was interpreted by the browser, as it
+  was written into the page without escaping.
+  ([#421](https://github.com/OpenCCU/OpenCCU-Base/pull/421), @jens-maus)
 * the link profile pages of several senders showed no texts because
   their localization table could not be read: the German tables of the
   rain quantity and wind direction senders of blind actuators and 12

@@ -46,7 +46,7 @@
           {
             i = i + 1;
             Write('<script type="text/javascript">sButton="";</script>');
-            string sInfo = oFav.EnumInfo();
+            string sInfo = oFav.EnumInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
             if( !sInfo.Length() ) { sInfo = "${noDescription}"; }
               string sName = oFav.Name();
               Write('<td>');
