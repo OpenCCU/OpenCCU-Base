@@ -24,5 +24,5 @@
 
 
 "description_19" : "<span class=\"translated\">Actuating the switch activates the selected effect.</span><br/><br/>",
-"description_20" : "<span class=\"translated\">The profile is not active.</span><br/><br/>",,
+"description_20" : "<span class=\"translated\">The profile is not active.</span><br/><br/>",
 

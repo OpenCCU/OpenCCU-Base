@@ -7,7 +7,7 @@
 "subset_1" : "moved up",
 "subset_2" : "moved down",
 "subset_3" : "moved up/down in toggle mode",
-"subset_4" : "Rain'
+"subset_4" : "Rain",
 "subset_5" : "Draught",
 "subset_6" : "Draught",
 "subset_7" : "Rain",
