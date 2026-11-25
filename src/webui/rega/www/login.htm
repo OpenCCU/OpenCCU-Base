@@ -94,7 +94,7 @@
                                 sStyle = "line-height:30px;";
                               }
                               Write('<div id="btn-user-'#uId#'" class="Button colorGradient" style="'#sStyle#'" onclick=\'UserButtonClick("'#sUserFullName.JsEncode()#'", "'#uObj.Name().JsEncode()#'");\'>');
-                              Write(sUserFullName);
+                              Write(sUserFullName.HtmlEncode());
                               Write('</div>');
                             Write('</td>');
                           Write('</tr>');

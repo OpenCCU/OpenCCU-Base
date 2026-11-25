@@ -16,7 +16,9 @@ is published.
   field of the system variable dialog shows the unit as stored (e.g.
   `&deg;C` instead of "°C"), so saving the dialog no longer changes it, and
   the start page of the guest user shows names of favorites containing `&`,
-  `<` or `>` correctly instead of escaped twice.
+  `<` or `>` correctly instead of escaped twice. The login page shows the
+  names of the users as text: markup in a first or last name was
+  interpreted by the browser.
   ([#420](https://github.com/OpenCCU/OpenCCU-Base/pull/420), @jens-maus)
 * the profiles of direct links show umlauts instead of escape
   sequences such as "T%FCr %F6ffnen" ("Tür öffnen"), e.g. in the profile
