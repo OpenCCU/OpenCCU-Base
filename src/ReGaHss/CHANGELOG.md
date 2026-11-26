@@ -11,6 +11,66 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0272 (2026-11-26)
+
+* fix variables declared as `idarray` in a script (e.g. `idarray a;
+  a.Add(obj);`): such a variable referred to no ID array, so that its
+  methods (`Add()`, `Count()`, `Remove()`, `GetAt()`, `EnumIDs()`, ...) and
+  `foreach` ended the script with an error. It now refers to an empty ID
+  array of the script engine, which is freed with the variables of the
+  script (a new declaration of the variable empties it). An ID array set as
+  session variable shared with other scripts, or as `_result` of a script, is
+  kept as the text of its IDs. Also, an ID array set as session variable by
+  a remote request (`/rega.exe`) kept only its first ID (the IDs were parsed
+  as number).
+  (cf. [OpenCCU/OpenCCU#536](https://github.com/OpenCCU/OpenCCU/issues/536))
+* fix a program with a condition "on change" ("bei Änderung") being executed
+  at the first trigger although the result of its condition did not change,
+  e.g. a program "system variable less than 10" when the variable was
+  updated or changed from 8 to 9 (or its "else" activity when it stayed
+  above 10). This happened at the first trigger after the start of ReGaHss
+  for a program not executed at the start (`ExecuteOnStartup()`, "autostart"
+  in the WebUI), for a new program, after activating a program and for a
+  condition added to a program: the program is no longer executed in these
+  cases since R1.00.0388.0267, so that its conditions did not know their
+  result before the first trigger and took it as a change. The conditions
+  are now evaluated in these cases without executing the program, also
+  those of the "else if" parts.
+  (cf. [OpenCCU/OpenCCU#4800](https://github.com/OpenCCU/OpenCCU/issues/4800))
+* stop marking the object model as modified at each start of ReGaHss and
+  each time the start page of the WebUI is loaded, which made it be saved
+  again shortly afterwards (`CheckModifiedCycle`, 10 minutes by default) and
+  `dom.IsDOMModified()` return true: reading `InterfacesList.xml` at the start
+  only sets the modified flag if it changes the interfaces (logged then), the
+  timers initialized for the programs at the start do not set it, and the
+  setters of the system settings (e.g. `system.LoginPage()`, which the start
+  page sets each time it is loaded) only set it if the value changes.
+  ([#55](https://github.com/OpenCCU/ReGaHss/pull/55))
+* fix the login of the WebUI when all sessions (`SessionMaxCount`) are used:
+  ReGaHss sent three responses on the connection (the page "Zuviele
+  gleichzeitige Verbindungen!!", the page of an invalid session and a
+  redirect to the login), of which the browser showed the first one. It now
+  sends a single page with the status 503 (was 500) and `Retry-After: 60`,
+  reading "Es sind zu viele Sitzungen gleichzeitig angemeldet. Bitte später
+  erneut versuchen." with the link "Erneut versuchen", or the English text
+  if the browser prefers English to German (`Accept-Language`). The message
+  in the log is a warning now (was info).
+  ([#54](https://github.com/OpenCCU/ReGaHss/pull/54))
+* escape the values of the variables in the response of `/rega.exe` (e.g.
+  "Skript testen" of the WebUI, tclrega) in one pass instead of with five
+  replacements, which copied each value five times and searched each
+  occurrence of a character to escape on its own; the response is
+  unchanged. With AddressSanitizer this took minutes for a value of some
+  MiB of quotes.
+  ([#53](https://github.com/OpenCCU/ReGaHss/pull/53))
+* fix undefined behavior of the thread polling data points (reported by
+  UBSan in the CI): it cast each object of the data point list to a data
+  point before checking its type, also an object being deleted by another
+  thread at this time. It now only gets the data points of the list. Also,
+  a data point due for polling is polled right away again instead of after
+  waiting one more second (the thread only waited for its stop event).
+  ([#52](https://github.com/OpenCCU/ReGaHss/pull/52))
+
 ## R1.00.0388.0271 (2026-11-25)
 
 * add `system.DeleteSessionVar(name)`, which deletes a session variable
