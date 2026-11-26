@@ -9,6 +9,13 @@ is published.
 
 ## Unreleased
 
+* the device settings and the channel selection of direct links describe the
+  channels 3 to 5 of the HmIP-PS, HmIP-PSM, HmIP-PSM-PE, HmIP-PS-UK,
+  HmIP-PSM-IT and HmIP-PSM-CH as switch actuator again instead of
+  "Currently not supported", and a blind channel of the HmIPW blind
+  actuators, the HmIP-DRBLI4 and the HmIP-BBL-2 in shutter mode as shutter
+  actuator instead of blind actuator.
+  (fixes [#4797](https://github.com/OpenCCU/OpenCCU/issues/4797), @jens-maus)
 * names, descriptions, units and values are escaped with the new string
   methods of ReGaHss R1.00.0388.0271 instead of chains of `Replace()`
   calls, which the WebUI therefore requires. Units show every character
