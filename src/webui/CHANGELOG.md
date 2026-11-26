@@ -9,6 +9,18 @@ is published.
 
 ## Unreleased
 
+* the user account configuration dialog adapts to the browser window: it
+  opens at 65% of the window width (at least its former width), 80% of the
+  window height and 10% below the top edge, stays within the window and can
+  be resized by the grip in its lower right corner, with the list of system
+  variables taking the free height. Dragging in the system variable
+  selection opened from it, from "Wert eingeben" or from the OU-LED16 and
+  OUCFM dialogs no longer moves the dialog and selects the row under the
+  mouse, and the dialog keeps its position after the selection
+  ([#428](https://github.com/OpenCCU/OpenCCU-Base/pull/428),
+  [#376](https://github.com/OpenCCU/OpenCCU-Base/pull/376),
+  [#382](https://github.com/OpenCCU/OpenCCU-Base/pull/382),
+  @unbox-digital-print, @MichaelN0815).
 * the device settings and the channel selection of direct links describe the
   channels 3 to 5 of the HmIP-PS, HmIP-PSM, HmIP-PSM-PE, HmIP-PS-UK,
   HmIP-PSM-IT and HmIP-PSM-CH as switch actuator again instead of

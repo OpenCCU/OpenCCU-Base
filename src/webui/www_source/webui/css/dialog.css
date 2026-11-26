@@ -81,3 +81,21 @@ html, body {
   color: $_(textColorA); /* white */
   cursor: pointer;
 }
+
+/* #messagebox made resizable by enableDialogResize() (ise/js/functions.js): title
+   and content as a column, so a content area with height: 100% takes the space
+   below the title and scrolls itself; other dialogs keep their own layout */
+#messagebox.DialogResizable {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  /* without a background Firefox draws dark scrollbars (dark layer behind) */
+  background-color: $_(white); /* white */
+}
+
+/* size of the larger grip icon (ui-icon-grip-diagonal-se), for every dialog
+   made resizable by enableDialogResize() */
+.DialogResizable > .ui-resizable-se {
+  width: 16px;
+  height: 16px;
+}

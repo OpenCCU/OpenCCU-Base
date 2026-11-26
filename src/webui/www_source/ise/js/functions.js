@@ -114,6 +114,19 @@ TM_WORKDAYS = (TM_FRI * 2) - 1;
 CALL_STRCUT = 1;
 CALL_SPACECUT = 2;
 
+// Dialogs that adapt to the browser window, see getDialogMaxSize(),
+// enableDialogResize() and iseMessageBox.setWidthInViewport() (sizes in px)
+DIALOG_VIEWPORT_MARGIN              = 12;  // smallest gap between a dialog and the window edge (per side)
+DIALOG_VIEWPORT_MIN_WIDTH           = 240; // a dialog never gets narrower, even in a very small window
+DIALOG_VIEWPORT_MIN_HEIGHT          = 180; // a dialog never gets lower, even in a very small window
+DIALOG_USER_ACCOUNT_MIN_WIDTH       = 360; // user account dialog: smallest size when resized
+DIALOG_USER_ACCOUNT_MIN_HEIGHT      = 320;
+DIALOG_USER_ACCOUNT_LIST_MIN_HEIGHT = 100; // smallest height of its list of system variables
+DIALOG_USER_ACCOUNT_WIDTH_PERCENT   = 65;  // user account dialog when opened: width, top and
+DIALOG_USER_ACCOUNT_TOP_PERCENT     = 10;  // height in percent of the browser window
+DIALOG_USER_ACCOUNT_HEIGHT_PERCENT  = 80;
+DIALOG_RESIZE_DATA_KEY              = "dialogResize"; // jQuery data of a resizable dialog
+
 GROUPASSIGNMENT = null;
 
 dlgResult = "";
@@ -825,6 +838,168 @@ centerMessageBox = function() {
       msgbox.style.marginTop = (dimMsgBox.height / 2) + 'px';
     }*/
   }
+};
+
+/**
+ * Largest size of a dialog in the current browser window: the window without
+ * its margins, but at least the minimum size, and never more than the window.
+ **/
+getDialogMaxSize = function() {
+  var windowWidth = WebUI.getWidth(), windowHeight = WebUI.getHeight();
+  return {
+    width:  Math.min(windowWidth,  Math.max(DIALOG_VIEWPORT_MIN_WIDTH,  windowWidth  - 2 * DIALOG_VIEWPORT_MARGIN)),
+    height: Math.min(windowHeight, Math.max(DIALOG_VIEWPORT_MIN_HEIGHT, windowHeight - 2 * DIALOG_VIEWPORT_MARGIN))
+  };
+};
+
+/**
+ * Makes a dialog resizable by the grip in its lower right corner. The dialog
+ * stays within the browser window, also when the window gets smaller.
+ *
+ * element: the dialog (element, selector or jQuery object)
+ * options: minWidth, minHeight  smallest size of the dialog
+ *          growElement          optional selector of an element inside the dialog
+ *                               whose height follows the height of the dialog
+ *          growElementMinHeight smallest height of growElement
+ *          height               optional height of the dialog when made resizable
+ *          onResize             optional function(width, height), called after
+ *                               each size change of the dialog
+ **/
+enableDialogResize = function(element, options) {
+  var dialog = jQuery(element);
+  if ((dialog.length == 0) || (typeof jQuery.fn.resizable != "function")) { return; }
+
+  disableDialogResize(dialog);
+
+  var opts = jQuery.extend({
+    minWidth: 0,
+    minHeight: 0,
+    growElement: null,
+    growElementMinHeight: 0,
+    height: null,
+    onResize: null
+  }, options);
+  var growElement = opts.growElement ? dialog.find(opts.growElement) : jQuery();
+
+  // largest overflow of the dialog and of the scrolling areas around growElement
+  var getOverflow = function() {
+    var overflow = 0;
+    growElement.parentsUntil(dialog).add(dialog).each(function() {
+      if (jQuery(this).css("overflow-y") != "visible") {
+        overflow = Math.max(overflow, this.scrollHeight - this.clientHeight);
+      }
+    });
+    return overflow;
+  };
+
+  // gives growElement the height that is left: first surely too high, then
+  // reduced by what overflows, so wrapped text and tables are measured as
+  // the browser lays them out; 1px less, because scrollHeight is rounded
+  var fitGrowElement = function() {
+    var height = growElement.height() + dialog[0].clientHeight;
+    growElement.height(height);
+    growElement.height(Math.max(opts.growElementMinHeight, height - getOverflow() - 1));
+  };
+
+  var applySize = function() {
+    if (growElement.length) { fitGrowElement(); }
+    if (typeof opts.onResize == "function") {
+      opts.onResize(dialog.width(), dialog.height());
+    }
+  };
+
+  // shift that brings a dialog edge from start (size px long) into a window
+  // of room px; the margin only as far as there is room for it, and a dialog
+  // larger than the window keeps its start (left or top edge) visible
+  var getShiftIntoWindow = function(start, size, room) {
+    var margin = Math.min(DIALOG_VIEWPORT_MARGIN, Math.max(0, (room - size) / 2));
+    var lowest = margin;
+    var highest = Math.max(lowest, room - margin - size);
+    return Math.min(Math.max(start, lowest), highest) - start;
+  };
+
+  // move the dialog back into the window if a part of it is outside
+  var keepInWindow = function() {
+    var rect = dialog[0].getBoundingClientRect();
+    var dx = getShiftIntoWindow(rect.left, rect.width,  WebUI.getWidth());
+    var dy = getShiftIntoWindow(rect.top,  rect.height, WebUI.getHeight());
+    if (dx != 0) { dialog.css("left", (parseFloat(dialog.css("left")) + dx) + "px"); }
+    if (dy != 0) { dialog.css("top",  (parseFloat(dialog.css("top"))  + dy) + "px"); }
+  };
+
+  // limits of the size of the dialog, given as size including its border
+  var setLimits = function(maxWidth, maxHeight) {
+    var frameWidth  = dialog.outerWidth()  - dialog.width();
+    var frameHeight = dialog.outerHeight() - dialog.height();
+    dialog.resizable("option", {
+      minWidth:  Math.min(opts.minWidth,  maxWidth)  - frameWidth,
+      minHeight: Math.min(opts.minHeight, maxHeight) - frameHeight,
+      maxWidth:  maxWidth  - frameWidth,
+      maxHeight: maxHeight - frameHeight
+    });
+    return {width: maxWidth - frameWidth, height: maxHeight - frameHeight};
+  };
+
+  // at the start of a resize: the grip may not leave the window
+  var onResizeStart = function() {
+    var maxSize = getDialogMaxSize();
+    var rect = dialog[0].getBoundingClientRect();
+    setLimits(Math.min(maxSize.width,  WebUI.getWidth()  - DIALOG_VIEWPORT_MARGIN - rect.left),
+              Math.min(maxSize.height, WebUI.getHeight() - DIALOG_VIEWPORT_MARGIN - rect.top));
+  };
+
+  var limitToWindow = function() {
+    var maxSize = getDialogMaxSize();
+    var limit = setLimits(maxSize.width, maxSize.height);
+    if ((dialog.width() > limit.width) || (dialog.height() > limit.height)) {
+      dialog.width(Math.min(dialog.width(), limit.width));
+      dialog.height(Math.min(dialog.height(), limit.height));
+      applySize();
+    }
+    keepInWindow();
+  };
+
+  var onWindowResize = function(event) {
+    // the resize events of jQuery UI bubble up to the window as well
+    if (event.target !== window) { return; }
+    if (!jQuery.contains(document.documentElement, dialog[0])) {
+      jQuery(window).off("resize", onWindowResize);
+      return;
+    }
+    limitToWindow();
+  };
+
+  dialog.addClass("DialogResizable").resizable({
+    handles: "se",
+    start: onResizeStart,
+    resize: applySize
+  });
+  // the larger grip icon of the jQuery UI theme, the small one is hard to see
+  dialog.children(".ui-resizable-se").removeClass("ui-icon-gripsmall-diagonal-se").addClass("ui-icon-grip-diagonal-se");
+  if (opts.height) {
+    dialog.height(opts.height - (dialog.outerHeight() - dialog.height()));
+  }
+  if (dialog[0].style.height) {
+    applySize();
+  }
+  limitToWindow();
+  jQuery(window).on("resize", onWindowResize);
+  dialog.data(DIALOG_RESIZE_DATA_KEY, {options: options, onWindowResize: onWindowResize});
+};
+
+/**
+ * Ends enableDialogResize() for a dialog. The dialog gets its automatic height
+ * back. Returns the options it was made resizable with (null if it was not).
+ **/
+disableDialogResize = function(element) {
+  var dialog = jQuery(element);
+  var state = dialog.data(DIALOG_RESIZE_DATA_KEY);
+  if (!state) { return null; }
+
+  jQuery(window).off("resize", state.onWindowResize);
+  if (dialog.hasClass("ui-resizable")) { dialog.resizable("destroy"); }
+  dialog.removeClass("DialogResizable").removeData(DIALOG_RESIZE_DATA_KEY).css("height", "");
+  return state.options;
 };
 
 saveDlgResult = function(id) {
