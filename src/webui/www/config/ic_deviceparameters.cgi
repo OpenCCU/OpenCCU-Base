@@ -1224,7 +1224,7 @@ proc put_channel_parameters {} {
     # Due to performance reasons we spare the MULTI_MODE_INPUT_TRANSMITTER at this point
     if {(! [string equal $ch_descr(TYPE) "MULTI_MODE_INPUT_TRANSMITTER"]) } {
       puts "<script type='text/javascript'>"
-        puts "var ext = getExtendedDescription(\{\"deviceType\" : \"$ch_descr(PARENT_TYPE)\", \"channelType\" : \"$ch_descr(TYPE)\" ,\"channelIndex\" : \"$ch_descr(INDEX)\", \"channelAddress\" : \"$ch_descr(ADDRESS)\" \});"
+        puts "var ext = getExtendedDescription(\{\"deviceType\" : \"$ch_descr(PARENT_TYPE)\", \"channelType\" : \"$ch_descr(TYPE)\" ,\"channelIndex\" : \"$ch_descr(INDEX)\", \"channelAddress\" : \"$ch_descr(ADDRESS)\", \"isVisible\" : [expr {($ch_descr(FLAGS) & 1) ? "true" : "false"}] \});"
         puts "jQuery(\"#chDescr_$ch_descr(INDEX)\").html(\"<br/><br/>\" + ext);"
       puts "</script>"
     } else {
