@@ -1069,6 +1069,8 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
   set hbRc12EpBwIdentifier "HB-RC-12-EP-BW"
   set hbRc4DisThIdentifier "HB-RC-4-Dis-TH"
   set hbRc4DisThCrgIdentifier "HB-RC-4-Dis-TH-CRG"
+  set hbStatusDisplays [list $hbDis42BWIdentifier $hbDis42BWMainsIdentifier $hbDis75BWIdentifier $hbDis75BWMainsIdentifier $hbRc12EpcIdentifier $hbRc12EpBwIdentifier $hbRc4DisThIdentifier $hbRc4DisThCrgIdentifier]
+  set hbStatusDisplayParams {TEXTLINE_1 TEXTLINE_2 HBTEXTLINE_1 HBTEXTLINE_2 HBTEXTLINE_3 HBTEXTLINE_4 HBTEXTLINE_UPPER HBTEXTLINE_LOWER HB_HEADERLINE}
   
   if { ! [catch { array set ch_descr [xmlrpc $iface_url($iface) getDeviceDescription [list string $address]] } ] } then {
     set channel_type $ch_descr(TYPE)
@@ -1158,48 +1160,38 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
       "STRING" {
         # Prüfen, ob es sich um einen Text-Parameter des Gerätes vom Typ 'HM Wireless Status Display' handelt.
         # In diesem Fall wird dem Texteingabefeld eine fortlaufende Nr. vorangestellt.
-        if {$param_id != "TEXTLINE_1" && $param_id != "TEXTLINE_2" && $param_id != "HBTEXTLINE_1" && $param_id != "HBTEXTLINE_2" && $param_id != "HBTEXTLINE_3" && $param_id != "HBTEXTLINE_4" && $param_id != "HBTEXTLINE_UPPER" && $param_id != "HBTEXTLINE_LOWER" && $param_id != "HB_HEADERLINE"} {
+        if {([lsearch -exact $hbStatusDisplays $parent_type] != -1) && ([lsearch -exact $hbStatusDisplayParams $param_id] != -1)} {
+          # Text parameters of the HB status displays
+          puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/KEY_4Dis.js');</script>"
+          if { ($parent_type == $hbRc4DisThIdentifier) || ($parent_type == $hbRc4DisThCrgIdentifier) } then {
+            # header line and two text lines with up to 10 characters
+            if {[lsearch -exact {HB_HEADERLINE HBTEXTLINE_UPPER HBTEXTLINE_LOWER} $param_id] != -1} {
+              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
+            }
+          } elseif { ($parent_type == $hbRc12EpcIdentifier) || ($parent_type == $hbRc12EpBwIdentifier) } then {
+            # one text line with up to 10 characters
+            if {$param_id == "TEXTLINE_1"} {
+              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
+            }
+          } elseif { ($parent_type == $hbDis75BWIdentifier) || ($parent_type == $hbDis75BWMainsIdentifier) } then {
+            # four numbered text lines per channel
+            if {[regexp {^HBTEXTLINE_([1-4])$} $param_id dummy line]} {
+              append s "<td>[expr (($chn - 1) * 4) + $line]:&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
+            }
+          } else {
+            # HB-DIS-EP-42BW(-MAINS): two numbered text lines per channel
+            if {$param_id == "HBTEXTLINE_1"} {
+              append s "<td>[expr $chn * 2 - 1]&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
+            } else {
+              append s "<td>[expr $chn * 2]&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
+            }
+          }
+        } elseif {$param_id != "TEXTLINE_1" && $param_id != "TEXTLINE_2"} {
           append s "<td><input type=\"text\" name=\"$param_id\" value=\"$value\" $id $access /></td>"
         } else {
           puts "<script type=\"text/javascript\">load_JSFunc('/config/easymodes/MASTER_LANG/KEY_4Dis.js');</script>"
           set helpText [getStatusDisplayHelp]
-          if { ($parent_type == $hbRc4DisThIdentifier) || ($parent_type == $hbRc4DisThCrgIdentifier) } then {
-            if {$param_id == "HB_HEADERLINE"} {
-              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-            if {$param_id == "HBTEXTLINE_UPPER"} {
-              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-            if {$param_id == "HBTEXTLINE_LOWER"} {
-              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-          } else {
-          if {($parent_type == $hbRc12EpcIdentifier) || ($parent_type == $hbRc12EpBwIdentifier)} then {
-            if {$param_id == "TEXTLINE_1"} {
-              append s "<td><input type=\"text\" name=\"$param_id\" maxlength=\"10\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-          } else {  
-           if {(($parent_type == $hbDis75BWIdentifier) || ($parent_type == $hbDis75BWMainsIdentifier))} then {
-            if {$param_id == "HBTEXTLINE_1"} {
-              append s "<td>[expr (($chn - 1) * 4) + 1]:&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            } 
-            if {$param_id == "HBTEXTLINE_2"} {
-              append s "<td>[expr (($chn - 1) * 4) + 2]:&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-            if {$param_id == "HBTEXTLINE_3"} {
-              append s "<td>[expr (($chn - 1) * 4) + 3]:&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-            if {$param_id == "HBTEXTLINE_4"} {
-              append s "<td>[expr (($chn - 1) * 4) + 4]:&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-            }
-           } else {      
-           if {(($parent_type == $hbDis42BWIdentifier) || ($parent_type == $hbDis42BWMainsIdentifier))} then {
-             if {$param_id == "HBTEXTLINE_1"} {
-               append s "<td>[expr $chn * 2 - 1]&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-             } else {
-               append s "<td>[expr $chn * 2]&nbsp;&nbsp;<input type=\"text\" style=\"font-weight: bold;\" name=\"$param_id\" maxlength=\"16\" onblur=\"encodeStringStatusDisplay('$idval', true);\" value=\"$value\" $id $access /></td>"
-             }
-           } else {
+
           # The parameter numbering of the channels 1 and 2 are the same as from the HM-Dis-WM55
           if {($parent_type != $hmDisEPIdentifier) || ($chn < 4)} {
             if {$param_id == "TEXTLINE_1"} {
@@ -1234,10 +1226,6 @@ proc cmd_link_paramset2 {iface address pps_descr pps ps_type {pnr 0}} {
               append s "<td><img src=\"/ise/img/help.png\"/ size=\"24\" width=\"24\" onclick=\"MessageBox.show(translateKey('dialogHelpTitle'), '$helpText', '', 450, 375) ;\"></td>"
             }
           }
-        }
-        }
-          }
-         }
         }
         append s "<td>$unit</td>"
       }
