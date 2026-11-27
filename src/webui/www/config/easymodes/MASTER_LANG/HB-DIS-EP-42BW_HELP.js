@@ -12,7 +12,7 @@ jQuery.extend(true,langJSON, {
     "KEY_TRANSCEIVER" :
       "Kurzen oder langen Tastendruck nach dem Starten des Displays senden.",
     "AVAILABLE_ICONS" :
-      "Icon-Übersicht:<br/><table style=\"text-align: center;\">"+
+      "Icon-%DCbersicht:<br/><table style=\"text-align: center;\">"+
       "<tr>"+
         "<td><img src=/ise/img/icons_hm_dis_ep_wm55/24/0.png></td>"+
         "<td><img src=/ise/img/icons_hm_dis_ep_wm55/24/1.png></td>"+

@@ -12,7 +12,7 @@ jQuery.extend(true,langJSON, {
     "KEY_TRANSCEIVER" :
       "Kurzen oder langen Tastendruck nach dem Starten des Displays senden.",
     "AVAILABLE_ICONS" :
-      "Icon-Übersicht:<br/><table style=\"text-align: center;\">"+
+      "Icon-%DCbersicht:<br/><table style=\"text-align: center;\">"+
       "<tr>"+
         "<td><img src=/ise/img/icons_hb_dis_ep_75bw/measure_cistern_0.png></td>"+
         "<td><img src=/ise/img/icons_hb_dis_ep_75bw/measure_cistern_30.png></td>"+
@@ -110,7 +110,7 @@ jQuery.extend(true,langJSON, {
         "<td>0xa2</td>"+
         "<td></td>"+
       "</tr>"+
-      "</table><br/>Icons from <a target='_blank' href=\"https://github.com/OpenAutomationProject/knx-uf-iconset\">OpenAutomationProject</a>"
+      "</table><br/>Icons from <a target='_blank' rel='noopener noreferrer' href=\"https://github.com/OpenAutomationProject/knx-uf-iconset\">OpenAutomationProject</a>"
   },
   "en" :{
     "HelpTitle" : "Help",
