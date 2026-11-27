@@ -145,10 +145,10 @@ SaveDeviceParameters = function()
     }
 
     if (
-        ( (window.P1_tom) && (P1_tom.iface == $F('global_iface')) && (P1_tom.address == channel_address) && (P1_tom.tom_isDirty()) && (P1_tom.jphb) ) ||
-        ( (window.P2_tom) && (P2_tom.iface == $F('global_iface')) && (P2_tom.address == channel_address) && (P2_tom.tom_isDirty()) && (P2_tom.jphb) ) ||
-        ( (window.P3_tom) && (P3_tom.iface == $F('global_iface')) && (P3_tom.address == channel_address) && (P3_tom.tom_isDirty()) && (P3_tom.jphb) ) ||
-        ( (window.P4_tom) && (P4_tom.iface == $F('global_iface')) && (P4_tom.address == channel_address) && (P4_tom.tom_isDirty()) && (P4_tom.jphb) )
+        ( (window.P1_tom) && (P1_tom.iface == $F('global_iface')) && (P1_tom.address == channel_address) && (P1_tom.tom_isDirty()) && (P1_tom.isHB) ) ||
+        ( (window.P2_tom) && (P2_tom.iface == $F('global_iface')) && (P2_tom.address == channel_address) && (P2_tom.tom_isDirty()) && (P2_tom.isHB) ) ||
+        ( (window.P3_tom) && (P3_tom.iface == $F('global_iface')) && (P3_tom.address == channel_address) && (P3_tom.tom_isDirty()) && (P3_tom.isHB) ) ||
+        ( (window.P4_tom) && (P4_tom.iface == $F('global_iface')) && (P4_tom.address == channel_address) && (P4_tom.tom_isDirty()) && (P4_tom.isHB) )
         ) {
         SetParameters ($F('global_iface'), channel_address, 'TIMEOUTMANAGER');
         actions++;

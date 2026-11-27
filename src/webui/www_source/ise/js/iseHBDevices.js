@@ -1,7 +1,18 @@
+/**
+ * ise/iseHBDevices.js
+ **/
+
+/**
+ * @fileOverview Controls, dialogs and the timeout manager of the HB
+ *               homebrew devices (HB-*), formerly part of the
+ *               JP-HB-Devices addon.
+ * @author jp112sdl
+ **/
+
 CC_save_Level = function(prgName)
 {
   var prg = (typeof prgName != "undefined" && prgName != null) ? prgName : "";
-  for (loop = 0; loop <= (document.getElementsByName(prg+'level_tmp').length -1); loop++)
+  for (var loop = 0; loop <= (document.getElementsByName(prg+'level_tmp').length -1); loop++)
   {
       document.getElementsByName(prg + 'level')[loop].value = parseInt(document.getElementsByName(prg +'level_tmp')[loop].value);
   }
@@ -25,14 +36,14 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
 
     this.iface = iface;
     this.address = address;
-    this.jphb = true;
+    this.isHB = true;
 
     this.prg = (prgName != undefined && prgName != null) ? prgName : "";
 
     //Woche anlegen und initialisieren
     this.week = new Array(7);
     this.divname = new Array(7); //DIV-Container
-    this.weekdirty = new Array(7); //Sind ƒnderungen erfolgt?
+    this.weekdirty = new Array(7); //Sind Aenderungen erfolgt?
 
     this.setMaxTimouts();
 
@@ -194,7 +205,7 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
     var postStr = "";
 
     for (var dayidx = 0; dayidx < 7; dayidx++) {
-      //Welcher Tag enth‰lt die relevanten Daten: "wie am Vortag"-Funktion?
+      //Welcher Tag enthaelt die relevanten Daten: "wie am Vortag"-Funktion?
       var prev_day = $(this.prg + 'prevday_' + dayidx);
       var p = dayidx;
       while (prev_day.checked) {
@@ -285,7 +296,7 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
     var timeouts = this.week[dayidx];
 
     if (timeouts.length >= this.maxTimeOuts ) {
-      //alert('Der Zeitabschnitt kann nicht angelegt werden. Es kˆnnen nur bis zu '+this.maxTimeOuts+'  Zeitabschnitte angelegt werden.');
+      //alert('Der Zeitabschnitt kann nicht angelegt werden. Es koennen nur bis zu '+this.maxTimeOuts+'  Zeitabschnitte angelegt werden.');
       alert(translateKey('errorCreateTimePeriod') + translateKey('maxTimePeriodReachedA') + this.maxTimeOuts+translateKey('maxTimePeriodReachedB'));
       return;
     }
@@ -343,7 +354,7 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
 
     for (i = 1; i < timeouts.length; i++) {
       if (timeouts[i][tom_endtime] <= timeouts[i - 1][tom_endtime]) {
-        alert("Der " + i + ". Zeitabschnitt hat eine ung¸ltige Dauer");
+        alert("Der " + i + ". Zeitabschnitt hat eine ung\u00fcltige Dauer");
       }
     }
   },
@@ -367,7 +378,7 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
 
     var equals_prevday = this.tom_equals_prevday(day);
 
-    msg = "<hr class=\"CLASS10400\" />";
+    var msg = "<hr class=\"CLASS10400\" />";
     msg += "<table class=\"TimeoutTable\">";
     msg += "<tbody>";
     msg += "<tr>";
@@ -421,70 +432,13 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
 
 
 
-/**
- * ise/iseButtonsWindowHB.js
- **/
-
-/**
- * @fileOverview ?
- * @author ise, mod by jp112sdl
- **/
-
 /* * * * * * * * * * * * * * * * * * * * * * * *
- * iseButtonsWindowHB                          *
+ * iseButtonsServo                             *
  * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
  * @class
  **/
-iseButtonsWindowHB = Class.create();
-
-iseButtonsWindowHB.prototype = {
-  /*
-   * id = datapoint-ID of switch
-   * initState = Creation State (0 or 1)
-   */
-  initialize: function(id, initState) {
-    this.id = id;
-    this.state = initState;
-    this.divOpenH = $(this.id + "OpenH");
-    this.divOpenV = $(this.id + "OpenV");
-    this.divClosed = $(this.id + "Closed");
-    this.divExtra = $(this.id + "Extra");
-
-    switch (initState) {
-      case 0:
-      case false:
-        ControlBtn.on(this.divClosed);
-        break;
-      case 1:
-        ControlBtn.on(this.divOpenV);
-        break;
-      case 2:
-      case true:
-        ControlBtn.on(this.divOpenH);
-        break;
-      case 3:
-        ControlBtn.on(this.divExtra);
-        break;
-      default:
-        break;
-    }
-  }
-};
-
-/**
- * ise/iseButtonsServo.js
- **/
-
-/**
- * @fileOverview ?
- * @author ise, mod by jp112sdl
- **/
-
-/**
- * @class
- **/ 
 iseButtonsServo = Class.create();
 
 iseButtonsServo.prototype = {
@@ -1072,7 +1026,7 @@ HbStatusDisplayDialogEPaper = Class.create(StatusDisplayDialog, {
     var arValues = val.split(","), //replace(/ /g, "").split(","),
     arLines = []; // contains the lines 1,2,3
 
-    // Is a start key and end key available? Otherwise the string isn¬•t valid.
+    // Is a start key and end key available? Otherwise the string isn't valid.
     if (arValues[0] == this.startKey && arValues[arValues.length - 1] == this.endKey) {
       var lineIndex = 0,
       textIndex,
@@ -1108,14 +1062,14 @@ HbStatusDisplayDialogEPaper = Class.create(StatusDisplayDialog, {
             nextTextBlockIndex++;
           } while ((arValues[textIndex] != this.iconKey) && (arValues[textIndex] != this.lf)) ;
 
-          // Icon hinzuf¬∏gen, entweder nicht benutzt (-1) oder den entsprechenden Wert
+          // Icon hinzufuegen, entweder nicht benutzt (-1) oder den entsprechenden Wert
           // Add the icon, either not used (-1) or the correspondent value
           valueSet.icon = (arValues[textIndex] == this.iconKey) ? arValues[textIndex + 1] : -1;
           arLines[lineIndex] = valueSet;
           lineIndex++;
           if (valueSet.icon == -1) {textOffset = 1;} else {textOffset = 3;}
           // Jump to the next text block
-          loopx += nextTextBlockIndex + textOffset; // Springe zum n‚Ä∞chsten Textblock
+          loopx += nextTextBlockIndex + textOffset; // Springe zum naechsten Textblock
           //console.log("new loopx : " + loopx);
         }
       }
@@ -1126,26 +1080,23 @@ HbStatusDisplayDialogEPaper = Class.create(StatusDisplayDialog, {
   }
 });
 
-YesNoDialog.RESULT_NO = 0;
-YesNoDialog.RESULT_YES = 1;
-
 /* * * * * * * * * * * * * * * * * * * * * * * *
- * iseButtonsJPWindowControl                   *
+ * iseButtonsHBWindowControls                  *
  * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
  * @class
  **/ 
-iseButtonsJPWindowControls= Class.create();
+iseButtonsHBWindowControls= Class.create();
 
-iseButtonsJPWindowControls.prototype = {
+iseButtonsHBWindowControls.prototype = {
   /*
    * id = datapoint-ID of switch
    * initState = Creation State (0 or 1)
    */
   initialize: function(id, opts, iViewOnly)
   {
-    this.Window = "JPWindowControls";
+    this.Window = "HBWindowControls";
     conInfo(this.Window);
     this.id = id;
     this.opts = opts;
@@ -1157,13 +1108,12 @@ iseButtonsJPWindowControls.prototype = {
     this.divOpen = $(this.id + "Open");
     this.divClose = $(this.id + "Close");
     this.state = this.opts.stLevel * 100;
-    Released = false;
     // Draw WinMatic Control
     var s = "<div id='spec"+this.id+"'><div id='"+this.id+"Ctrl' style='position:relative;top:0px;left:0px;line-height:0;background-color: White; width:100px;height:100px;'>" +
             "<img src='/ise/img/window/circle.png' /></div></div>";
     this.Circle.innerHTML = s;
     this.graphics = new jsGraphics(this.id+"Ctrl");
-    this.graphics.setColor(WebUI.getColor("active")); // gr¸n
+    this.graphics.setColor(WebUI.getColor("active")); // gruen
     
     // Add event handlers
     if (iViewOnly === 0) {
@@ -1233,6 +1183,8 @@ iseButtonsJPWindowControls.prototype = {
       var iTmp = parseInt(this.Perc.value);
       if (iTmp < 0)
         iTmp = 0;
+      if (iTmp > 100)
+        iTmp = 100;
       this.state = iTmp;
       this.refresh();
     }
@@ -1371,6 +1323,7 @@ SendInternalKeyPressNoPopup = function(iface, sender, receiver, longKeyPress)
   poststr += "&sender=" + sender;
   poststr += "&receiver=" + receiver;
   poststr += "&longKeyPress=" + simLongKeyPress;
-  poststr += "&cmd=SendInternalKeyPressNoPopup";
-  SendRequest('ic_ifacecmd_jp.cgi');
+  poststr += "&noPopup=1";
+  poststr += "&cmd=SendInternalKeyPress";
+  SendRequest('ic_ifacecmd.cgi');
 };

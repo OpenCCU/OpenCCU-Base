@@ -69,7 +69,7 @@ function ::CreateWndRotSensor() {
   
   object objState = cObj.DPByControl("RHS.STATE");
   WriteLine("<script type='text/javascript'>");
-  WriteLine("ibw"#cObj.ID()#" = new iseButtonsWindowHB("#chnId#", "#objState.Value()#");");
+  WriteLine("ibw"#cObj.ID()#" = new iseButtonsWindow("#chnId#", "#objState.Value()#");");
   WriteLine("</script>");
   return;
 }

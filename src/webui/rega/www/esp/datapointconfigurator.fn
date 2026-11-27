@@ -184,7 +184,7 @@ function ::dcCreate()
     var CN_IBTN_BUTTON     = "IBTN.";
     var CN_SERVO           = "SERVO.";
     var CN_AIRFLAP         = "AIRFLAP.";
-    var CN_JPWINDOW        = "JPWND.";
+    var CN_HBWINDOW        = "JPWND.";
     var CN_GDS             = "GDS.";
     var CN_FAN             = "FAN.";
     var CN_PFS             = "PFS.";
@@ -450,17 +450,17 @@ function ::dcCreate()
             isKnownControl = true;
             sLastControlName = CN_SERVO;
             WriteLine( "<script>conInfo('Control SERVO found.');</script>" );
-            Call("/esp/controls/jpservo.fn::CreateServoActuator()");
+            Call("/esp/controls/servo.fn::CreateServoActuator()");
           } 
  
-          !# JPWINDOW
-          bIsControl = ( sControlName.Find(CN_JPWINDOW) > -1 );
-          if( bIsControl && (sLastControlName!=CN_JPWINDOW) )
+          !# HBWINDOW (HB-OU-MOT-WIN, control JPWND.*)
+          bIsControl = ( sControlName.Find(CN_HBWINDOW) > -1 );
+          if( bIsControl && (sLastControlName!=CN_HBWINDOW) )
           {
-            WriteLine( "<script>conInfo('Control JPWINDOW found.');</script>" );
+            WriteLine( "<script>conInfo('Control HBWINDOW found.');</script>" );
             isKnownControl = true;
-            sLastControlName = CN_JPWINDOW;
-            Call("/esp/controls/jpwindow.fn::CreateJPWindowControls()");
+            sLastControlName = CN_HBWINDOW;
+            Call("/esp/controls/hbwindow.fn::CreateHBWindowControls()");
           }
           
           !# GDS

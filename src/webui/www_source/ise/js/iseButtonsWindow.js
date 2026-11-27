@@ -27,6 +27,7 @@ iseButtonsWindow.prototype = {
     this.divOpenH = $(this.id + "OpenH");
     this.divOpenV = $(this.id + "OpenV");
     this.divClosed = $(this.id + "Closed");
+    this.divExtra = $(this.id + "Extra");
     
     switch (initState) {
       case 0:
@@ -39,6 +40,10 @@ iseButtonsWindow.prototype = {
       case 2:
       case true:
         ControlBtn.on(this.divOpenH);
+        break;
+      case 3:
+        // extra state of the HB-Sec-RHS-3 and compatible devices
+        if (this.divExtra) ControlBtn.on(this.divExtra);
         break;
       default:
         break;

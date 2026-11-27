@@ -1,4 +1,4 @@
-function ::CreateJPWindowControls()
+function ::CreateHBWindowControls()
 {
   object oLevel = cObj.DPByControl("JPWND.LEVEL");
   object oStop = cObj.DPByControl("JPWND.STOP");
@@ -73,7 +73,7 @@ function ::CreateJPWindowControls()
       WriteLine(" stStop: '"#oStop.Value()#"'");
       WriteLine("};");
 
-      WriteLine("ibwm"#cObj.ID()#" = new iseButtonsJPWindowControls("#cObj.ID()#", opts, " #system.GetVar("iStatusOnly")# ");");
+      WriteLine("ibwm"#cObj.ID()#" = new iseButtonsHBWindowControls("#cObj.ID()#", opts, " #system.GetVar("iStatusOnly")# ");");
       WriteLine("translatePage('#ctrl"#chnId#"tbl');");
     WriteLine('</script>');
   }
