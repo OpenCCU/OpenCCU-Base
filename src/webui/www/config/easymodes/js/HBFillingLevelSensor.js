@@ -3,7 +3,7 @@ self.displayCustom = function (elem) {
   $$(".j_custom").invoke(mode);
 };
 
-setVal = function(tmpElm, type) {
+hbLevelSensorSetVal = function(tmpElm, type) {
   var elmID; 
   
   switch (type) {
@@ -28,7 +28,7 @@ setVal = function(tmpElm, type) {
 
 // Je nach Gehäuseform dürfen nur bestimmte Parameter sichtbar sein.
 // This doesn�t work with IE10 therefore this function was rewritten
-_caseHasChanged = function(elm) {
+hbLevelSensor_caseHasChanged = function(elm) {
 
   var caseHeightElem;
 
@@ -56,7 +56,7 @@ _caseHasChanged = function(elm) {
 
 };
 
-caseHasChanged = function(elm) {
+hbLevelSensorCaseHasChanged = function(elm) {
   conInfo("Case has changed....");
   var caseHeightElem;
 
@@ -84,7 +84,7 @@ caseHasChanged = function(elm) {
 
 };
 
-ProofValue = function(elmID, min, caseSelectorID, deviceMaxValue) {
+hbLevelSensorProofValue = function(elmID, min, caseSelectorID, deviceMaxValue) {
   
   var isValModified = (document.getElementById("caseHeightMinMaxA").style.display == "none") ? true : false ;
   var elm = $(elmID);
@@ -105,7 +105,7 @@ ProofValue = function(elmID, min, caseSelectorID, deviceMaxValue) {
   ProofAndSetValue(elmID, elmID, min, max, 1);
 };
 
-showHelpElem = function(mode) {
+hbLevelSensorShowHelpElem = function(mode) {
   if (!mode || (mode != "hide")) {
     $("caseHelp").show();
     document.getElementById("caseHelp").scrollIntoView();

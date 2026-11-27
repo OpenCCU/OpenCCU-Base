@@ -1,4 +1,4 @@
-convertAddress = function(address) {
+dummyBeaconConvertAddress = function(address) {
   var val = {};
   if (address) {  
     var hAddress = parseInt(address).toString(16);
@@ -21,7 +21,7 @@ convertAddress = function(address) {
   return val;
 };
 
-restoreRFAddress = function(oVal) {
+dummyBeaconRestoreRFAddress = function(oVal) {
   
   var hexSenderAddress = "000000";
 
@@ -39,12 +39,12 @@ restoreRFAddress = function(oVal) {
   return parseInt(hexSenderAddress, 16);
 };
 
-decToHex = function(val) {
+dummyBeaconDecToHex = function(val) {
   var sHex = parseInt(val).toString(16);
   return (sHex.length == 1) ? "0" +  sHex : sHex;
 }
 
-self.init = function (chn) {
+dummyBeaconInit = function (chn) {
   var options = jQuery(".select_"+chn+" option");
   if (options) {
     var arr = options.map(function(_, o) {
@@ -78,14 +78,14 @@ self.init = function (chn) {
   val.senderMID=mid;
   val.senderLOW=low;
 
-  var rf = restoreRFAddress(val);
+  var rf = dummyBeaconRestoreRFAddress(val);
   document.getElementById("deviceSelectionBox_"+chn).value = rf;
   
-  setDevice(document.getElementById("deviceSelectionBox_"+chn), chn);
+  dummyBeaconSetDevice(document.getElementById("deviceSelectionBox_"+chn), chn);
 } 
 
 
-self.setDevice = function (elm, chn) {
+dummyBeaconSetDevice = function (elm, chn) {
   //console.log("setDevice "+elm.value+" ch:"+chn);
   
   var devType = jQuery(".FD_CYCLIC_TIMEOUT_"+chn).val();
@@ -108,17 +108,17 @@ self.setDevice = function (elm, chn) {
       jQuery(".FD_CYCLIC_TIMEOUT_"+chn).val(0); 
       document.getElementById("deviceTypeSelectionBox_"+chn).value = 0;
     }
-    var senderBYTES = convertAddress(parseInt(elm.value));
+    var senderBYTES = dummyBeaconConvertAddress(parseInt(elm.value));
     jQuery(".ADDRESS_SENDER_HIGH_BYTE_"+chn).val(senderBYTES.HIGH); 
     jQuery(".ADDRESS_SENDER_MID_BYTE_"+chn).val(senderBYTES.MID); 
     jQuery(".ADDRESS_SENDER_LOW_BYTE_"+chn).val(senderBYTES.LOW); 
     
-    jQuery(".HEXADDR_"+chn).html("(0x "+decToHex(senderBYTES.HIGH)+" "+decToHex(senderBYTES.MID)+" "+decToHex(senderBYTES.LOW)+")"); 
+    jQuery(".HEXADDR_"+chn).html("(0x "+dummyBeaconDecToHex(senderBYTES.HIGH)+" "+dummyBeaconDecToHex(senderBYTES.MID)+" "+dummyBeaconDecToHex(senderBYTES.LOW)+")"); 
   }
 
 };
 
-self.setDeviceType = function (elm, chn, min) {
+dummyBeaconSetDeviceType = function (elm, chn, min) {
   //console.log("setDeviceType "+elm.value+" ch:"+chn);
   if (elm.value === "0") {
     jQuery(".j_sens_param_"+chn).hide();

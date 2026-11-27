@@ -106,7 +106,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   append HTML_PARAMS(separate_1) "<tr>"
   append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\">\${stringTableFdSimulate}</td>"
-  append HTML_PARAMS(separate_1) "<td><select class=\"select\_$chn\" id=\"deviceSelectionBox\_$chn\" onchange=\"setDevice(this, $chn)\">"
+  append HTML_PARAMS(separate_1) "<td><select class=\"select\_$chn\" id=\"deviceSelectionBox\_$chn\" onchange=\"dummyBeaconSetDevice(this, $chn)\">"
   append HTML_PARAMS(separate_1) "<option id='$chn\_0' value='0'>-&nbsp;nicht&nbsp;belegt&nbsp;-</option>"
 
   foreach name [array names devnames] {
@@ -139,7 +139,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   set minCyclicTimeout 60
   append HTML_PARAMS(separate_1) "<tr class=\"j_param_$chn\">"
     append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\">\${stringTableFdSimulateDeviceType}</td>"
-    append HTML_PARAMS(separate_1) "<td><select class=\"selectDeviceType\_$chn j_param_$chn\" id=\"deviceTypeSelectionBox\_$chn\" onchange=\"setDeviceType(this, $chn, parseInt([getMinValue ps_descr $param]))\">"
+    append HTML_PARAMS(separate_1) "<td><select class=\"selectDeviceType\_$chn j_param_$chn\" id=\"deviceTypeSelectionBox\_$chn\" onchange=\"dummyBeaconSetDeviceType(this, $chn, parseInt([getMinValue ps_descr $param]))\">"
       append HTML_PARAMS(separate_1) "<option id='DeviceType\_$chn\_0' value='0'>\${stringTableFdSimulateDeviceTypeActuator}</option>"
       append HTML_PARAMS(separate_1) "<option id='DeviceType\_$chn\_1' value='1'>\${stringTableFdSimulateDeviceTypeSensor}</option>"
     append HTML_PARAMS(separate_1) "</select></td>"
@@ -177,6 +177,6 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
       
   append HTML_PARAMS(separate_1) "</table>"
   
-  puts "<script type=\"text/javascript\">init($chn);</script>"
+  puts "<script type=\"text/javascript\">dummyBeaconInit($chn);</script>"
 }
 constructor

@@ -3,7 +3,7 @@ self.displayCustom = function (elem) {
   $$(".j_custom").invoke(mode);
 };
 
-setVal = function(tmpElm, type) {
+hbCurrentSensorSetVal = function(tmpElm, type) {
   var elmID; 
   
   switch (type) {
@@ -26,7 +26,7 @@ setVal = function(tmpElm, type) {
   document.getElementById(elmID).value = convertedValue.toFixed(0);
 };
 
-powerSupplyHasChanged = function(elm) {
+hbCurrentSensorPowerSupplyHasChanged = function(elm) {
   conInfo("powerSupply has changed....");    
   switch (elm.selectedIndex) {  
     case 0:                             

@@ -176,14 +176,14 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     append HTML_PARAMS(separate_1) "<tr class=\"j_custom\">"
       append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\">$devType|$param</td>"
       append HTML_PARAMS(separate_1) "<td>" 
-        append HTML_PARAMS(separate_1) "<select class=\"stringtable_select\" style=\"width:160px;\" id=$caseSelectorID name=\"$param\" onchange=\"caseHasChanged(this)\">"
+        append HTML_PARAMS(separate_1) "<select class=\"stringtable_select\" style=\"width:160px;\" id=$caseSelectorID name=\"$param\" onchange=\"hbLevelSensorCaseHasChanged(this)\">"
           append HTML_PARAMS(separate_1) "<option value=\"0\">$devType|CASE_DESIGN=VERTICAL_BARREL</option>" 
           append HTML_PARAMS(separate_1) "<option value=\"1\">$devType|CASE_DESIGN=HORIZONTAL_BARREL</option>" 
           append HTML_PARAMS(separate_1) "<option value=\"2\">$devType|CASE_DESIGN=RECTANGLE</option>" 
         append HTML_PARAMS(separate_1) "</select>"
         setSelectedCase $selectedCase "separate_CHANNEL_1_$paramNr"
       append HTML_PARAMS(separate_1) "</td>"
-      append HTML_PARAMS(separate_1) "<td><img src=\"/ise/img/help.png\" style=\"cursor: pointer; width:24px; height:24px;\" onclick=\"showHelpElem('show')\"></td>"
+      append HTML_PARAMS(separate_1) "<td><img src=\"/ise/img/help.png\" style=\"cursor: pointer; width:24px; height:24px;\" onclick=\"hbLevelSensorShowHelpElem('show')\"></td>"
     append HTML_PARAMS(separate_1) "</tr>"
 
     incr paramNr
@@ -202,7 +202,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     set max [getMaxValue ps_descr $param]
     append HTML_PARAMS(separate_1) "<tr class=\"j_custom j_caseHeight\">"
       append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\" id=\"caseHeight\">$devType|$param</td>"
-      append HTML_PARAMS(separate_1) "<td> <input type=\"text\" id=\"separate_CHANNEL_1_$paramNr\" name=\"$param\" value=\"$ps($param)\" onblur=\"ProofValue('separate_CHANNEL_1_$paramNr','$min', $caseSelectorID, [getMaxValue ps_descr $param]);\"> </td>"
+      append HTML_PARAMS(separate_1) "<td> <input type=\"text\" id=\"separate_CHANNEL_1_$paramNr\" name=\"$param\" value=\"$ps($param)\" onblur=\"hbLevelSensorProofValue('separate_CHANNEL_1_$paramNr','$min', $caseSelectorID, [getMaxValue ps_descr $param]);\"> </td>"
       append HTML_PARAMS(separate_1) "<td>"
         append HTML_PARAMS(separate_1) "<span id=\"caseHeightMinMaxA\" style=\"display:none;\">[getUnit ps_descr $param] [getMinMaxValueDescr ps_descr $param]</span>"
         append HTML_PARAMS(separate_1) "<span id=\"caseHeightMinMaxB\" style=\"display:none;\">[getUnit ps_descr $param] (30 - $max)</span>"

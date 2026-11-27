@@ -15,7 +15,7 @@ proc getCheckBox {param value prn} {
 
 proc getComboBox {arOptions prn param val} {
   upvar $arOptions options
-  set s "<select  id=\"separate_DEVICE\_$prn\" name=$param onchange=\"powerSupplyHasChanged(this)\">"
+  set s "<select  id=\"separate_DEVICE\_$prn\" name=$param onchange=\"hbCurrentSensorPowerSupplyHasChanged(this)\">"
   #set s "<select id=\"separate_DEVICE\_$prn\" name=$param>"
   foreach value [lsort -real [array names options]] {
     set selected ""
