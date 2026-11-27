@@ -260,8 +260,8 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
 # die Texte der Platzhalter einlesen
   puts "<script type=\"text/javascript\">
-    var type = \"DIMMER\"
-    type = ('$dev_descr_receiver(TYPE)' == \"VIRTUAL_DIMMER\") ? \"DIMMER\" : type ;
+    var type = \"SERVO\"
+    type = ('$dev_descr_receiver(TYPE)' == \"VIRTUAL_DIMMER\") ? \"SERVO\" : type ;
     getLangInfo('$dev_descr_sender(TYPE)', type);
   </script>"
 

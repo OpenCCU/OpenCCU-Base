@@ -758,7 +758,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   }
 
 # die Texte der Platzhalter einlesen
-  puts "<script type=\"text/javascript\">getLangInfo('$device', '$device');</script>"
+  puts "<script type=\"text/javascript\">getLangInfo('$device', 'AIRFLAP');</script>"
 
   
   set prn 0 
