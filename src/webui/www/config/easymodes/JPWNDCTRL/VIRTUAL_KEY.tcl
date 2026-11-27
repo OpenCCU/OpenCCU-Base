@@ -390,14 +390,14 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "\${description_$prn}"
   append HTML_PARAMS(separate_$prn) "<table class=\"ProfileTbl\">"
 
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_OPEN_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_OPEN_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ON_TIME|LONG_ON_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ON_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ON_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   incr pref ;# 2
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_OPEN_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_OPEN_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ONDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ONDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ONDELAY_TIME
@@ -412,14 +412,14 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "\${description_$prn}"
   append HTML_PARAMS(separate_$prn) "<table class=\"ProfileTbl\">"
 
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_CLOSE_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_CLOSE_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFF_TIME|LONG_OFF_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFF_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFF_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   incr pref ;# 2
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_CLOSE_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_CLOSE_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFFDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFFDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFFDELAY_TIME
@@ -434,28 +434,28 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "\${description_$prn}"
   append HTML_PARAMS(separate_$prn) "<table class=\"ProfileTbl\">"
 
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_CLOSE_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_CLOSE_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFF_TIME|LONG_OFF_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFF_TIME "onclick=\"SwitchOption('separate_${special_input_id}_$prn\_2', 'separate_${special_input_id}_$prn\_1', \$('${special_input_id}_profiles'),2,'${special_input_id}');\"onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFF_TIME  
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 2
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_OPEN_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_OPEN_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ON_TIME|LONG_ON_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ON_TIME "onclick=\"SwitchOption('separate_${special_input_id}_$prn\_1', 'separate_${special_input_id}_$prn\_2', \$('${special_input_id}_profiles'),1,'${special_input_id}');\" onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\"" ]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ON_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 3
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_OPEN_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_OPEN_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ONDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ONDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ONDELAY_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 4
-  append HTML_PARAMS(separate_$prn) "<tr><td>\${JP_WND_CLOSE_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td>\${HB_WND_CLOSE_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFFDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFFDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFFDELAY_TIME
@@ -512,28 +512,28 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   }
   
   set pref 5
-  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"upTime_${special_input_id}_$prn\_1\"><td>\${JP_WND_OPEN_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"upTime_${special_input_id}_$prn\_1\"><td>\${HB_WND_OPEN_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ON_TIME|LONG_ON_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ON_TIME "onclick=\"SwitchOption('separate_${special_input_id}_$prn\_6', 'separate_${special_input_id}_$prn\_5', \$('${special_input_id}_profiles'),6,'${special_input_id}');\" onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ON_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 6
-  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"downTime_${special_input_id}_$prn\_1\"><td>\${JP_WND_CLOSE_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"downTime_${special_input_id}_$prn\_1\"><td>\${HB_WND_CLOSE_TIME}</td><td>"
   option LENGTH_OF_STAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFF_TIME|LONG_OFF_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFF_TIME "onclick=\"SwitchOption('separate_${special_input_id}_$prn\_5', 'separate_${special_input_id}_$prn\_6', \$('${special_input_id}_profiles'),5,'${special_input_id}');\" onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFF_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 7
-  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"upDelayTime_${special_input_id}_$prn\_1\"><td>\${JP_WND_OPEN_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"upDelayTime_${special_input_id}_$prn\_1\"><td>\${HB_WND_OPEN_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_ONDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_ONDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_ONDELAY_TIME
   append HTML_PARAMS(separate_$prn) "</td></tr>"
   
   incr pref ;# 8
-  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"downDelayTime_${special_input_id}_$prn\_1\"><td>\${JP_WND_CLOSE_DELAY_TIME}</td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr style=\"visibility:hidden;display:none\" id=\"downDelayTime_${special_input_id}_$prn\_1\"><td>\${HB_WND_CLOSE_DELAY_TIME}</td><td>"
   option DELAY
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_OFFDELAY_TIME separate_${special_input_id}_$prn\_$pref PROFILE_$prn SHORT_OFFDELAY_TIME "onchange=\"ActivateFreeTime(\$('${special_input_id}_profiles'),$pref);\""]
   EnterTime_h_m_s $prn $pref ${special_input_id} ps_descr SHORT_OFFDELAY_TIME
