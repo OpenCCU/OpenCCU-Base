@@ -9,6 +9,11 @@ is published.
 
 ## Unreleased
 
+* moving a dialog by its title bar no longer leaves a mouse listener behind
+  on the page, which kept closed dialogs in memory until the page was
+  reloaded.
+  ([#429](https://github.com/OpenCCU/OpenCCU-Base/pull/429), fixes
+  [#4806](https://github.com/OpenCCU/OpenCCU/issues/4806), @MichaelN0815)
 * the device settings and the channel selection of direct links describe the
   channels 3 to 5 of the HmIP-PS, HmIP-PSM, HmIP-PSM-PE, HmIP-PS-UK,
   HmIP-PSM-IT and HmIP-PSM-CH as switch actuator again instead of
