@@ -12,7 +12,7 @@ jQuery.extend(true,langJSON, {
     "KEY_TRANSCEIVER" :
       "Kurzen oder langen Tastendruck nach dem Starten des Displays senden.",
     "AVAILABLE_ICONS" :
-      "Icon-Übersicht:<br/><table style=\"text-align: center;\">"+
+      "Icon-%DCbersicht:<br/><table style=\"text-align: center;\">"+
       "<tr>"+
         "<td><img src=/ise/img/icons_hm_dis_ep_wm55/24/0.png></td>"+
         "<td><img src=/ise/img/icons_hm_dis_ep_wm55/24/1.png></td>"+
@@ -85,10 +85,17 @@ jQuery.extend(true,langJSON, {
     "HelpTitle" : "Help",
 
     "HB_DISPLAY_REFRESH_WAIT_TIME" :
-      "Insert translation here...",
+      "Waiting time before the ePaper refresh starts after a message has been received. " +
+      "If another message is received during this time, the waiting time starts again.<br/>" +
+      "During the waiting time the device LED flashes red.<br/><br/>"+
+      "<i>Note:<br/>"+
+      "During the refresh the whole device is blocked for several seconds and cannot send or receive radio messages.<br/><br/>"+
+      "If several pieces of information are sent to the device one after the other or split up (e.g. because they exceed the maximum message length "+
+      "of one transmission), a setting of <u>at least 5 seconds</u> is recommended.</i>",
     "KEY_TRANSCEIVER" :
-      "Send a short or long key press after startup",
-    "AVAILABLE_ICONS" :
-      "Icon overview."
+      "Send a short or long key press after startup"
   }
 });
+
+// The icon table does not depend on the language
+langJSON.en.AVAILABLE_ICONS = langJSON.de.AVAILABLE_ICONS.replace(/^[^<]*/, "Icon overview:");

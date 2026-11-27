@@ -900,6 +900,10 @@ jQuery.extend(true,langJSON, {
     "actionStatusControlLblOff" : "Off",
     "actionStatusControlLblShortKeyPress" : "Short<br/>button press",
     "actionStatusControlLblLongKeyPress" : "Long<br/>button press",
+    "actionStatusControlLblLongRfidHold" : "Long<br/>scan",
+    "actionStatusControlLblShortRfidHold" : "Short<br/>scan",
+    "actionStatusControlLblLongIrReceive" : "Long<br/>IR reception",
+    "actionStatusControlLblShortIrReceive" : "Short<br/>IR reception",
 
     "commentActionStatusControlEnd" : "***********************************************",
 

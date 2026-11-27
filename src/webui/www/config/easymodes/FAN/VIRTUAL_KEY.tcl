@@ -799,7 +799,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   incr pref ;# 4
   append HTML_PARAMS(separate_$prn) "<td colspan =\"2\"><hr>\${description_longkey}</td>"
-  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">Leistungsbegrenzung bei</span></td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">\${lblHbFanLevelLimit}</span></td><td>"
   option DIM_ONLEVEL
   append HTML_PARAMS(separate_$prn) [get_ComboBox options LONG_DIM_MAX_LEVEL separate_${special_input_id}_$prn\_$pref PROFILE_$prn        LONG_DIM_MAX_LEVEL "onchange=\"ActivateFreePercent(\$('${special_input_id}_profiles'),$pref);\""]
   EnterPercent $prn $pref ${special_input_id} ps_descr LONG_DIM_MAX_LEVEL
@@ -838,7 +838,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
 
   incr pref ;# 4
   append HTML_PARAMS(separate_$prn) "<td colspan =\"2\"><hr>\${description_longkey}</td>"
-  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">Leistungsbegrenzung bei</span></td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">\${lblHbFanLevelLimit}</span></td><td>"
   option DIM_OFFLEVEL
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_DIM_MIN_LEVEL|LONG_DIM_MIN_LEVEL separate_${special_input_id}_$prn\_$pref PROFILE_$prn        LONG_DIM_MIN_LEVEL "onchange=\"ActivateFreePercent(\$('${special_input_id}_profiles'),$pref);\""]
   EnterPercent $prn $pref ${special_input_id} ps_descr LONG_DIM_MIN_LEVEL
@@ -899,7 +899,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "<td colspan =\"2\"><hr>\${description_longkey}</td>"
   
   incr pref ;# 7
-  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">Leistungsbegrenzung bei</span></td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">\${lblHbFanLevelLimit}</span></td><td>"
   option DIM_ONLEVEL
   append HTML_PARAMS(separate_$prn) [get_ComboBox options LONG_DIM_MAX_LEVEL separate_${special_input_id}_$prn\_$pref PROFILE_$prn        LONG_DIM_MAX_LEVEL "onchange=\"ActivateFreePercent(\$('${special_input_id}_profiles'),$pref);\""]
   EnterPercent $prn $pref ${special_input_id} ps_descr LONG_DIM_MAX_LEVEL
@@ -1050,7 +1050,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "</td></tr>"
 
   incr pref ;# 2
-  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">Leistungsbegrenzung bei</span></td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">\${lblHbFanLevelLimit}</span></td><td>"
   option DIM_ONLEVEL
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_DIM_MAX_LEVEL|LONG_DIM_MAX_LEVEL separate_${special_input_id}_$prn\_$pref PROFILE_$prn        LONG_DIM_MAX_LEVEL "onchange=\"ActivateFreePercent(\$('${special_input_id}_profiles'),$pref);\""]
   EnterPercent $prn $pref ${special_input_id} ps_descr LONG_DIM_MAX_LEVEL
@@ -1066,7 +1066,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_$prn) "\${description_$prn}"
   append HTML_PARAMS(separate_$prn) "<table class=\"ProfileTbl\">"
 
-  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">Leistungsbegrenzung bei</span></td><td>"
+  append HTML_PARAMS(separate_$prn) "<tr><td><span class=\"pname_color\">\${lblHbFanLevelLimit}</span></td><td>"
   option DIM_OFFLEVEL
   append HTML_PARAMS(separate_$prn) [get_ComboBox options SHORT_DIM_MIN_LEVEL|LONG_DIM_MIN_LEVEL separate_${special_input_id}_$prn\_$pref PROFILE_$prn         LONG_DIM_MIN_LEVEL "onchange=\"ActivateFreePercent(\$('${special_input_id}_profiles'),$pref);\""]
   EnterPercent $prn $pref ${special_input_id} ps_descr LONG_DIM_MIN_LEVEL

@@ -107,7 +107,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_1) "<tr>"
   append HTML_PARAMS(separate_1) "<td class=\"stringtable_value\">\${stringTableFdSimulate}</td>"
   append HTML_PARAMS(separate_1) "<td><select class=\"select\_$chn\" id=\"deviceSelectionBox\_$chn\" onchange=\"dummyBeaconSetDevice(this, $chn)\">"
-  append HTML_PARAMS(separate_1) "<option id='$chn\_0' value='0'>-&nbsp;nicht&nbsp;belegt&nbsp;-</option>"
+  append HTML_PARAMS(separate_1) "<option id='$chn\_0' value='0'>\${optionHbNotAssigned}</option>"
 
   foreach name [array names devnames] {
     array set parentDescr [xmlrpc $url getDeviceDescription [list string $name]]
@@ -156,7 +156,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   incr paramCount
   set param "FD_STATUS"
   append HTML_PARAMS(separate_1) "<tr class=\"j_sens_param_$chn\">"
-    append HTML_PARAMS(separate_1) "<td class=\"j_sens_param_$chn stringtable_value\">den \${stringTableFdStatus}</td>"
+    append HTML_PARAMS(separate_1) "<td class=\"j_sens_param_$chn stringtable_value\">\${lblHbFdSendStatus}</td>"
     append HTML_PARAMS(separate_1) "<td class=\"j_sens_param_$chn\"> <input type=\"text\" style=\"width: 40px;\" id=\"separate_CHANNEL_$chn\_$paramCount\" name=\"$param\" value=\"$ps($param)\" onblur=\"ProofAndSetValue('separate_CHANNEL_$chn\_$paramCount','separate_CHANNEL_$chn\_$paramCount', '[getMinValue ps_descr $param]', '[getMaxValue ps_descr $param]', 1);\"> </td>"
     append HTML_PARAMS(separate_1) "<td class=\"j_sens_param_$chn\">[getUnit ps_descr $param] <i>[getMinMaxValueDescr ps_descr $param]</i></td>"
   append HTML_PARAMS(separate_1) "</tr>"
