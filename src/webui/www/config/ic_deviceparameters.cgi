@@ -994,7 +994,9 @@ proc put_channel_parameters {} {
         global receiver_address sender_address dev_descr_sender 
         set sender_address $ch_address
         set receiver_address $ch_address
-        #incr counter
+        # number the elements of the internal keys with the channel number
+        # like setInternalDeviceKey does: SaveDeviceParameters() looks for
+        # chInternalPeers_<channel number>
         set counter [lindex [split $ch_descr(ADDRESS) ":"] 1]
         
         # internal key unlocked in xml-file?
