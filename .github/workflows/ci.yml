@@ -242,6 +242,9 @@ jobs:
       - name: Check ReGa scripts in bin/
         run: python3 tests/test-hm-scripts.py -v
 
+      - name: Check device descriptions
+        run: python3 tests/test-devicetypes.py -v
+
   changelog-links:
     name: Changelog links
     if: github.event_name == 'pull_request'
