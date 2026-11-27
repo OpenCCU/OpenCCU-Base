@@ -31,7 +31,7 @@ set PROFILE_1(SHORT_JT_OFFDELAY)	0
 set PROFILE_1(SHORT_JT_ONDELAY)		0 
 set PROFILE_1(SHORT_ACT_TYPE)		2
 set PROFILE_1(SHORT_ACT_NUM)		{6 7}
-set PROFILE_1(UI_DESCRIPTION)	"Bei Bet&auml;tigung des Schaltkontaktes wird die Signalleuchte des Gongs entsprechend des gew&auml;hlten Schaltmodus geschaltet."
+set PROFILE_1(UI_DESCRIPTION)	"Bei Bet&auml;tigung des Schaltkontaktes wird das LED-Segment entsprechend dem gew&auml;hlten Schaltmodus geschaltet."
 set PROFILE_1(UI_TEMPLATE)		$PROFILE_1(UI_DESCRIPTION)	
 set PROFILE_1(UI_HINT)	1
 

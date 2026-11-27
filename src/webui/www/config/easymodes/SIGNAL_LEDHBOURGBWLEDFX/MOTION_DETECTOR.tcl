@@ -31,7 +31,7 @@ set PROFILE_1(SHORT_JT_OFFDELAY)	{0 2}
 set PROFILE_1(SHORT_JT_ONDELAY)		{0 2} 
 set PROFILE_1(SHORT_ACT_TYPE)		2
 set PROFILE_1(SHORT_ACT_NUM)		{6 7}
-set PROFILE_1(UI_DESCRIPTION)	"Beim Ausl&ouml;sen des Sensors wird die Signalleuchte des Gongs eingeschaltet. Ist eine Einschaltverz&ouml;gerungszeit eingestellt, so wird die Signalleuchte erst nach Ablauf dieser Zeit eingeschaltet."
+set PROFILE_1(UI_DESCRIPTION)	"Beim Ausl&ouml;sen des Sensors wird das LED-Segment eingeschaltet. Ist eine Einschaltverz&ouml;gerungszeit eingestellt, so wird das LED-Segment erst nach Ablauf dieser Zeit eingeschaltet."
 set PROFILE_1(UI_TEMPLATE)		$PROFILE_1(UI_DESCRIPTION)	
 set PROFILE_1(UI_HINT)	1
 

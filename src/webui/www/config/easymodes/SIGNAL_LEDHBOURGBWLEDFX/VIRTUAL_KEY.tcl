@@ -51,7 +51,7 @@ set PROFILE_1(LONG_JT_OFFDELAY)		0
 set PROFILE_1(LONG_JT_ONDELAY)		0
 set PROFILE_1(LONG_ACT_TYPE)		2
 set PROFILE_1(LONG_ACT_NUM)			{6 7}
-set PROFILE_1(UI_DESCRIPTION)	"Mit einem kurzen oder langen Tastendruck wird die Signalleuchte des Gongs eingeschaltet. Ist eine Einschaltverz&ouml;gerungszeit eingestellt, so wird die Signalleuchte erst nach Ablauf dieser Zeit eingeschaltet."
+set PROFILE_1(UI_DESCRIPTION)	"Mit einem kurzen oder langen Tastendruck wird das LED-Segment eingeschaltet. Ist eine Einschaltverz&ouml;gerungszeit eingestellt, so wird das LED-Segment erst nach Ablauf dieser Zeit eingeschaltet."
 set PROFILE_1(UI_TEMPLATE)		$PROFILE_1(UI_DESCRIPTION)	
 set PROFILE_1(UI_HINT)	1
 

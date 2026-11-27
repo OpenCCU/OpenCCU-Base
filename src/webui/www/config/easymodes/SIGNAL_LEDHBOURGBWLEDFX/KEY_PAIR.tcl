@@ -52,7 +52,7 @@ set PROFILE_1(LONG_JT_OFFDELAY)		3
 set PROFILE_1(LONG_JT_ONDELAY)		3
 set PROFILE_1(LONG_ACT_TYPE)		2
 set PROFILE_1(LONG_ACT_NUM)			6
-set PROFILE_1(UI_DESCRIPTION) "Falls die Signalleuchte unerw&uuml;nscht blinkt, kann sie mit dieser Taste ausgeschaltet werden."
+set PROFILE_1(UI_DESCRIPTION) "Falls das LED-Segment unerw&uuml;nscht leuchtet, kann es mit dieser Taste ausgeschaltet werden."
 set PROFILE_1(UI_TEMPLATE)		$PROFILE_1(UI_DESCRIPTION)	
 set PROFILE_1(UI_HINT)	1
 
@@ -95,7 +95,7 @@ set PROFILE_2(LONG_JT_OFFDELAY)		0
 set PROFILE_2(LONG_JT_ONDELAY)		0
 set PROFILE_2(LONG_ACT_TYPE)		2
 set PROFILE_2(LONG_ACT_NUM)			{6 7}
-set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen oder langen Tastendruck wird die Signalleuchte des Gongs entsprechend des gew&auml;hlten Schaltmodus geschaltet."
+set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen oder langen Tastendruck wird das LED-Segment entsprechend dem gew&auml;hlten Schaltmodus geschaltet."
 set PROFILE_2(UI_TEMPLATE)		$PROFILE_2(UI_DESCRIPTION)	
 set PROFILE_2(UI_HINT)	2
 
