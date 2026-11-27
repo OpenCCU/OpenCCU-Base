@@ -65,7 +65,7 @@ function ::CreateRfidKey() {
     WriteLine("</table>");
   WriteLine("</td>");
   WriteLine("<td><div class='ControlBtnInfo CLASS02532b' style='width:140px; height:35px;'>Chip&nbsp;ID<br/>"#sRfidChipId#"</div></td>");
-  WriteLine("<td><div class='ControlBtnInfo CLASS02532b' style='width:75px; height:35px;'>Anlern-<br/>modus:</div></td>"); 
+  WriteLine("<td><div class='ControlBtnInfo CLASS02532b j_translate' style='width:75px; height:35px;'>${lblHbLearnMode}</div></td>"); 
   
   if( objState )
   {

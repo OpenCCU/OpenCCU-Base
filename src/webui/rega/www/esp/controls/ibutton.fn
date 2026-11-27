@@ -87,7 +87,7 @@ function ::CreateIButtonKey() {
   object objStateDoor = cObj.DPByControl("IBTN.DSTATE");
 
   
-  WriteLine("<td><div class='ControlBtnInfo CLASS02532b' style='width:75px; height:35px;'>Anlern-<br/>modus:</div></td>"); 
+  WriteLine("<td><div class='ControlBtnInfo CLASS02532b j_translate' style='width:75px; height:35px;'>${lblHbLearnMode}</div></td>"); 
   
   if( objState )
   {

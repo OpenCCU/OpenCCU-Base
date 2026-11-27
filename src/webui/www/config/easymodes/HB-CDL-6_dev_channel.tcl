@@ -79,7 +79,7 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
   append HTML_PARAMS(separate_1) "</tr>"
 
   append HTML_PARAMS(separate_1) "<tr>"
-    append HTML_PARAMS(separate_1) "<td>Kanal&nbsp;</td>"
+    append HTML_PARAMS(separate_1) "<td>\${thChannel}&nbsp;</td>"
     append HTML_PARAMS(separate_1) "<td align=center>1</td>"
     append HTML_PARAMS(separate_1) "<td align=center>2</td>"
     append HTML_PARAMS(separate_1) "<td align=center>3</td>"

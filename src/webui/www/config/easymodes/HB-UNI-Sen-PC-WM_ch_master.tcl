@@ -142,9 +142,9 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     set param "HB_CHANGE_MODE"                                                            
     append HTML_PARAMS(separate_1) "<tr>"
       array_clear options
-      set options(0) "bei Wechsel von dunkel > hell"
-      set options(1) "bei Wechsel von hell > dunkel"
-      set options(2) "beide Wechsel"
+      set options(0) "\${optionHbChangeDarkToBright}"
+      set options(1) "\${optionHbChangeBrightToDark}"
+      set options(2) "\${optionHbChangeBoth}"
       append HTML_PARAMS(separate_1) "<td>\${stringTableHbChangeMode} </td>"
       set cmb $chn                                                                                                                                
       append cmb $prn  
