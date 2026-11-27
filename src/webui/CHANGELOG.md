@@ -19,9 +19,10 @@ is published.
   profile descriptions of the fans, servos, air flaps and the RGBW LED
   strip that describe these devices instead of a dimmer or a chime. The
   info and error buttons of the addon in the header, its `jp.*` API
-  methods and its update check are not taken over. The software page shows
-  why an upload of the addon is refused when the firmware supports its
-  devices itself.
+  methods and its update check are not taken over. The help page names the
+  sources of the icons (Icons8, Flaticon, KNX-UF iconset). The software
+  page shows why an upload of the addon is refused when the firmware
+  supports its devices itself.
   ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
   @jens-maus)
 * the week program of the thermostats and of the HB-LC-Sw*-TP switch
