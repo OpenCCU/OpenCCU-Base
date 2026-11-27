@@ -16,8 +16,8 @@ is published.
   images and descriptions, channel controls, settings and link pages,
   translations and the program editor conditions and activities are now
   part of the WebUI, with English texts, escaped names and values and
-  profile descriptions of the fans, servos and air flaps that describe
-  these devices instead of a dimmer. The
+  profile descriptions of the fans, servos, air flaps and the RGBW LED
+  strip that describe these devices instead of a dimmer or a chime. The
   info and error buttons of the addon in the header, its `jp.*` API
   methods and its update check are not taken over. The software page shows
   why an upload of the addon is refused when the firmware supports its
