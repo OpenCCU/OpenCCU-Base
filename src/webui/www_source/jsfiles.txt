@@ -203,6 +203,7 @@ config/js/ic_setprofiles.js
 config/js/ic_deviceparameters.js
 config/js/ic_neweasymode.js
 config/js/ic_timeout.js
+ise/js/iseHBDevices.js
 config/js/ic_partyendtime.js
 config/js/cp_functions.js
 #config/st_values.cgi

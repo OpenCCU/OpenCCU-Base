@@ -10,6 +10,13 @@
   integer iVP = oSD.DestinationValueParam();
   integer iVPT = oSD.DestinationValueParamType();
 
+  string hb_oump3led = "HB-OU-MP3-LED";
+  string hb_rc6led = "HB-RC-6-PBU-LED";
+  string hb_fxled = "HB-OU-RGBW-LED-FX";
+  string hb_statusDisplayEPaper = "HB-DIS-EP-42BW";
+  string hb_statusDisplayEPaperMains = "HB-DIS-EP-42BW-MAINS";
+  string hb_statusDisplayEPaper75 = "HB-DIS-EP-75BW";
+  string hb_statusDisplayEPaper75Mains = "HB-DIS-EP-75BW-MAINS";
   string hm_ouled16 =  "HM-OU-LED16";
   string hm_oucfm = "HM-OU-CFM-Pl";
   string hm_oucfmTW = "HM-OU-CFM-TW";
@@ -536,6 +543,13 @@
             ! Label() presents the type id of the channel, e.g. HM-OU-LED16 or  HM-OU-CFM-Pl
             string chLabel = oCH.Label();
 
+            integer oump3led = chLabel.Find(hb_oump3led);
+            integer rc6led = chLabel.Find(hb_rc6led);
+            integer fxled = chLabel.Find(hb_fxled);
+            integer statusHbDisplayEPaperDevice = hb_statusDisplayEPaper.Find(chLabel);
+            integer statusHbDisplayEPaperDeviceMains = hb_statusDisplayEPaperMains.Find(chLabel);
+            integer statusHbDisplayEPaperDevice75 = hb_statusDisplayEPaper75.Find(chLabel);
+            integer statusHbDisplayEPaperDevice75Mains = hb_statusDisplayEPaper75Mains.Find(chLabel);
             integer ouled16 = chLabel.Find(hm_ouled16);
             integer oucfm = chLabel.Find(hm_oucfm);
             integer oucfmTW = chLabel.Find(hm_oucfmTW);
@@ -566,6 +580,10 @@
 
             if ((statusDisplayDevice != -1)
               || (statusDisplayEPaperDevice != -1)
+              || (statusHbDisplayEPaperDevice != -1)
+              || (statusHbDisplayEPaperDeviceMains != -1)
+              || (statusHbDisplayEPaperDevice75 != -1)
+              || (statusHbDisplayEPaperDevice75Mains != -1)
               || (ePaperAcousticDisplay != -1)
               || (rgbw_controller != -1)
               || ((jalousieActor != - 1) && (oDP.HSSID().Find("LEVEL_COMBINED") != -1))
@@ -609,6 +627,22 @@
                 Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'ACOUSTIC_DIS-EP\');" type="text" class="SelectBox" size="10" value="'#iV.ToString().HtmlEncode()#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
+              if ((statusHbDisplayEPaperDevice != -1) || (statusHbDisplayEPaperDeviceMains != -1)) {
+                if(iV == "1") {
+                  ! This is the default string for 'all values not used'
+                  iV = "0x02,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x03";
+                }
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP42BW\');" type="text" class="SelectBox" size="10" value="'#iV.ToString().HtmlEncode()#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+              }
+
+              if ((statusHbDisplayEPaperDevice75 != -1) || (statusHbDisplayEPaperDevice75Mains != -1)) {
+                if(iV == "1") {
+                  ! This is the default string for 'all values not used'
+                  iV = "0x02,0x03";
+                }
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox" size="48" value="'#iV.ToString().HtmlEncode()#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+              }
+              
               if (rgbw_controller != -1) {
 
                 if (iV == "0") {
@@ -810,6 +844,13 @@
             }
 
             if((ouled16 == -1)
+              && (oump3led == -1)
+              && (rc6led == -1)
+              && (fxled == -1)
+              && (statusHbDisplayEPaperDevice == -1)
+              && (statusHbDisplayEPaperDeviceMains == -1)
+              && (statusHbDisplayEPaperDevice75 == -1)
+              && (statusHbDisplayEPaperDevice75Mains == -1)
               && (oucfm == -1)
               && (oucfmTW == -1)
               && (oucmpcb == -1)
@@ -838,6 +879,15 @@
               if((oucfm != -1) || (oucfmTW != -1) || (oucmpcb != -1)) {
                 Write( '<span class="CLASS02401" onclick="ChangeOUCFMValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
               }
+              if(oump3led != -1) {
+                Write( '<span class="CLASS02401" onclick="ChangeHBOUCFMValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
+              }
+              if(rc6led != -1) {
+                Write( '<span class="CLASS02401" onclick="ChangeHBRC6LEDValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
+              }  
+              if(fxled != -1) {
+                Write( '<span class="CLASS02401" onclick="ChangeHBOURGBWLEDFXValue('#oSD.ID()#');"><img src="/ise/img/notepad.png" /></span>' );
+              }  
               if (partyDialogDevice != -1) {
                 Write( '<span id="setPartyMode" class="CLASS02401" onclick="SetPartyMode(this);"><img src="/ise/img/notepad.png" /></span>' );
               }
@@ -846,6 +896,9 @@
               }
               if (statusDisplayEPaperDevice != -1) {
                 Write( '<span id="setStatusDisplayEPaper'#oSD.ID()#'" class="CLASS02401" onclick="SetStatusDisplay('#oSD.ID()#',\'DIS-EP\');"><img src="/ise/img/notepad.png" /></span>' );
+              }
+              if ((statusHbDisplayEPaperDevice != -1) || (statusHbDisplayEPaperDeviceMains != -1)) {
+                Write( '<span id="setHbStatusDisplayEPaper'#oSD.ID()#'" class="CLASS02401" onclick="SetStatusDisplay('#oSD.ID()#',\'DIS-EP42BW\');"><img src="/ise/img/notepad.png" /></span>' );
               }
               if (ePaperAcousticDisplay != -1) {
                 Write( '<span id="ePaperAcousticDisplay'#oSD.ID()#'" class="CLASS02401" onclick="SetStatusDisplay('#oSD.ID()#',\'ACOUSTIC_DIS-EP\');"><img src="/ise/img/notepad.png" /></span>' );

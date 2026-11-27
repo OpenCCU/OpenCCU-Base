@@ -46,3 +46,4 @@ This repository contains components under different licenses.
 
 - Main license references are available in `licenses/licenses.md`.
 - Additional bundled license texts are available in `licenses/` (for example `gpl-2.0.txt`, `lgpl-2.1.txt`, and `HMSL2.txt`).
+- The WebUI contains icons from Icons8, Flaticon and the KNX-UF iconset, which keep the licenses of their authors (see "Third-party icons" in `licenses/licenses.md`).

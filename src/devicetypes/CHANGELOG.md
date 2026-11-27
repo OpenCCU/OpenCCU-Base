@@ -6,6 +6,20 @@ BidCos-Wired devices. Newest version first.
 Changes not yet released are collected under `Unreleased` and get the
 OpenCCU-Base release they are part of when it is published.
 
+## Unreleased
+
+* add the device descriptions of the 86 homebrew device types of the
+  [JP-HB-Devices addon](https://github.com/jp112sdl/JP-HB-Devices-addon)
+  (`hb-*.xml`, `hb_switch_tp.xml`). A doubled quote in
+  `hb-uni-sen-pc-wm.xml`, `hb-uni-sen-press.xml` and
+  `hb-uni-sen-press-sc.xml` and the UTF-8 declaration of the ISO-8859-1
+  file `hb-lc-dim5pwm-cv.xml` are fixed, and `hb-rc-4-dis-th.xml` and
+  `hb-rc-4-dis-th-crg.xml` are indented with spaces instead of
+  non-breaking spaces. Device descriptions customized in the
+  `customized_firmware` folder of the addon are not taken over.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
+
 ## 3.89.12 (2026-11-16)
 
 * fix the error messages `Unknown paramset` / `GetAESMasterOperation()` of

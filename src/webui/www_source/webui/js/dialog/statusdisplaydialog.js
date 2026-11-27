@@ -73,7 +73,7 @@ function setFreeTextContainer() {
   // Check each line if the free text mode is active.
   // If yes switch on the appropriate text input field
   // and set the variable freeTextActive to true
-  for (var line = 0; line < 6; line++) {
+  for (var line = 0; line < 10; line++) {
     var jLine = jQuery("#textSelect_" + line),
     jCellFreeText = jQuery("#cellFreeText_"+line);
 
@@ -89,7 +89,7 @@ function setFreeTextContainer() {
   // If at least one line has an active free text mode
   // we have to activate the placeholder for the other lines and the header (color and icon are moving up)
   if (freeTextActive) {
-    for (var line = 0; line < 6; line++) {
+    for (var line = 0; line < 10; line++) {
       var jLine = jQuery("#textSelect_" + line),
       jPlaceHolder = jQuery("#placeHolder_"+line);
 
@@ -101,7 +101,7 @@ function setFreeTextContainer() {
     }
   } else {
     jHeadFreeText.hide().css("display", "none");
-    for (var line = 0; line < 6; line++) {
+    for (var line = 0; line < 10; line++) {
       jQuery("#placeHolder_"+line).hide().css("display", "none");
     }
   }

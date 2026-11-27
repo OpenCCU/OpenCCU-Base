@@ -1,0 +1,1 @@
+"description_1" : "<span class=\"translated\">Sendet der Wandthermostat den Heiz-/K&uuml;hlbefehl, wird der L&uuml;fter f&uuml;r die gew&uuml;nschte Zeit mit der festgelegten Leistung eingeschaltet und am Ende der Heiz-/K&uuml;hlphase wieder ausgeschaltet.</span><br/><br/>",

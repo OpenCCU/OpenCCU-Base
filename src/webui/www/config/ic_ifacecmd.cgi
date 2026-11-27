@@ -782,6 +782,8 @@ proc cmd_SendInternalKeyPress {} {
   catch {import sender}
   catch {import receiver}
   catch {import longKeyPress}
+  set noPopup 0
+  catch {import noPopup}
 
   set simLongKeyPress "false"
 
@@ -796,7 +798,7 @@ proc cmd_SendInternalKeyPress {} {
   if {[catch {xmlrpc $iface_url($iface) activateLinkParamset [list string $receiver] [list string $sender] [list bool $simLongKeyPress]}]} then {
     set error "<div class=\"CLASS20700\">\${dialogSimulateKeyPressError}</div>"
     puts "<script type=\"text/javascript\">MessageBox.show('\${dialogHint}','$error' ,'', 400, 80);</script>"
-  } else {
+  } elseif {$noPopup != 1} then {
     set success "<div class=\"CLASS20700\">\${dialogSimulateKeyPressSuccess}</div>"
     puts "<script type=\"text/javascript\">MessageBox.show('\${dialogHint}','$success' ,'', 420, 40);</script>"
   }
@@ -816,7 +818,7 @@ cgi_eval {
 
     html {
       head {
-        puts "<title>response of request with command: $cmd</title>"
+        puts "<title>response of request with command: [cgi_quote_html $cmd]</title>"
       }
       body {
         puts "<script src=\"/config/js/ic_common.js\" type=\"text/javascript\"></script>"

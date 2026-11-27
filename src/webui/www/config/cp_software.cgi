@@ -135,6 +135,9 @@ proc action_install_go {} {
     } elseif { $result == 10 } {
       put_message "\${dialogSettingsExtraSoftwareHintPerformInstallationTitle}" "\${dialogSettingsExtraSoftwareHintPerformInstallationContent}" {"\${btnNewLogin}" "window.location.href='/';"}
       exec /sbin/reboot -d 2 2>/dev/null >/dev/null &
+    } elseif { $result == 107 } {
+      # the addon is part of the firmware (JP-HB-Devices), see /bin/install_addon
+      put_message "Error ($result)" "\${dialogSettingsExtraSoftwareHintAddonIntegrated}"
     } else {
       put_message "Error ($result)" "\${dialogSettingsExtraSoftwareHintPerformInstallationFailure}"
     }

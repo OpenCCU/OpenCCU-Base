@@ -1,0 +1,6 @@
+"description_1" : "<span class=\"translated\">Bei Feueralarm wird der Servo f&uuml;r die festgelegte Zeit auf den festgelegten Stellwinkel gefahren. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird der Servo wieder auf 0&deg; gefahren.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Der Servo signalisiert f&uuml;r die festgelegte Zeit Alarm, indem er im Takt hin- und herf&auml;hrt. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird die Alarmmeldung beendet.</span><br/><br/>",
+"subset_1" : "nur ausl&ouml;sender Rauchmelder",
+"subset_2" : "Rauchmelder der gleichen Gruppe",
+"subset_3" : "nur ausl&ouml;sender Rauchmelder",
+"subset_4" : "Rauchmelder der gleichen Gruppe",

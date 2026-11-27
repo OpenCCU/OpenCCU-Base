@@ -1,0 +1,6 @@
+"description_1" : "<span class=\"translated\">Bei Feueralarm wird die L&uuml;ftungsklappe f&uuml;r die festgelegte Zeit auf den festgelegten &Ouml;ffnungsgrad ge&ouml;ffnet. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird die Klappe wieder geschlossen.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Die L&uuml;ftungsklappe signalisiert f&uuml;r die festgelegte Zeit Alarm, indem sie im Takt auf- und zuf&auml;hrt. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird die Alarmmeldung beendet.</span><br/><br/>",
+"subset_1" : "nur ausl&ouml;sender Rauchmelder",
+"subset_2" : "Rauchmelder der gleichen Gruppe",
+"subset_3" : "nur ausl&ouml;sender Rauchmelder",
+"subset_4" : "Rauchmelder der gleichen Gruppe",

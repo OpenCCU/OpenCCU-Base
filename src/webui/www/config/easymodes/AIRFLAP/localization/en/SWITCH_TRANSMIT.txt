@@ -1,0 +1,1 @@
+"description_1" : "<span class=\"translated\">If the wall thermostat sends the command for heating or cooling, the air flap is opened to the set position for the desired time. If the end of the heating/cooling period is sent, the air flap is closed.</span><br/><br/>",

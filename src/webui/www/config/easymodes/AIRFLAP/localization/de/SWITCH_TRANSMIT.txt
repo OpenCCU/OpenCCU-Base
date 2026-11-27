@@ -1,0 +1,1 @@
+"description_1" : "<span class=\"translated\">Sendet der Wandthermostat den Heiz-/K&uuml;hlbefehl, wird die L&uuml;ftungsklappe f&uuml;r die gew&uuml;nschte Zeit auf den festgelegten &Ouml;ffnungsgrad ge&ouml;ffnet und am Ende der Heiz-/K&uuml;hlphase wieder geschlossen.</span><br/><br/>",

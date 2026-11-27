@@ -219,6 +219,24 @@ iseMessageBox.prototype =
         this.setWidth(400);
         this.setFile( "/pages/msg/setOUCFMMode.htm" );
         break;
+        case ID_SET_HBOUCFM_MODE:
+        this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
+        this.addToPostBody( 'string type = "'+this.type+'";' );
+        this.setWidth(400);
+        this.setFile( "/pages/msg/setHBOUCFMMode.htm" );
+        break;
+        case ID_SET_HBRC6LED_MODE:
+        this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
+        this.addToPostBody( 'string type = "'+this.type+'";' );
+        this.setWidth(400);
+        this.setFile( "/pages/msg/setHBRC6LEDMode.htm" );
+        break;
+        case ID_SET_HBOURGBWLEDFX_MODE:
+        this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
+        this.addToPostBody( 'string type = "'+this.type+'";' );
+        this.setWidth(480);
+        this.setFile( "/pages/msg/setHBOURGBWLEDFXMode.htm" );
+        break;
         case ID_SET_STATUS_DISPLAY:
         this.setTitle( translateKey("dialogEnterValue") /*"Wert eingeben" */);
         this.addToPostBody( 'string type = "'+this.type+'";' );

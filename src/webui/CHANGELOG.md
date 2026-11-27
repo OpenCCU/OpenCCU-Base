@@ -9,6 +9,33 @@ is published.
 
 ## Unreleased
 
+* the homebrew devices of the
+  [JP-HB-Devices addon](https://github.com/jp112sdl/JP-HB-Devices-addon)
+  (86 device types such as HB-UNI-Sen-*, HB-UNI-SenAct-*, HB-OU-*, HB-RC-*,
+  HB-LC-* and HB-DIS-EP-*) are supported without the addon: their device
+  images and descriptions, channel controls, settings and link pages,
+  translations and the program editor conditions and activities are now
+  part of the WebUI, with English texts, escaped names and values and
+  profile descriptions of the fans, servos, air flaps and the RGBW LED
+  strip that describe these devices instead of a dimmer or a chime. The
+  info and error buttons of the addon in the header, its `jp.*` API
+  methods and its update check are not taken over. The help page names the
+  sources of the icons (Icons8, Flaticon, KNX-UF iconset). The software
+  page shows why an upload of the addon is refused when the firmware
+  supports its devices itself.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
+* the week program of the thermostats and of the HB-LC-Sw*-TP switch
+  actuators reports a time period that does not end after the previous one
+  with its correct number and in the language of the WebUI instead of
+  always in German.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
+* the settings of the internal keys of a device are saved for the right
+  channel if a channel before them shows no internal keys: their hidden
+  elements were numbered by a counter instead of by their channel.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
 * moving a dialog by its title bar no longer leaves a mouse listener behind
   on the page, which kept closed dialogs in memory until the page was
   reloaded.

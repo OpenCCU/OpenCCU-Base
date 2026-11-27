@@ -1,0 +1,2 @@
+"description_1" : "<span class=\"translated\">Beim Ausl&ouml;sen des Sensors wird das LED-Segment eingeschaltet. Ist eine Verz&ouml;gerungszeit eingestellt, wird das LED-Segment erst nach Ablauf dieser Zeit eingeschaltet.<br/><br/>Beim Bewegungsmelder (Kanalparameter) wird ein Sendeabstand von <b>dynamisch</b> und ein Mindestsendeabstand von <b>15s</b> empfohlen.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Der Bewegungsmelder ist deaktiviert.</span>",

@@ -761,6 +761,54 @@ function ::dimmerOldVal()
 }
 
 ! [chnId]
+function ::servoOldVal()
+{
+  object chn = dom.GetObject( system.GetVar("chnId") );
+  if (chn)
+  {
+    object oOL = chn.DPByControl("SERVO.OLD_LEVEL");
+    object oL = chn.DPByControl("SERVO.LEVEL");
+    if( oL && oOL )
+    {
+      oOL.State(1);
+    }
+  }
+  return;
+}
+
+! [chnId]
+function ::fanOldVal()
+{
+  object chn = dom.GetObject( system.GetVar("chnId") );
+  if (chn)
+  {
+    object oOL = chn.DPByControl("FAN.OLD_LEVEL");
+    object oL = chn.DPByControl("FAN.LEVEL");
+    if( oL && oOL )
+    {
+      oOL.State(1);
+    }
+  }
+  return;
+}
+
+! [chnId]
+function ::airflapOldVal()
+{
+  object chn = dom.GetObject( system.GetVar("chnId") );
+  if (chn)
+  {
+    object oOL = chn.DPByControl("AIRFLAP.OLD_LEVEL");
+    object oL = chn.DPByControl("AIRFLAP.LEVEL");
+    if( oL && oOL )
+    {
+      oOL.State(1);
+    }
+  }
+  return;
+}
+
+! [chnId]
 ! --> bhasReadDPs
 function ::chnHasReadDPs() {
   boolean bHasReadDPs = false;

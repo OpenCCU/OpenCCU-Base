@@ -1,0 +1,6 @@
+"description_1" : "<span class=\"translated\">Bei Feueralarm wird der L&uuml;fter f&uuml;r die festgelegte Zeit mit der festgelegten Leistung eingeschaltet. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird der L&uuml;fter wieder ausgeschaltet.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Der L&uuml;fter signalisiert f&uuml;r die festgelegte Zeit Alarm, indem die L&uuml;fterleistung im Takt wechselt. Erfolgt die Best&auml;tigung des Alarms am Ausl&ouml;senden oder einem Rauchmelder der gleichen Gruppe, wird die Alarmmeldung beendet.</span><br/><br/>",
+"subset_1" : "nur ausl&ouml;sender Rauchmelder",
+"subset_2" : "Rauchmelder der gleichen Gruppe",
+"subset_3" : "nur ausl&ouml;sender Rauchmelder",
+"subset_4" : "Rauchmelder der gleichen Gruppe",

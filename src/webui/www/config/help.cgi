@@ -235,7 +235,7 @@ proc action_put_page {} {
         puts "eQ-3 AG, 26789 Leer, Germany<br/>"
         puts "<a target='_blank' href=\"$HM_INFO_URL\">\${homepage} \${LabelHomeMatic}</a><br/>"
         puts "<a target='_blank' href=\"$IP_INFO_URL\">\${homepage} \${dialogHelpLinkOnlineHelpB}</a><br/>"
-        puts "<br/>Menu icons made by <a target='_blank' href=\"https://icons8.com/license/\">icons8.com</a><br/>"
+        puts "<br/>Icons made by <a target='_blank' href=\"https://icons8.com/license/\">icons8.com</a>, by <a target='_blank' href=\"https://www.flaticon.com/authors/popcic/others?author_id=6817\">popcic</a> from <a target='_blank' href=\"https://www.flaticon.com/\">flaticon.com</a> and from the <a target='_blank' href=\"https://github.com/OpenAutomationProject/knx-uf-iconset\">KNX-UF iconset</a> (<a target='_blank' href=\"https://creativecommons.org/licenses/by-sa/3.0/de/\">CC BY-SA 3.0 DE</a>)<br/>"
         puts "<br/>\${dialogSettingsCMHintSoftwareUpdateOpenCCU}<br/><br/>"
         puts "<h1 class='helpTitle'><u>\${menuHelpPage}</u></h1>"
         puts "<a target='_blank' href='https://github.com/openccu/openccu/wiki'>OpenCCU Documentation</a><br/>"
