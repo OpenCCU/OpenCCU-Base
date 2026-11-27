@@ -16,7 +16,7 @@ function ::CreateRfidKey() {
   string sRfidChipId = "";
 
   if (oRfidChipId) {
-    sRfidChipId = oRfidChipId.Value();
+    sRfidChipId = oRfidChipId.Value().ToString().HtmlEncode();
   }
   
   object ch = dom.GetObject(chnId);

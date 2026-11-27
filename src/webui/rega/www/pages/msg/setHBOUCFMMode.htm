@@ -224,8 +224,8 @@
     {
       if( oSD )
       {
-        Write('conInfo( "'#oSD.DestinationValue()#'" );');
-        Write('oldVal = "'#oSD.DestinationValue()#'";');
+        Write('conInfo( "'#oSD.DestinationValue().ToString().JsEncode()#'" );');
+        Write('oldVal = "'#oSD.DestinationValue().ToString().JsEncode()#'";');
       }
     }
     else

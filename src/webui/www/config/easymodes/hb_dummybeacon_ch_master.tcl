@@ -58,26 +58,15 @@ proc get_devicenames {allDevices dummydeviceAddress} {
   foreach val $allDevices {
     array set devDescr $val
     if {($devDescr(ADDRESS) != $dummydeviceAddr ) &&  ($devDescr(PARENT) == "") } {
-      set name [string tolower $ise_CHANNELNAMES($iface;$devDescr(ADDRESS))]   
-      if { [string first $_iface $name] == -1} {
-        set result($devDescr(ADDRESS)) $ise_CHANNELNAMES($iface;$devDescr(ADDRESS))
+      if { [catch { set devName $ise_CHANNELNAMES($iface;$devDescr(ADDRESS)) }] } then {
+        set devName $devDescr(ADDRESS)
+      }
+      if { [string first $_iface [string tolower $devName]] == -1} {
+        set result($devDescr(ADDRESS)) $devName
       }
     }
   }
   return [array get result]
-}
-
-proc get_devname { address } {  
-  set rega_cmd ""
-  append rega_cmd "string devName = '$address';"
-  append rega_cmd "string dev_id;"
-  append rega_cmd "foreach(dev_id, dom.GetObject(ID_DEVICES).EnumUsedIDs()){"
-  append rega_cmd "object dev=dom.GetObject(dev_id);"
-  append rega_cmd "if (dev.Address() == devName) { devName = dev.Name(); }"
-  append rega_cmd "}"
-  
-  array set result [rega_script $rega_cmd]
-  return $result(devName);
 }
 
 proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
@@ -124,9 +113,9 @@ proc set_htmlParams {iface address pps pps_descr special_input_id peer_type} {
     array set parentDescr [xmlrpc $url getDeviceDescription [list string $name]]
     set senderRF     $parentDescr(RF_ADDRESS)
     set senderSERIAL $parentDescr(ADDRESS)
-    set senderNAME   [get_devname $senderSERIAL]
+    set senderNAME   [cgi_quote_html $devnames($name)]
     if {$senderRF != $ccuDescr(RF_ADDRESS)} {   
-      append HTML_PARAMS(separate_1) "<option id='$chn\_$senderRF' value='$senderRF'>$senderNAME ($senderSERIAL)</option>"
+      append HTML_PARAMS(separate_1) "<option id='$chn\_$senderRF' value='$senderRF'>$senderNAME ([cgi_quote_html $senderSERIAL])</option>"
     }
   }
   append HTML_PARAMS(separate_1) "</select></td>"
