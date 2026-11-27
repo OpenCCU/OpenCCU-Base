@@ -11,6 +11,83 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0273 (2026-11-27)
+
+* add a random offset to the time modules: `tm.CalRandomOffset(seconds)`
+  (0 to 86400, default 0: none) moves each trigger time of a time module
+  without duration (once, periodic or a series, also astro) by a random
+  offset between -seconds and +seconds, e.g. for a presence simulation or to
+  spread the load of time modules at the same time. The offset of a trigger
+  time is computed from the time module and its regular time, so that it is
+  the same for each computation and after a restart: `Next()` returns the
+  actual next trigger time, the programs are executed once at it and their
+  conditions check the regular time. It is saved with the time module (an
+  earlier version ignores it). The time ranges are not moved.
+  (cf. [OpenCCU/OpenCCU#1283](https://github.com/OpenCCU/OpenCCU/issues/1283))
+* fix time modules which were not triggered if the timers were updated in
+  the second they were due (e.g. by saving, activating or deactivating a
+  program with a time module, a repeated alarm message or `dom.RTUpdate()`
+  in a script; up to R1.00.0388.0269 also by each trigger of an inactive
+  program with a time module by a data point or system variable of its
+  conditions): the timers due by now were discarded without being triggered
+  and only their next times were used, so that e.g. a program triggered
+  daily at a point in time was not executed on that day. The due timers are
+  now triggered before the timers are updated.
+  (cf. [OpenCCU/OpenCCU#4809](https://github.com/OpenCCU/OpenCCU/issues/4809))
+* add methods for the delayed write jobs of an object in scripts (e.g. by
+  `obj.State(value, ms)` or the delayed destinations of programs, which are
+  kept at their data point or system variable): `obj.Schedules()` returns
+  their number, `obj.ScheduleTimes()` their remaining times in ms and
+  `obj.ScheduleStates()` their values (separated by tabs, the next first;
+  with an index the one of a single write job, -1 or empty for an invalid
+  index), `obj.DeleteSchedule(n)` deletes one without executing it (without
+  index all of the object) and `obj.EditSchedule(n, ms)` sets its remaining
+  time (0: execute immediately). Before, a script could neither see nor
+  change them. The delayed scripts of programs are not included.
+  (cf. [OpenCCU/OpenCCU#887](https://github.com/OpenCCU/OpenCCU/issues/887))
+* add methods moving the parts of a program within the program in scripts:
+  `rule.RuleMoveCondition(cnd)` moves a condition to the rule `rule`,
+  `cnd.CndMoveSingle(sc)` a single condition to the condition `cnd` and
+  `dst.DestMoveSingle(sd)` a single destination to the destination `dst`
+  (the part as object, ID or ID as text). The part is kept (same ID and
+  settings), appended at the end (its position can be changed with
+  `MoveObject()`) and gets its new parent (`CndParent()`,
+  `ConditionParent()`, `DestinationParent()`). Before, the parts could only
+  be moved by removing their IDs from the ID array of their parent and adding
+  them to another one, which kept their old parent, so that the WebUI edited
+  the wrong condition or destination. Parts of another program (or of the
+  copy of a program the WebUI edits) are not moved; this and an object of
+  another type are logged as warning.
+  (cf. [OpenCCU/OpenCCU#1081](https://github.com/OpenCCU/OpenCCU/issues/1081))
+* add access to the entries of value lists (system variables and data
+  points of type integer with subtype enum) in scripts: `dp.ValueName()` now
+  also returns the entry of the current value of a value list (before only
+  the name of a logic value, empty for value lists), `dp.ValueName(index)`
+  returns the entry of an index and the new `dp.ValueIndex(name)` the index
+  of an entry (-1 if not found), instead of e.g.
+  `sv.ValueList().StrValueByIndex(";", sv.Value())`. `dp.State(text)` sets a
+  value list to the entry `text` (before, a text was not set), a number (also
+  as text) is still taken as index. An unknown text and an index outside of
+  the value list (which is still set) are logged as warning.
+  (cf. [OpenCCU/OpenCCU#440](https://github.com/OpenCCU/OpenCCU/issues/440))
+* add the optional parameters start position and number of the occurrence
+  to the string method `Find()`: `s.Find(key, start)` searches from the
+  position `start` (e.g. to find all occurrences one after another with
+  `p = s.Find(key, p + 1)`), `s.Find(key, start, n)` returns the position of
+  the n-th occurrence from `start`, e.g. `"<td>key</td><td>value</td>"
+  .Find("<td>", 0, 2)` returns 12; -1 if not found. `s.Find(key)` is
+  unchanged. Before, the script ended with an error for more than one
+  parameter, and searching after a position needed copies of the string
+  with `Substr()`.
+  (cf. [OpenCCU/OpenCCU#346](https://github.com/OpenCCU/OpenCCU/issues/346))
+* add the string method `StringBetween(start, end)`, which returns the text
+  between the first occurrence of `start` and the first occurrence of `end`
+  after it, e.g. `"<td>key</td><td>value</td>".StringBetween("<td>",
+  "</td>")` returns `key`. An empty `start` means the beginning, an empty
+  `end` the end of the string; if `start` or `end` is not found, the result
+  is empty.
+  (cf. [OpenCCU/OpenCCU#527](https://github.com/OpenCCU/OpenCCU/issues/527))
+
 ## R1.00.0388.0272 (2026-11-26)
 
 * fix variables declared as `idarray` in a script (e.g. `idarray a;
