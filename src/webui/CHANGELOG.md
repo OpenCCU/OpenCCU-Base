@@ -14,10 +14,17 @@ is published.
   (86 device types such as HB-UNI-Sen-*, HB-UNI-SenAct-*, HB-OU-*, HB-RC-*,
   HB-LC-* and HB-DIS-EP-*) are supported without the addon: their device
   images and descriptions, channel controls, settings and link pages,
-  translations and the program editor conditions are now part of the WebUI.
-  The info and error buttons of the addon in the header and its `jp.*` API
-  methods are not taken over.
-  ([#XXX](https://github.com/OpenCCU/OpenCCU-Base/pull/XXX), @jp112sdl)
+  translations and the program editor conditions and activities are now
+  part of the WebUI, with English texts and escaped names and values. The
+  info and error buttons of the addon in the header, its `jp.*` API
+  methods and its update check are not taken over.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
+* the settings of the internal keys of a device are saved for the right
+  channel if a channel before them shows no internal keys: their hidden
+  elements were numbered by a counter instead of by their channel.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
 * moving a dialog by its title bar no longer leaves a mouse listener behind
   on the page, which kept closed dialogs in memory until the page was
   reloaded.

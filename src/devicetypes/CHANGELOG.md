@@ -13,8 +13,12 @@ OpenCCU-Base release they are part of when it is published.
   (`hb-*.xml`, `hb_switch_tp.xml`). A doubled quote in
   `hb-uni-sen-pc-wm.xml`, `hb-uni-sen-press.xml` and
   `hb-uni-sen-press-sc.xml` and the UTF-8 declaration of the ISO-8859-1
-  file `hb-lc-dim5pwm-cv.xml` are fixed.
-  ([#XXX](https://github.com/OpenCCU/OpenCCU-Base/pull/XXX), @jp112sdl)
+  file `hb-lc-dim5pwm-cv.xml` are fixed, and `hb-rc-4-dis-th.xml` and
+  `hb-rc-4-dis-th-crg.xml` are indented with spaces instead of
+  non-breaking spaces. Device descriptions customized in the
+  `customized_firmware` folder of the addon are not taken over.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
 
 ## 3.89.12 (2026-11-16)
 
