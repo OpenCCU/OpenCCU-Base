@@ -22,6 +22,12 @@ is published.
   devices itself.
   ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
   @jens-maus)
+* the week program of the thermostats and of the HB-LC-Sw*-TP switch
+  actuators reports a time period that does not end after the previous one
+  with its correct number and in the language of the WebUI instead of
+  always in German.
+  ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
+  @jens-maus)
 * the settings of the internal keys of a device are saved for the right
   channel if a channel before them shows no internal keys: their hidden
   elements were numbered by a counter instead of by their channel.

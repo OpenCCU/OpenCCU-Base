@@ -798,6 +798,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot" : "The installation of the addon was successful. Please make sure the addon works as expected or perform a reboot if you identify any problems.",
     "dialogSettingsExtraSoftwareHintPerformInstallationFailure" : "An unexpected error occurred while trying to install the addon. The uploaded file might be no valid addon archive, corrupt or you are trying to install the wrong hardware version of the addon. Please try again or contact the addon vendor.",
     "dialogSettingsExtraSoftwareHintAddonIntegrated" : "This addon is not installed because its functions are already part of the firmware. The supported devices can be used without the addon.",
+    "timePeriodInvalidDuration" : "Time period %s has an invalid duration: it has to end after the previous time period.",
 
     "commentSettingsExtraSoftwareEnd" : "***********************************************",
     "commentDialogNewDevices" : "***********************************************",

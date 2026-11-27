@@ -352,9 +352,9 @@ HBTimeoutManager.prototype = Object.extend(new MsgBox(), {
   checkDayTimeouts: function (dayidx) {
     var timeouts = this.week[dayidx];
 
-    for (i = 1; i < timeouts.length; i++) {
+    for (var i = 1; i < timeouts.length; i++) {
       if (timeouts[i][tom_endtime] <= timeouts[i - 1][tom_endtime]) {
-        alert("Der " + i + ". Zeitabschnitt hat eine ung\u00fcltige Dauer");
+        alert(translateKey('timePeriodInvalidDuration').replace('%s', i + 1));
       }
     }
   },
