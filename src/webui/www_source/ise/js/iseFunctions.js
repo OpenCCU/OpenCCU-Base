@@ -1582,7 +1582,8 @@ ise.SingleCondition.prototype =
     };
     new Ajax.Request(url,opts);    
   },
-  SetChannel: function(scid,chid)
+  // onReloaded (optional): called once the condition is shown again
+  SetChannel: function(scid,chid,onReloaded)
   {
     var url = "/esp/sico.htm?sid="+SessionId;
     var pb = '';
@@ -1595,7 +1596,7 @@ ise.SingleCondition.prototype =
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadSingleCondition(scid);
+        ReloadSingleCondition(scid, onReloaded);
       }
     };
     new Ajax.Request(url,opts);    
@@ -1656,7 +1657,8 @@ ise.SingleDestination.prototype =
     };
     new Ajax.Request(url,opts);
   },
-  SetChannel: function(id,value)
+  // onReloaded (optional): called once the activity is shown again
+  SetChannel: function(id,value,onReloaded)
   {
     var url = "/esp/side.htm?sid="+SessionId;
     var pb = '';
@@ -1669,7 +1671,7 @@ ise.SingleDestination.prototype =
       onComplete:function(t)
       {
         if(dbg){alert( t.responseText );}
-        ReloadSingleDestination(id);
+        ReloadSingleDestination(id, onReloaded);
       }
     };
     new Ajax.Request(url,opts);    

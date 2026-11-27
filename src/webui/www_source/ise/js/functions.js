@@ -317,6 +317,12 @@ updateContentCurrentPage = function()
 updateContentLoaded = function()
 {
   iseRefr(true);
+  // the error page of ReGaHss for an invalid or expired session is shown in
+  // the language of the WebUI (see translateSessionInvalid() in translate.js)
+  if( typeof translateSessionInvalid == "function" )
+  {
+    translateSessionInvalid();
+  }
   var keepsLock = (updateContentPending !== null);
   if( !keepsLock )
   {
@@ -3393,16 +3399,24 @@ getExtendedDescription = function(oChannelDescr)  {
     channelIsVisible = oChannelDescr.isVisible,
     multiMode = oChannelDescr.multiMode;
   var tmpDev;
+  var channel;
+
+  // The channel object is needed for more than the channel type (visibility,
+  // mode of a blind channel), so look it up even if the caller names the type.
+  if ((typeof channelAddress != "undefined") && (typeof DeviceList != "undefined")) {
+    channel = DeviceList.getChannelByAddress(channelAddress);
+  }
 
   if (typeof channelType != "undefined") {
     chType = channelType;
-  } else if (typeof channelAddress != "undefined") {
-    var channel = DeviceList.getChannelByAddress(channelAddress);
-    if (channel) {
-      chType = channel.channelType;
-      channelIsVisible = channel.isVisible;
-    }
-  } 
+  } else if (channel) {
+    chType = channel.channelType;
+  }
+
+  // The visibility named by the caller wins, the channel object is the fallback.
+  if ((typeof channelIsVisible == "undefined") && channel) {
+    channelIsVisible = channel.isVisible;
+  }
 
   if (chType == "KEY_TRANSCEIVER") {
     if (deviceType.toLowerCase().indexOf("hmip-asir") != -1) {
@@ -3469,7 +3483,8 @@ getExtendedDescription = function(oChannelDescr)  {
       || deviceType.toLowerCase() == "hmip-ps-uk"
       || deviceType.toLowerCase() == "hmip-psm-it"
       || deviceType.toLowerCase() == "hmip-psm-ch"
-      ) && (! channelIsVisible)) {
+      ) && (typeof channelIsVisible != "undefined") && (! channelIsVisible)) {
+      // (a channel of unknown visibility is not reported as unsupported)
       result = translateKey("lblHmIP_NotSupported");
     } else {
 
@@ -3481,7 +3496,6 @@ getExtendedDescription = function(oChannelDescr)  {
         case "hmip-wgt-a":
         case "hmip-wgtc":
         case "hmip-wgtc-a":
-          if (channel === undefined) { var channel = DeviceList.getChannelByAddress(channelAddress); }
           if (channel === undefined) {
             result = translateKey("chType_SWITCH_VIRTUAL_RECEIVER");
             break;
@@ -3632,9 +3646,12 @@ getExtendedDescription = function(oChannelDescr)  {
       result = translateKey("chType_BLIND_WEEK_PROFILE");
     } else {
       if (typeof channel != "undefined") {
-        var virtChannelType = channel.getVirtChannelType(),
-        devMode = virtChannelType.split("_")[0].toLowerCase();
-        result = (devMode == "shutter") ? translateKey("chType_" + chType.replace("BLIND", "SHUTTER")) : translateKey("chType_" + chType.replace("SHUTTER", "BLIND"));
+        // (the mode is unknown until the channel has set its virtual channel type)
+        var virtChannelType = channel.getVirtChannelType();
+        if (typeof virtChannelType == "string") {
+          var devMode = virtChannelType.split("_")[0].toLowerCase();
+          result = (devMode == "shutter") ? translateKey("chType_" + chType.replace("BLIND", "SHUTTER")) : translateKey("chType_" + chType.replace("SHUTTER", "BLIND"));
+        }
       }
     }
   }

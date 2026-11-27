@@ -526,6 +526,7 @@ jQuery.extend(true,langJSON, {
     "btnSettingsDiagrams" : "Diagramme",
     "btnSettingsGroups" : "Gruppen",
     "sessionInvalid" : "Die Sitzung ist ung%FCltig oder abgelaufen!",
+    "sessionInvalidLogin" : "Neu anmelden",
 	  "forward" : "Weiter zur Startseite",
     "unknownMessage" : "unbekannte Meldung",
     "alarmTriggerTimeModule" : "Zeitmodul",

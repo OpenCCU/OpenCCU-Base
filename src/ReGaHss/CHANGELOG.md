@@ -11,6 +11,160 @@ version and date with the next release (Release workflow, `version.sh`).
 The versions up to R1.00.0388.0267 come from the former `ChangeLog` and are
 dated with their newest entry.
 
+## R1.00.0388.0272 (2026-11-26)
+
+* fix variables declared as `idarray` in a script (e.g. `idarray a;
+  a.Add(obj);`): such a variable referred to no ID array, so that its
+  methods (`Add()`, `Count()`, `Remove()`, `GetAt()`, `EnumIDs()`, ...) and
+  `foreach` ended the script with an error. It now refers to an empty ID
+  array of the script engine, which is freed with the variables of the
+  script (a new declaration of the variable empties it). An ID array set as
+  session variable shared with other scripts, or as `_result` of a script, is
+  kept as the text of its IDs. Also, an ID array set as session variable by
+  a remote request (`/rega.exe`) kept only its first ID (the IDs were parsed
+  as number).
+  (cf. [OpenCCU/OpenCCU#536](https://github.com/OpenCCU/OpenCCU/issues/536))
+* fix a program with a condition "on change" ("bei Änderung") being executed
+  at the first trigger although the result of its condition did not change,
+  e.g. a program "system variable less than 10" when the variable was
+  updated or changed from 8 to 9 (or its "else" activity when it stayed
+  above 10). This happened at the first trigger after the start of ReGaHss
+  for a program not executed at the start (`ExecuteOnStartup()`, "autostart"
+  in the WebUI), for a new program, after activating a program and for a
+  condition added to a program: the program is no longer executed in these
+  cases since R1.00.0388.0267, so that its conditions did not know their
+  result before the first trigger and took it as a change. The conditions
+  are now evaluated in these cases without executing the program, also
+  those of the "else if" parts.
+  (cf. [OpenCCU/OpenCCU#4800](https://github.com/OpenCCU/OpenCCU/issues/4800))
+* stop marking the object model as modified at each start of ReGaHss and
+  each time the start page of the WebUI is loaded, which made it be saved
+  again shortly afterwards (`CheckModifiedCycle`, 10 minutes by default) and
+  `dom.IsDOMModified()` return true: reading `InterfacesList.xml` at the start
+  only sets the modified flag if it changes the interfaces (logged then), the
+  timers initialized for the programs at the start do not set it, and the
+  setters of the system settings (e.g. `system.LoginPage()`, which the start
+  page sets each time it is loaded) only set it if the value changes.
+  ([#55](https://github.com/OpenCCU/ReGaHss/pull/55))
+* fix the login of the WebUI when all sessions (`SessionMaxCount`) are used:
+  ReGaHss sent three responses on the connection (the page "Zuviele
+  gleichzeitige Verbindungen!!", the page of an invalid session and a
+  redirect to the login), of which the browser showed the first one. It now
+  sends a single page with the status 503 (was 500) and `Retry-After: 60`,
+  reading "Es sind zu viele Sitzungen gleichzeitig angemeldet. Bitte später
+  erneut versuchen." with the link "Erneut versuchen", or the English text
+  if the browser prefers English to German (`Accept-Language`). The message
+  in the log is a warning now (was info).
+  ([#54](https://github.com/OpenCCU/ReGaHss/pull/54))
+* escape the values of the variables in the response of `/rega.exe` (e.g.
+  "Skript testen" of the WebUI, tclrega) in one pass instead of with five
+  replacements, which copied each value five times and searched each
+  occurrence of a character to escape on its own; the response is
+  unchanged. With AddressSanitizer this took minutes for a value of some
+  MiB of quotes.
+  ([#53](https://github.com/OpenCCU/ReGaHss/pull/53))
+* fix undefined behavior of the thread polling data points (reported by
+  UBSan in the CI): it cast each object of the data point list to a data
+  point before checking its type, also an object being deleted by another
+  thread at this time. It now only gets the data points of the list. Also,
+  a data point due for polling is polled right away again instead of after
+  waiting one more second (the thread only waited for its stop event).
+  ([#52](https://github.com/OpenCCU/ReGaHss/pull/52))
+
+## R1.00.0388.0271 (2026-11-25)
+
+* add `system.DeleteSessionVar(name)`, which deletes a session variable
+  (returns true if it existed), and `system.ListSessionVars()`, which
+  returns the names of the session variables (sorted, separated by tabs, so
+  that they can be iterated with `foreach`). The scripts of programs,
+  alarms and mappings share their session variables; a remote request
+  (`/rega.exe`, e.g. "Skript testen" of the WebUI) now also gets, sets and
+  deletes them (`SetSessionVar()`, `GetSessionVar()`, `IsSessionVar()`,
+  `DeleteSessionVar()`, `ListSessionVars()`), so that they can be checked
+  there. With `ScriptVariableScope=global` (default) only the variables set
+  with `system.SetSessionVar()` are session variables: a remote request
+  neither gets nor changes the other variables of the scripts of the
+  programs. A session variable set by a remote request is kept after the
+  request (before, it only existed for the request, which still has it as
+  its own variable, too); an array, XML or persistent object is kept as
+  text. The pages of the WebUI keep their own session variables (named
+  `session...`) with the session of the WebUI as before and do not get the
+  ones of the programs; `DeleteSessionVar()` also removes them from the
+  session (not `sessionId`, `sessionUserID` and `sessionUserName`), and
+  `ListSessionVars()` returns their names.
+  (cf. [OpenCCU/OpenCCU#4485](https://github.com/OpenCCU/OpenCCU/issues/4485))
+* add the string methods `HtmlEncode()`, `HtmlEncodeKeepEntities()` and
+  `JsEncode()`, which replace the chains of `Replace()` calls the WebUI
+  uses to escape texts. `HtmlEncode()` encodes `&`, `<`, `>`, `"` and `'`
+  as `&amp;`, `&lt;`, `&gt;`, `&quot;` and `&#39;`, so that the text can be
+  written into HTML text and quoted attribute values.
+  `HtmlEncodeKeepEntities()` does the same, but keeps the character
+  references a text already contains (e.g. `&#176;`, `&#xB0;`, `&deg;`),
+  for texts like units which are written as HTML. `JsEncode()` encodes `\`,
+  `'`, `"`, `<`, `>`, `&` and the control characters (e.g. line breaks) as
+  `\xNN`, so that the text can be written into a JavaScript string literal
+  in single or double quotes, both in a `<script>` element and in an event
+  handler attribute such as `onclick`. Like for `Replace()`, a result longer
+  than 32 MiB ends the script with a script runtime error.
+  (cf. [OpenCCU/OpenCCU-Base#419](https://github.com/OpenCCU/OpenCCU-Base/pull/419))
+
+## R1.00.0388.0270 (2026-11-24)
+
+* fix the modified flag of the object model being set again shortly after it
+  was saved: an inactive program with a time module was deactivated again at
+  each trigger by a data point or system variable of its conditions, which
+  updated the timers and set the modified flag each time, even though its
+  time modules were already disabled, so that `dom.IsDOMModified()` stayed
+  true and the object model was saved again and again. Only enabled time
+  modules are now disabled (and the timers updated). Activating or
+  deactivating a program with `Active()` now sets the modified flag if the
+  state changes, also for a program without a time module.
+  (cf. [OpenCCU/OpenCCU#4791](https://github.com/OpenCCU/OpenCCU/issues/4791))
+* mark the error page of an invalid or expired session for the WebUI, which
+  loads it into its content area: the message is wrapped in an element with
+  the id `sessionInvalid` (styled by the WebUI), and the message and the
+  link have the keys of their translations (`sessionInvalid`,
+  `sessionInvalidLogin`) as name, so that the WebUI can show them in its
+  language. The message now reads "Die Sitzung ist ungültig oder
+  abgelaufen!" (was "Sitzung ungültig oder abgelaufen!") and the link "Neu
+  anmelden" (was "Weiter"); its target and the status of the page are
+  unchanged, as are the other error pages.
+  (cf. [OpenCCU/OpenCCU-Base#415](https://github.com/OpenCCU/OpenCCU-Base/pull/415))
+* add a warning at the start of ReGaHss for each condition and activity of a
+  program with settings which are invalid for its data point, system
+  variable or time module, e.g. left by editing the program in an earlier
+  version (see the entry below): the comparison or trigger of a condition,
+  the index of an entry of a value list or a number outside of the range
+  of a system variable. The warning names the program, the condition or
+  activity and the invalid setting; the settings are not corrected, as
+  this could change what the program does. A condition on a key press is
+  not reported, as it is evaluated like a new one.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776))
+* fix programs which no longer worked correctly after a condition or an
+  activity was edited: changing the data point or system variable of a
+  condition kept its trigger and comparison, e.g. "on change" after a key
+  was selected (the program was only executed at the first key press),
+  "greater than" after a logic value was selected (the condition was met
+  by the other value) or the index of an entry of another value list
+  (never met), and changing the system variable of an activity kept the
+  value, e.g. the index of an entry of another value list or a number
+  outside of the range of the new system variable. The settings of a
+  condition (LeftVal(), LeftValType()) and of an activity (DestinationDP())
+  now correct the values which are invalid for the new data point or system
+  variable, in the WebUI as well as in scripts, and keep the valid ones.
+  Changing the kind of a condition (device, system variable, time) resets
+  its trigger and comparison.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776))
+* fix a program with a condition on a key press (or another data point of
+  an action, e.g. the timer event of a CUxD timer) only being executed at
+  the first key press, or never: the condition kept the trigger ("on
+  change") or the comparison (e.g. "in the range of") of a data point or
+  system variable selected before in the WebUI, which is not shown for a
+  key. A condition on a key press is now always evaluated like a new one
+  (each key press triggers the program, whatever the trigger and the
+  comparison of the condition are), which also repairs existing programs.
+  (cf. [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775), [OpenCCU/OpenCCU#4422](https://github.com/OpenCCU/OpenCCU/issues/4422))
+
 ## R1.00.0388.0269 (2026-11-11)
 
 * fix the setters BreakOnRestart(value) of a rule destination and

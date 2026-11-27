@@ -17,7 +17,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
   string tmp = "";
   Write("deviceData = new Object();");
   Write("deviceData['id'] = "#dev.ID()#";");
-  Write("deviceData['name'] = '"#dev.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+  Write("deviceData['name'] = '"#dev.Name().JsEncode()#"';");
   Write("deviceData['type'] = '"#dev.Label()#"';");
   string sIface = "";
   integer iface = dev.Interface();
@@ -56,7 +56,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       Write("Group["#gE#"]['deviface'] = '"#sIface#"';");
       Write("Group["#gE#"]['transOp'] = '"#chn.ChnAESOperation()#"';");
       Write("Group["#gE#"]['trans'] = ("#chn.ChnAESActive()#" ? '${lblSecured}' : '${lblStandard}' );");
-      Write("Group["#gE#"]['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("Group["#gE#"]['name'] = '"#chn.Name().JsEncode()#"';");
 
       Write("console.dir(Group);");
 
@@ -66,14 +66,14 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         object objTmp = dom.GetObject(funcTmp);
         functions = functions # objTmp.Name() # ";";
       }
-      Write("Group["#gE#"]['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("Group["#gE#"]['func'] = '"#functions.JsEncode()#"';");
       string rooms = "";
       string roomTmp = "";
       foreach(roomTmp, chn.ChnRoom()) {
         object objTmp = dom.GetObject(roomTmp);
         rooms = rooms # objTmp.Name() # ";";
       }
-      Write("Group["#gE#"]['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("Group["#gE#"]['room'] = '"#rooms.JsEncode()#"';");
       Write("Group["#gE#"]['action'] = '';");
       Write("Group["#gE#"]['links'] = '';");
       Write("Group["#gE#"]['ready'] = "#chn.ReadyConfig()#";");
@@ -157,7 +157,7 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
       Write("deviceData['hasSubs'] = true;");
       Write('var tmp = new Object();');
       Write("tmp['id'] = "#chn.ID()#";");
-      Write("tmp['name'] = '"#chn.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['name'] = '"#chn.Name().JsEncode()#"';");
       Write("tmp['type'] = '"#chn.Label()#"';");
       Write("tmp['pic'] = '';");
       Write("tmp['desc'] = DEV_getDescription(deviceData['type']);");     
@@ -178,14 +178,14 @@ if ( dev && (dev.ReadyConfig() == false) && (dev.Name() != 'Gateway') && (dev.In
         object objTmp = dom.GetObject(funcTmp);
         functions = functions # objTmp.Name() # ";";
       }
-      Write("tmp['func'] = '"#functions.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['func'] = '"#functions.JsEncode()#"';");
       string rooms = "";
       string roomTmp = "";
       foreach(roomTmp, chn.ChnRoom()) {
         object objTmp = dom.GetObject(roomTmp);
         rooms = rooms # objTmp.Name() # ";";
       }
-      Write("tmp['room'] = '"#rooms.Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+      Write("tmp['room'] = '"#rooms.JsEncode()#"';");
       Write("tmp['action'] = '';");
       Write("tmp['links'] = '';");
       Write("tmp['ready'] = "#chn.ReadyConfig()#";");

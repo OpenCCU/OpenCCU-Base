@@ -934,18 +934,37 @@
     };
   };
 
+  // number of the latest channel selection of each condition or activity: only
+  // the latest selection saves its entries once the condition or activity is
+  // shown again, so that the reload of an earlier selection which completes
+  // last does not save the entries of its channel
+  ChannelSelections = {};
+  NextChannelSelection = function(id)
+  {
+    ChannelSelections[id] = (ChannelSelections[id] || 0) + 1;
+    return ChannelSelections[id];
+  };
+  IsLatestChannelSelection = function(id, selection)
+  {
+    return ChannelSelections[id] === selection;
+  };
+
   ShowDestinationChannelChooser2 = function(scid)
   {
     var callback = function ( result )
     {
       if (result) {
+        var selection = NextChannelSelection(scid);
         window.setTimeout(function() {
-          iseSingleDestination.SetChannel(scid, result);
-          // Necessary for the COMBINED_PARAMETER
-          window.setTimeout(function () {
+          // once the activity of the new channel is shown, save its first data
+          // point and value shown (and the COMBINED_PARAMETER), which SetChannel
+          // does not set (a fixed delay saved the previous ones if the activity
+          // was not shown again by then, see OpenCCU/OpenCCU#4776)
+          iseSingleDestination.SetChannel(scid, result, function () {
+            if (!IsLatestChannelSelection(scid, selection)) { return; }
             jQuery("#setDestinationDPSelectChange" + scid).change();
             jQuery("#prgStringOptionValue"+scid).change();
-          }, 750);
+          });
         },500);
       }
     };
@@ -958,12 +977,16 @@
     var callback = function ( result )
     {
       if (result) {
-
+        var selection = NextChannelSelection(scid);
         window.setTimeout(function() {
-          iseSingleCondition.SetChannel(scid, result);
-          window.setTimeout(function() {
+          // once the condition of the new channel is shown, save its first entry
+          // shown, which SetChannel does not set (a fixed delay saved the one of
+          // the previous channel if the condition was not shown again by then,
+          // see OpenCCU/OpenCCU#4775)
+          iseSingleCondition.SetChannel(scid, result, function() {
+            if (!IsLatestChannelSelection(scid, selection)) { return; }
             jQuery("#selectConditionWhen" + scid).change();
-          },250);
+          });
         },500);
       }
     };
@@ -1086,14 +1109,18 @@
     iseRefr(true);
     TranslatePrgRulePage();
   };
-  ReloadSingleDestination = function(sdid)
+  // onReloaded (optional): called once the activity is shown again
+  ReloadSingleDestination = function(sdid, onReloaded)
   {
     iseRefr(false);
     var url = "/esp/side.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "ReloadSiDe";';
     pb += 'string id = "'+sdid+'";';
-    var opts = { postBody: pb, onComplete: ReloadSiDeCallback };
+    var opts = { postBody: pb, onComplete: function(t) {
+      ReloadSiDeCallback(t);
+      if (onReloaded) { onReloaded(); }
+    } };
     new Ajax.Updater("side"+sdid,url,opts);
   };
   ReloadSiCoCallback = function(t)
@@ -1101,14 +1128,18 @@
     iseRefr(true);
     TranslatePrgRulePage();
   };
-  ReloadSingleCondition = function(scid)
+  // onReloaded (optional): called once the condition is shown again
+  ReloadSingleCondition = function(scid, onReloaded)
   {
     iseRefr(true);
     var url = "/esp/sico.htm?sid="+SessionId;
     var pb = '';
     pb += 'string action = "ReloadSiCo";';
     pb += 'string id = "'+scid+'";';
-    var opts = { postBody: pb, onComplete: ReloadSiCoCallback };
+    var opts = { postBody: pb, onComplete: function(t) {
+      ReloadSiCoCallback(t);
+      if (onReloaded) { onReloaded(); }
+    } };
     new Ajax.Updater("sico"+scid,url,opts);
   };
   LoadRuleCallback = function(t)
@@ -1207,7 +1238,7 @@
     </thead>
     <tbody>
       <tr class="CLASS04803">
-        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") ); %></td>
+        <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>name" onclick="textEdit('prg<% Write(oPrg.ID()); %>name', <% Write(oPrg.ID()); %>);"><% Write( oPrg.Name().HtmlEncode() ); %></td>
         <td class="tBodyCell taCenter" id="prg<% Write(oPrg.ID()); %>desc" onclick="textEditInfo('prg<% Write(oPrg.ID()); %>desc', <% Write(oPrg.ID()); %>,true);"><% Write( oPrg.PrgInfo() ); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteConditionText()"); Write(sRet); %></td>
         <td class="tBodyCell"><% object oPrgID = oPrg.ID(); string sRet = ""; Call("/esp/programs.fn::WriteDestinationText()"); Write(sRet); %></td>

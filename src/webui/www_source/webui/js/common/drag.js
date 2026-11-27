@@ -39,7 +39,7 @@ Drag = function(element, event, callback)
     var y = (document.all) ? window.event.clientY : event.pageY;
     
     Event.stopObserving(document, "mousemove", onMouseMove);
-    Event.stopObserving(document, "mouseip", onMouseUp);
+    Event.stopObserving(document, "mouseup", onMouseUp);
     
     if (m_callback) { m_callback(m_element, x, y); }
   };

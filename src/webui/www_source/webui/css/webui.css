@@ -154,3 +154,34 @@ progress[value] {
 progress::-moz-progress-bar { background: #3678c9; }
 progress::-webkit-progress-value { background: #3678c9; }
 
+/* Expired-session message of ReGaHss (message with the link "Weiter" to
+   /index.htm). ReGaHss marks it with the id "sessionInvalid":
+   <div id="sessionInvalid" role="alert"><p>...<br><a href="/index.htm">Weiter</a></p></div>
+   The message is shown centered like the login mask, the link gets the
+   look of the WebUI buttons (.Button, .colorGradient in ise/style/style.css). */
+#sessionInvalid {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+}
+/* #content is a flex container: the message fills its whole height */
+#content > #sessionInvalid {
+  align-self: stretch;
+}
+#sessionInvalid > p {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  background-color: $_(inactiveBackground);
+  border: solid 1px $_(black); /* black */
+}
+#sessionInvalid > p > a {
+  display: block;
+  margin: 16px auto 0;
+  text-decoration: none;
+}

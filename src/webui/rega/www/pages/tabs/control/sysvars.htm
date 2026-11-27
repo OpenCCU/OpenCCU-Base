@@ -86,8 +86,8 @@
               {
                 string trId = "sysvar"#o.ID();
                 WriteLine( '<tr id="'#trId#'" class="CLASS03305">' );
-                WriteLine( '<td class="tBodyCell">' # o.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;") # '</td>' );
-                WriteLine( '<td class="tBodyCell">' # o.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>') # '</td>' );
+                WriteLine( '<td class="tBodyCell">' # o.Name().HtmlEncode() # '</td>' );
+                WriteLine( '<td class="tBodyCell">' # o.DPInfo().HtmlEncode().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>") # '</td>' );
                 string sTimestamp = o.Timestamp();
                 Call( "/esp/TimeStamp.fn::TimeStampToStringNoBR()" );
                 WriteLine( '<td class="tBodyCell"><span id="tmc'#o.ID()#'">'#sTimestamp#'</span></td>' );
@@ -107,7 +107,7 @@
                 Write("<script type='text/javascript'>");
                 Write("var tmp = new Object();");
                 Write("tmp['id'] = '"#o.ID()#"';");
-                Write("tmp['name'] = '"#o.Name().Replace("\\", "\\\\").Replace("'", "\\'").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#"';");
+                Write("tmp['name'] = '"#o.Name().JsEncode()#"';");
                 Write("tmp['trid'] = '"#trId#"';");
                 Write("arItems[arItems.length] = tmp;");
                 Write("Cursor.set(Cursor.NORMAL);");

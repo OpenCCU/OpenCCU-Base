@@ -364,5 +364,5 @@ test('the pages write system variable values only as sanitized HTML', () => {
   }
   assert.ok(callers >= 3, 'callers of getSysVarValAsString() not found');
   const system = fs.readFileSync(path.join(root, 'esp', 'system.fn'), 'latin1');
-  assert.match(system, /function ::writeSysVarVal\(\)\s*\{\s*Write\( '<span data-sysvar-value="' # sSysVarVal\.Replace\("&", "&amp;"\)\.Replace\("<", "&lt;"\)\.Replace\(">", "&gt;"\)\.Replace\('"', "&quot;"\) # '"><\/span>' \);/);
+  assert.match(system, /function ::writeSysVarVal\(\)\s*\{\s*Write\( '<span data-sysvar-value="' # sSysVarVal\.HtmlEncode\(\) # '"><\/span>' \);/);
 });

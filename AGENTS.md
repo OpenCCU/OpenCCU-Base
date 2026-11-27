@@ -29,6 +29,7 @@ node --test tests/webui/test-proofandsetvalue.js       # WebUI ProofAndSetValue(
 node --test tests/webui/test-rega-escapestring.js      # WebUI ReGa.escapeString() tests
 node --test tests/webui/test-translate.js               # WebUI translateString() tests
 node --test tests/webui/test-programs-else-rule.js     # WebUI program editor ELSE rule tests
+node --test tests/webui/test-extended-description.js   # WebUI getExtendedDescription() tests
 python3 tests/test-hm-scripts.py                       # bin/hm_* equal src/webui/rega/bin/hm_*
 python3 tests/test-changelog-links.py                  # changelog link check tests
 python3 scripts/check-changelog-links.py origin/main   # new changelog entries link their change

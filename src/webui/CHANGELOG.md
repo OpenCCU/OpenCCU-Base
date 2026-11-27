@@ -18,6 +18,78 @@ is published.
   The info and error buttons of the addon in the header and its `jp.*` API
   methods are not taken over.
   ([#XXX](https://github.com/OpenCCU/OpenCCU-Base/pull/XXX), @jp112sdl)
+* moving a dialog by its title bar no longer leaves a mouse listener behind
+  on the page, which kept closed dialogs in memory until the page was
+  reloaded.
+  ([#429](https://github.com/OpenCCU/OpenCCU-Base/pull/429), fixes
+  [#4806](https://github.com/OpenCCU/OpenCCU/issues/4806), @MichaelN0815)
+* the device settings and the channel selection of direct links describe the
+  channels 3 to 5 of the HmIP-PS, HmIP-PSM, HmIP-PSM-PE, HmIP-PS-UK,
+  HmIP-PSM-IT and HmIP-PSM-CH as switch actuator again instead of
+  "Currently not supported", and a blind channel of the HmIPW blind
+  actuators, the HmIP-DRBLI4 and the HmIP-BBL-2 in shutter mode as shutter
+  actuator instead of blind actuator.
+  ([#426](https://github.com/OpenCCU/OpenCCU-Base/pull/426), fixes
+  [#4797](https://github.com/OpenCCU/OpenCCU/issues/4797), @jens-maus)
+* names, descriptions, units and values are escaped with the new string
+  methods of ReGaHss R1.00.0388.0271 instead of chains of `Replace()`
+  calls, which the WebUI therefore requires. Units show every character
+  reference they contain as the character, e.g. `m&sup2;` as "m²". The unit
+  field of the system variable dialog shows the unit as stored (e.g.
+  `&deg;C` instead of "°C"), so saving the dialog no longer changes it, and
+  the start page of the guest user shows names of favorites containing `&`,
+  `<` or `>` correctly instead of escaped twice. The login page shows the
+  names of the users as text: markup in a first or last name was
+  interpreted by the browser.
+  ([#420](https://github.com/OpenCCU/OpenCCU-Base/pull/420), @jens-maus)
+* the profiles of direct links show umlauts instead of escape
+  sequences such as "T%FCr %F6ffnen" ("Tür öffnen"), e.g. in the profile
+  list and description of a door lock, the access receivers, the virtual
+  receivers of switch, dimmer and blind actuators and the names of their
+  parameters.
+  ([#422](https://github.com/OpenCCU/OpenCCU-Base/pull/422), @jens-maus)
+* the description of a favorite is shown as text on the favorites page and
+  the guest start page: markup in it was interpreted by the browser, as it
+  was written into the page without escaping.
+  ([#421](https://github.com/OpenCCU/OpenCCU-Base/pull/421), @jens-maus)
+* the link profile pages of several senders showed no texts because
+  their localization table could not be read: the German tables of the
+  rain quantity and wind direction senders of blind actuators and 12
+  English tables (e.g. humidity, rain drop and wind speed senders, the
+  heat demand pump senders of the MIOB and the virtual key of dual white
+  lights) contained a missing or doubled comma or a broken string.
+  ([#423](https://github.com/OpenCCU/OpenCCU-Base/pull/423), @jens-maus)
+* units of data points and system variables that contain a character
+  reference, such as `&#176;C` of CUxD devices or `&deg;C` and `&euro;`
+  entered as the unit of a system variable, are shown as the character
+  again ("°C", "€") instead of the reference itself in the conditions and
+  activities of the program editor, the program list, the system protocol
+  and the system variable views. Markup in a unit is still shown as text.
+  (fixes [OpenCCU/OpenCCU#4790](https://github.com/OpenCCU/OpenCCU/issues/4790),
+  @jens-maus)
+* the program list no longer changes the programs it shows: it set an
+  invalid comparison or trigger of the first condition of a program to a
+  default when the list was shown. After a channel is selected for a
+  condition or an activity in the program editor, the first entry shown
+  for the new channel is now saved once the condition or activity is shown
+  again, instead of after a fixed delay, which could save the entry of the
+  previous channel. Together with ReGaHss R1.00.0388.0270, which corrects
+  the invalid settings of a condition or activity when its data point or
+  system variable is changed, this fixes programs which only triggered
+  once, never or on the wrong value after they were edited.
+  ([#406](https://github.com/OpenCCU/OpenCCU-Base/pull/406), see
+  [OpenCCU/OpenCCU#4775](https://github.com/OpenCCU/OpenCCU/issues/4775),
+  [OpenCCU/OpenCCU#4776](https://github.com/OpenCCU/OpenCCU/issues/4776),
+  @jens-maus)
+* the message of an invalid or expired session ("Die Sitzung ist ungültig
+  oder abgelaufen!") is shown centered in the content area like the login
+  mask, with the link to the login ("Neu anmelden") as a WebUI button, and in
+  the language of the WebUI. It needs a ReGaHss (R1.00.0388.0270 or newer) that marks the
+  message with the id `sessionInvalid` and the keys of its translations;
+  with an older ReGaHss the message is shown as before.
+  ([#415](https://github.com/OpenCCU/OpenCCU-Base/pull/415),
+  [#368](https://github.com/OpenCCU/OpenCCU-Base/pull/368),
+  @unbox-digital-print, @MichaelN0815, @jens-maus)
 
 ## 3.89.13 (2026-11-18)
 

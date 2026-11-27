@@ -310,7 +310,7 @@ function ::UpdateUI()
   object oPresence = dom.GetObject( ID_PRESENT );
   if( oPresence )
   {
-    Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n")#'";' );
+    Write( 'if( $("presence") ) $("presence").innerHTML = "'#oPresence.ValueName().HtmlEncode().JsEncode()#'";' );
   }
   
   WriteLine("resetReGaSaveButton();");
@@ -337,7 +337,7 @@ function ::UpdateUI()
           string sDateTimeTmp = sTimestamp;
           !string sMessageTmp = oSV.Name()#" ausgelöst";
           string sMessageTmp = oSV.Name()#" ${lblTriggered}";
-          WriteLine( 'if( typeof(alarmLogSystem) == "object" ) alarmLogSystem.add("'#sDateTimeTmp#'","","'#sMessageTmp.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'");' );
+          WriteLine( 'if( typeof(alarmLogSystem) == "object" ) alarmLogSystem.add("'#sDateTimeTmp#'","","'#sMessageTmp.JsEncode()#'");' );
         }
       }
     }
@@ -417,7 +417,7 @@ function ::UpdateUI()
             Write("if ($('sla"#sAID#"'))");
               Write("$('sla"#sAID#"').innerHTML = '"#sLastTimestamp#"';");
           }
-          Write( 'if( typeof(serviceLogSystem) == "object" ) serviceLogSystem.add("'#sDateTime#'","'#sChannelName.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("<", "\\x3C").Replace("\r", "\\r").Replace("\n", "\\n")#'","'#sServiceMessage#'");' );
+          Write( 'if( typeof(serviceLogSystem) == "object" ) serviceLogSystem.add("'#sDateTime#'","'#sChannelName.JsEncode()#'","'#sServiceMessage#'");' );
         }
       }
     }
@@ -468,17 +468,12 @@ function ::UpdateUI()
       boolean bAlarm  = ( (iVT==ivtBinary)  && (iST==istAlarm)   );
       boolean bString = ( (iVT==ivtString)  && (iST==istChar8859));
       Call( "/esp/system.fn::getSysVarValAsString()" );
-      ! Escape unwanted chars
-      sSysVarVal = sSysVarVal.Replace("\\", "\\\\");
-      sSysVarVal = sSysVarVal.Replace("`", "\\`");
-      sSysVarVal = sSysVarVal.Replace("${", "\\${");
-      ! the response is a script element, which a closing script tag in the
-      ! value would end early, so every less-than sign is written as \x3C
-      sSysVarVal = sSysVarVal.Replace("<", "\\x3C");
       WriteLine("if ($('SYSVAR_" # svId # "')) {");
-      ! use javascript string literal char (`) to ensure proper char escaping;
-      ! the value may contain HTML, of which only the formatting is kept
-      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = sanitizeSysVarHtml(translateSysVarValue(`" # sSysVarVal # "`));");
+      ! JsEncode() writes the value as JavaScript string literal (line breaks,
+      ! quotes, backslashes and every less-than sign, which would end the
+      ! script element of the response early, as \xNN); the value may contain
+      ! HTML, of which only the formatting is kept
+      WriteLine("  $('SYSVAR_" # svId # "').innerHTML = sanitizeSysVarHtml(translateSysVarValue(\"" # sSysVarVal.JsEncode() # "\"));");
       WriteLine("}");
     }    
   }
@@ -659,7 +654,7 @@ function ::buildPropTable() {
       object elem = dom.GetObject(tmp);
       if (elem) {
         Write("<tr class='popupWhiteCells'>");
-        Write("<td id='er"#elem.ID()#"' onclick='bNecc = true;textEdit(id, "#elem.ID()#", false, function() { changeRoomOrSubsection.delay(1, \"" # elem.ID() # "\"); });'>"#elem.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+        Write("<td id='er"#elem.ID()#"' onclick='bNecc = true;textEdit(id, "#elem.ID()#", false, function() { changeRoomOrSubsection.delay(1, \"" # elem.ID() # "\"); });'>"#elem.Name().HtmlEncode()#"</td>");
         Write("<td id='cr"#elem.ID()#"' onclick='bNecc = false;textEditInfo(id, "#elem.ID()#", true)' >"#elem.EnumInfo()#"</td>");
         Write( '<td><span class="StdButton" onclick="bNecc = true;DeleteObject2('#elem.ID()#');removeRoomOrSubsection(\''#elem.ID()#'\');">${btnRemove}</span></td>' );
         Write("</tr>");
@@ -679,7 +674,7 @@ function ::getChnNameById()
     object obj = dom.GetObject( system.GetVar("id") );
     if (obj)
     {
-      Write(obj.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+      Write(obj.Name().HtmlEncode());
     }
   }
   return;
@@ -1509,8 +1504,8 @@ function ::BuildUserSvTable() {
     {
       string trid = "u" # system.GetVar("userId") # "s" # tmp;
       WriteLine("<tr id='"#trid#"'>");
-        WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
-        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('\r\n', '<br/>').Replace('\r', '<br/>').Replace('\n', '<br/>')#"</td>");
+        WriteLine("<td class='GrayBkg CLASS02109'>"#sysvar.Name().HtmlEncode()#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.DPInfo().HtmlEncode().Replace("\r\n", "<br/>").Replace("\r", "<br/>").Replace("\n", "<br/>")#"</td>");
         
         WriteLine("<td class='GrayBkg'>");
         string s = "Unbekannt: " # sysvar.ValueSubType();
@@ -1527,24 +1522,24 @@ function ::BuildUserSvTable() {
         !if (sysvar.ValueSubType() == istPresent) {} !#### Auskommentierung z.Z. nicht erwünscht. Später KW.
         
         if (sysvar.ValueSubType() == istAlarm) {
-          WriteLine("${lblTrue} = " # sysvar.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/>");
-          WriteLine("${lblFalse} = " # sysvar.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+          WriteLine("${lblTrue} = " # sysvar.ValueName1().HtmlEncode()#"<br/>");
+          WriteLine("${lblFalse} = " # sysvar.ValueName0().HtmlEncode());
         }
         if (sysvar.ValueSubType() == istGeneric) {
           WriteLine("${lblMinValue}: " # sysvar.ValueMin()#"<br/>");
           WriteLine("${lblMaxValue}: " # sysvar.ValueMax());
         }
         if (sysvar.ValueSubType() == istEnum) {
-          WriteLine(sysvar.ValueList().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+          WriteLine(sysvar.ValueList().HtmlEncode());
         }
         if (sysvar.ValueSubType() == istBool) {
-          WriteLine("${lblTrue} = " # sysvar.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"<br/>");
-          WriteLine("${lblFalse} = " # sysvar.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;"));
+          WriteLine("${lblTrue} = " # sysvar.ValueName1().HtmlEncode()#"<br/>");
+          WriteLine("${lblFalse} = " # sysvar.ValueName0().HtmlEncode());
         }
         if (sysvar.ValueSubType() == istChar8859) { }
         WriteLine("</td>");
         
-        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;")#"</td>");
+        WriteLine("<td class='GrayBkg'>"#sysvar.ValueUnit().HtmlEncodeKeepEntities()#"</td>");
         WriteLine("<td class='WhiteBkg'>");
           WriteLine("<div class='CLASS02108' ");
           if (system.GetVar("userId") != 0)  {
@@ -1640,11 +1635,11 @@ function ::getSysVarValAsString()
   {
     if ( (cObjTmp.Value() == 0) || (cObjTmp.Value() == "") )
     {
-      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName0().HtmlEncode();
     }
     else
     {
-      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName1().HtmlEncode();
     }
   }
   
@@ -1652,11 +1647,11 @@ function ::getSysVarValAsString()
   {
     if( cObjTmp.AlState() == asOncoming )
     {
-      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName1().HtmlEncode();
     }
     else
     {
-      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName0().HtmlEncode();
     }    
   }
   
@@ -1664,15 +1659,15 @@ function ::getSysVarValAsString()
   { 
     if( cObjTmp.Value() == "" )
     {
-      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),0).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),0).HtmlEncode();
     }
     else
     {
-      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),cObjTmp.Value()).Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = web.webGetValueFromList(cObjTmp.ValueList(),cObjTmp.Value()).HtmlEncode();
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().HtmlEncodeKeepEntities();
     }
   }
   
@@ -1688,7 +1683,7 @@ function ::getSysVarValAsString()
     }
     if( cObjTmp.ValueUnit() != "" )
     {
-      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = sSysVarVal#" "#cObjTmp.ValueUnit().HtmlEncodeKeepEntities();
     }
   }
   
@@ -1697,11 +1692,11 @@ function ::getSysVarValAsString()
   {
     if ( (cObjTmp.Value() == 0) || (cObjTmp.Value() == "") )
     {
-      sSysVarVal = cObjTmp.ValueName0().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName0().HtmlEncode();
     }
     else
     {
-      sSysVarVal = cObjTmp.ValueName1().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+      sSysVarVal = cObjTmp.ValueName1().HtmlEncode();
     }
   }
 
@@ -1721,7 +1716,7 @@ function ::getSysVarValAsString()
 ! of the placeholder, so the caller writes it into an element of its own.
 function ::writeSysVarVal()
 {
-  Write( '<span data-sysvar-value="' # sSysVarVal.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace('"', "&quot;") # '"></span>' );
+  Write( '<span data-sysvar-value="' # sSysVarVal.HtmlEncode() # '"></span>' );
 }
 
 ! [cId]

@@ -1171,7 +1171,7 @@ proc put_tablebody {p_realchannels p_virtualchannels} {
 
       if {! [string equal $dev_descr(TYPE) "MULTI_MODE_INPUT_TRANSMITTER"]} {
         puts "<script type=\"text/javascript\">"
-          puts "var ext = getExtendedDescription(\{\"deviceType\" : \"$dev_descr(PARENT_TYPE)\", \"channelType\" : \"$dev_descr(TYPE)\" ,\"channelIndex\" : \"$dev_descr(INDEX)\", \"channelAddress\" : \"$dev_descr(ADDRESS)\" \});"
+          puts "var ext = getExtendedDescription(\{\"deviceType\" : \"$dev_descr(PARENT_TYPE)\", \"channelType\" : \"$dev_descr(TYPE)\" ,\"channelIndex\" : \"$dev_descr(INDEX)\", \"channelAddress\" : \"$dev_descr(ADDRESS)\", \"isVisible\" : [expr {($dev_descr(FLAGS) & 1) ? "true" : "false"}] \});"
           puts "if (ext.length > 0) \{"
             puts "jQuery(\"#dev$rowcount\").html(\"<br/>$SENTRY(NAME)<br/><br/>\" + ext);"
           puts "\}"
