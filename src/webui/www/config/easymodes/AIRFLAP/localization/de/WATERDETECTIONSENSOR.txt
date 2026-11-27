@@ -1,5 +1,5 @@
-"description_1" : "<span class=\"translated\">Bei Feuchtigkeit wird das Licht auf den festgelegten Helligkeitswert ein- und bei Trockenheit ausgeschaltet. Diese Funktion l&auml;sst sich auch umkehren.</span><br/><br/>",
-"description_2" : "<span class=\"translated\">Bei &Auml;nderung der Feuchtigkeit wird das Licht f&uuml;r die festgelegte Zeit auf den festgelegten Helligkeitswert ein- oder ausgeschaltet.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">Bei Feuchtigkeit wird die L&uuml;ftungsklappe auf den festgelegten &Ouml;ffnungsgrad ge&ouml;ffnet und bei Trockenheit geschlossen. Diese Funktion l&auml;sst sich auch umkehren.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Bei &Auml;nderung der Feuchtigkeit wird die L&uuml;ftungsklappe f&uuml;r die festgelegte Zeit auf den festgelegten &Ouml;ffnungsgrad ge&ouml;ffnet oder geschlossen.</span><br/><br/>",
 "subset_1" : "Trocken - ein / Feuchtigkeit - aus",
 "subset_2" : "Trocken - aus / Feuchtigkeit - ein",
 "subset_3" : "ein bei absoluter Trockenheit",

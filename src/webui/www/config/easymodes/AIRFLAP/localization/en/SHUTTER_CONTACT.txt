@@ -1,5 +1,5 @@
-"description_1" : "<span class=\"translated\">When the contact is opened the light will be switched on to the defined brightness value and switched off when the window is closed. This function can be reversed.</span><br/><br/>",
-"description_2" : "<span class=\"translated\">When the contact is opened or closed the light will be switched on for the set time to the defined brightness value.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">When the contact is opened the air flap is opened to the set position and closed when the contact is closed. This function can be reversed.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">When the contact is opened or closed the air flap is opened to the set position for the set time.</span><br/><br/>",
 "subset_1" : "Open - off / Closed - on",
 "subset_2" : "Open - on / Closed - off",
 "subset_3" : "Close",

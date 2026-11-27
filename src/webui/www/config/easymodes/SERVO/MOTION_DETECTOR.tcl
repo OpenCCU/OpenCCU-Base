@@ -38,7 +38,7 @@ set PROFILE_1(SHORT_OFFDELAY_BLINK) {1 0}
 set PROFILE_1(SHORT_ON_LEVEL)   {1.0 range 0.0 - 1.005}
 set PROFILE_1(SHORT_RAMPON_TIME)  {0.5 range 0.0 - 111600}
 set PROFILE_1(SHORT_RAMPOFF_TIME) {0.5 range 0.0 - 111600}
-set PROFILE_1(UI_DESCRIPTION) "Beim Ausl&ouml;sen des Sensors wird das Licht mindestens f&uuml;r die eingestellte Zeit eingeschaltet.&nbsp;"
+set PROFILE_1(UI_DESCRIPTION) "Beim Ausl&ouml;sen des Sensors wird der Servo mindestens f&uuml;r die eingestellte Zeit auf den eingestellten Stellwinkel gefahren.&nbsp;"
 set PROFILE_1(UI_TEMPLATE)  $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 

@@ -96,7 +96,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird das Licht auf die eingestellte Helligkeit eingeschaltet. Mit einem langen Tastendruck wird das Licht hochgedimmt."
+set PROFILE_1(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Mit einem langen Tastendruck wird die Klappe weiter ge&ouml;ffnet."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 
@@ -173,7 +173,7 @@ set PROFILE_2(SHORT_ON_TIME_MODE) 0
 set PROFILE_2(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_2(SHORT_RAMPON_TIME)  0.5
 set PROFILE_2(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird das Licht ausgeschaltet. Mit einem langen Tastendruck wird das Licht runtergedimmt."
+set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe geschlossen. Mit einem langen Tastendruck wird die Klappe weiter geschlossen."
 set PROFILE_2(UI_TEMPLATE)    $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 
@@ -250,7 +250,7 @@ set PROFILE_3(SHORT_ON_TIME_MODE) 0
 set PROFILE_3(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_3(SHORT_RAMPON_TIME)  0.5
 set PROFILE_3(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_3(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wechselt das Licht zwischen der eingestellten Helligkeit und aus. Mit einem langen Tastendruck wird das Licht abwechselnd hoch- und runtergedimmt."
+set PROFILE_3(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe abwechselnd auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet und geschlossen. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_3(UI_TEMPLATE)    $PROFILE_3(UI_DESCRIPTION)
 set PROFILE_3(UI_HINT)  3
 
@@ -327,7 +327,7 @@ set PROFILE_4(SHORT_ON_TIME_MODE) 1
 set PROFILE_4(SHORT_RAMPOFF_TIME) 20.0
 set PROFILE_4(SHORT_RAMPON_TIME)  0.5
 set PROFILE_4(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_4(UI_DESCRIPTION) "Das Licht wird durch kurzen oder langen Tastendruck f&uuml;r die eingestellte Zeit eingeschaltet. In der Ausschaltverz&ouml;gerung wird der Pegel zur Vorwarnung leicht abgesenkt, um anschlie&szlig;end langsam bis auf aus runterzudimmen."
+set PROFILE_4(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck f&uuml;r die eingestellte Zeit ge&ouml;ffnet. In der Ausschaltverz&ouml;gerung wird die L&uuml;ftungsklappe zur Vorwarnung leicht geschlossen und anschlie&szlig;end langsam ganz geschlossen."
 set PROFILE_4(UI_TEMPLATE)    $PROFILE_4(UI_DESCRIPTION)
 set PROFILE_4(UI_HINT)  4
 
@@ -404,7 +404,7 @@ set PROFILE_5(SHORT_ON_TIME_MODE) 0
 set PROFILE_5(SHORT_RAMPOFF_TIME) 1800.0
 set PROFILE_5(SHORT_RAMPON_TIME)  0.5
 set PROFILE_5(SHORT_RAMP_START_STEP)  0.0
-set PROFILE_5(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird das Licht auf die eingestellte Helligkeit eingeschaltet und nach der eingestellten Zeit langsam auf aus runtergedimmt. Mit einem langen Tastendruck wird das Licht abwechselnd hoch- und runtergedimmt."
+set PROFILE_5(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet und nach der eingestellten Zeit langsam geschlossen. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_5(UI_TEMPLATE)    $PROFILE_5(UI_DESCRIPTION)
 set PROFILE_5(UI_HINT)  5
 
@@ -481,7 +481,7 @@ set PROFILE_6(SHORT_ON_TIME_MODE) 0
 set PROFILE_6(SHORT_RAMPOFF_TIME) 0.0
 set PROFILE_6(SHORT_RAMPON_TIME)  0.0
 set PROFILE_6(SHORT_RAMP_START_STEP)  0.0
-set PROFILE_6(UI_DESCRIPTION) "Das Licht wechselt im eingestellten Takt endlos zwischen den beiden Helligkeitswerten."
+set PROFILE_6(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wechselt im eingestellten Takt endlos zwischen den beiden eingestellten &Ouml;ffnungsgraden."
 set PROFILE_6(UI_TEMPLATE)    $PROFILE_6(UI_DESCRIPTION)
 set PROFILE_6(UI_HINT)  6
 
@@ -558,7 +558,7 @@ set PROFILE_7(SHORT_ON_TIME_MODE) 0
 set PROFILE_7(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_7(SHORT_RAMPON_TIME)  60.0
 set PROFILE_7(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_7(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird das Licht langsam auf die eingestellten Helligkeit hochgedimmt. Mit einem langen Tastendruck wird das Licht abwechselnd hoch- und runtergedimmt."
+set PROFILE_7(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe langsam auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_7(UI_TEMPLATE)    $PROFILE_7(UI_DESCRIPTION)
 set PROFILE_7(UI_HINT)  7
 
@@ -635,7 +635,7 @@ set PROFILE_8(SHORT_ON_TIME_MODE) 0
 set PROFILE_8(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_8(SHORT_RAMPON_TIME)  0.5
 set PROFILE_8(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_8(UI_DESCRIPTION) "Das Licht wird durch kurzen oder langen Tastendruck auf die eingestellten Helligkeit eingeschaltet."
+set PROFILE_8(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet."
 set PROFILE_8(UI_TEMPLATE)  $PROFILE_8(UI_DESCRIPTION)
 set PROFILE_8(UI_HINT)  8
 
@@ -712,7 +712,7 @@ set PROFILE_9(SHORT_ON_TIME_MODE) 0
 set PROFILE_9(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_9(SHORT_RAMPON_TIME)  0.5
 set PROFILE_9(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_9(UI_DESCRIPTION) "Das Licht wird durch kurzen oder langen Tastendruck ausgeschaltet."
+set PROFILE_9(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck geschlossen."
 set PROFILE_9(UI_TEMPLATE)    $PROFILE_9(UI_DESCRIPTION)
 set PROFILE_9(UI_HINT)  9
 
@@ -789,7 +789,7 @@ set PROFILE_10(SHORT_ON_TIME_MODE)  0
 set PROFILE_10(SHORT_RAMPOFF_TIME)  0.5
 set PROFILE_10(SHORT_RAMPON_TIME) 0.5
 set PROFILE_10(SHORT_RAMP_START_STEP) 0.05
-set PROFILE_10(UI_DESCRIPTION)  "Das Licht wird durch kurzen oder langen Tastendruck hochgedimmt."
+set PROFILE_10(UI_DESCRIPTION)  "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck weiter ge&ouml;ffnet."
 set PROFILE_10(UI_TEMPLATE) $PROFILE_10(UI_DESCRIPTION)
 set PROFILE_10(UI_HINT) 10
 
@@ -866,7 +866,7 @@ set PROFILE_11(SHORT_ON_TIME_MODE)  1
 set PROFILE_11(SHORT_RAMPOFF_TIME)  0.5
 set PROFILE_11(SHORT_RAMPON_TIME) 0.5
 set PROFILE_11(SHORT_RAMP_START_STEP) 0.05
-set PROFILE_11(UI_DESCRIPTION)  "Das Licht wird durch kurzen oder langen Tastendruck runtergedimmt."
+set PROFILE_11(UI_DESCRIPTION)  "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck weiter geschlossen."
 set PROFILE_11(UI_TEMPLATE)   $PROFILE_11(UI_DESCRIPTION)
 set PROFILE_11(UI_HINT) 11
 

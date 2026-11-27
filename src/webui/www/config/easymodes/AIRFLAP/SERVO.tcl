@@ -96,7 +96,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) {0.5 range 0.0 - 111600.00} 
 set PROFILE_1(SHORT_RAMPON_TIME)  {0.5 range 0.0 - 111600.00}
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird der eingestellte Winkel angefahren. Mit einem langen Tastendruck wird der Stellwinkel vergr&ouml;&szlig;ert."
+set PROFILE_1(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Mit einem langen Tastendruck wird die Klappe weiter ge&ouml;ffnet."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 
@@ -173,7 +173,7 @@ set PROFILE_2(SHORT_ON_TIME_MODE) 0
 set PROFILE_2(SHORT_RAMPOFF_TIME) {0.5 range 0.0 - 111600.0}
 set PROFILE_2(SHORT_RAMPON_TIME)  0.5
 set PROFILE_2(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen Tastendruck werden 0&deg; angefahren. Mit einem langen Tastendruck wird der Stellwinkel verkleinert."
+set PROFILE_2(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe geschlossen. Mit einem langen Tastendruck wird die Klappe weiter geschlossen."
 set PROFILE_2(UI_TEMPLATE)    $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 
@@ -250,7 +250,7 @@ set PROFILE_3(SHORT_ON_TIME_MODE) 0
 set PROFILE_3(SHORT_RAMPOFF_TIME) {0.5 range 0.0 - 108000}
 set PROFILE_3(SHORT_RAMPON_TIME)    {0.5 range 0.0 - 108000}
 set PROFILE_3(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_3(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wechselt der Stellwinkel zwischen dem eingestellten Stellwinkel und 0&deg;. Mit einem langen Tastendruck wird der Stellwinkel abwechselnd verg&ouml;&szlig;ert und verringert."
+set PROFILE_3(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe abwechselnd auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet und geschlossen. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_3(UI_TEMPLATE)    $PROFILE_3(UI_DESCRIPTION)
 set PROFILE_3(UI_HINT)  3
 
@@ -327,7 +327,7 @@ set PROFILE_5(SHORT_ON_TIME_MODE) 0
 set PROFILE_5(SHORT_RAMPOFF_TIME) {1800.0 range 0.0 - 108000}
 set PROFILE_5(SHORT_RAMPON_TIME)  0.5
 set PROFILE_5(SHORT_RAMP_START_STEP)  0.0
-set PROFILE_5(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird der eingestellte Stellwinkel angefahren und nach der eingestellten Zeit langsam auf 0&deg; reduziert. Mit einem langen Tastendruck wird der Stellwinkel abwechselnd verg&ouml;&szlig;ert und verringert."
+set PROFILE_5(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet und nach der eingestellten Zeit langsam geschlossen. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_5(UI_TEMPLATE)    $PROFILE_5(UI_DESCRIPTION)
 set PROFILE_5(UI_HINT)  5
 
@@ -404,7 +404,7 @@ set PROFILE_7(SHORT_ON_TIME_MODE) 0
 set PROFILE_7(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_7(SHORT_RAMPON_TIME)    {60.0 range 0.0 - 108000}
 set PROFILE_7(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_7(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird der Stellwinkel langsam auf den eingestellten Wert verg&ouml;&szlig;ert. Mit einem langen Tastendruck wird der Stellwinkel abwechselnd verg&ouml;&szlig;ert und verringert."
+set PROFILE_7(UI_DESCRIPTION) "Mit einem kurzen Tastendruck wird die L&uuml;ftungsklappe langsam auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Mit einem langen Tastendruck wird die Klappe abwechselnd weiter ge&ouml;ffnet und geschlossen."
 set PROFILE_7(UI_TEMPLATE)    $PROFILE_7(UI_DESCRIPTION)
 set PROFILE_7(UI_HINT)  7
 
@@ -481,7 +481,7 @@ set PROFILE_8(SHORT_ON_TIME_MODE) 0
 set PROFILE_8(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_8(SHORT_RAMPON_TIME)    {0.5 range 0.0 - 108000}
 set PROFILE_8(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_8(UI_DESCRIPTION) "Der Stellwinkel wird durch kurzen oder langen Tastendruck auf den eingestellten Winkel angefahren."
+set PROFILE_8(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet."
 set PROFILE_8(UI_TEMPLATE)  $PROFILE_8(UI_DESCRIPTION)
 set PROFILE_8(UI_HINT)  8
 
@@ -558,7 +558,7 @@ set PROFILE_9(SHORT_ON_TIME_MODE) 0
 set PROFILE_9(SHORT_RAMPOFF_TIME) {0.5 range 0.0 - 108000}
 set PROFILE_9(SHORT_RAMPON_TIME)  0.5
 set PROFILE_9(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_9(UI_DESCRIPTION) "Der Stellwinkel wird durch kurzen oder langen Tastendruck auf 0&deg; gefahren."
+set PROFILE_9(UI_DESCRIPTION) "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck geschlossen."
 set PROFILE_9(UI_TEMPLATE)    $PROFILE_9(UI_DESCRIPTION)
 set PROFILE_9(UI_HINT)  9
 
@@ -635,7 +635,7 @@ set PROFILE_10(SHORT_ON_TIME_MODE)  0
 set PROFILE_10(SHORT_RAMPOFF_TIME)  0.5
 set PROFILE_10(SHORT_RAMPON_TIME) 0.5
 set PROFILE_10(SHORT_RAMP_START_STEP) 0.05
-set PROFILE_10(UI_DESCRIPTION)  "Der Stellwinkel wird durch kurzen oder langen Tastendruck verg&ouml;&szlig;ert."
+set PROFILE_10(UI_DESCRIPTION)  "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck weiter ge&ouml;ffnet."
 set PROFILE_10(UI_TEMPLATE) $PROFILE_10(UI_DESCRIPTION)
 set PROFILE_10(UI_HINT) 10
 
@@ -712,7 +712,7 @@ set PROFILE_11(SHORT_ON_TIME_MODE)  1
 set PROFILE_11(SHORT_RAMPOFF_TIME)  0.5
 set PROFILE_11(SHORT_RAMPON_TIME) 0.5
 set PROFILE_11(SHORT_RAMP_START_STEP) 0.05
-set PROFILE_11(UI_DESCRIPTION)  "Der Stellwinkel wird durch kurzen oder langen Tastendruck verringert."
+set PROFILE_11(UI_DESCRIPTION)  "Die L&uuml;ftungsklappe wird durch kurzen oder langen Tastendruck weiter geschlossen."
 set PROFILE_11(UI_TEMPLATE)   $PROFILE_11(UI_DESCRIPTION)
 set PROFILE_11(UI_HINT) 11
 

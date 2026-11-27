@@ -44,7 +44,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wechselt das Licht in den entgegengesetzten Zustand. Bei nochmaligem Bet&auml;tigen w&auml;hrend der Rampenzeit, wird sofort der jeweilige Endwert eingestellt."
+set PROFILE_1(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wechselt die L&uuml;ftungsklappe in den entgegengesetzten Zustand. Bei nochmaligem Bet&auml;tigen w&auml;hrend der Rampenzeit, wird sofort der jeweilige Endwert eingestellt."
 set PROFILE_1(UI_TEMPLATE)  $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 
@@ -77,7 +77,7 @@ set PROFILE_2(SHORT_ON_TIME_MODE) 0
 set PROFILE_2(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_2(SHORT_RAMPON_TIME)  0.5
 set PROFILE_2(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_2(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wird das Licht f&uuml;r die eingestellte Zeit auf die gew&uuml;nschte Helligkeit gestellt. Kann auch als Treppenhauslicht genutzt werden."
+set PROFILE_2(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wird die L&uuml;ftungsklappe f&uuml;r die eingestellte Zeit auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Kann z.B. f&uuml;r eine zeitgesteuerte L&uuml;ftung genutzt werden."
 set PROFILE_2(UI_TEMPLATE)    $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 
@@ -110,7 +110,7 @@ set PROFILE_3(SHORT_ON_TIME_MODE) 0
 set PROFILE_3(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_3(SHORT_RAMPON_TIME)  0.5
 set PROFILE_3(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_3(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wird das Licht ausgeschaltet."
+set PROFILE_3(UI_DESCRIPTION) "Beim Bet&auml;tigen des Schaltkontaktes wird die L&uuml;ftungsklappe geschlossen."
 set PROFILE_3(UI_TEMPLATE)  $PROFILE_3(UI_DESCRIPTION)
 set PROFILE_3(UI_HINT)  3
 

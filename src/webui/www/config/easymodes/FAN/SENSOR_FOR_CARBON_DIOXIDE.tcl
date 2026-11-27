@@ -34,7 +34,7 @@ set PROFILE_1(SHORT_JT_ONDELAY)   2
 set PROFILE_1(SHORT_JT_RAMPOFF)   2
 set PROFILE_1(SHORT_JT_RAMPON)    3
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
-set PROFILE_1(UI_DESCRIPTION) "Bei erh&ouml;htem CO2-Gehalt der Luft wird der Schalter f&uuml;r die eingestellte Zeit eingeschaltet."
+set PROFILE_1(UI_DESCRIPTION) "Bei erh&ouml;htem CO2-Gehalt der Luft wird der L&uuml;fter f&uuml;r die eingestellte Zeit eingeschaltet."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)  
 set PROFILE_1(UI_HINT)  1
 

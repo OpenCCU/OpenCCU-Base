@@ -1,4 +1,4 @@
-"description_1" : "<span class=\"translated\">Der Dimmer wird abh&auml;ngig vom Eingangswert des Sensors und der gew&auml;hlten Schaltrichtung ein- oder ausgeschaltet.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">Die L&uuml;ftungsklappe wird abh&auml;ngig vom Eingangswert des Sensors und der gew&auml;hlten Schaltrichtung ge&ouml;ffnet oder geschlossen.</span><br/><br/>",
 
 "threshold" : "Schwellwert",
 "thresholdON" : "Schwellwert A",
