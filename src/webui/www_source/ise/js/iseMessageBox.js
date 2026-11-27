@@ -33,10 +33,20 @@ iseMessageBox.prototype =
     this.pb = "";
     this.file = "";
     this.draggable = true;
+    this.resizable = null; // options for enableDialogResize(), set in initPopup
+    this.topPercent = null; // distance from the top of the window, see setTopInViewport
 
     if(secondary)
     {
       this.secondary = true;
+      this.oldMsgHeight = jQuery("#messagebox").height();
+      this.oldMsgPosition = {
+        left: $("messagebox").style.left,
+        top: $("messagebox").style.top,
+        marginLeft: $("messagebox").style.marginLeft,
+        marginTop: $("messagebox").style.marginTop
+      };
+      this.oldMsgResizable = disableDialogResize("#messagebox");
       this.oldMsgHtml = $("messagebox").innerHTML;
       this.oldMsgWidth = $("messagebox").getWidth();
       //$("messagebox").style.width = this.width + "px"; 
@@ -189,12 +199,26 @@ iseMessageBox.prototype =
       case ID_USER_ACCOUNT_CONFIG_ADMIN:
         this.setTitle(translateKey("dialogUserAccountTitle")/*"Benutzerkonto - Konfiguration"*/);
         this.addToPostBody( 'integer userid = '+this.type+';' );
-        this.setWidth(800);
+        this.setWidthInViewport(Math.max(800, WebUI.getWidth() * DIALOG_USER_ACCOUNT_WIDTH_PERCENT / 100));
+        this.setTopInViewport(DIALOG_USER_ACCOUNT_TOP_PERCENT);
+        this.resizable = {
+          minWidth: DIALOG_USER_ACCOUNT_MIN_WIDTH,
+          minHeight: DIALOG_USER_ACCOUNT_MIN_HEIGHT,
+          height: WebUI.getHeight() * DIALOG_USER_ACCOUNT_HEIGHT_PERCENT / 100,
+          growElement: "#userSysVarTbl",
+          growElementMinHeight: DIALOG_USER_ACCOUNT_LIST_MIN_HEIGHT
+        };
         this.setFile( "/pages/msg/userAccountConfigAdmin.htm" );
         break;   
       case ID_USER_ACCOUNT_CONFIG_USER:
         this.setTitle(translateKey("dialogUserAccountTitle")/*"Benutzerkonto - Konfiguration" */);
-        this.setWidth(1000);
+        this.setWidthInViewport(Math.max(1000, WebUI.getWidth() * DIALOG_USER_ACCOUNT_WIDTH_PERCENT / 100));
+        this.setTopInViewport(DIALOG_USER_ACCOUNT_TOP_PERCENT);
+        this.resizable = {
+          minWidth: DIALOG_USER_ACCOUNT_MIN_WIDTH,
+          minHeight: DIALOG_USER_ACCOUNT_MIN_HEIGHT,
+          height: WebUI.getHeight() * DIALOG_USER_ACCOUNT_HEIGHT_PERCENT / 100
+        };
         this.setFile( "/pages/msg/userAccountConfigUser.htm" );
         break;
       case ID_AUTO_LOGIN_CONFIG:
@@ -242,6 +266,11 @@ iseMessageBox.prototype =
       jQuery("#messagebox").draggable({
         cancel: "input,textarea,button,select,option,.FooterButton,.StdButton,.CodeMirror,.CodeMirror-line,.cm-editor,.cm-line"
       });
+    } else if (this.secondary && jQuery("#messagebox").hasClass("ui-draggable")) {
+      // a secondary dialog shares #messagebox with its parent, whose draggable
+      // is still active: a drag on a list row would select that row
+      jQuery("#messagebox").draggable("disable");
+      this.oldMsgDraggable = true;
     }
 
   },
@@ -309,6 +338,24 @@ iseMessageBox.prototype =
       this.setWidth(maxWidth * perc);
     }
   },
+  /* like setWidth(), but at most as wide as the browser window allows */
+  setWidthInViewport: function(width)
+  {
+    this.setWidth(Math.min(width, getDialogMaxSize().width));
+  },
+  /* place the top edge at this percentage of the window height instead of centering */
+  setTopInViewport: function(percent)
+  {
+    this.topPercent = percent;
+  },
+  /* moves the dialog to the top as in setTopInViewport; measured in the window,
+     because #centerbox itself starts at 50% (initCenterBox); keeps the margins */
+  applyTopInViewport: function()
+  {
+    var box = jQuery("#messagebox");
+    var shift = WebUI.getHeight() * this.topPercent / 100 - box[0].getBoundingClientRect().top;
+    box.css("top", ((parseFloat(box.css("top")) || 0) + shift) + "px");
+  },
   setHeight: function(height)
   {
     this.height = height;
@@ -353,6 +400,7 @@ iseMessageBox.prototype =
   {
     if ( $('messagebox') )
     {
+      disableDialogResize("#messagebox");
       $('messagebox').remove();
     }
   },
@@ -411,6 +459,13 @@ iseMessageBox.prototype =
         centerMessageBox();
         iseRefr(true);
         translatePage("#messagebox");
+        if (t.resizable) {
+          enableDialogResize("#messagebox", t.resizable);
+          centerMessageBox();
+        }
+        if (t.topPercent !== null) {
+          t.applyTopInViewport();
+        }
         setTimeout(function() {
           eQ3.HomeMatic.Event.fire({type:'ContentLoaded'});
         }, 100);
@@ -428,6 +483,15 @@ iseMessageBox.prototype =
   restorePrevious: function() {
     $("messagebox").innerHTML = this.oldMsgHtml;
     $("messagebox").setStyle({width: this.oldMsgWidth + "px"});
+    $("messagebox").setStyle(this.oldMsgPosition);
+    if (this.oldMsgDraggable) {
+      jQuery("#messagebox").draggable("enable");
+    }
+    if (this.oldMsgResizable) {
+      jQuery("#messagebox").height(this.oldMsgHeight);
+      // keep the size the dialog had, not the one it opened with
+      enableDialogResize("#messagebox", jQuery.extend({}, this.oldMsgResizable, {height: null}));
+    }
   },
   
   keepAlive: function() {
