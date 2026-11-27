@@ -9,7 +9,7 @@ jQuery.extend(true,langJSON, {
   "en" :{
     "HelpTitle" : "Information",
     "HBWEA_TRANSMIT_INTERVAL" :
-      "not translated",
+      "The average of <i>transmit interval</i> measurements is calculated and transmitted.<br/>The time between two transmissions is (measuring interval x transmit interval) seconds",
     "BACKLIGHT_ON_TIME"  :
       "0 = lcd backlight permanent ON"  
   }

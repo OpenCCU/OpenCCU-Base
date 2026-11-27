@@ -9,8 +9,8 @@ jQuery.extend(true,langJSON, {
   "en" :{
     "HelpTitle" : "Information",
     "FD_CYCLIC_TIMEOUT" :
-      "not translated",
+      "The intervals in which the CCU expects a message are given in the XML file of the respective device (/firmware/rftypes).<br/><br/>Example:<br/><i>&lt;device version='1' rx_modes='...' cyclic_timeout='600'&gt;</i><br/>= the CCU expects a message at least every 600 seconds<br/><br/>More information can be found on the <a target='_blank' rel='noopener noreferrer' href='https://github.com/jp112sdl/HB-UNI-Sen-DUMMY-BEACON-V2#cyclic_timeout-werte-der-homematic-ger%E4te'>project page on GitHub</a>.",
     "FD_DEVICE_TYPE" :
-      "not translated"  
+      "<b>Actuator:</b><br/>The DUMMY-BEACON acknowledges switching commands received for the simulated device with an <i>ACK</i>.<br/><br/><b>Sensor:</b><br/>The DUMMY-BEACON cyclically sends a message to the CCU."  
   }
 });

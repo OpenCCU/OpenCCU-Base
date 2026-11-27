@@ -290,7 +290,6 @@ jQuery.extend(true,langJSON, {
     "stringTableHbCrgscMsgPosA" : "Meldung bei %22Ger%E4t wird nicht aufgeladen%22",
     "stringTableMsgPosCrgOff" : "Ger%E4t wird nicht aufgeladen",
     "stringTableMsgPosCrgOn" : "Ger%E4t wird aufgeladen",
-    "stringTableHbHumidityOffset" : "Luftfeuchtigkeit-Offset",
     "stringTableHbHeaderLine" : "%dcberschrift Text",
     "stringTableHbEpShowHeader" : "%dcberschrift anzeigen",
     "stringTableHbTextLineLower" : "untere Textzeile",
