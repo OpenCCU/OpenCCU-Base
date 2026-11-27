@@ -49,7 +49,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Bei Regen wird das Licht auf die eingestellte Helligkeit eingeschaltet und bei Trockenheit ausgeschaltet. Die Schaltzuordnung l&auml;sst sich auch umkehren."
+set PROFILE_1(UI_DESCRIPTION) "Bei Regen wird der L&uuml;fter mit der eingestellten Leistung eingeschaltet und bei Trockenheit ausgeschaltet. Die Schaltzuordnung l&auml;sst sich auch umkehren."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 

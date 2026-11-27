@@ -1,3 +1,3 @@
-"description_1" : "<span class=\"translated\">By operating the switch the light changes to the other status. If the switch is operated during the ramp time the device changes to the set maximum brightness value immediately.</span><br/><br/>",
-"description_2" : "<span class=\"translated\">By operating the switch the light will be switched on for the set time to the defined brightness value. This profile can also be used as staircase light./span><br/><br/>",
-"description_3" : "<span class=\"translated\">By operating the switch the light will be switched off.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">By operating the switch the air flap changes to the other state. If the switch is operated during the ramp time, the set end value is applied immediately.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">By operating the switch the air flap is opened to the set position for the set time. This profile can be used e.g. for timed ventilation.</span><br/><br/>",
+"description_3" : "<span class=\"translated\">By operating the switch the air flap is closed.</span><br/><br/>",

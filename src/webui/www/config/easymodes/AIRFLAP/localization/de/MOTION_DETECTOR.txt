@@ -1,4 +1,4 @@
-"description_1" : "<span class=\"translated\">Beim Ausl&ouml;sen des Sensors wird das Licht mindestens f&uuml;r die festgelegte Zeit eingeschaltet.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">Beim Ausl&ouml;sen des Sensors wird die L&uuml;ftungsklappe mindestens f&uuml;r die festgelegte Zeit ge&ouml;ffnet.</span><br/><br/>",
 "description_2" : "<span class=\"translated\">Das Profil ist nicht aktiv</span>",
 "md_on_time" : "Einschaltdauer (Verweildauer im Zustand \"ein\")",
 "md_min_on_time" : "Mindest-Einschaltdauer",

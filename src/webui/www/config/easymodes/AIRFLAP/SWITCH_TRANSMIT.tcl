@@ -50,7 +50,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Sendet der Wandthermostat den Heizbefehl, wird das Licht f&uuml;r die gew&uuml;nschte Zeit auf den festgelegten Helligkeitswert eingeschaltet."
+set PROFILE_1(UI_DESCRIPTION) "Sendet der Wandthermostat den Heizbefehl, wird die L&uuml;ftungsklappe f&uuml;r die gew&uuml;nschte Zeit auf den festgelegten &Ouml;ffnungsgrad ge&ouml;ffnet."
 set PROFILE_1(UI_TEMPLATE)  $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 

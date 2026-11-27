@@ -51,7 +51,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Beim &Ouml;ffnen des Kontaktes wird das Licht auf die eingestellte Helligkeit eingeschaltet und beim Schlie&szlig;en ausgeschaltet. Die Schaltzuordnung l&auml;sst sich auch umkehren."
+set PROFILE_1(UI_DESCRIPTION) "Beim &Ouml;ffnen des Kontaktes wird die L&uuml;ftungsklappe auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet und beim Schlie&szlig;en geschlossen. Die Schaltzuordnung l&auml;sst sich auch umkehren."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 
@@ -92,7 +92,7 @@ set PROFILE_2(SHORT_ON_TIME_MODE) 0
 set PROFILE_2(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_2(SHORT_RAMPON_TIME)  0.5
 set PROFILE_2(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_2(UI_DESCRIPTION) "Bei ausgew&auml;hlten Kontaktzustandswechseln wird das Licht f&uuml;r eine bestimmte Zeit auf die eingestellte Helligkeit eingeschaltet. Bei jedem Kontaktzustandswechsel beginnt die Zeit von vorne."
+set PROFILE_2(UI_DESCRIPTION) "Bei ausgew&auml;hlten Kontaktzustandswechseln wird die L&uuml;ftungsklappe f&uuml;r eine bestimmte Zeit auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Bei jedem Kontaktzustandswechsel beginnt die Zeit von vorne."
 set PROFILE_2(UI_TEMPLATE)  $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 

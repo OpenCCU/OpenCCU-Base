@@ -35,7 +35,7 @@ set PROFILE_1(SHORT_ACTION_TYPE)  1
 set PROFILE_1(SHORT_ON_TIME)    {111600.0 1 180}
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_ON_LEVEL)   {1.0 1.005}
-set PROFILE_1(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird das Licht f&uuml;r die gew&auml;hlte Zeit auf die eingestellte Helligkeit eingeschaltet."
+set PROFILE_1(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird der Servo f&uuml;r die gew&auml;hlte Zeit auf den eingestellten Stellwinkel gefahren."
 set PROFILE_1(UI_TEMPLATE)  $PROFILE_1(UI_DESCRIPTION)
 set PROFILE_1(UI_HINT)  1
 
@@ -59,7 +59,7 @@ set PROFILE_2(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_2(SHORT_OFF_LEVEL)    0.0
 set PROFILE_2(SHORT_OFFDELAY_TIME)    0.0
 set PROFILE_2(SHORT_OFFDELAY_BLINK) 0 
-set PROFILE_2(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird das Licht ausgeschaltet."
+set PROFILE_2(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird der Servo auf 0&deg; gefahren."
 set PROFILE_2(UI_TEMPLATE)  $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 
@@ -86,7 +86,7 @@ set PROFILE_3(SHORT_OFFDELAY_TIME)  0.0
 set PROFILE_3(SHORT_ONDELAY_TIME) 0.0
 set PROFILE_3(SHORT_OFFDELAY_BLINK) 0 
 set PROFILE_3(SHORT_ON_LEVEL)   {1.0 1.005}
-set PROFILE_3(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird das Licht entweder ein- oder ausgeschaltet."
+set PROFILE_3(UI_DESCRIPTION) "Beim Senden des Schaltbefehls wird der Servo entweder auf den eingestellten Stellwinkel oder auf 0&deg; gefahren."
 set PROFILE_3(UI_TEMPLATE)  $PROFILE_3(UI_DESCRIPTION)
 set PROFILE_3(UI_HINT)  3
 

@@ -1,5 +1,5 @@
-"description_1" : "<span class=\"translated\">Beim &Ouml;ffnen des Fensters wird das Licht auf den festgelegten Helligkeitswert eingeschaltet und beim Schlie&szlig;en wieder ausgeschaltet. Diese Funktion l&auml;sst sich auch umkehren.</span><br/><br/>",
-"description_2" : "<span class=\"translated\">Beim &Ouml;ffnen und Schlie&szlig;en des Fensters wird das Licht f&uuml;r eine bestimmte Zeit auf den festgelegten Helligkeitswert eingeschaltet.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">Beim &Ouml;ffnen des Fensters wird der Servo auf den festgelegten Stellwinkel gefahren und beim Schlie&szlig;en auf 0&deg; zur&uuml;ckgefahren. Diese Funktion l&auml;sst sich auch umkehren.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">Beim &Ouml;ffnen und Schlie&szlig;en des Fensters wird der Servo f&uuml;r eine bestimmte Zeit auf den festgelegten Stellwinkel gefahren.</span><br/><br/>",
 "open" : "ganz offen",
 "tilt_open" : "gekippt oder ganz offen",
 "subset_1" : "Offen - aus / Zu - ein",

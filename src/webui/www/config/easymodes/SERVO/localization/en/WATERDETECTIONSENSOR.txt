@@ -1,5 +1,5 @@
-"description_1" : "<span class=\"translated\">In case of humidity the light will be switched on to the defined brightness value, in case of dry conditions it will be switched off. This function can be reversed.</span><br/><br/>",
-"description_2" : "<span class=\"translated\">When the humidity level changes the light will be switched on or off for the set time to the defined brightness value.</span><br/><br/>",
+"description_1" : "<span class=\"translated\">In case of humidity the servo is moved to the set angle, in case of dry conditions it is moved back to 0&deg;. This function can be reversed.</span><br/><br/>",
+"description_2" : "<span class=\"translated\">When the humidity level changes the servo is moved to the set angle or moved to 0&deg; for the set time.</span><br/><br/>",
 "subset_1" : "Dry - on / Humidity - off",
 "subset_2" : "Dry - off / Humidity - on",
 "subset_3" : "switch on in case of absolute dry conditions",

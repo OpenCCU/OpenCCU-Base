@@ -51,7 +51,7 @@ set PROFILE_1(SHORT_ON_TIME_MODE) 0
 set PROFILE_1(SHORT_RAMPOFF_TIME) 0.5
 set PROFILE_1(SHORT_RAMPON_TIME)  0.5
 set PROFILE_1(SHORT_RAMP_START_STEP)  0.05
-set PROFILE_1(UI_DESCRIPTION) "Bei Feueralarm wird das Licht f&uuml;r die gew&auml;hlte Zeit auf die eingestellte Helligkeit geschaltet. Wird der Alarm am ausl&ouml;senden oder, wahlweise, einem Rauchmelder der gleichen Gruppe best&auml;tigt, wird das Licht ausgeschaltet."
+set PROFILE_1(UI_DESCRIPTION) "Bei Feueralarm wird die L&uuml;ftungsklappe f&uuml;r die gew&auml;hlte Zeit auf den eingestellten &Ouml;ffnungsgrad ge&ouml;ffnet. Wird der Alarm am ausl&ouml;senden oder, wahlweise, einem Rauchmelder der gleichen Gruppe best&auml;tigt, wird die Klappe geschlossen."
 set PROFILE_1(UI_TEMPLATE)    $PROFILE_1(UI_DESCRIPTION)  
 set PROFILE_1(UI_HINT)  1
 
@@ -92,7 +92,7 @@ set PROFILE_2(SHORT_DIM_STEP)   0.05
 set PROFILE_2(SHORT_OFFDELAY_STEP)  100
 set PROFILE_2(SHORT_OFFDELAY_NEWTIME) 2
 set PROFILE_2(SHORT_OFFDELAY_OLDTIME) 0.5
-set PROFILE_2(UI_DESCRIPTION) "Die angeschlossene Leuchte gibt f&uuml;r die eingestellte Zeit Alarm. Wird der Alarm am ausl&ouml;senden oder, wahlweise, einem Rauchmelder der gleichen Gruppe best&auml;tigt, wird die Alarmmeldung beendet."
+set PROFILE_2(UI_DESCRIPTION) "Die L&uuml;ftungsklappe signalisiert f&uuml;r die eingestellte Zeit Alarm, indem sie im Takt auf- und zuf&auml;hrt. Wird der Alarm am ausl&ouml;senden oder, wahlweise, einem Rauchmelder der gleichen Gruppe best&auml;tigt, wird die Alarmmeldung beendet."
 set PROFILE_2(UI_TEMPLATE)    $PROFILE_2(UI_DESCRIPTION)
 set PROFILE_2(UI_HINT)  2
 
