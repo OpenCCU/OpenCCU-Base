@@ -632,7 +632,7 @@
                   ! This is the default string for 'all values not used'
                   iV = "0x02,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x03";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP42BW\');" type="text" class="SelectBox" size="10" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP42BW\');" type="text" class="SelectBox" size="10" value="'#iV.ToString().HtmlEncode()#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
 
               if ((statusHbDisplayEPaperDevice75 != -1) || (statusHbDisplayEPaperDevice75Mains != -1)) {
@@ -640,7 +640,7 @@
                   ! This is the default string for 'all values not used'
                   iV = "0x02,0x03";
                 }
-                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" onfocus="SetStatusDisplay('#oSD.ID()#',\'DIS-EP75BW\');" type="text" class="SelectBox" size="48" value="'#iV.ToString().Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;")#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
+                Write( '<input id="prgStringOptionValue'#oSD.ID()#'" type="text" class="SelectBox" size="48" value="'#iV.ToString().HtmlEncode()#'" onchange="iseSingleDestination.SetValue('#oSD.ID()#',this.value,\'STRING\');" /> ' );
               }
               
               if (rgbw_controller != -1) {
