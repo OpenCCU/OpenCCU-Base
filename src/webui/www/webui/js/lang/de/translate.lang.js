@@ -788,6 +788,7 @@ jQuery.extend(true,langJSON, {
     "dialogSettingsExtraSoftwareHintPerformInstallationContent" : "Die Software wird installiert. Nach der Installation wird die Zentrale automatisch neu gestartet. Sie k%F6nnen sich dann neu anmelden.",
     "dialogSettingsExtraSoftwareHintPerformInstallationContentNoReboot" : "Die Installation des Addons war erfolgreich. Bitte stellen Sie sicher, dass das Addon ordnungsgem%E4&szlig; funktioniert oder starten Sie bei etwaigen Problemen die Zentrale neu.",
     "dialogSettingsExtraSoftwareHintPerformInstallationFailure" : "Ein unerwarteter Fehler ist w%E4hrend der Addon-Installation aufgetreten. Bei der hochgeladenen Datei handelt es sich entweder nicht um ein Addon-Archiv, ist defekt oder ist f%FCr eine andere Hardware vorgesehen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Autor des Addons.",
+    "dialogSettingsExtraSoftwareHintAddonIntegrated" : "Dieses Addon wird nicht installiert, weil seine Funktionen bereits Bestandteil der Firmware sind. Die unterst%FCtzten Ger%E4te k%F6nnen ohne das Addon verwendet werden.",
     "commentSettingsExtraSoftwareEnd" : "***********************************************",
     "commentDialogNewDevices" : "***********************************************",
     "dialogNewDevicesTitle" : "Ger%E4te anlernen",

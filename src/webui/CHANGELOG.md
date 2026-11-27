@@ -17,7 +17,9 @@ is published.
   translations and the program editor conditions and activities are now
   part of the WebUI, with English texts and escaped names and values. The
   info and error buttons of the addon in the header, its `jp.*` API
-  methods and its update check are not taken over.
+  methods and its update check are not taken over. The software page shows
+  why an upload of the addon is refused when the firmware supports its
+  devices itself.
   ([#414](https://github.com/OpenCCU/OpenCCU-Base/pull/414), @jp112sdl,
   @jens-maus)
 * the settings of the internal keys of a device are saved for the right
