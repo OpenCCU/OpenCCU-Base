@@ -27,7 +27,7 @@ proc ServoControl_getStatus { channelId dataPoint } {
 	set    result [status_separator]
 	append result {<tr><td class="status">}
 	append result {<div class="caption">Stellwert</div>}
-	append result "<div class=\"center\">$level %</div>"
+	append result "<div class=\"center\">$level&deg;</div>"
 	append result {</td></tr>}
 	return $result
 }
@@ -46,11 +46,11 @@ proc ServoControl_getControls { channelId dataPoint } {
 	global sid favListId favId UI_URLBASE
 	set result ""
 	
-	append result [button "180°"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv180"]
-	append result [button "135°" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv135"]
-	append result [button "90°" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv90"]
-	append result [button "45°" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv45"]
-	append result [button "0°"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv0"]
+	append result [button "180&deg;"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv180"]
+	append result [button "135&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv135"]
+	append result [button "90&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv90"]
+	append result [button "45&deg;" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv45"]
+	append result [button "0&deg;"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=serv0"]
 	
 	return $result
 }

@@ -4,11 +4,11 @@ set DPControls_GETSTATUS(FAN.LEVEL)   [list FanControl_getStatus]
 set DPControls_GETCONTROLS(FAN.LEVEL) [list FanControl_getControls]
 #set DPControls_GETTOPCONTROLS(FAN.LEVEL) [list FanControl_getTopControls]
 
-set COMMANDS(dim100) [list FanControl_dim100]
-set COMMANDS(dim75)  [list FanControl_dim75]
-set COMMANDS(dim50)  [list FanControl_dim50]
-set COMMANDS(dim25)  [list FanControl_dim25]
-set COMMANDS(dim0)   [list FanControl_dim0]
+set COMMANDS(fan100) [list FanControl_dim100]
+set COMMANDS(fan75)  [list FanControl_dim75]
+set COMMANDS(fan50)  [list FanControl_dim50]
+set COMMANDS(fan25)  [list FanControl_dim25]
+set COMMANDS(fan0)   [list FanControl_dim0]
 
 proc FanControl_getStatus { channelId dataPoint } {
 	array set dp $dataPoint
@@ -36,7 +36,7 @@ proc FanControl_getTopControls { channelId dataPoint } {
 	global sid favListId favId UI_URLBASE
 	set result ""
 	
-	append result [button "Ein"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim100"]
+	append result [button "Ein"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan100"]
 	
 	return $result
 }
@@ -46,11 +46,11 @@ proc FanControl_getControls { channelId dataPoint } {
 	global sid favListId favId UI_URLBASE
 	set result ""
 	
-	append result [button "Ein"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim100"]
-	append result [button "75 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim75"]
-	append result [button "50 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim50"]
-	append result [button "25 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim25"]
-	append result [button "Aus"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=dim0"]
+	append result [button "Ein"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan100"]
+	append result [button "75 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan75"]
+	append result [button "50 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan50"]
+	append result [button "25 %" "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan25"]
+	append result [button "Aus"  "$UI_URLBASE/fav.cgi?sid=$sid&uiStyle=[getUIStyle]&favListId=$favListId&favId=$favId&cmd=fan0"]
 	
 	return $result
 }
