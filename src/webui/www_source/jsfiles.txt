@@ -142,6 +142,7 @@ webui/js/homematic.com.js
 # ise
 ise/js/rega.js
 ise/js/iseFunctions.js
+ise/js/iseProgramSort.js
 ise/js/iseRefresher.js
 ise/js/iseMessageBox.js
 ise/js/iseSubMenuControl.js
