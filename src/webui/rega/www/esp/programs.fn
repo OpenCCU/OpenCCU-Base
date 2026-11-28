@@ -1,3 +1,20 @@
+! Render program identifiers and recorded save times in both native lists.
+function ::WriteProgramSaveColumns()
+{
+  WriteLine('<td id="'#trId#'_id" class="'#sProgramColumnClass#'">'#o.ID()#'</td>');
+  WriteLine('<td id="'#trId#'_saved" class="'#sProgramColumnClass#'">');
+  integer savedAt = o.MetaData("webuiLastSaved").ToInteger();
+  if (savedAt > 0)
+  {
+    Write(savedAt.ToTime().Format("%d.%m.%Y %H:%M:%S"));
+  }
+  else
+  {
+    Write("${lblProgramSaveTimeUnknown}");
+  }
+  WriteLine('</td>');
+}
+
 function ::WriteConditionText()
 {
   if( system.IsVar("oPrgID") )
@@ -972,7 +989,11 @@ function ::RestoreProgram()
         oOrig.ProgramCopyID( ID_ERROR );        
         Write( oOrig.Name() );
       }
-      oOrig.ProgramUpdate();
+      if (oOrig.ProgramUpdate())
+      {
+        oOrig.AddMetaData("webuiLastSaved");
+        oOrig.MetaData("webuiLastSaved", system.Date("%s"));
+      }
       oOrig.Active(isActive);
     }
   }
@@ -991,7 +1012,13 @@ function ::CopyToNewProgram()
       string sUniqueName;
       dom.CheckName(oCopy.Name(), &sUniqueName, oCopy.ID() );
       oCopy.Name( sUniqueName );
-      Write( oCopy.ProgramUpdate() );
+      boolean saved = oCopy.ProgramUpdate();
+      if (saved)
+      {
+        oCopy.AddMetaData("webuiLastSaved");
+        oCopy.MetaData("webuiLastSaved", system.Date("%s"));
+      }
+      Write(saved);
       oCopy.Active(true);
     }
   }

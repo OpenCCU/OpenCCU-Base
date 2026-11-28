@@ -1103,6 +1103,10 @@ jQuery.extend(true, langJSON, {
     "lblSysVarMoveUp" : "Move up",
     "lblSysVarMoveDown" : "Move down",
 
+    "thProgramId" : "Program ID",
+    "thProgramLastSaved" : "Last saved",
+    "lblProgramSaveTimeUnknown" : "unknown",
+
     "theEnd" : ""
   }
 });

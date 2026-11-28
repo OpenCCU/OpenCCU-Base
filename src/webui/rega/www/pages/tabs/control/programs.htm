@@ -49,6 +49,8 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
       <col>
       <col>
       <col>
+      <col style="width:120px;">
+      <col style="width:165px;">
       <col style="width:250px;">
     </colgroup>
     <thead>
@@ -58,6 +60,8 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
         <th class="tHeaderCell CLASS03303" >${thDescription}</th>
         <th class="tHeaderCell CLASS03303" >${thActivity}</th>
         <th class="tHeaderCell CLASS03303" >${thLastExecution}</th>
+        <th class="tHeaderCell CLASS03303">${thProgramId}</th>
+        <th class="tHeaderCell CLASS03303">${thProgramLastSaved}</th>
         <th class="tHeaderCell CLASS03303" ><div><span>${thAction}</span><img src="/ise/img/help.png" style="cursor: pointer; width:24px; height:24px; vertical-align:middle;" role="button" tabindex="0" data-aria-key="HelpTitle" onclick="MessageBox.show(translateKey('HelpTitle'), translateKey('actionStatusControlLblStartHelp'), '', 400, 250);"></div></th>
       </tr>
     </thead>
@@ -71,6 +75,8 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                 <div id="ftCancelNameBtn" class='FilterSetButton' onclick="$('btnFilterNameSub').hide()">${filterClose}</div>
             </div>
           </td>
+          <td class="CLASS03706"></td>
+          <td class="CLASS03706"></td>
           <td class="CLASS03706"></td>
           <td class="CLASS03706"></td>
           <td class="CLASS03706"></td>
@@ -116,6 +122,8 @@ setPath("<span onclick='WebUI.enter(ControlPage);'>"+translateKey('menuControlPa
                     Write( dtLastExecuteTime.Format("%d.%m.%Y %H:%M:%S") );
                   }
                   WriteLine( '</span></td>' );
+                  string sProgramColumnClass = "tBodyCell";
+                  Call("/esp/programs.fn::WriteProgramSaveColumns()");
                   WriteLine( '<td class="tBodyCell">' );
                   Write( '<div id="dpc'#o.ID()#'">' );
                   
