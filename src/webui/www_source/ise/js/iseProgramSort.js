@@ -25,6 +25,8 @@
   // longest wait and poll interval for the open requests of the editor.
   var IDLE_WAIT_MS = 5000;
   var IDLE_POLL_MS = 50;
+  // Longest wait for the answer to a sort request. The request is not sent again: ReGa may have done it.
+  var REQUEST_TIMEOUT_MS = 30000;
   var scanPending = false;
   // Schedules a scan of the editor, its DOM is replaced asynchronously.
   function schedule() {
@@ -62,6 +64,8 @@
     retry: null,
     generation: 0,
     noCondWarn: false,
+    result: null,
+    reloadFailedFlag: false,
     model: null
   };
 
@@ -78,6 +82,8 @@
     S.awaitingReload = false;
     S.model = null;
     S.noCondWarn = false;
+    S.result = null;
+    S.reloadFailedFlag = false;
     S.saveLocked = false;
     S.retry = null;
     if (S.saveTimer) { win.clearTimeout(S.saveTimer); S.saveTimer = null; }
@@ -270,11 +276,14 @@
       if (!S.busy) { setStatus(''); }
     }
     if (S.awaitingReload) {
-      // Native ReloadRule calls replace the DOM asynchronously. Wait until all responses finish.
-      if (S.reloads && Object.keys(S.reloads).length) { return; }
+      // Native ReloadRule calls replace the DOM asynchronously. Wait until all responses finish; after a
+      // failed read the retry stays offered and sorting and Save stay blocked.
+      if (S.reloadFailedFlag || (S.reloads && Object.keys(S.reloads).length)) { return; }
       S.awaitingReload = false; S.busy = false; S.retry = null;
       disarmReloadTimer();
-      setStatus(sortNotice());
+      removeRetry();
+      // The result of the sorting stays visible: the notice for OK, the rejection or warning otherwise.
+      if (S.result) { setStatus(S.result.msg, S.result.bad); } else { setStatus(sortNotice()); }
     }
 
     branchList(m).forEach(function (r) {
@@ -322,6 +331,7 @@
   }
   // The reload failed. The sorting is done on the CCU, so only the reading is offered again.
   function reloadFailed() {
+    S.reloadFailedFlag = true;
     disarmReloadTimer();
     var tb = doc.getElementById('RuleSortToolbar');
     if (!tb || !S.retry) { return; }
@@ -339,10 +349,13 @@
   }
 
   // Reloads the affected branches with the original editor.
+  // S.reloads counts the open reads per rule: a retry while an older read is still open adds one, every
+  // response (also a failed one) takes one away.
   function reloadRules(rids) {
     if(!rids.length){return;}
-    S.busy=true;S.awaitingReload=true;S.reloadGeneration=S.generation;S.reloads={};
-    rids.forEach(function(rid){S.reloads[rid]=true;});
+    if (!S.awaitingReload || !S.reloads) { S.reloads = {}; }
+    S.busy=true;S.awaitingReload=true;S.reloadGeneration=S.generation;S.reloadFailedFlag=false;
+    rids.forEach(function(rid){S.reloads[rid]=(S.reloads[rid]||0)+1;});
     S.retry = function () { reloadRules(rids); };
     armReloadTimer();
     rids.forEach(function (rid) {
@@ -360,9 +373,15 @@
       if (!SAFE_VALUE.test(String(vars[names[i]]))) { cb('ERR', 'ERR|invalid'); return; }
       pb += 'string ' + names[i] + ' = "' + vars[names[i]] + '";';
     }
+    // Without an answer in time the state of the copy is unclear; a late answer is ignored.
+    var done = false;
+    var timer = win.setTimeout(function () { done = true; cb('UNKNOWN', 'UNKNOWN|timeout'); }, REQUEST_TIMEOUT_MS);
     new win.Ajax.Request('/esp/programs.htm?sid=' + win.SessionId, {
       postBody: win.ReGa.encode(pb),
       onComplete: function (t) {
+        if (done) { return; }
+        done = true;
+        win.clearTimeout(timer);
         var text = String(t.responseText || '').replace(/^\s+|\s+$/g, '');
         var kind = text.split('|')[0];
         if (t.status !== 200 || (kind !== 'OK' && kind !== 'ERR' && kind !== 'POSTFAIL')) { kind = 'UNKNOWN'; }
@@ -412,21 +431,21 @@
   ruleSort.request = request;
 
   // Shows the answer of the CCU and reloads the affected branches with the original editor.
+  // The result is kept in S.result, so that it is shown again when the reload of the branches is done.
   function finishRequest(kind, text, affected) {
     if (kind === 'OK') {
-      reloadRules(affected);
       S.sortChanged = true;
-      setStatus(sortNotice());
+      S.result = { msg: sortNotice(), bad: false };
     } else if (kind === 'POSTFAIL') {
       S.poisoned = true;
-      reloadRules(affected);
-      win.alert(tr('ruleSortPostfailAlert'));
-      setStatus(tr('ruleSortPostfailStatus'), true);
+      S.result = { msg: tr('ruleSortPostfailStatus'), bad: true };
     } else {
       if (kind === 'UNKNOWN') { S.poisoned = true; }
-      reloadRules(affected);
-      setStatus(kind === 'ERR' ? tr('ruleSortNotMoved') + errText(text) : tr('ruleSortErr_unknown'), true);
+      S.result = { msg: kind === 'ERR' ? tr('ruleSortNotMoved') + errText(text) : tr('ruleSortErr_unknown'), bad: true };
     }
+    reloadRules(affected);
+    if (kind === 'POSTFAIL') { win.alert(tr('ruleSortPostfailAlert')); }
+    setStatus(S.result.msg, S.result.bad);
   }
 
   // Returns the IDs of the entries of a container as comma separated list.
@@ -548,7 +567,7 @@
     var sameKind = S.model.containers.filter(function (c) { return c.type === cont.type && c.key !== cont.key; });
     for (i = 0; i < sameKind.length; i++) {
       var span = spanOf(sameKind[i]);
-      if (span && y >= span.top && y <= span.bottom) {
+      if (span && y >= span.top && y <= span.bottom && x >= span.left && x <= span.right) {
         if (!movable(cont)) {
           sameKind[i].items.forEach(function (it) { it.el.classList.add('RuleSortDropInvalid'); });
           D.ghost.className = 'RuleSortGhost RuleSortGhostBad';
@@ -577,10 +596,12 @@
 
   // Conditions and activities can leave their container, condition groups and branches cannot.
   function movable(cont) { return cont.type === 'conds' || cont.type === 'acts'; }
-  // Returns the vertical range of a container: its entries, or the THEN / ELSE area when it is empty.
+  // Returns the area of a container: its entries, or the empty area of the branch.
   function spanOf(cont) {
     if (cont.items.length) {
-      return { top: rectOf(cont.items[0].el).top, bottom: rectOf(cont.items[cont.items.length - 1].el).bottom };
+      var first = rectOf(cont.items[0].el), last = rectOf(cont.items[cont.items.length - 1].el);
+      return { top: first.top, bottom: last.bottom,
+        left: Math.min(first.left, last.left), right: Math.max(first.right, last.right) };
     }
     return cont.area ? cont.area.getBoundingClientRect() : null;
   }
@@ -617,18 +638,19 @@
     D.cancel();
     if (!wasActive || !valid || ins < 0) { return false; }
     if (target) {
-      whenIdle(function () { requestMove(cont, from, target, ins); });
+      whenIdle(function () { requestMove(cont, from, target, ins); }, function () {});
       return true;
     }
     var perm = ruleSort.movePerm(cont.items.length, from, ins);
     if (isIdentity(perm)) { return false; }
-    whenIdle(function () { request(cont, perm); });
+    whenIdle(function () { request(cont, perm); }, function () {});
     return true;
   };
 
-  // Calls fn when the open requests of the editor are done, at the latest after IDLE_WAIT_MS. Sorting
-  // stays locked meanwhile; fn is dropped when another program was opened.
-  function whenIdle(fn) {
+  // Calls fn when the open requests of the editor are done. Sorting stays locked meanwhile. When they are
+  // still open after IDLE_WAIT_MS (e.g. the saving of a field), nothing is sent: onCancel runs and the user
+  // is asked to try again. Both are dropped when another program was opened.
+  function whenIdle(fn, onCancel) {
     var generation = S.generation, waited = 0;
     S.busy = true;
     (function poll() {
@@ -636,6 +658,11 @@
       var open = win.Ajax && win.Ajax.activeRequestCount > 0;
       if (open && waited < IDLE_WAIT_MS) { waited += IDLE_POLL_MS; win.setTimeout(poll, IDLE_POLL_MS); return; }
       S.busy = false;
+      if (open) {
+        onCancel();
+        setStatus(tr('ruleSortFieldPending'), true);
+        return;
+      }
       fn();
     })();
   }
@@ -697,7 +724,7 @@
         sel.selectedIndex = 1;
         finishRequest(kind, text, []);
       });
-    });
+    }, function () { sel.selectedIndex = 1; });
   }, true);
 
   if (win.Ajax && win.Ajax.Responders) {
@@ -708,9 +735,13 @@
       var failed = !request.transport || request.transport.status !== 200;
       if (!S.awaitingReload || S.reloadGeneration !== S.generation) { return; }
       if (body.indexOf('"ReloadRule"') < 0) { return; }
-      if (failed) { reloadFailed(); return; }
       var match = /string rid\s*=\s*"(\d+)"/.exec(body);
-      if (match && S.reloads) { delete S.reloads[match[1]]; schedule(); }
+      if (match && S.reloads && S.reloads[match[1]]) {
+        S.reloads[match[1]]--;
+        if (!S.reloads[match[1]]) { delete S.reloads[match[1]]; }
+      }
+      if (failed) { reloadFailed(); return; }
+      schedule();
     }});
   }
 

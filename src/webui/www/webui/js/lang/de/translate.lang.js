@@ -959,6 +959,7 @@ jQuery.extend(true,langJSON, {
     "ruleSortElse" : "SONST",
     "ruleSortNotice" : "Letzte Sortier%E4nderung %FCbernommen. Mit %22OK%22 speichern, mit %22Zur%FCck%22 abbrechen.",
     "ruleSortWarnNoCondition" : "Ein WENN- oder SONST-WENN-Zweig hat keine Bedingung. Die folgenden Zweige werden dadurch nie ausgef%FChrt. Bedingung erg%E4nzen oder den Zweig auf %22Sonst...%22 umstellen.",
+    "ruleSortFieldPending" : "Ein Eingabefeld wird noch gespeichert. Bitte danach erneut versuchen.",
     "ruleSortSaving" : "Reihenfolge wird gespeichert ...",
     "ruleSortPostfailAlert" : "Die Reihenfolge konnte nach dem Schreiben nicht best%E4tigt werden. Bitte pr%FCfen Sie das Programm. Mit %22Zur%FCck%22 im Editor wird die Bearbeitung verworfen, das Original bleibt unver%E4ndert.",
     "ruleSortPostfailStatus" : "Reihenfolge nicht best%E4tigt, bitte pr%FCfen oder abbrechen.",

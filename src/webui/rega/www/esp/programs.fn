@@ -1914,6 +1914,10 @@ function ::DnDReorderBranches()
 ! stays where it is. Every branch is compared with the branch it stands for before the sorting.
 ! Sets sResult to "OK", "ERR|code" (nothing changed) or "POSTFAIL|code".
 ! Caller declares: string sRids, string sPerm, string sResult (and none of the names declared here).
+! Note for changes: only the condition groups and activities move. Properties of the rule or of its
+! destination stay at the position in the chain, so each of them must be carried over explicitly, as
+! BreakOnRestart is (records sRecB, mode "bor"), and be part of DnDFpOf() to be checked. A property that
+! ReGaHss adds to rules or destinations later is not moved and not checked until it is added here.
 function ::DnDBranchPermute()
 {
   string sDnDIds = "";
@@ -2431,6 +2435,15 @@ function ::DnDMove()
             iElseDestID = oSrc.ID();
             Call("/esp/programs.fn::DeleteEmptyElseRule()");
             if( sRemovedRuleParentID != "" ) { sResult = "OK|removed|" # sRid # "|" # sRemovedRuleParentID; }
+            else
+            {
+              ! Only an ELSE branch is removed, an empty THEN area stays. An ELSE branch still there was
+              ! not removed as expected.
+              if( !oRule.ElseIfFlag() )
+              {
+                if( dom.GetObject( sRid.ToInteger() ) ) { sResult = "POSTFAIL|cleanup"; }
+              }
+            }
           }
           if( bCreate ) { sResult = "OK|reload"; }
         }

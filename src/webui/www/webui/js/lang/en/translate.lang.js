@@ -1004,6 +1004,7 @@ jQuery.extend(true,langJSON, {
     "ruleSortElse" : "ELSE",
     "ruleSortNotice" : "Last sort change applied. Save with %22OK%22, discard with %22Back%22.",
     "ruleSortWarnNoCondition" : "An IF or ELSE IF branch has no condition. The following branches will never be executed. Add a condition or change the branch to %22Else...%22.",
+    "ruleSortFieldPending" : "An input field is still being saved. Please try again afterwards.",
     "ruleSortSaving" : "Saving order...",
     "ruleSortPostfailAlert" : "The order could not be confirmed after writing. Please check the program. %22Back%22 in the editor discards the changes, the original stays unchanged.",
     "ruleSortPostfailStatus" : "Order not confirmed, please check or cancel.",
