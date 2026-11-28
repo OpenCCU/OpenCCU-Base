@@ -9,6 +9,13 @@ is published.
 
 ## Unreleased
 
+* the "Execute script" dialog opens at 65% instead of 80% of the window
+  width and can be resized by the grip in its lower right corner. It stays
+  within the browser window, and the input and output editor share the free
+  height. The browser keeps the size set by the grip for the next time the
+  dialog opens. The close button moved left of the grip
+  ([#431](https://github.com/OpenCCU/OpenCCU-Base/pull/431), fixes
+  [#2439](https://github.com/OpenCCU/OpenCCU/issues/2439), @MichaelN0815).
 * the user account configuration dialog adapts to the browser window: it
   opens at 65% of the window width (at least its former width), 80% of the
   window height and 10% below the top edge, stays within the window and can

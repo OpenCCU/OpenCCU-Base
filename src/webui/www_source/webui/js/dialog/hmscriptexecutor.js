@@ -17,8 +17,15 @@ HMScriptExecutor = Class.create({
   {
     var screenWidth  = WebUI.getWidth();
     var screenHeight = WebUI.getHeight();
-    var frameWidth   = parseInt(screenWidth * 0.8);
-    var frameHeight  = parseInt(screenHeight * 0.8);
+    var frameWidth   = parseInt(screenWidth * HMScriptExecutor.WIDTH_RATIO);
+    var frameHeight  = parseInt(screenHeight * HMScriptExecutor.HEIGHT_RATIO);
+    // the size set by the grip last time, if there is one
+    var savedSize    = loadDialogSize(HMScriptExecutor.STORAGE_KEY, HMScriptExecutor.MIN_WIDTH, HMScriptExecutor.MIN_HEIGHT);
+    if (savedSize) {
+      var savedContentSize = HMScriptExecutor.getContentSize(savedSize.width, savedSize.height);
+      frameWidth  = savedContentSize.width;
+      frameHeight = savedContentSize.height;
+    }
     var frameX       = parseInt((screenWidth  - frameWidth)  / 2);
     var frameY       = parseInt((screenHeight - frameHeight) / 2);
 
@@ -28,6 +35,14 @@ HMScriptExecutor = Class.create({
     
     this.m_layer = document.createElement("div");
     this.m_layer.className = "DialogLayer";
+
+    // positioned by m_layout()
+    this.m_runButton = new UI.Button()
+      .setText(HMScriptExecutor.TEXT_RUN)
+      .setAction(this.run, this);
+    this.m_closeButton = new UI.Button()
+      .setText(HMScriptExecutor.TEXT_CLOSE)
+      .setAction(this.close, this);
 
     this.m_frame = new UI.Frame(true)
       .setTitle(HMScriptExecutor.TITLE)
@@ -52,16 +67,8 @@ HMScriptExecutor = Class.create({
         .setID("output")
         .setName("output")
       )
-      .add(new UI.Button()
-        .setPosition(5, frameHeight-30)
-        .setText(HMScriptExecutor.TEXT_RUN)
-        .setAction(this.run, this)
-      )
-      .add(new UI.Button()
-        .setPosition(frameWidth-155, frameHeight-30)
-        .setText(HMScriptExecutor.TEXT_CLOSE)
-        .setAction(this.close, this)
-      );
+      .add(this.m_runButton)
+      .add(this.m_closeButton);
       
     this.m_layer.appendChild(this.m_frame.getElement());
     Layer.add(this.m_layer);
@@ -116,7 +123,6 @@ HMScriptExecutor = Class.create({
                       cm.replaceRange('', {line: c.line, ch: c.ch - m[1].length}, {line: c.line, ch: c.ch});
                   }}
     });
-    this.m_input.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.6));
 
     this.m_output = CCUCodeMirror6.fromTextArea(document.getElementById('output'), {
       mode: "default",
@@ -124,7 +130,36 @@ HMScriptExecutor = Class.create({
       lineWrapping: true,
       lineNumbers: false
     });
-    this.m_output.setSize("100%", parseInt((this.m_frame.getContentHeight()-70) * 0.4));
+    this.m_layout(frameWidth, frameHeight);
+
+    var _this_ = this;
+    enableDialogResize(this.m_frame.getElement(), {
+      minWidth: HMScriptExecutor.MIN_WIDTH,
+      minHeight: HMScriptExecutor.MIN_HEIGHT,
+      storageKey: HMScriptExecutor.STORAGE_KEY,
+      onResize: function(width, height) {
+        var contentSize = HMScriptExecutor.getContentSize(width, height);
+        _this_.m_layout(contentSize.width, contentSize.height);
+      }
+    });
+  },
+
+  /**
+   * Lays out the dialog for a content area of the given size (px): the
+   * buttons at its bottom, the close button left of the resize grip, and the
+   * input and output editor in the height left by the labels and buttons.
+   **/
+  m_layout: function(contentWidth, contentHeight)
+  {
+    var buttonY      = contentHeight - HMScriptExecutor.BUTTON_BOTTOM;
+    var editorHeight = contentHeight - HMScriptExecutor.EDITOR_RESERVED_HEIGHT;
+
+    this.m_frame.setContentSize(contentWidth, contentHeight);
+    this.m_runButton.setPosition(HMScriptExecutor.BUTTON_MARGIN, buttonY);
+    this.m_closeButton.setPosition(contentWidth - UI.Button.DEFAULT_WIDTH - HMScriptExecutor.BUTTON_MARGIN
+                                   - HMScriptExecutor.RESIZE_GRIP_SIZE, buttonY);
+    this.m_input.setSize("100%", parseInt(editorHeight * HMScriptExecutor.INPUT_HEIGHT_RATIO));
+    this.m_output.setSize("100%", parseInt(editorHeight * HMScriptExecutor.OUTPUT_HEIGHT_RATIO));
   },
 
   run: function()
@@ -177,11 +212,39 @@ HMScriptExecutor = Class.create({
   
   close: function()
   {
+    disableDialogResize(this.m_frame.getElement());
     Layer.remove(this.m_layer);
   }
   
 });
 
-HMScriptExecutor.CONTENT_WIDTH = 800;
-HMScriptExecutor.CONTENT_HEIGHT = 500;
+// fixed size of the content area up to the CodeMirror 6 editor (#340), replaced
+// by WIDTH_RATIO and HEIGHT_RATIO
+// HMScriptExecutor.CONTENT_WIDTH = 800;
+// HMScriptExecutor.CONTENT_HEIGHT = 500;
+
+HMScriptExecutor.WIDTH_RATIO  = 0.65; // content area when opened, as part of the
+HMScriptExecutor.HEIGHT_RATIO = 0.8;  // browser window
+HMScriptExecutor.MIN_WIDTH    = 360;  // smallest size of the dialog (px, with border)
+HMScriptExecutor.MIN_HEIGHT   = 300;  // when resized by the grip
+HMScriptExecutor.EDITOR_RESERVED_HEIGHT = 70;  // height of the content area not used by the editors
+HMScriptExecutor.INPUT_HEIGHT_RATIO     = 0.6; // parts of the remaining height for the
+HMScriptExecutor.OUTPUT_HEIGHT_RATIO    = 0.4; // input and the output editor
+HMScriptExecutor.BUTTON_MARGIN    = 5;  // gap of the buttons to the left and right edge
+HMScriptExecutor.BUTTON_BOTTOM    = 30; // top of the buttons above the bottom of the content area
+HMScriptExecutor.RESIZE_GRIP_SIZE = 16; // grip of enableDialogResize(), see
+                                        // ".DialogResizable > .ui-resizable-se" in dialog.css
+HMScriptExecutor.STORAGE_KEY = "scriptExecutor"; // the size set by the grip, see loadDialogSize()
+
+/**
+ * Size of the content area for a size of the frame including its border, as
+ * the grip and loadDialogSize() give it.
+ **/
+HMScriptExecutor.getContentSize = function(frameWidth, frameHeight)
+{
+  return {
+    width:  frameWidth  - (2 * UI.Frame.BORDER_SIZE),
+    height: frameHeight - (3 * UI.Frame.BORDER_SIZE) - UI.Frame.TITLE_HEIGHT
+  };
+};
 

@@ -126,6 +126,7 @@ DIALOG_USER_ACCOUNT_WIDTH_PERCENT   = 65;  // user account dialog when opened: w
 DIALOG_USER_ACCOUNT_TOP_PERCENT     = 10;  // height in percent of the browser window
 DIALOG_USER_ACCOUNT_HEIGHT_PERCENT  = 80;
 DIALOG_RESIZE_DATA_KEY              = "dialogResize"; // jQuery data of a resizable dialog
+DIALOG_SIZE_STORAGE_PREFIX          = "dialogSize_";  // localStorage key of a size set by the grip
 
 GROUPASSIGNMENT = null;
 
@@ -853,6 +854,25 @@ getDialogMaxSize = function() {
 };
 
 /**
+ * Size of a dialog (px, with border) last set by the grip and kept under
+ * storageKey by enableDialogResize(), within the minimum size and the size of
+ * the browser window (see getDialogMaxSize()). null if no valid size is kept.
+ **/
+loadDialogSize = function(storageKey, minWidth, minHeight) {
+  var value = null;
+  try { value = localStorage.getItem(DIALOG_SIZE_STORAGE_PREFIX + storageKey); } catch (e) {}
+  // written as "<width>x<height>", but the browser storage can be changed by anyone
+  var match = /^(\d{1,5})x(\d{1,5})$/.exec(value || "");
+  if (!match) { return null; }
+
+  var maxSize = getDialogMaxSize();
+  return {
+    width:  Math.min(maxSize.width,  Math.max(minWidth,  parseInt(match[1], 10))),
+    height: Math.min(maxSize.height, Math.max(minHeight, parseInt(match[2], 10)))
+  };
+};
+
+/**
  * Makes a dialog resizable by the grip in its lower right corner. The dialog
  * stays within the browser window, also when the window gets smaller.
  *
@@ -864,6 +884,8 @@ getDialogMaxSize = function() {
  *          height               optional height of the dialog when made resizable
  *          onResize             optional function(width, height), called after
  *                               each size change of the dialog
+ *          storageKey           optional key under which the size set by the grip
+ *                               is kept in the browser, see loadDialogSize()
  **/
 enableDialogResize = function(element, options) {
   var dialog = jQuery(element);
@@ -877,7 +899,8 @@ enableDialogResize = function(element, options) {
     growElement: null,
     growElementMinHeight: 0,
     height: null,
-    onResize: null
+    onResize: null,
+    storageKey: null
   }, options);
   var growElement = opts.growElement ? dialog.find(opts.growElement) : jQuery();
 
@@ -969,10 +992,21 @@ enableDialogResize = function(element, options) {
     limitToWindow();
   };
 
+  // at the end of a resize: keep the size the user has set (not a size the
+  // dialog gets from a smaller window), as "<width>x<height>" with border
+  var saveSize = function() {
+    if (!opts.storageKey) { return; }
+    try {
+      localStorage.setItem(DIALOG_SIZE_STORAGE_PREFIX + opts.storageKey,
+        Math.round(dialog.outerWidth()) + "x" + Math.round(dialog.outerHeight()));
+    } catch (e) {}
+  };
+
   dialog.addClass("DialogResizable").resizable({
     handles: "se",
     start: onResizeStart,
-    resize: applySize
+    resize: applySize,
+    stop: saveSize
   });
   // the larger grip icon of the jQuery UI theme, the small one is hard to see
   dialog.children(".ui-resizable-se").removeClass("ui-icon-gripsmall-diagonal-se").addClass("ui-icon-grip-diagonal-se");
