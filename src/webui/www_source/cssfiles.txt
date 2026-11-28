@@ -12,6 +12,7 @@ config/css/ic_neweasymode.css
 # HomeMatic WebUI
 webui/css/webui.css
 webui/css/filter.css
+webui/css/programsort.css
 webui/css/dialog.css
 webui/css/mainmenu.css
 webui/css/webuiloader.css

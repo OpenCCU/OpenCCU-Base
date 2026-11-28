@@ -9,6 +9,39 @@ is published.
 
 ## Unreleased
 
+* the program editor can sort the program logic by drag and drop: whole IF
+  and ELSE IF branches, condition groups, conditions and activities.
+  Conditions can also be moved to another condition group and activities
+  to another THEN or ELSE area, also of another branch. A moved condition
+  takes the AND/OR operator of its new group. Dropped on a branch without
+  conditions, a condition gets a new condition group, and an activity
+  dropped on the missing ELSE branch creates it, as when an entry is added
+  there. A condition group left empty is deleted and an ELSE branch left
+  without activities is removed, as when their last entry is deleted.
+  Turning an ELSE IF branch into the ELSE branch no longer deletes the
+  branch with its activities and all following branches: the branch moves
+  behind the last ELSE IF branch, takes over the activities of the former
+  ELSE branch and loses its conditions. The editor warns when an IF or
+  ELSE IF branch without condition is followed by other branches, ReGaHss
+  then never runs them. A field still being edited is saved before a
+  sorting. The terminal ELSE branch keeps its position and condition
+  groups stay in their branch. Conditions and condition groups can only be
+  sorted in a list whose operators are all the same (all AND or all OR),
+  and a condition can only be taken out of such a group. The CCU changes
+  the editor copy of the program (`DnDReorder`, `DnDReorderBranches`,
+  `DnDMove` and `ElseIfToElse` in `esp/programs.fn`) with the methods
+  `RuleMoveCondition()`, `CndMoveSingle()` and `DestMoveSingle()` of
+  ReGaHss, which the WebUI therefore requires, reads the result back and
+  compares it before it reports success. Based on the sorting of the
+  EnhancedWebUI add-on
+  ([#397](https://github.com/OpenCCU/OpenCCU-Base/pull/397), replaces
+  [#326](https://github.com/OpenCCU/OpenCCU-Base/pull/326), see
+  [#1081](https://github.com/OpenCCU/OpenCCU/issues/1081),
+  @unbox-digital-printing, @MichaelN0815)
+* turning the ELSE branch of a program into an ELSE IF branch no longer
+  logs a `ScriptRuntimeError` of ReGaHss (`AddNewElseRule()` in
+  `esp/programs.fn` wrote the destination of an undeclared rule).
+  ([#397](https://github.com/OpenCCU/OpenCCU-Base/pull/397), @MichaelN0815)
 * moving a dialog by its title bar no longer leaves a mouse listener behind
   on the page, which kept closed dialogs in memory until the page was
   reloaded.
