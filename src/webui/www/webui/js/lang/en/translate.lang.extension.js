@@ -1103,6 +1103,9 @@ jQuery.extend(true, langJSON, {
     "lblSysVarMoveUp" : "Move up",
     "lblSysVarMoveDown" : "Move down",
 
+    "lblFavoriteDragSort" : "Drag to reorder",
+    "lblFavoriteSortFailed" : "The favorite could not be moved. The list will be reloaded.",
+
     "theEnd" : ""
   }
 });

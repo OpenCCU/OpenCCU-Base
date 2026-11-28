@@ -1107,6 +1107,9 @@ jQuery.extend(true,langJSON, {
     "lblSysVarMoveUp" : "Nach oben verschieben",
     "lblSysVarMoveDown" : "Nach unten verschieben",
 
+    "lblFavoriteDragSort" : "Zum Sortieren ziehen",
+    "lblFavoriteSortFailed" : "Der Favorit konnte nicht verschoben werden. Die Liste wird neu geladen.",
+
     "theEnd" : ""
   }
 });
